@@ -95,7 +95,8 @@ class model:
         start_time = time.time()
 
         if self.kind == 'mitgcm':
-            self.full = (xr.open_mfdataset(self.dirname + '/Day_*.nc', parallel=True))
+            self.full = (xr.open_mfdataset(self.dirname + '/Day_[0-9][0-9][0-9][0-9].nc',
+                                           engine='h5netcdf', parallel=True))
 
         if self.kind == 'roms':
             self.full = xr.Dataset()
