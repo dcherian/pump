@@ -72,6 +72,7 @@ class model:
         (self.full.sel(longitude=section_lons, method='nearest')
          .sel(time=str(self.mid_year))
          .mean('time')
+         .load()
          .to_netcdf(self.dirname + '/obs_subset/johnson-section-mean.nc'))
 
     def extract_tao(self):
@@ -87,7 +88,8 @@ class model:
         self.tao['longitude'].values = (
             np.array([-170, -155, -140, -125, -110, -95]) * 1.0)
 
-        self.tao.to_netcdf(self.dirname + '/obs_subset/tao-extract.nc')
+        (self.tao.load()
+         .to_netcdf(self.dirname + '/obs_subset/tao-extract.nc'))
 
     def read_full(self):
         start_time = time.time()
