@@ -77,3 +77,54 @@ def get_euc_transport(u):
     euc = euc.integrate('latitude') * 0.1
 
     return (euc)
+
+
+def calc_tao_ri(adcp, temp):
+    '''
+
+    Calculate Ri for TAO dataset.
+    Interpolates to 5m grid and then differentiates.
+    Uses N^2 = g alpha dT/dz
+
+
+    Inputs
+    ------
+
+    adcp: xarray.Dataset
+        Dataset with ['u', 'v']
+
+    temp: xarry.DataArray
+        Temperature DataArray
+
+    References
+    ----------
+
+    Smyth & Moum (2013)
+    Pham et al. (2017)
+
+    '''
+
+    V = adcp[['u', 'v']].load()
+    V['shear'] = np.hypot(V['u'].differentiate('depth'),
+                          V['v'].differentiate('depth'))
+
+    T = (temp.load()
+         .where(temp.depth > -500, drop=True)
+         .dropna('depth', how='all')
+         .sel(time=V.time)
+         .sortby('depth')
+         .interpolate_na('depth', 'linear')
+         .sortby('depth', 'descending')
+         .interp(depth=V.depth))
+
+    # the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
+    N2 = (9.81
+          * sw.alpha(35, T, xr.broadcast(T, T.depth)[1])
+          * T.differentiate('depth'))
+    S2 = V.shear ** 2
+
+    N2 = N2
+    Ri = ((N2.where(N2 > 1e-7) / S2.where(S2 > 1e-10))
+          .dropna('depth', how='all'))
+
+    return Ri

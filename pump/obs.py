@@ -51,11 +51,19 @@ def read_tao_adcp(domain=None):
         adcp[vv] = adcp[vv].where(np.abs(adcp[vv]) < 1000)
 
     adcp['longitude'] -= 360
+    adcp['depth'] *= -1
+    adcp['depth'].attrs['units'] = 'm'
+    adcp['u'].attrs['units'] = 'm/s'
+    adcp['v'].attrs['units'] = 'm/s'
 
     if domain is not None:
-        adcp = adcp.sel(**domain).dropna('longitude', how='all').dropna('depth', how='all')
+        adcp = adcp.sel(**domain)
+    else:
+        adcp = adcp.sel(latitude=0)
 
-    return adcp.sel(latitude=0, method='nearest')
+    return (adcp
+            .dropna('longitude', how='all')
+            .dropna('depth', how='all'))
 
 def read_tao(domain=None):
     tao = (xr.open_mfdataset([root+'/obs/tao/'+ff
@@ -76,12 +84,14 @@ def read_tao(domain=None):
     tao['u'].attrs['units'] = 'm/s'
     tao['v'].attrs['units'] = 'm/s'
 
-    tao = tao.drop(['S_300', 'D_310'])
+    tao['depth'] *= -1
+
+    tao = tao.drop(['S_300', 'D_310', 'QS_5300', 'QD_5310', 'QS_5041', 'SS_6041',
+                    'QT_5020', 'ST_6020', 'SRC_6300'])
 
     for vv in tao:
         tao[vv] = tao[vv].where(tao[vv] < 1e4)
         tao[vv].attrs['long_name'] = ''
-
 
     if domain is not None:
         return tao.sel(**domain)
