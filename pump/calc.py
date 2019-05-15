@@ -151,3 +151,86 @@ def get_mld(dens):
     mld = thresh.max('depth')
 
     return mld
+
+
+def get_tiw_phase(v, debug=False):
+    '''
+    Estimates TIW phase using 10 day low-passed meridional velocity
+    averaged between 10m and 80m.
+
+    Input
+    -----
+    v: xr.DataArray
+        Meridional velocity (z, t).
+
+    Output
+    ------
+    phase: xr.DataArray
+        Phase in degrees.
+
+    References
+    ----------
+    Inoue et. al. (2019)
+    '''
+
+    import scipy as sp
+    import xfilter
+
+    v = xfilter.lowpass(
+        v.sel(depth=slice(-10, -80)).mean('depth'),
+        coord='time',
+        freq=1/10.0,
+        cycles_per='D')
+
+    dvdt = v.differentiate('time')
+
+    phase = xr.zeros_like(v) * np.nan
+
+    zeros = (xr.where(np.abs(v) < 1e-2, np.arange(v.size), np.nan)
+             .dropna('time').values.astype(np.int32))
+    zeros_unique = zeros[np.insert(np.diff(zeros), 0, 100) > 1]
+
+    phase_0 = sp.signal.find_peaks(v)
+    phase_90 = [zeros_unique[np.nonzero(dvdt.values[zeros_unique] < 0)[0]]]
+    phase_180 = sp.signal.find_peaks(-v)
+    phase_270 = [zeros_unique[np.nonzero(dvdt.values[zeros_unique] > 0)[0]]]
+
+    # One version with phase=0 at points in phase_0
+    # One version with 360 at points in phase_0
+    # Then merge sensibly
+    phase2 = phase.copy(deep=True)
+    for pp, cc, ph in zip([phase_0, phase_90, phase_180, phase_270],
+                          'rgbk',
+                          [0, 90, 180, 270]):
+        if debug:
+            v[pp[0]].plot(color=cc, ls='none', marker='o')
+        phase[pp[0]] = ph
+        if ph < 10:
+            phase2[pp[0]] = 360
+        else:
+            phase2[pp[0]] = ph
+
+    phase = phase.interpolate_na('time', method='linear')
+    phase2 = phase2.interpolate_na('time', method='linear')
+
+    if debug:
+        v.plot(x='time')
+        dcpy.plots.liney(0)
+
+        plt.figure()
+        phase.plot()
+        phase2.plot()
+
+    dpdt = phase.differentiate('time')
+
+    phase_new = xr.where((phase2 >= 270) & (phase2 < 360)
+                         & (phase < 270) & (dpdt <= 0),
+                         phase2, phase)
+    if debug:
+        phase_new.plot()
+
+    phase_new.attrs['long_name'] = 'TIW phase'
+    phase_new.name = 'tiw_phase'
+    phase_new.attrs['units'] = 'deg'
+
+    return phase_new
