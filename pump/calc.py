@@ -51,6 +51,14 @@ def get_euc_max(u):
 
 
 def get_dcl_base(data):
+    '''
+    Estimates base of the deep cycle layer as the depth of max total shear squared.
+
+    References
+    ----------
+
+    Inoue et al. (2012)
+    '''
 
     if 'shear' in data:
         s2 = data['shear']**2
@@ -128,3 +136,18 @@ def calc_tao_ri(adcp, temp):
           .dropna('depth', how='all'))
 
     return Ri
+
+
+def get_mld(dens):
+    '''
+    Given density field, estimate MLD as depth where Δρ > 0.015 and N2 > 2e-5.
+    Interpolates density to 1m gridl
+    '''
+
+    drho = dens.interp(depth=np.arange(0, -200, -1)) - dens.isel(depth=0)
+    N2 = -9.81/1025 * dens.interp(depth=np.arange(0, -200, -1)).differentiate('depth')
+
+    thresh = xr.where((drho > 0.015) & (N2 > 2e-5), drho.depth, np.nan)
+    mld = thresh.max('depth')
+
+    return mld
