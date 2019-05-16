@@ -1,6 +1,9 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import seawater as sw
 import xarray as xr
+
+import dcpy
 
 def calc_reduced_shear(data):
     '''
@@ -182,55 +185,95 @@ def get_tiw_phase(v, debug=False):
         freq=1/10.0,
         cycles_per='D')
 
+    if v.ndim == 1:
+        v = v.expand_dims('new_dim')
+        unstack = False
+    elif v.ndim > 2:
+        unstack = True
+        v = v.stack({'stacked': set(v.dims) - set(['time'])})
+    else:
+        unstack = False
+
     dvdt = v.differentiate('time')
 
-    phase = xr.zeros_like(v) * np.nan
+    zeros_da = xr.where(np.abs(v) < 1e-2,
+                        xr.DataArray(np.arange(v.shape[v.get_axis_num('time')]),
+                                     dims=['time'],
+                                     coords={'time': v.time}),
+                        np.nan)
 
-    zeros = (xr.where(np.abs(v) < 1e-2, np.arange(v.size), np.nan)
-             .dropna('time').values.astype(np.int32))
-    zeros_unique = zeros[np.insert(np.diff(zeros), 0, 100) > 1]
+    assert v.ndim == 2
+    dim2 = list(set(v.dims) - set(['time']))[0]
 
-    phase_0 = sp.signal.find_peaks(v)
-    phase_90 = [zeros_unique[np.nonzero(dvdt.values[zeros_unique] < 0)[0]]]
-    phase_180 = sp.signal.find_peaks(-v)
-    phase_270 = [zeros_unique[np.nonzero(dvdt.values[zeros_unique] > 0)[0]]]
+    phases = []
+    peak_kwargs = {'prominence': 0.05}
 
-    # One version with phase=0 at points in phase_0
-    # One version with 360 at points in phase_0
-    # Then merge sensibly
-    phase2 = phase.copy(deep=True)
-    for pp, cc, ph in zip([phase_0, phase_90, phase_180, phase_270],
-                          'rgbk',
-                          [0, 90, 180, 270]):
+    for dd in v[dim2]:
         if debug:
-            v[pp[0]].plot(color=cc, ls='none', marker='o')
-        phase[pp[0]] = ph
-        if ph < 10:
-            phase2[pp[0]] = 360
-        else:
-            phase2[pp[0]] = ph
+            plt.figure()
+            v.sel({dim2: dd}).plot(x='time')
+            dcpy.plots.liney(0)
 
-    phase = phase.interpolate_na('time', method='linear')
-    phase2 = phase2.interpolate_na('time', method='linear')
+        zeros = (zeros_da.sel({dim2: dd})
+                 .dropna('time').values.astype(np.int32))
 
-    if debug:
-        v.plot(x='time')
-        dcpy.plots.liney(0)
+        zeros_unique = zeros[np.insert(np.diff(zeros), 0, 100) > 1]
 
-        plt.figure()
-        phase.plot()
-        phase2.plot()
+        phase_0 = sp.signal.find_peaks(v.sel({dim2: dd}), **peak_kwargs)
+        phase_90 = [zeros_unique[np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] < 0)[0]]]
+        phase_180 = sp.signal.find_peaks(-v.sel({dim2: dd}), **peak_kwargs)
+        phase_270 = [zeros_unique[np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] > 0)[0]]]
 
-    dpdt = phase.differentiate('time')
+        # One version with phase=0 at points in phase_0
+        # One version with 360 at points in phase_0
+        # Then merge sensibly
+        phase = xr.zeros_like(v.sel({dim2: dd})) * np.nan
+        phase2 = phase.copy(deep=True)
+        for pp, cc, ph in zip([phase_0, phase_90, phase_180, phase_270],
+                              'rgbk',
+                              [0, 90, 180, 270]):
+            if debug:
+                v.sel({dim2: dd})[pp[0]].plot(color=cc, ls='none', marker='o')
 
-    phase_new = xr.where((phase2 >= 270) & (phase2 < 360)
-                         & (phase < 270) & (dpdt <= 0),
-                         phase2, phase)
-    if debug:
-        phase_new.plot()
+            phase[pp[0]] = ph
+            if ph < 10:
+                phase2[pp[0]] = 360
+            else:
+                phase2[pp[0]] = ph
 
-    phase_new.attrs['long_name'] = 'TIW phase'
-    phase_new.name = 'tiw_phase'
-    phase_new.attrs['units'] = 'deg'
+        if not (np.all(np.isin(phase.dropna('time').diff('time'), [90, -270]))
+                or np.all(np.isin(phase2.dropna('time').diff('time'), [90, -270]))):
+            raise AssertionError('Secondary peaks detected!')
 
-    return phase_new
+        phase = phase.interpolate_na('time', method='linear')
+        phase2 = phase2.interpolate_na('time', method='linear')
+
+        dpdt = phase.differentiate('time')
+
+        phase_new = xr.where((phase2 >= 270) & (phase2 < 360)
+                             & (phase < 270) & (dpdt <= 0),
+                             phase2, phase)
+        if debug:
+            plt.figure()
+            phase_new.plot()
+            dcpy.plots.liney([0, 90, 180, 270, 360])
+
+        for dd in set(list(phase_new.coords))-set(['time']):
+            phase_new = phase_new.expand_dims(dd)
+
+        phases.append(phase_new)
+
+    phase = xr.merge(phases)
+
+    if unstack:
+        # lost stack information earlier; re-assign that
+        phase['stacked'] = v['stacked']
+        phase = phase.unstack('stacked')
+
+    phase = phase.to_array().squeeze()
+
+    phase.attrs['long_name'] = 'TIW phase'
+    phase.name = 'tiw_phase'
+    phase.attrs['units'] = 'deg'
+
+    return phase
