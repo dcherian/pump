@@ -185,6 +185,8 @@ def get_tiw_phase(v, debug=False):
         freq=1/10.0,
         cycles_per='D')
 
+    v.attrs['long_name'] = 'v: (10, 80m) avg, 10d lowpass'
+
     if v.ndim == 1:
         v = v.expand_dims('new_dim')
         unstack = False
@@ -210,9 +212,10 @@ def get_tiw_phase(v, debug=False):
 
     for dd in v[dim2]:
         if debug:
-            plt.figure()
-            v.sel({dim2: dd}).plot(x='time')
-            dcpy.plots.liney(0)
+            f, ax = plt.subplots(2, 1, sharex=True, constrained_layout=True)
+
+            v.sel({dim2: dd}).plot(ax=ax[0], x='time')
+            dcpy.plots.liney(0, ax=ax[0])
 
         zeros = (zeros_da.sel({dim2: dd})
                  .dropna('time').values.astype(np.int32))
@@ -233,7 +236,7 @@ def get_tiw_phase(v, debug=False):
                               'rgbk',
                               [0, 90, 180, 270]):
             if debug:
-                v.sel({dim2: dd})[pp[0]].plot(color=cc, ls='none', marker='o')
+                v.sel({dim2: dd})[pp[0]].plot(ax=ax[0], color=cc, ls='none', marker='o')
 
             phase[pp[0]] = ph
             if ph < 10:
@@ -254,9 +257,11 @@ def get_tiw_phase(v, debug=False):
                              & (phase < 270) & (dpdt <= 0),
                              phase2, phase)
         if debug:
-            plt.figure()
-            phase_new.plot()
-            dcpy.plots.liney([0, 90, 180, 270, 360])
+            phase_new.plot(ax=ax[1])
+            dcpy.plots.liney([0, 90, 180, 270, 360], ax=ax[1])
+            ax[0].set_xlabel('')
+            ax[1].set_title('');
+            ax[1].set_ylabel('TIW phase [deg]')
 
         for dd in set(list(phase_new.coords))-set(['time']):
             phase_new = phase_new.expand_dims(dd)

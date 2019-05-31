@@ -9,13 +9,16 @@ class model:
 
     from . import validate
 
-    def __init__(self, dirname, name, kind='mitgcm', full=False):
+    def __init__(self, dirname, name, kind='mitgcm', full=False, budget=False):
         self.dirname = dirname
         self.kind = kind
         self.name = name
 
-        self.surface = (xr.open_dataset(self.dirname + '/obs_subset/surface.nc')
-                        .squeeze())
+        try:
+            self.surface = (xr.open_dataset(self.dirname + '/obs_subset/surface.nc')
+                            .squeeze())
+        except FileNotFoundError:
+            self.surface = xr.Dataset()
 
         # self.surface['theta_anom'] = self.surface.theta - self.surface.theta.mean(['longitude', 'time'])
 
@@ -49,7 +52,6 @@ class model:
             pass
 
         self.obs = obs_container()
-        self.oisst = read_sst(self.domain['xyt'])
 
         try:
             self.tao = xr.open_dataset(self.dirname + '/obs_subset/tao-extract.nc')
