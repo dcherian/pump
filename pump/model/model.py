@@ -3,6 +3,8 @@ import time
 import xarray as xr
 import xmitgcm
 
+from ..calc import (calc_reduced_shear, get_euc_max, get_dcl_base, get_mld,
+                    get_tiw_phase)
 from ..constants import *
 from ..obs import *
 
@@ -54,10 +56,7 @@ class model:
 
         self.obs = obs_container()
 
-        try:
-            self.tao = xr.open_dataset(self.dirname + '/obs_subset/tao-extract.nc')
-        except FileNotFoundError:
-            self.tao = None
+        self.read_tao()
 
         try:
             self.johnson = xr.open_dataset(dirname + '/obs_subset/johnson-section-mean.nc')
@@ -69,7 +68,6 @@ class model:
         # Add resolution
 
         return string
-
 
     def extract_johnson_sections(self):
         (self.full.sel(longitude=section_lons, method='nearest')
@@ -180,6 +178,29 @@ class model:
         ])
 
         self.budget['oceQsw'] = self.budget.oceQsw.fillna(0)
+
+    def read_tao(self):
+        try:
+            self.tao = xr.open_mfdataset(self.dirname + '/obs_subset/tao-*.nc')
+        except FileNotFoundError:
+            self.tao = None
+            return
+
+        self.tao = calc_reduced_shear(self.tao)
+        self.tao['euc_max'] = get_euc_max(self.tao.u)
+        self.tao['dcl_base'] = get_dcl_base(self.tao)
+        self.tao['mld'] = get_mld(self.tao.dens)
+
+        CV = (self.metrics.cellvol
+              .sel(latitude=self.tao.latitude,
+                   longitude=self.tao.longitude,
+                   depth=self.tao.depth,
+                   method='nearest')
+              .assign_coords(**dict(self.tao.isel(time=1).coords)))
+
+        self.tao['Jq'] = (1035 * 3999 * 10 * self.tao.DFrI_TH / CV)
+        self.tao['Jq'].attrs['long_name'] = "$J_q^t$"
+        self.tao['Jq'].attrs['units'] = 'W/m$^2$'
 
     def update_coords(self):
         if self.surface:
