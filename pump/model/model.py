@@ -63,6 +63,9 @@ class model:
         except FileNotFoundError:
             self.johnson = None
 
+        self.tiw_trange = [slice('1995-10-01', '1996-03-01'),
+                           slice('1996-09-01', '1997-03-01')]
+
     def __repr__(self):
         string = f'{self.name} [{self.dirname}]'
         # Add resolution
@@ -178,6 +181,16 @@ class model:
         ])
 
         self.budget['oceQsw'] = self.budget.oceQsw.fillna(0)
+
+    def get_tiw_phase(self, v, debug=False):
+
+        ph = []
+        for tt in self.tiw_trange:
+            ph.append(get_tiw_phase(v.sel(time=tt), debug=debug))
+
+        phase = xr.merge(ph).drop('variable').reindex(time=v.time)
+
+        return phase['tiw_phase']
 
     def read_tao(self):
         try:
