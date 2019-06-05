@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seawater as sw
 import xarray as xr
+import warnings
 
 import dcpy
 
@@ -208,13 +209,14 @@ def get_tiw_phase(v, debug=False):
     dim2 = list(set(v.dims) - set(['time']))[0]
 
     phases = []
-    peak_kwargs = {'prominence': 0.05}
+    peak_kwargs = {'prominence': 0.02}
 
     for dd in v[dim2]:
+        vsub = v.sel({dim2: dd})
         if debug:
             f, ax = plt.subplots(2, 1, sharex=True, constrained_layout=True)
 
-            v.sel({dim2: dd}).plot(ax=ax[0], x='time')
+            vsub.plot(ax=ax[0], x='time')
             dcpy.plots.liney(0, ax=ax[0])
 
         zeros = (zeros_da.sel({dim2: dd})
@@ -222,31 +224,51 @@ def get_tiw_phase(v, debug=False):
 
         zeros_unique = zeros[np.insert(np.diff(zeros), 0, 100) > 1]
 
-        phase_0 = sp.signal.find_peaks(v.sel({dim2: dd}), **peak_kwargs)
+        phase_0 = sp.signal.find_peaks(vsub, **peak_kwargs)
         phase_90 = [zeros_unique[np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] < 0)[0]]]
-        phase_180 = sp.signal.find_peaks(-v.sel({dim2: dd}), **peak_kwargs)
+        phase_180 = sp.signal.find_peaks(-vsub, **peak_kwargs)
         phase_270 = [zeros_unique[np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] > 0)[0]]]
+
+        vamp = np.abs(vsub
+                      .isel(time=np.sort(np.hstack([phase_0[0], phase_90[0],
+                                                    phase_180[0], phase_270[0]])))
+                      .diff('time', label='lower'))
 
         # One version with phase=0 at points in phase_0
         # One version with 360 at points in phase_0
         # Then merge sensibly
-        phase = xr.zeros_like(v.sel({dim2: dd})) * np.nan
+        phase = xr.zeros_like(vsub) * np.nan
         phase2 = phase.copy(deep=True)
         for pp, cc, ph in zip([phase_0, phase_90, phase_180, phase_270],
                               'rgbk',
                               [0, 90, 180, 270]):
-            if debug:
-                v.sel({dim2: dd})[pp[0]].plot(ax=ax[0], color=cc, ls='none', marker='o')
+            idx = pp[0]
 
-            phase[pp[0]] = ph
+            # 0 phase must be positive v
+            if ph == 0:
+                if not np.all(vsub[idx] > 0):
+                    idx = np.where(vsub[idx] > 0, idx, np.nan)
+                    idx = idx[~np.isnan(idx)].astype(np.int32)
+
+            # 180 phase must be negative v
+            if ph == 180:
+                if not np.all(vsub[idx] < 0):
+                    idx = np.where(vsub[idx] < 0, idx, np.nan)
+                    idx = idx[~np.isnan(idx)].astype(np.int32)
+
+            if debug:
+                vsub[idx].plot(ax=ax[0], color=cc, ls='none', marker='o')
+                ax[1].plot(vsub.time[idx], ph*np.ones_like(idx), color=cc, ls='none', marker='o')
+
+            phase[idx] = ph
             if ph < 10:
-                phase2[pp[0]] = 360
+                phase2[idx] = 360
             else:
-                phase2[pp[0]] = ph
+                phase2[idx] = ph
 
         if not (np.all(np.isin(phase.dropna('time').diff('time'), [90, -270]))
                 or np.all(np.isin(phase2.dropna('time').diff('time'), [90, -270]))):
-            raise AssertionError('Secondary peaks detected!')
+            warnings.warn('Secondary peaks detected!')
 
         phase = phase.interpolate_na('time', method='linear')
         phase2 = phase2.interpolate_na('time', method='linear')
@@ -256,7 +278,11 @@ def get_tiw_phase(v, debug=False):
         phase_new = xr.where((phase2 >= 270) & (phase2 < 360)
                              & (phase < 270) & (dpdt <= 0),
                              phase2, phase)
+        vampf = vamp.reindex(time=phase.time).ffill('time')
+        phase_new = phase_new.where(vampf > 0.1)
+
         if debug:
+            # vampf.plot.step(ax=ax[0])
             phase_new.plot(ax=ax[1])
             dcpy.plots.liney([0, 90, 180, 270, 360], ax=ax[1])
             ax[0].set_xlabel('')
