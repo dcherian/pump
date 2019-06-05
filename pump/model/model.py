@@ -256,3 +256,127 @@ class model:
 
         self.domain['xy'] = {'latitude': self.domain['xyt']['latitude'],
                              'longitude': self.domain['xyt']['longitude']}
+
+    def plot_tiw_composite(self, region=dict(latitude=0, longitude=-140),
+                           ax=None, ds='tao', **kwargs):
+
+        ds = getattr(self, ds)
+
+        subset = ds.sel(**region)
+
+        tiw_phase = self.get_tiw_phase(subset.v)
+        subset = (subset.rename({'KPP_diffusivity': 'KT'})
+                  .where(subset.depth < subset.mld - 5))
+
+        for vv in ['mld', 'dcl_base', 'euc_max']:
+            subset[vv] = subset[vv].max('depth')
+
+        phase_bins = np.arange(0, 365, 10)
+        grouped = subset.groupby_bins(tiw_phase, bins=phase_bins)
+        mean = grouped.mean('time')
+
+        mean['shear'] = mean['shear'] ** 2
+        mean['shear'].attrs['long_name'] = '$S^2$'
+        mean['shear'].attrs['units'] = 's$^{-2}$'
+
+        if ax is None:
+            f, axx = plt.subplots(5, 1, sharex=True, sharey=True,
+                                  constrained_layout=True,
+                                  gridspec_kw={'height_ratios': [1, 1, 1, 1, 1]})
+
+            ax = dict(zip(['u', 'v', 'shear', 'N2', 'Jq', 'KT'], axx))
+            f.set_size_inches((5, 6))
+
+        else:
+            axx = list(ax.values())
+
+        cmaps = dict(u=mpl.cm.RdBu_r,
+                     v=mpl.cm.RdBu_r,
+                     shear=mpl.cm.Reds,
+                     N2=mpl.cm.Blues,
+                     Jq=mpl.cm.BuGn_r,
+                     KT=mpl.cm.Reds)
+
+        handles = dict()
+        for aa in ax:
+            if aa == 'KT':
+                pkwargs = dict(norm=mpl.colors.LogNorm())
+            elif aa == 'shear':
+                pkwargs=dict(vmin=0, vmax=3e-4)
+            elif aa == 'Jq':
+                pkwargs=dict(vmax=0, vmin=-300)
+            elif aa == 'u':
+                pkwargs = dict(vmin=-0.8, vmax=0.8)
+            elif aa == 'v':
+                pkwargs = dict(vmin=-0.3, vmax=0.3)
+            elif aa == 'N2':
+                pkwargs = dict(vmin=0, vmax=4e-4)
+
+            handles[aa] = mean[aa].plot(ax=ax[aa],
+                                        y='depth',
+                                        cmap=cmaps[aa],
+                                        robust=True,
+                                        ylim=[-250, 0],
+                                        **kwargs, **pkwargs)
+            plot_depths(mean, ax=ax[aa])
+
+        for aa in axx[:-1]:
+            aa.set_xlabel('')
+
+        for aa in axx[1:]:
+            aa.set_title('')
+
+        axx[0].set_xticks([0, 90, 180, 270, 360])
+
+        for aa in axx:
+            aa.grid(True, axis='x')
+
+        return handles
+
+    def plot_dcl(self, region, ds='tao'):
+
+        subset = getattr(self, ds).sel(**region)
+
+        f, axx = plt.subplots(5, 1, constrained_layout=True, sharex=True,
+                              gridspec_kw=dict(height_ratios=[1, 1, 2, 5, 5]))
+
+        ax = dict(zip(['v', 'Q', 'dcl_KT', 'KT', 'shear'], axx))
+
+        (np.log10(subset.KPP_diffusivity)
+         .plot(ax=ax['KT'], x='time', robust=True, cmap=mpl.cm.GnBu, ylim=[-150, 0]))
+
+        dcl_K = (subset.KPP_diffusivity.where((subset.depth < (subset.mld - 5))
+                                              & (subset.depth > (subset.dcl_base + 5))))
+        dcl_K = dcl_K.where(dcl_K < 1e-2)
+        (dcl_K.mean('depth')
+         .plot(ax=ax['dcl_KT'], x='time', yscale='log', _labels=False))
+        (dcl_K.median('depth')
+         .plot(ax=ax['dcl_KT'], x='time', yscale='log', _labels=False,
+               ylim=[5e-4, 3e-3]))
+
+        ax['dcl_KT'].set_ylabel('DCL $K$')
+
+        subset.oceQnet.plot(ax=ax['Q'], x='time', _labels=False)
+
+        subset.v.isel(depth=1).plot(ax=ax['v'], x='time', _labels=False)
+
+        (subset.shear**2).plot(ax=ax['shear'], x='time', ylim=[-150, 0],
+                               robust=True, cmap=mpl.cm.RdYlBu_r,
+                               norm=mpl.colors.LogNorm(1e-6, 1e-3))
+
+        for axx0 in [ax['KT'], ax['shear']]:
+            heuc = (subset.euc_max.plot(ax=axx0, color='k', lw=1, _labels=False))
+            hdcl = (subset.dcl_base.plot(ax=axx0, color='gray', lw=1, _labels=False))
+            hmld = ((subset.mld - 5).plot(ax=axx0, color='k', lw=0.5, _labels=False))
+
+        ax['v'].set_ylabel('v')
+        ax['Q'].set_ylabel('$Q_{net}$')
+        axx[0].set_title(ax['KT'].get_title())
+        [aa.set_title('') for aa in axx[1:]]
+        [aa.set_xlabel('') for aa in axx]
+
+        ax['v'].axhline(0, color='k', zorder=-1, lw=1, ls='--')
+        ax['Q'].axhline(0, color='k', zorder=-1, lw=1, ls='--')
+
+        f.set_size_inches((8, 6))
+        dcpy.plots.label_subplots(ax.values())
