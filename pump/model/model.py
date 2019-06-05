@@ -1,4 +1,9 @@
+import dcpy.plots
+import glob
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
+import seawater as sw
 import time
 import xarray as xr
 import xmitgcm
@@ -7,6 +12,7 @@ from ..calc import (calc_reduced_shear, get_euc_max, get_dcl_base, get_mld,
                     get_tiw_phase)
 from ..constants import *
 from ..obs import *
+from ..plot import plot_depths
 
 class model:
 
@@ -80,18 +86,28 @@ class model:
          .to_netcdf(self.dirname + '/obs_subset/johnson-section-mean.nc'))
 
     def extract_tao(self):
-        self.tao = (
-            self.full.sel(
-                longitude=[-170, -155, -140, -125, -110, -95],
-                latitude=[-8, -5, -2, 0, 2, 5, 8],
-                method='nearest')
-            .sel(depth=slice(0, -500)))
+        region = dict(longitude=[-170, -155, -140, -125, -110, -95],
+                      latitude=[-8, -5, -2, 0, 2, 5, 8],
+                      method='nearest')
+        datasets = [self.full.sel(**region)
+                    .sel(depth=slice(0, -500))
+                    .load()]
+        if self.budget:
+            print('Merging in budget terms...')
+            datasets.append(self.budget.sel(**region)
+                            .sel(depth=slice(0, -500))
+                            .load())
+            if not self.full.time.equals(self.budget.time):
+                datasets[0] = datasets[0].reindex(time=self.budget.time)
+
+        self.tao = xr.merge(datasets)
 
         # round lat, lon
         self.tao['latitude'].values = np.array([-8, -5, -2, 0, 2, 5, 8]) * 1.0
         self.tao['longitude'].values = (
             np.array([-170, -155, -140, -125, -110, -95]) * 1.0)
 
+        print('Writing to file...')
         (self.tao.load()
          .to_netcdf(self.dirname + '/obs_subset/tao-extract.nc'))
 
@@ -194,7 +210,7 @@ class model:
 
     def read_tao(self):
         try:
-            self.tao = xr.open_mfdataset(self.dirname + '/obs_subset/tao-*.nc')
+            self.tao = xr.open_mfdataset(self.dirname + '/obs_subset/tao-*extract.nc')
         except FileNotFoundError:
             self.tao = None
             return
@@ -211,7 +227,9 @@ class model:
                    method='nearest')
               .assign_coords(**dict(self.tao.isel(time=1).coords)))
 
-        self.tao['Jq'] = (1035 * 3999 * 10 * self.tao.DFrI_TH / CV)
+        dz = np.abs(self.metrics.dRF[0])
+
+        self.tao['Jq'] = (1035 * 3999 * dz * self.tao.DFrI_TH / CV)
         self.tao['Jq'].attrs['long_name'] = "$J_q^t$"
         self.tao['Jq'].attrs['units'] = 'W/m$^2$'
 
@@ -228,7 +246,7 @@ class model:
         self.time = ds.time
         self.mid_year = np.unique(self.time.dt.year)[1]
 
-        if 'depth' in ds.variables and len(ds['depth']) > 1:
+        if 'depth' in ds.variables and not np.isscalar(ds['depth']):
             self.depth = ds.depth
 
         for dim in ['latitude', 'longitude', 'time']:
