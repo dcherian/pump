@@ -252,6 +252,7 @@ def get_tiw_phase(v, debug=False):
     dim2 = list(set(v.dims) - set(['time']))[0]
 
     phases = []
+    labels = []
     peak_kwargs = {'prominence': 0.02}
 
     for dd in v[dim2]:
@@ -281,7 +282,9 @@ def get_tiw_phase(v, debug=False):
         # One version with 360 at points in phase_0
         # Then merge sensibly
         phase = xr.zeros_like(vsub) * np.nan
+        label = xr.zeros_like(vsub) * np.nan
         phase2 = phase.copy(deep=True)
+        start_num = 1
         for pp, cc, ph in zip([phase_0, phase_90, phase_180, phase_270],
                               'rgbk',
                               [0, 90, 180, 270]):
@@ -292,6 +295,9 @@ def get_tiw_phase(v, debug=False):
                 if not np.all(vsub[idx] > 0):
                     idx = np.where(vsub[idx] > 0, idx, np.nan)
                     idx = idx[~np.isnan(idx)].astype(np.int32)
+
+                label.values[idx] = np.arange(start_num, len(idx)+1)
+
 
             # 180 phase must be negative v
             if ph == 180:
@@ -328,26 +334,43 @@ def get_tiw_phase(v, debug=False):
             # vampf.plot.step(ax=ax[0])
             phase_new.plot(ax=ax[1])
             dcpy.plots.liney([0, 90, 180, 270, 360], ax=ax[1])
+            ax2 = ax[1].twinx()
+            (label.ffill('time')
+             .where(~np.isnan(phase_new))
+             .plot(ax=ax2, x='time', color='k'))
             ax[0].set_xlabel('')
             ax[1].set_title('');
             ax[1].set_ylabel('TIW phase [deg]')
 
         for dd in set(list(phase_new.coords))-set(['time']):
             phase_new = phase_new.expand_dims(dd)
+            label = label.expand_dims(dd)
 
         phases.append(phase_new)
+        labels.append(label)
 
-    phase = xr.merge(phases)
+    phase = xr.merge(phases).to_array().squeeze()
+    phase.attrs['long_name'] = 'TIW phase'
+    phase.name = 'tiw_phase'
+    phase.attrs['units'] = 'deg'
+
+    label = xr.merge(labels).to_array().squeeze().ffill('time')
+    label.name = 'period'
+
+    phase = xr.merge([phase, label])
 
     if unstack:
         # lost stack information earlier; re-assign that
         phase['stacked'] = v['stacked']
         phase = phase.unstack('stacked')
 
-    phase = phase.to_array().squeeze()
+    phase['period'] = phase.period.where(~np.isnan(phase.tiw_phase))
 
-    phase.attrs['long_name'] = 'TIW phase'
-    phase.name = 'tiw_phase'
-    phase.attrs['units'] = 'deg'
+    # get rid of 1 point periods
+    phase['period'].groupby(phase.period).count
+    mask = phase.period.groupby(phase.period).count() == 1
+    drop_num = mask.period.where(mask, drop=True).values
+    phase['period'] = (phase['period']
+                           .where(np.logical_not(phase.period.isin(drop_num))))
 
     return phase

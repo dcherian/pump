@@ -203,10 +203,15 @@ class model:
         ph = []
         for tt in self.tiw_trange:
             ph.append(get_tiw_phase(v.sel(time=tt), debug=debug))
+            if len(ph) > 1:
+                start_num = ph[-2].period.max()
+            else:
+                start_num = 0
+            ph[-1]['period'] += start_num
 
         phase = xr.merge(ph).drop('variable').reindex(time=v.time)
 
-        return phase['tiw_phase']
+        return phase.set_coords('period')['tiw_phase']
 
     def read_tao(self):
         try:
