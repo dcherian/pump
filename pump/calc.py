@@ -65,7 +65,7 @@ def get_euc_max(u):
     return euc_max
 
 
-def get_dcl_base(data):
+def get_dcl_base_shear(data):
     '''
     Estimates base of the deep cycle layer as the depth of max total shear squared.
 
@@ -85,11 +85,43 @@ def get_dcl_base(data):
     else:
         euc_max = data.euc_max
 
-    dcl_max = _get_max(s2.where(s2.depth > euc_max, 0), 'depth')
+    dcl_max = _get_max(s2.where(s2.depth < -20, 0)
+                       .where(s2.depth > euc_max, 0), 'depth')
 
-    dcl_max.attrs['long_name'] = 'Depth of DCL Base'
+    dcl_max.attrs['long_name'] = 'DCL Base (shear)'
     dcl_max.attrs['units'] = 'm'
     dcl_max.attrs['description'] = 'Depth of maximum total shear squared (above EUC)'
+
+    return dcl_max
+
+
+def get_dcl_base_Ri(data):
+    '''
+    Estimates base of the deep cycle layer as max depth where Ri <= 0.25.
+
+    References
+    ----------
+
+    Lien et. al. (1995)
+    Pham et al (2017)
+    '''
+
+    if 'Ri' not in data:
+        raise ValueError('Ri not in provided dataset.')
+
+    if 'euc_max' not in data:
+        euc_max = get_euc_max(data.u)
+    else:
+        euc_max = data.euc_max
+
+
+    depth = xr.broadcast(data.Ri, data.depth)[1]
+
+    dcl_max = depth.where((data.Ri < 0.25)).min('depth')
+
+    dcl_max.attrs['long_name'] = 'DCL Base (Ri)'
+    dcl_max.attrs['units'] = 'm'
+    dcl_max.attrs['description'] = 'Deepest depth above EUC where Ri=0.25'
 
     return dcl_max
 
