@@ -16,6 +16,10 @@ def calc_reduced_shear(data):
     data['shear'].attrs['long_name'] = '|$u_z$|'
     data['shear'].attrs['units'] = 's$^{-1}$'
 
+    data['shear2'] = data.shear**2
+    data['shear2'].attrs['long_name'] = '$S^2$'
+    data['shear2'].attrs['units'] = 's$^{-2}$'
+
     data['N2'] = (9.81 * 1.7e-4 * data.theta.differentiate('depth')
                   - 9.81 * 7.6e-4 * data.salt.differentiate('depth'))
     data['N2'].attrs['long_name'] = '$N^2$'
@@ -24,6 +28,10 @@ def calc_reduced_shear(data):
     data['shred2'] = data.shear**2 - 4 * data.N2
     data.shred2.attrs['long_name'] = 'Reduced shear$^2$'
     data.shred2.attrs['units'] = '$s^{-2}$'
+
+    data['Ri'] = data.N2 / data.shear**2
+    data.Ri.attrs['long_name'] = 'Ri'
+    data.Ri.attrs['units'] = ''
 
     return data
 
