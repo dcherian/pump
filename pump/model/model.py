@@ -8,8 +8,8 @@ import time
 import xarray as xr
 import xmitgcm
 
-from ..calc import (calc_reduced_shear, get_euc_max, get_dcl_base, get_mld,
-                    get_tiw_phase)
+from ..calc import (calc_reduced_shear, get_euc_max, get_dcl_base_Ri,
+                    get_dcl_base_shear, get_mld, get_tiw_phase)
 from ..constants import *
 from ..obs import *
 from ..plot import plot_depths
@@ -215,14 +215,22 @@ class model:
 
     def read_tao(self):
         try:
-            self.tao = xr.open_mfdataset(self.dirname + '/obs_subset/tao-*extract.nc')
+            self.tao = xr.open_mfdataset(self.dirname + '/obs_subset/tao-*extract.nc',
+                                         concat_dim=None)
         except FileNotFoundError:
             self.tao = None
             return
 
         self.tao = calc_reduced_shear(self.tao)
         self.tao['euc_max'] = get_euc_max(self.tao.u)
-        self.tao['dcl_base'] = get_dcl_base(self.tao)
+        self.tao['dcl_base_shear'] = get_dcl_base_shear(self.tao)
+        self.tao['dcl_base_Ri'] = get_dcl_base_Ri(self.tao)
+        self.tao['dens'] = xr.DataArray(
+            sw.pden(*xr.broadcast(self.tao.salt,
+                                  self.tao.theta,
+                                  self.tao.depth)),
+            dims=self.tao.salt.dims,
+            coords=self.tao.salt.coords)
         self.tao['mld'] = get_mld(self.tao.dens)
 
         CV = (self.metrics.cellvol
@@ -262,6 +270,66 @@ class model:
         self.domain['xy'] = {'latitude': self.domain['xyt']['latitude'],
                              'longitude': self.domain['xyt']['longitude']}
 
+
+    def plot_tiw_summary(self, subset, ax=None, **kwargs):
+
+        if ax is None:
+            f, axx = plt.subplots(6, 1, sharex=True, sharey=True,
+                                  constrained_layout=True)
+            ax = dict(zip(['u', 'v', 'shear2', 'N2', 'Jq', 'Ri'], axx))
+            f.set_size_inches((6, 8))
+
+        else:
+            axx = list(ax.values())
+
+        cmaps = dict(u=mpl.cm.RdBu_r,
+                     v=mpl.cm.RdBu_r,
+                     shear2=mpl.cm.Reds,
+                     N2=mpl.cm.Blues,
+                     Jq=mpl.cm.BuGn_r,
+                     KT=mpl.cm.Reds,
+                     Ri=mpl.cm.Reds,)
+
+        x = kwargs.get('x')
+
+        handles = dict()
+        for aa in ax:
+            if aa == 'KT':
+                pkwargs = dict(norm=mpl.colors.LogNorm())
+            elif aa == 'shear2':
+                pkwargs=dict(vmin=0, vmax=3.5e-4)
+            elif aa == 'Jq':
+                pkwargs=dict(vmax=0, vmin=-500)
+            elif aa == 'u':
+                pkwargs = dict(vmin=-0.8, vmax=0.8)
+            elif aa == 'v':
+                pkwargs = dict(vmin=-0.5, vmax=0.5)
+            elif aa == 'S':
+                pkwargs = dict()
+            elif aa == 'N2':
+                pkwargs = dict(vmin=0, vmax=1e-4)
+            elif aa == 'Ri':
+                pkwargs = dict(levels=[0.1, 0.25, 0.35, 0.5])
+
+            handles[aa] = subset[aa].plot(ax=ax[aa],
+                                          y='depth',
+                                          cmap=cmaps[aa],
+                                          ylim=[-180, 0],
+                                          **kwargs, **pkwargs)
+            plot_depths(subset, ax=ax[aa], x=x)
+
+        for aa in axx[:-1]:
+            aa.set_xlabel('')
+
+        for aa in axx[1:]:
+            aa.set_title('')
+
+        if x:
+            if 'phase' in x:
+                axx[0].set_xlim([0, 360])
+
+        return handles, ax
+
     def plot_tiw_composite(self, region=dict(latitude=0, longitude=-140),
                            ax=None, ds='tao', **kwargs):
 
@@ -280,86 +348,40 @@ class model:
         grouped = subset.groupby_bins(tiw_phase, bins=phase_bins)
         mean = grouped.mean('time')
 
-        mean['shear'] = mean['shear'] ** 2
-        mean['shear'].attrs['long_name'] = '$S^2$'
-        mean['shear'].attrs['units'] = 's$^{-2}$'
-
-        if ax is None:
-            f, axx = plt.subplots(5, 1, sharex=True, sharey=True,
-                                  constrained_layout=True,
-                                  gridspec_kw={'height_ratios': [1, 1, 1, 1, 1]})
-
-            ax = dict(zip(['u', 'v', 'shear', 'N2', 'Jq', 'KT'], axx))
-            f.set_size_inches((5, 6))
-
-        else:
-            axx = list(ax.values())
-
-        cmaps = dict(u=mpl.cm.RdBu_r,
-                     v=mpl.cm.RdBu_r,
-                     shear=mpl.cm.Reds,
-                     N2=mpl.cm.Blues,
-                     Jq=mpl.cm.BuGn_r,
-                     KT=mpl.cm.Reds)
-
-        handles = dict()
-        for aa in ax:
-            if aa == 'KT':
-                pkwargs = dict(norm=mpl.colors.LogNorm())
-            elif aa == 'shear':
-                pkwargs=dict(vmin=0, vmax=3e-4)
-            elif aa == 'Jq':
-                pkwargs=dict(vmax=0, vmin=-300)
-            elif aa == 'u':
-                pkwargs = dict(vmin=-0.8, vmax=0.8)
-            elif aa == 'v':
-                pkwargs = dict(vmin=-0.3, vmax=0.3)
-            elif aa == 'N2':
-                pkwargs = dict(vmin=0, vmax=4e-4)
-
-            handles[aa] = mean[aa].plot(ax=ax[aa],
-                                        y='depth',
-                                        cmap=cmaps[aa],
-                                        robust=True,
-                                        ylim=[-250, 0],
-                                        **kwargs, **pkwargs)
-            plot_depths(mean, ax=ax[aa])
-
-        for aa in axx[:-1]:
-            aa.set_xlabel('')
-
-        for aa in axx[1:]:
-            aa.set_title('')
+        handles, ax = self.plot_tiw_summary(mean, x='phase')
 
         axx[0].set_xticks([0, 90, 180, 270, 360])
 
-        for aa in axx:
+        for _, aa in ax.iteritems():
             aa.grid(True, axis='x')
 
-        return handles
+        return handles, ax
 
     def plot_dcl(self, region, ds='tao'):
 
         subset = getattr(self, ds).sel(**region)
 
-        f, axx = plt.subplots(5, 1, constrained_layout=True, sharex=True,
-                              gridspec_kw=dict(height_ratios=[1, 1, 2, 5, 5]))
+        f, axx = plt.subplots(6, 1, constrained_layout=True, sharex=True,
+                              gridspec_kw=dict(height_ratios=[1, 1, 5, 5, 5, 5]))
 
-        ax = dict(zip(['v', 'Q', 'dcl_KT', 'KT', 'shear'], axx))
+        ax = dict(zip(['v', 'Q', 'KT', 'shear', 'N2', 'Ri'], axx))
 
         (np.log10(subset.KPP_diffusivity)
-         .plot(ax=ax['KT'], x='time', robust=True, cmap=mpl.cm.GnBu, ylim=[-150, 0]))
+         .plot(ax=ax['KT'], x='time', vmin=-6, vmax=-2,
+               cmap=mpl.cm.GnBu, ylim=[-150, 0]))
 
-        dcl_K = (subset.KPP_diffusivity.where((subset.depth < (subset.mld - 5))
-                                              & (subset.depth > (subset.dcl_base + 5))))
-        dcl_K = dcl_K.where(dcl_K < 1e-2)
-        (dcl_K.mean('depth')
-         .plot(ax=ax['dcl_KT'], x='time', yscale='log', _labels=False))
-        (dcl_K.median('depth')
-         .plot(ax=ax['dcl_KT'], x='time', yscale='log', _labels=False,
-               ylim=[5e-4, 3e-3]))
+        # dcl_K = (subset.KPP_diffusivity.where((subset.depth < (subset.mld - 5))
+        #                                       & (subset.depth > (subset.dcl_base + 5))))
+        # dcl_K = dcl_K.where(dcl_K < 1e-2)
+        # (dcl_K.mean('depth')
+        #  .plot(ax=ax['dcl_KT'], x='time', yscale='log', _labels=False,
+        #        label='mean'))
+        # (dcl_K.median('depth')
+        #  .plot(ax=ax['dcl_KT'], x='time', yscale='log', _labels=False,
+        #        ylim=[5e-4, 3e-3], label='median'))
 
-        ax['dcl_KT'].set_ylabel('DCL $K$')
+        # ax['dcl_KT'].set_ylabel('DCL $K$')
+        # ax['dcl_KT'].legend()
 
         subset.oceQnet.plot(ax=ax['Q'], x='time', _labels=False)
 
@@ -368,12 +390,28 @@ class model:
         (subset.shear**2).plot(ax=ax['shear'], x='time', ylim=[-150, 0],
                                robust=True, cmap=mpl.cm.RdYlBu_r,
                                norm=mpl.colors.LogNorm(1e-6, 1e-3))
+        (subset.N2).plot(ax=ax['N2'], x='time', ylim=[-150, 0],
+                         robust=True, cmap=mpl.cm.RdYlBu_r,
+                         norm=mpl.colors.LogNorm(1e-6, 1e-3))
 
-        for axx0 in [ax['KT'], ax['shear']]:
+
+        inv_Ri = 1/(subset.N2 / subset.shear**2)
+        inv_Ri.attrs['long_name'] = 'Inv. Ri'
+        inv_Ri.attrs['units'] = ''
+
+        (inv_Ri).plot(ax=ax['Ri'], x='time', ylim=[-150, 0],
+                      robust=True, cmap=mpl.cm.RdBu_r,
+                      center=4)
+        (inv_Ri).plot.contour(ax=ax['Ri'], x='time', ylim=[-150, 0],
+                              levels=[4], colors='gray', linewidths=0.5)
+
+        for axx0 in [ax['KT'], ax['shear'], ax['N2']]:
             heuc = (subset.euc_max.plot(ax=axx0, color='k', lw=1, _labels=False))
             hdcl = (subset.dcl_base.plot(ax=axx0, color='gray', lw=1, _labels=False))
             hmld = ((subset.mld - 5).plot(ax=axx0, color='k', lw=0.5, _labels=False))
 
+        ((subset.mld-5).plot(ax=ax['Ri'], color='k', lw=0.5, _labels=False))
+        (subset.euc_max.plot(ax=ax['Ri'], color='k', lw=0.5, _labels=False))
         ax['v'].set_ylabel('v')
         ax['Q'].set_ylabel('$Q_{net}$')
         axx[0].set_title(ax['KT'].get_title())
@@ -383,5 +421,23 @@ class model:
         ax['v'].axhline(0, color='k', zorder=-1, lw=1, ls='--')
         ax['Q'].axhline(0, color='k', zorder=-1, lw=1, ls='--')
 
-        f.set_size_inches((8, 6))
-        dcpy.plots.label_subplots(ax.values())
+        f.set_size_inches((8, 8))
+        dcpy.plots.label_subplotsax.values()
+
+    def summarize_tiw_periods(self, subset):
+
+        import tqdm
+
+        if 'tiw_phase' not in subset:
+            subset = xr.merge([subset, self.get_tiw_phase(subset.v)])
+
+        for period in tqdm.tqdm(np.unique(subset.period.dropna('time'))):
+            self.plot_tiw_summary(subset.where(subset.period == period, drop=True)
+                                  .drop('period')
+                                  .assign_coords(period=period),
+                                  x='time')
+
+            plt.gcf().savefig(f'../images/{self.name}-tiw-period'
+                              f'-{subset.latitude.values}-{np.abs(subset.longitude.values)}'
+                              f'-{period}.png',
+                              dpi=200)

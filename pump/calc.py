@@ -194,7 +194,7 @@ def get_mld(dens):
     drho = dens.interp(depth=np.arange(0, -200, -1)) - dens.isel(depth=0)
     N2 = -9.81/1025 * dens.interp(depth=np.arange(0, -200, -1)).differentiate('depth')
 
-    thresh = xr.where((drho > 0.015) & (N2 > 2e-5), drho.depth, np.nan)
+    thresh = xr.where((drho > 0.01) & (N2 > 1e-5), drho.depth, np.nan)
     mld = thresh.max('depth')
 
     return mld
