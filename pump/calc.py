@@ -298,7 +298,6 @@ def get_tiw_phase(v, debug=False):
 
                 label.values[idx] = np.arange(start_num, len(idx)+1)
 
-
             # 180 phase must be negative v
             if ph == 180:
                 if not np.all(vsub[idx] < 0):
@@ -330,13 +329,21 @@ def get_tiw_phase(v, debug=False):
         vampf = vamp.reindex(time=phase.time).ffill('time')
         phase_new = phase_new.where(vampf > 0.1)
 
+        label = label.ffill('time')
+
+        # periods don't necessarily start with phase = 0
+        phase_no_period = np.logical_and(~np.isnan(phase_new), np.isnan(label))
+        label.values[phase_no_period.values] = 0
+
+        if np.any(label == 0):
+           label += 1
+
         if debug:
             # vampf.plot.step(ax=ax[0])
             phase_new.plot(ax=ax[1])
             dcpy.plots.liney([0, 90, 180, 270, 360], ax=ax[1])
             ax2 = ax[1].twinx()
             (label.ffill('time')
-             .where(~np.isnan(phase_new))
              .plot(ax=ax2, x='time', color='k'))
             ax[0].set_xlabel('')
             ax[1].set_title('');
@@ -364,7 +371,7 @@ def get_tiw_phase(v, debug=False):
         phase['stacked'] = v['stacked']
         phase = phase.unstack('stacked')
 
-    phase['period'] = phase.period.where(~np.isnan(phase.tiw_phase))
+    # phase['period'] = phase.period.where(~np.isnan(phase.tiw_phase))
 
     # get rid of 1 point periods
     phase['period'].groupby(phase.period).count
