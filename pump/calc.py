@@ -374,10 +374,9 @@ def get_tiw_phase(v, debug=False):
     # phase['period'] = phase.period.where(~np.isnan(phase.tiw_phase))
 
     # get rid of 1 point periods
-    phase['period'].groupby(phase.period).count
-    mask = phase.period.groupby(phase.period).count() == 1
+    mask = phase.tiw_phase.groupby(phase.period).count() == 1
     drop_num = mask.period.where(mask, drop=True).values
     phase['period'] = (phase['period']
-                           .where(np.logical_not(phase.period.isin(drop_num))))
+                       .where(np.logical_not(phase.period.isin(drop_num))))
 
     return phase
