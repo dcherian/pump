@@ -271,12 +271,13 @@ class model:
                              'longitude': self.domain['xyt']['longitude']}
 
 
-    def plot_tiw_summary(self, subset, ax=None, **kwargs):
+    def plot_tiw_summary(self, subset, ax=None, normalize_period=False,
+                         **kwargs):
 
         if ax is None:
             f, axx = plt.subplots(6, 1, sharex=True, sharey=True,
                                   constrained_layout=True)
-            ax = dict(zip(['u', 'v', 'shear2', 'N2', 'Jq', 'Ri'], axx))
+            ax = dict(zip(['u', 'v', 'S2', 'N2', 'Jq', 'Ri'], axx))
             f.set_size_inches((6, 8))
 
         else:
@@ -284,7 +285,7 @@ class model:
 
         cmaps = dict(u=mpl.cm.RdBu_r,
                      v=mpl.cm.RdBu_r,
-                     shear2=mpl.cm.Reds,
+                     S2=mpl.cm.Reds,
                      N2=mpl.cm.Blues,
                      Jq=mpl.cm.BuGn_r,
                      KT=mpl.cm.Reds,
@@ -307,7 +308,7 @@ class model:
             elif aa == 'S':
                 pkwargs = dict()
             elif aa == 'N2':
-                pkwargs = dict(vmin=0, vmax=1e-4)
+                pkwargs = dict(vmin=0, vmax=3e-4)
             elif aa == 'Ri':
                 pkwargs = dict(levels=[0.1, 0.25, 0.35, 0.5])
 
@@ -327,6 +328,38 @@ class model:
         if x:
             if 'phase' in x:
                 axx[0].set_xlim([0, 360])
+
+        if normalize_period:
+            phase = subset.tiw_phase.copy(deep=True)
+
+            dtdp = ((phase.time[-1] - phase.time[0]).astype('float32') / (phase[-1] - phase[0]))
+
+            phase_times = []
+            for pp in [0, 90, 180, 270]:
+                tt = subset.time.where(subset.tiw_phase.isin(pp), drop=True).values
+
+                if tt.size == 1:
+                    phase_times.append(tt[0])
+                else:
+                    delta_p = pp - phase[0]
+                    delta_t = (dtdp * delta_p).astype('timedelta64[ns]')
+                    phase_times.append(phase.time[0].values + delta_t.values)
+
+            if phase[-1] < 359:
+                delta_p = 360 - phase[-1]
+                delta_t = (dtdp * delta_p).astype('timedelta64[ns]')
+                phase_times.append(phase.time[-1].values + delta_t.values)
+
+            assert(len(phase_times) >= 4)
+
+            dcpy.plots.linex(phase_times, ax=axx, zorder=10, color='k', lw=1)
+
+            # plt.figure()
+            # subset.tiw_phase.plot()
+            # dcpy.plots.linex(phase_times)
+            # dcpy.plots.liney([0, 90, 180, 270, 360])
+
+            axx[0].set_xlim([np.min(phase_times), np.max(phase_times)])
 
         return handles, ax
 
@@ -435,7 +468,7 @@ class model:
             self.plot_tiw_summary(subset.where(subset.period == period, drop=True)
                                   .drop('period')
                                   .assign_coords(period=period),
-                                  x='time')
+                                  x='time', normalize_period=True)
 
             plt.gcf().savefig(f'../images/{self.name}-tiw-period'
                               f'-{subset.latitude.values}-{np.abs(subset.longitude.values)}'
