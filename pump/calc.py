@@ -11,14 +11,14 @@ def calc_reduced_shear(data):
     Estimate reduced shear for a dataset. Dataset must contain 'u', 'v', 'depth', 'dens'.
     '''
 
-    data['shear'] = np.hypot(data.u.differentiate('depth'),
-                             data.v.differentiate('depth'))
+    data['S2'] = (data.u.differentiate('depth')**2 +
+                  data.v.differentiate('depth')**2)
+    data['S2'].attrs['long_name'] = '$S^2$'
+    data['S2'].attrs['units'] = 's$^{-2}$'
+
+    data['shear'] = np.sqrt(data.S2)
     data['shear'].attrs['long_name'] = '|$u_z$|'
     data['shear'].attrs['units'] = 's$^{-1}$'
-
-    data['shear2'] = data.shear**2
-    data['shear2'].attrs['long_name'] = '$S^2$'
-    data['shear2'].attrs['units'] = 's$^{-2}$'
 
     data['N2'] = (9.81 * 1.7e-4 * data.theta.differentiate('depth')
                   - 9.81 * 7.6e-4 * data.salt.differentiate('depth'))
@@ -29,7 +29,7 @@ def calc_reduced_shear(data):
     data.shred2.attrs['long_name'] = 'Reduced shear$^2$'
     data.shred2.attrs['units'] = '$s^{-2}$'
 
-    data['Ri'] = data.N2 / data.shear**2
+    data['Ri'] = data.N2 / data.S2
     data.Ri.attrs['long_name'] = 'Ri'
     data.Ri.attrs['units'] = ''
 
