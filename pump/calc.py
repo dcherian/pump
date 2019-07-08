@@ -25,7 +25,7 @@ def calc_reduced_shear(data):
     data['N2'].attrs['long_name'] = '$N^2$'
     data['N2'].attrs['units'] = 's$^{-2}$'
 
-    data['shred2'] = data.shear**2 - 4 * data.N2
+    data['shred2'] = data.S2 - 4 * data.N2
     data.shred2.attrs['long_name'] = 'Reduced shear$^2$'
     data.shred2.attrs['units'] = '$s^{-2}$'
 

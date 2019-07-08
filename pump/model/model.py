@@ -132,9 +132,10 @@ class model:
         h = dict()
         for ff in ['hFacC', 'RAC', 'RF']:
             try:
-                h[ff] = xmitgcm.utils.read_mds(dirname + ff, dask_delayed=False)[ff]
+                h[ff] = xmitgcm.utils.read_mds(dirname + ff)[ff]
             except (FileNotFoundError, OSError):
                 print('metrics files not available.')
+                self.metrics = None
                 return xr.Dataset()
 
         hFacC = h['hFacC'].copy().squeeze().astype('float32')
@@ -233,18 +234,19 @@ class model:
             coords=self.tao.salt.coords)
         self.tao['mld'] = get_mld(self.tao.dens)
 
-        CV = (self.metrics.cellvol
-              .sel(latitude=self.tao.latitude,
-                   longitude=self.tao.longitude,
-                   depth=self.tao.depth,
-                   method='nearest')
-              .assign_coords(**dict(self.tao.isel(time=1).coords)))
+        if self.metrics:
+            CV = (self.metrics.cellvol
+                  .sel(latitude=self.tao.latitude,
+                       longitude=self.tao.longitude,
+                       depth=self.tao.depth,
+                       method='nearest')
+                  .assign_coords(**dict(self.tao.isel(time=1).coords)))
 
-        dz = np.abs(self.metrics.dRF[0])
+            dz = np.abs(self.metrics.dRF[0])
 
-        self.tao['Jq'] = (1035 * 3999 * dz * self.tao.DFrI_TH / CV)
-        self.tao['Jq'].attrs['long_name'] = "$J_q^t$"
-        self.tao['Jq'].attrs['units'] = 'W/m$^2$'
+            self.tao['Jq'] = (1035 * 3999 * dz * self.tao.DFrI_TH / CV)
+            self.tao['Jq'].attrs['long_name'] = "$J_q^t$"
+            self.tao['Jq'].attrs['units'] = 'W/m$^2$'
 
     def update_coords(self):
         if self.surface:
@@ -330,9 +332,8 @@ class model:
                 axx[0].set_xlim([0, 360])
 
         if normalize_period:
-            phase = subset.tiw_phase.copy(deep=True)
-
-            dtdp = ((phase.time[-1] - phase.time[0]).astype('float32') / (phase[-1] - phase[0]))
+            phase = subset.tiw_phase.copy(deep=True).dropna('time')
+            dtdp = (phase.time[-1] - phase.time[0]).astype('float32') / (phase[-1] - phase[0])
 
             phase_times = []
             for pp in [0, 90, 180, 270]:
@@ -464,7 +465,7 @@ class model:
         if 'tiw_phase' not in subset:
             subset = xr.merge([subset, self.get_tiw_phase(subset.v)])
 
-        for period in tqdm.tqdm(np.unique(subset.period.dropna('time'))):
+        for period in tqdm.tqdm_notebook(np.unique(subset.period.dropna('time'))):
             self.plot_tiw_summary(subset.where(subset.period == period, drop=True)
                                   .drop('period')
                                   .assign_coords(period=period),
