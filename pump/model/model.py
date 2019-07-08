@@ -70,7 +70,7 @@ class model:
             self.johnson = None
 
         self.tiw_trange = [slice('1995-10-01', '1996-03-01'),
-                           slice('1996-09-01', '1997-03-01')]
+                           slice('1996-08-01', '1997-03-01')]
 
     def __repr__(self):
         string = f'{self.name} [{self.dirname}]'
@@ -277,21 +277,23 @@ class model:
                          **kwargs):
 
         if ax is None:
-            f, axx = plt.subplots(6, 1, sharex=True, sharey=True,
+            f, axx = plt.subplots(8, 1, sharex=True, sharey=True,
                                   constrained_layout=True)
-            ax = dict(zip(['u', 'v', 'S2', 'N2', 'Jq', 'Ri'], axx))
-            f.set_size_inches((6, 8))
+            ax = dict(zip(['u', 'v', 'w', 'theta', 'S2', 'N2', 'Jq', 'Ri'], axx))
+            f.set_size_inches((6, 10))
 
         else:
             axx = list(ax.values())
 
         cmaps = dict(u=mpl.cm.RdBu_r,
                      v=mpl.cm.RdBu_r,
+                     w=mpl.cm.RdBu_r,
                      S2=mpl.cm.Reds,
                      N2=mpl.cm.Blues,
                      Jq=mpl.cm.BuGn_r,
                      KT=mpl.cm.Reds,
-                     Ri=mpl.cm.Reds,)
+                     Ri=mpl.cm.Reds,
+                     theta=mpl.cm.RdYlBu_r)
 
         x = kwargs.get('x')
 
@@ -299,27 +301,31 @@ class model:
         for aa in ax:
             if aa == 'KT':
                 pkwargs = dict(norm=mpl.colors.LogNorm())
-            elif aa == 'shear2':
-                pkwargs=dict(vmin=0, vmax=3.5e-4)
+            elif aa == 'S2':
+                pkwargs=dict(vmin=0, vmax=5e-4)
             elif aa == 'Jq':
-                pkwargs=dict(vmax=0, vmin=-500)
+                pkwargs=dict(vmax=0, vmin=-300)
             elif aa == 'u':
                 pkwargs = dict(vmin=-0.8, vmax=0.8)
             elif aa == 'v':
                 pkwargs = dict(vmin=-0.5, vmax=0.5)
+            elif aa == 'w':
+                pkwargs = dict(vmin=-1.5e-4, vmax=1.5e-4)
             elif aa == 'S':
                 pkwargs = dict()
             elif aa == 'N2':
                 pkwargs = dict(vmin=0, vmax=3e-4)
             elif aa == 'Ri':
                 pkwargs = dict(levels=[0.1, 0.25, 0.35, 0.5])
+            else:
+                pkwargs = {'robust': True}
 
-            handles[aa] = subset[aa].plot(ax=ax[aa],
-                                          y='depth',
-                                          cmap=cmaps[aa],
-                                          ylim=[-180, 0],
-                                          **kwargs, **pkwargs)
+            handles[aa] = subset[aa].sel(depth=slice(0, -180)).plot(
+                ax=ax[aa], y='depth', ylim=[-180, 0],
+                cmap=cmaps[aa], **kwargs, **pkwargs)
             plot_depths(subset, ax=ax[aa], x=x)
+
+        subset.salt.plot.contour(ax=ax['theta'], y='depth', levels=12, colors='gray', linewidths=0.5)
 
         for aa in axx[:-1]:
             aa.set_xlabel('')
@@ -375,18 +381,18 @@ class model:
         subset = (subset.rename({'KPP_diffusivity': 'KT'})
                   .where(subset.depth < subset.mld - 5))
 
-        for vv in ['mld', 'dcl_base', 'euc_max']:
+        for vv in ['mld', 'dcl_base_shear', 'euc_max']:
             subset[vv] = subset[vv].max('depth')
 
         phase_bins = np.arange(0, 365, 10)
         grouped = subset.groupby_bins(tiw_phase, bins=phase_bins)
         mean = grouped.mean('time')
 
-        handles, ax = self.plot_tiw_summary(mean, x='phase')
+        handles, ax = self.plot_tiw_summary(mean, x='tiw_phase_bins')
 
-        axx[0].set_xticks([0, 90, 180, 270, 360])
+        ax.get('u').set_xticks([0, 90, 180, 270, 360])
 
-        for _, aa in ax.iteritems():
+        for _, aa in ax.items():
             aa.grid(True, axis='x')
 
         return handles, ax
@@ -441,7 +447,7 @@ class model:
 
         for axx0 in [ax['KT'], ax['shear'], ax['N2']]:
             heuc = (subset.euc_max.plot(ax=axx0, color='k', lw=1, _labels=False))
-            hdcl = (subset.dcl_base.plot(ax=axx0, color='gray', lw=1, _labels=False))
+            hdcl = (subset.dcl_base_shear.plot(ax=axx0, color='gray', lw=1, _labels=False))
             hmld = ((subset.mld - 5).plot(ax=axx0, color='k', lw=0.5, _labels=False))
 
         ((subset.mld-5).plot(ax=ax['Ri'], color='k', lw=0.5, _labels=False))
@@ -456,7 +462,7 @@ class model:
         ax['Q'].axhline(0, color='k', zorder=-1, lw=1, ls='--')
 
         f.set_size_inches((8, 8))
-        dcpy.plots.label_subplotsax.values()
+        dcpy.plots.label_subplots(ax.values())
 
     def summarize_tiw_periods(self, subset):
 
