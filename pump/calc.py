@@ -47,7 +47,8 @@ def _get_max(var, dim='depth'):
     dims = list(var.dims)
     del dims[var.get_axis_num(dim)]
 
-    argmax = np.argmax(var.values, var.get_axis_num(dim))
+    argmax = np.nanargmax(var.values, var.get_axis_num(dim))
+
     da = xr.DataArray(argmax.squeeze(),
                       dims=dims,
                       coords=coords)
@@ -58,7 +59,16 @@ def _get_max(var, dim='depth'):
 def get_euc_max(u):
     ''' Given a u field, returns depth of max speed i.e. EUC maximum. '''
 
-    euc_max = _get_max(u, 'depth')
+    if np.any(np.isnan(u)):
+        maxes = []
+        for ll in u.longitude.values:
+            maxes.append(_get_max(u.sel(longitude=ll)
+                                  .dropna('time', how='all'))
+                         .reindex(time=u.time))
+        euc_max = xr.concat(maxes, 'longitude')
+    else:
+        euc_max = _get_max(u, 'depth')
+
     euc_max.attrs['long_name'] = 'Depth of EUC max'
     euc_max.attrs['units'] = 'm'
 
