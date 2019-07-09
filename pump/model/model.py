@@ -14,6 +14,7 @@ from ..constants import *
 from ..obs import *
 from ..plot import plot_depths
 
+
 class model:
 
     from . import validate
@@ -115,8 +116,14 @@ class model:
         start_time = time.time()
 
         if self.kind == 'mitgcm':
-            self.full = (xr.open_mfdataset(self.dirname + '/Day_[0-9][0-9][0-9][0-9].nc',
-                                           engine='h5netcdf', parallel=True))
+            if '_hb' in self.dirname:
+                self.full = xr.open_mfdataset(
+                    self.dirname + '/Day_[0-9][0-9][0-9][0-9].nc',
+                    engine='h5netcdf', parallel=True)
+            else:
+                self.full = xr.open_mfdataset(
+                    self.dirname + '/Day_[0-9][0-9][0-9].nc',
+                    engine='h5netcdf', parallel=True)
 
         if self.kind == 'roms':
             self.full = xr.Dataset()
