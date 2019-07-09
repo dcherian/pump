@@ -197,12 +197,13 @@ def calc_tao_ri(adcp, temp):
 
 def get_mld(dens):
     '''
-    Given density field, estimate MLD as depth where Î”Ï > 0.015 and N2 > 2e-5.
-    Interpolates density to 1m gridl
+    Given density field, estimate MLD as depth where ”Á > 0.015 and N2 > 2e-5.
+    Interpolates density to 1m grid.
     '''
 
-    drho = dens.interp(depth=np.arange(0, -200, -1)) - dens.isel(depth=0)
-    N2 = -9.81/1025 * dens.interp(depth=np.arange(0, -200, -1)).differentiate('depth')
+    densi = dens.interp(depth=np.arange(0, -200, -1))
+    drho = densi - dens.isel(depth=0)
+    N2 = (-9.81/1025 * densi.differentiate('depth'))
 
     thresh = xr.where((drho > 0.01) & (N2 > 1e-5), drho.depth, np.nan)
     mld = thresh.max('depth')
