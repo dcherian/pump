@@ -6,9 +6,11 @@ import warnings
 
 import dcpy
 
+
 def calc_reduced_shear(data):
     '''
-    Estimate reduced shear for a dataset. Dataset must contain 'u', 'v', 'depth', 'dens'.
+    Estimate reduced shear for a dataset. Dataset must contain
+    'u', 'v', 'depth', 'dens'.
     '''
 
     data['S2'] = (data.u.differentiate('depth')**2 +
@@ -38,7 +40,7 @@ def calc_reduced_shear(data):
 
 def _get_max(var, dim='depth'):
 
-    #return((xr.where(var == var.max(dim), var[dim], np.nan))
+    # return((xr.where(var == var.max(dim), var[dim], np.nan))
     #       .max(dim))
 
     coords = dict(var.coords)
