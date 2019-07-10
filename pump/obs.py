@@ -8,6 +8,7 @@ from .constants import *
 
 root = '/glade/p/nsc/ncgd0043/'
 
+
 def read_all(domain=None):
     johnson = read_johnson()
     tao = read_tao(domain)
@@ -20,13 +21,13 @@ def read_all(domain=None):
 def read_johnson(filename=root+'/obs/johnson-eq-pac-adcp.cdf'):
     ds = (xr.open_dataset(filename)
             .rename({'XLON': 'longitude',
-                    'YLAT11_101': 'latitude',
-                    'ZDEP1_50': 'depth',
-                    'POTEMPM': 'temp',
-                    'SALINITYM': 'salt',
-                    'SIGMAM': 'rho',
-                    'UM': 'u',
-                    'XLONedges': 'lon_edges'}))
+                     'YLAT11_101': 'latitude',
+                     'ZDEP1_50': 'depth',
+                     'POTEMPM': 'temp',
+                     'SALINITYM': 'salt',
+                     'SIGMAM': 'rho',
+                     'UM': 'u',
+                     'XLONedges': 'lon_edges'}))
 
     ds['longitude'] -= 360
     ds['depth'] *= -1
@@ -67,7 +68,9 @@ def read_tao_adcp(domain=None):
 
 def read_tao(domain=None):
     tao = (xr.open_mfdataset([root+'/obs/tao/'+ff
-                              for ff in ['t_xyzt_dy.cdf', 's_xyzt_dy.cdf', 'cur_xyzt_dy.cdf']],
+                              for ff in ['t_xyzt_dy.cdf',
+                                         's_xyzt_dy.cdf',
+                                         'cur_xyzt_dy.cdf']],
                              parallel=False,
                              chunks={'lat': 1, 'lon': 1, 'depth': 5})
            .rename({'U_320': 'u',
@@ -75,8 +78,7 @@ def read_tao(domain=None):
                     'T_20': 'temp',
                     'S_41': 'salt',
                     'lon': 'longitude',
-                    'lat': 'latitude'
-                   }))
+                    'lat': 'latitude'}))
     tao['longitude'] -= 360
 
     tao['u'] /= 100
@@ -86,7 +88,8 @@ def read_tao(domain=None):
 
     tao['depth'] *= -1
 
-    tao = tao.drop(['S_300', 'D_310', 'QS_5300', 'QD_5310', 'QS_5041', 'SS_6041',
+    tao = tao.drop(['S_300', 'D_310', 'QS_5300', 'QD_5310',
+                    'QS_5041', 'SS_6041',
                     'QT_5020', 'ST_6020', 'SRC_6300'])
 
     for vv in tao:
@@ -118,7 +121,9 @@ def read_sst(domain=None):
     sst['anom'] = sst.sst - sst.sst.mean(['longitude', 'time'])
     sst['anom'].attrs['long_name'] = 'OISST Anomaly'
     sst['anom'].attrs['units'] = r'$\degree$C'
-    sst['anom'].attrs['description'] = 'SST - mean(SST) in longitude, time after subsetting to simulation time length'
+    sst['anom'].attrs['description'] = ('SST - mean(SST) in longitude, '
+                                        'time after subsetting to simulation '
+                                        'time length')
 
     if domain is not None:
         return sst.sel(**domain)
@@ -137,6 +142,7 @@ def read_oscar(domain=None):
         return oscar.sel(**domain)
     else:
         return oscar
+
 
 def read_argo():
 
@@ -162,12 +168,11 @@ def read_argo():
                          'ARGO_SALINITY_MEAN': 'Smean',
                          'ARGO_SALINITY_ANOMALY': 'Sanom'}))
 
-    _, ref_date = xr.coding.times._unpack_netcdf_time_units(argo.time.attrs['units'])
+    _, ref_date = xr.coding.times._unpack_netcdf_time_units(
+        argo.time.attrs['units'])
 
     argo.time.values = (pd.Timestamp(ref_date)
                         + pd.to_timedelta(30 * argo.time.values, unit='D'))
-
-
     argo['longitude'] -= 360
     argo['depth'] *= -1
 
@@ -188,11 +193,14 @@ def process_oni():
 def process_esrl_index(file, skipfooter=3):
     ''' Read and make xarray version of climate indices from ESRL.'''
 
-    month_names = (pd.date_range('01-Jan-2001', '31-Dec-2001', freq='MS').to_series()
-                   .dt.strftime('%b').values.astype(str))
+    month_names = (pd.date_range('01-Jan-2001', '31-Dec-2001', freq='MS')
+                   .to_series()
+                   .dt.strftime('%b').values
+                   .astype(str))
 
     index = pd.read_csv(root+'/obs/'+file, index_col=0,
-                        names=month_names, delim_whitespace=True, skiprows=1, na_filter=False, skipfooter=skipfooter,
+                        names=month_names, delim_whitespace=True,
+                        skiprows=1, na_filter=False, skipfooter=skipfooter,
                         dtype=np.float32)
 
     flat = index.stack().reset_index()
