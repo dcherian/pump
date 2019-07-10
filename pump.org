@@ -1,0 +1,336 @@
+#+TITLE: PUMP
+#+hugo_base_dir: ./hugo/
+#+hugo_section:
+
+* Todo                                                             :noexport:
+- [ ] Do velocity spectra (only at equator?)
+- [ ] spectra vs TAO vs SST
+- [ ] filtered hovmoellerr for SST
+- [ ] What are TAO locations with most data?
+- [ ] freq of shred > 0?
+- [ ] surface stress, net heat flux, N^2 profile
+- [ ] plot differences in mean state between solutions
+- [ ] Update script for heat budget runs
+- [ ] composite DCL / TIW
+
+- [ ] composite like Inoue et al (2019).
+
+- What do profiles look like with daily data?
+
+* startup
+
+#+NAME: startup
+#+BEGIN_SRC ein :session localhost:8888/ein.ipynb :results raw drawer :exports none
+%matplotlib inline
+
+# import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import xarray as xr
+
+import dcpy
+import facetgrid
+import pump
+
+mpl.rcParams['savefig.bbox'] = 'tight'
+mpl.rcParams['figure.dpi'] = 120
+
+# cluster, client = pump.utils.build_cluster()
+
+# client
+#+END_SRC
+
+#+RESULTS: startup
+:results:
+[....]
+:end:
+
+#+RESULTS: c13391af-fe47-449e-87e2-a6d85b041094
+:results:
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask_jobqueue/config.py:12: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  defaults = yaml.load(f)
+
+<Client: scheduler='tcp://10.12.205.27:42720' processes=0 cores=0>
+:end:
+
+#+NAME: scale-cluster
+#+BEGIN_SRC ein :session localhost:8888/pump/notebooks/validation.ipynb :results output drawer
+cluster.scale(6)
+client
+#+END_SRC
+#+RESULTS: scale-cluster
+:results:
+<Client: scheduler='tcp://10.12.205.27:42720' processes=6 cores=12>
+:end:
+
+#+NAME: a261958f-1a9b-4cb3-8839-ffacf67ca16b
+#+BEGIN_SRC ein :session localhost:8888 :results none
+import pump
+#+END_SRC
+#+CAPTION:
+[[file:images/temp/imgwQY4pU.png]]
+
+
+
+* gyaan
+
+** Marginal instability
+
+1. In marginally unstable systems, Ri tends to cluster around 1/4 citep:Smyth2019 : this is /scale invariance/ --- This is why the usual averaging bias in Ri estimates is not a problem at the equator citep:Pham2017. This behaviour is seen for stratified turbulence forced by a mean shear that varies slowly on the time scale of the instabilities.
+
+2. cite:Smyth2013a grid T, ADCP on 5m grid and then differentiate. Use N2 = g α T_z.
+
+** TIWs
+- Meridional velocity seems to be a good way to define phases.
+
+Inoue papers:
+- N-S phase has strongest mixing
+- S phase -> UCL (-300 W/m^2; 1e-3 m^2/s)
+  - EQUIX was the first expt where microstructure measurements were taken during the S phase
+  - Can models recover this?
+- Turbulence appears to be proportional to Sh^2_{red}
+- S-N, N phases have weakest mixing / heat flux + strongest dT/dz
+- S^2 , N^2 co-vary (Inoue et al, 2012; Figure 8)
+
+Ryan:
+- Zonal shear is the main thing. Meridional shear is not so important.
+-
+
+
+* Data locations                                                   :noexport:
+
+| ROMS   | glade/tpos20/OUT/ |
+| MITgcm | glade/TPOS_MITgcm  |
+| POP    |             g.xxx |
+
+
+* Vertical resolution
+
+#+NAME: 541ec1bc-e56b-4910-8b49-ad9476538313
+#+BEGIN_SRC ein :session localhost:8888/pump/notebooks/validation.ipynb :results output drawer
+%time gcm0 = pump.model('../glade/TPOS_MITgcm/HOLD/', 'gcm20 orig')
+%time gcm1 = pump.model('../glade/TPOS_MITgcm_1/HOLD/', 'gcm20 1m')
+%time gcm25 = pump.model('../glade/TPOS_MITgcm_2.5/HOLD/', 'gcm20 2.5m')
+%time gcm5 = pump.model('../glade/TPOS_MITgcm_5/HOLD/', 'gcm20 5m')
+%time gcm10 = pump.model('../glade/TPOS_MITgcm_10/HOLD/', 'gcm20 10m')
+
+models = dict(zip(['gcm', '1m', '2.5m', '5m', '10m'],
+                  [gcm0, gcm1, gcm25, gcm5, gcm10]))
+#+END_SRC
+
+#+RESULTS: 541ec1bc-e56b-4910-8b49-ad9476538313
+:results:
+---------------------------------------------------------------------------
+KeyboardInterrupt                         Traceback (most recent call last)
+<timed exec> in <module>
+
+~/pump/pump/model/model.py in __init__(self, dirname, name, kind, full)
+     50
+     51         self.obs = obs_container()
+---> 52         self.oisst = read_sst(self.domain['xyt'])
+     53
+     54         try:
+
+~/pump/pump/obs.py in read_sst(domain)
+     97         sst = xr.open_mfdataset(
+     98             [root+'/obs/oisst/sst.day.mean.'+str(yy)+'.nc' for yy in years],
+---> 99             parallel=True)
+    100     else:
+    101         sst = xr.open_mfdataset(root+'/obs/oisst/sst.day.mean.*.nc',
+
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py in open_mfdataset(paths, chunks, concat_dim, compat, preprocess, engine, lock, data_vars, coords, autoclose, parallel, **kwargs)
+    704         # calling compute here will return the datasets/file_objs lists,
+    705         # the underlying datasets will still be stored as dask arrays
+--> 706         datasets, file_objs = dask.compute(datasets, file_objs)
+    707
+    708     # Close datasets in case of a ValueError
+
+~/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/base.py in compute(*args, **kwargs)
+    396     keys = [x.__dask_keys__() for x in collections]
+    397     postcomputes = [x.__dask_postcompute__() for x in collections]
+--> 398     results = schedule(dsk, keys, **kwargs)
+    399     return repack([f(r, *a) for r, (f, a) in zip(results, postcomputes)])
+    400
+
+~/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/client.py in get(self, dsk, keys, restrictions, loose_restrictions, resources, sync, asynchronous, direct, retries, priority, fifo_timeout, actors, **kwargs)
+   2330             try:
+   2331                 results = self.gather(packed, asynchronous=asynchronous,
+-> 2332                                       direct=direct)
+   2333             finally:
+   2334                 for f in futures.values():
+
+~/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/client.py in gather(self, futures, errors, maxsize, direct, asynchronous)
+   1654             return self.sync(self._gather, futures, errors=errors,
+   1655                              direct=direct, local_worker=local_worker,
+-> 1656                              asynchronous=asynchronous)
+   1657
+   1658     @gen.coroutine
+
+~/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/client.py in sync(self, func, *args, **kwargs)
+    674             return future
+    675         else:
+--> 676             return sync(self.loop, func, *args, **kwargs)
+    677
+    678     def __repr__(self):
+
+~/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/utils.py in sync(loop, func, *args, **kwargs)
+    278     else:
+    279         while not e.is_set():
+--> 280             e.wait(10)
+    281     if error[0]:
+    282         six.reraise(*error[0])
+
+~/miniconda3/envs/dcpy/lib/python3.6/threading.py in wait(self, timeout)
+    549             signaled = self._flag
+    550             if not signaled:
+--> 551                 signaled = self._cond.wait(timeout)
+    552             return signaled
+    553
+
+~/miniconda3/envs/dcpy/lib/python3.6/threading.py in wait(self, timeout)
+    297             else:
+    298                 if timeout > 0:
+--> 299                     gotit = waiter.acquire(True, timeout)
+    300                 else:
+    301                     gotit = waiter.acquire(False)
+
+KeyboardInterrupt:
+:end:
+
+
+* Validations
+:PROPERTIES:
+:EXPORT_FILE_NAME: validations
+:EXPORT_HUGO_SECTION: validations
+:END:
+
+** Todo
+- [X] Barotropic flow and slope of EUC
+
+- [ ] Diurnal cycle
+
+- [X] meridional profile of the EUC. How wide is it? What depth is the maximum width? This can be compared with the Johnson et al data at different longitudes.
+
+- [ ] Meridional shear and location/strength of NECC
+
+- [X] shear above the EUC. Are the two lobes of the westward SEC above it realistic? (Again Johnson, also the long equatorial mooring time series at 110W, 140W, 170W, 165E). The site with these is shut down now but will presumably be up again soon.
+
+- [ ] Variability of TIWs (amplitude, lateral extent, frequency)
+
+- [ ] the TIWs you mention will be a good test, since Frank has shown that his 0.1-degree run has much stronger TIWs than the 1-degree run. Do they get even stronger at 1/20th? Does the cold tongue front sharpen? Beyond the present project, we need to understand the role of model resolution on TIWs, since they are so fundamental to the upper heat budget. There is limited data to test this (a few short-term experiments), except SST may be useful.
+
+- [ ] temporal variation of U, V, shear, stratification within TIW cycle in mixed layer, pycnocline, EUC core, and below at 110, 125, and 140W. Especially, compare  with observations that we have found in 2008.
+
+** Summary
+
+1. EUC is narrower and weaker than Johnson climatology. EUC maximum is slightly deeper (20m or so).
+2.
+
+** Turbulence
+
+|------------------------------+---------------------------------------+-------------------------------+----------------------------|
+| Diagnostic / Model           | observations                          | 1m                            | 10m                        |
+|------------------------------+---------------------------------------+-------------------------------+----------------------------|
+| Marginal stability at 0, 140 | Ri = 0.25,                            | Ri=0.3-0.4                    | Ri=0.3-0.4                 |
+|                              | MAM: more stable (0.5-1)              | MAM: not different! (0.4-0.5) | MAM: more stable (0.5-0.6) |
+|------------------------------+---------------------------------------+-------------------------------+----------------------------|
+| Deep cycle layer (DCL)       | Daily cycle; seasonal cycle in depth  |                               |                            |
+|------------------------------+---------------------------------------+-------------------------------+----------------------------|
+| Upper core layer (UCL)       | 20 - 40m thick layer above EUC max    |                               |                            |
+|                              | decoupled from DCL / surface at times |                               |                            |
+|------------------------------+---------------------------------------+-------------------------------+----------------------------|
+| TIW modulation               | Largest during N, N-S phases          |                               |                            |
+| (not independent)             |                                       |                               |                            |
+|------------------------------+---------------------------------------+-------------------------------+----------------------------|
+
+*** Marginal (in)stability
+
+#+CAPTION: Seasonal median Ri profiles like cite:Smyth2013a for TAO locations along the equator. This uses daily average output.
+[[file:images/seasonal-Ri-tao.png]]
+
+#+CAPTION: Compare gcm runs to TAO at (0, 140). Still biased high. The TAO estimates are with daily-averaged output.
+[[file:images/Ri-all-models.png]]
+
+*** Deep cycle
+
+Definitions:
+1. Depth of max squared shear
+2. dε/dt : since DCL is a daily cycle in ε. Average εto 6h intervals and then compute dε/dt. Identify penetration of daily varying epsilon + choose greatest depth of penetration
+
+**** Zaron & Moum
+
+KPP defines /mixing layer/ as Ri < 0.3 which would include the deep cycle layer?
+
+But Zaron & Moum show SBL (i.e. mixing layer depth) as being different from MLD and deep cycle?
+
+Large & Gent: Pacanowski & Philander scheme has much higher diffusivities because they need that to get a surface mixed layer but KPP has a surface layer mixing scheme to take care of that.
+
+**** Are the models simulating a deep cycle?
+ a. 1m:
+
+ b. 10m: Hmmm..
+  #+CAPTION: Not sure if the 10m simulation actually has a deep cycle. The descending shear max  corresponds to base of the mixed layer. (c) DCL $K_T$ mean, median (d,e) Solid lines are MLD, DCL base, EUC max.
+  [[file:images/maybe-dcl-10m.png]]
+
+** SST
+
+#+CAPTION: 1996 Monthly mean SST from OISST and MITgcm.
+[[file:images/monthly-mean-sst.png]]
+
+** Surface velocity
+
+#+CAPTION: Monthly mean sea-surface zonal velocity. OSCAR vs MITgcm
+[[file:images/monthly-mean-ssu.png]]
+
+** EUC
+
+#+CAPTION: Meriodional sections of the EUC in the Johnson climatology (black) and MITgcm 1/20 (gray). First 3 columns: Meriodional profile is averaged -250m to surface. 4th column: vertical profile is averaged between -3N to 3N, -250m to surface, for u > 0.
+[[file:images/mitgcm-20-johnson-depth-sections.png]]
+
+
+#+CAPTION: Depth-longitude sections for MITgcm 1/20 vs Johnson climatology. Slope looks good! Model EUC is slightly deeper.
+[[file:images/mitgcm-20-johnson-longitude-depth-section.png]]
+** NECC
+** Spectra
+#+CAPTION: Multitaper spectra for 100m temperature. TAO vs MITgcm 1/20.
+[[file:images/validation-mitgcm20-tao-100m-temp-spectra.png]]
+
+** TIW
+
+#+CAPTION: Hovmoeller plots of SST anomaly from OISST (color) & MITgcm (black)
+[[file:images/oisst-comparison.png]]
+
+
+* low S2, N2 anomaly
+
+- seems to be approx constant $u_z$
+-
+
+
+* Diary
+
+** <2019-06-10 Mon>
+
+- No luck so far with a new DCL base definition
+- There seems to be large variation for each TIW "period" though composites at 110W, 125W, 140W are consistent
+
+** <2019-05-14 Tue>
+
+- Looking for deep cycle signal. I may or may not see it. Hard to be sure.
+  [[file:images/maybe-dcl-10m.png]]
+
+* Meetings
+:PROPERTIES:
+:EXPORT_FILE_NAME: meetings
+:EXPORT_HUGO_SECTION: meetings
+:END:
+
+** <2019-03-20 Wed>
+
+*** Results
+
+- Simulation domain begins at 95W. Do we move this further east to avoid edge effects?
+
+*** Comments
+- [ ] Do vertical profile of transport instead of mean velocity.
+*** Followup
