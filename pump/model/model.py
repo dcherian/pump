@@ -20,17 +20,34 @@ class model:
     from . import validate
 
     def __init__(self, dirname, name, kind='mitgcm', full=False, budget=False):
+        '''
+        Create an object that represents one model run.
+
+        Inputs
+        ------
+
+        dirname: str
+            Location of netCDF output. MITgcm stuff is in /HOLD/
+        name: str
+            Name for this run.
+        kind: str, optional
+            mitgcm or ROMS?
+        full: bool, optional
+            Read in all output files using mfdataset?
+        budget: bool, optional
+            Read in heat budget terms using mfdataset?
+        '''
+
         self.dirname = dirname
         self.kind = kind
         self.name = name
 
         try:
-            self.surface = (xr.open_dataset(self.dirname + '/obs_subset/surface.nc')
+            self.surface = (xr.open_dataset(
+                self.dirname + '/obs_subset/surface.nc')
                             .squeeze())
         except FileNotFoundError:
             self.surface = xr.Dataset()
-
-        # self.surface['theta_anom'] = self.surface.theta - self.surface.theta.mean(['longitude', 'time'])
 
         if full:
             self.read_full()
@@ -53,7 +70,8 @@ class model:
         self.read_metrics()
 
         try:
-            self.mean = (xr.open_dataset(self.dirname + '/obs_subset/annual-mean.nc')
+            self.mean = (xr.open_dataset(
+                self.dirname + '/obs_subset/annual-mean.nc')
                          .squeeze())
         except FileNotFoundError:
             self.mean = None
@@ -66,7 +84,8 @@ class model:
         self.read_tao()
 
         try:
-            self.johnson = xr.open_dataset(dirname + '/obs_subset/johnson-section-mean.nc')
+            self.johnson = xr.open_dataset(
+                dirname + '/obs_subset/johnson-section-mean.nc')
         except FileNotFoundError:
             self.johnson = None
 
@@ -223,8 +242,8 @@ class model:
 
     def read_tao(self):
         try:
-            self.tao = xr.open_mfdataset(self.dirname + '/obs_subset/tao-*extract.nc',
-                                         concat_dim=None)
+            self.tao = xr.open_mfdataset(
+                self.dirname + '/obs_subset/tao-*extract.nc')
         except FileNotFoundError:
             self.tao = None
             return
@@ -279,14 +298,14 @@ class model:
         self.domain['xy'] = {'latitude': self.domain['xyt']['latitude'],
                              'longitude': self.domain['xyt']['longitude']}
 
-
     def plot_tiw_summary(self, subset, ax=None, normalize_period=False,
                          **kwargs):
 
         if ax is None:
             f, axx = plt.subplots(8, 1, sharex=True, sharey=True,
                                   constrained_layout=True)
-            ax = dict(zip(['u', 'v', 'w', 'theta', 'S2', 'N2', 'Jq', 'Ri'], axx))
+            ax = dict(zip(['u', 'v', 'w', 'theta', 'S2', 'N2', 'Jq', 'Ri'],
+                          axx))
             f.set_size_inches((6, 10))
 
         else:
@@ -309,9 +328,9 @@ class model:
             if aa == 'KT':
                 pkwargs = dict(norm=mpl.colors.LogNorm())
             elif aa == 'S2':
-                pkwargs=dict(vmin=0, vmax=5e-4)
+                pkwargs = dict(vmin=0, vmax=5e-4)
             elif aa == 'Jq':
-                pkwargs=dict(vmax=0, vmin=-300)
+                pkwargs = dict(vmax=0, vmin=-300)
             elif aa == 'u':
                 pkwargs = dict(vmin=-0.8, vmax=0.8)
             elif aa == 'v':
@@ -332,7 +351,8 @@ class model:
                 cmap=cmaps[aa], **kwargs, **pkwargs)
             plot_depths(subset, ax=ax[aa], x=x)
 
-        subset.salt.plot.contour(ax=ax['theta'], y='depth', levels=12, colors='gray', linewidths=0.5)
+        subset.salt.plot.contour(ax=ax['theta'], y='depth',
+                                 levels=12, colors='gray', linewidths=0.5)
 
         for aa in axx[:-1]:
             aa.set_xlabel('')
@@ -346,11 +366,13 @@ class model:
 
         if normalize_period:
             phase = subset.tiw_phase.copy(deep=True).dropna('time')
-            dtdp = (phase.time[-1] - phase.time[0]).astype('float32') / (phase[-1] - phase[0])
+            dtdp = ((phase.time[-1] - phase.time[0]).astype('float32')
+                    / (phase[-1] - phase[0]))
 
             phase_times = []
             for pp in [0, 90, 180, 270]:
-                tt = subset.time.where(subset.tiw_phase.isin(pp), drop=True).values
+                tt = (subset.time.where(subset.tiw_phase.isin(pp), drop=True)
+                      .values)
 
                 if tt.size == 1:
                     phase_times.append(tt[0])
@@ -409,7 +431,8 @@ class model:
         subset = getattr(self, ds).sel(**region)
 
         f, axx = plt.subplots(6, 1, constrained_layout=True, sharex=True,
-                              gridspec_kw=dict(height_ratios=[1, 1, 5, 5, 5, 5]))
+                              gridspec_kw=dict(
+                                  height_ratios=[1, 1, 5, 5, 5, 5]))
 
         ax = dict(zip(['v', 'Q', 'KT', 'shear', 'N2', 'Ri'], axx))
 
@@ -417,8 +440,9 @@ class model:
          .plot(ax=ax['KT'], x='time', vmin=-6, vmax=-2,
                cmap=mpl.cm.GnBu, ylim=[-150, 0]))
 
-        # dcl_K = (subset.KPP_diffusivity.where((subset.depth < (subset.mld - 5))
-        #                                       & (subset.depth > (subset.dcl_base + 5))))
+        # dcl_K = (subset.KPP_diffusivity.where(
+        #     (subset.depth < (subset.mld - 5))
+        #     & (subset.depth > (subset.dcl_base + 5))))
         # dcl_K = dcl_K.where(dcl_K < 1e-2)
         # (dcl_K.mean('depth')
         #  .plot(ax=ax['dcl_KT'], x='time', yscale='log', _labels=False,
@@ -440,7 +464,6 @@ class model:
         (subset.N2).plot(ax=ax['N2'], x='time', ylim=[-150, 0],
                          robust=True, cmap=mpl.cm.RdYlBu_r,
                          norm=mpl.colors.LogNorm(1e-6, 1e-3))
-
 
         inv_Ri = 1/(subset.N2 / subset.shear**2)
         inv_Ri.attrs['long_name'] = 'Inv. Ri'
@@ -478,13 +501,15 @@ class model:
         if 'tiw_phase' not in subset:
             subset = xr.merge([subset, self.get_tiw_phase(subset.v)])
 
-        for period in tqdm.tqdm_notebook(np.unique(subset.period.dropna('time'))):
-            self.plot_tiw_summary(subset.where(subset.period == period, drop=True)
+        for period in tqdm.tqdm(np.unique(subset.period.dropna('time'))):
+            self.plot_tiw_summary(subset.where(subset.period == period,
+                                               drop=True)
                                   .drop('period')
                                   .assign_coords(period=period),
                                   x='time', normalize_period=True)
 
             plt.gcf().savefig(f'../images/{self.name}-tiw-period'
-                              f'-{subset.latitude.values}-{np.abs(subset.longitude.values)}'
+                              f'-{subset.latitude.values}'
+                              f'-{np.abs(subset.longitude.values)}'
                               f'-{period}.png',
                               dpi=200)
