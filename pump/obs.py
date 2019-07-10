@@ -47,12 +47,16 @@ def read_tao_adcp(domain=None, freq='dy'):
                          'U_1205': 'u',
                          'V_1206': 'v'}))
     elif freq == 'hr':
-        adcp = (xr.open_mfdataset(
-            [root+'/obs/tao/adcp0n'+lon+'_hr.cdf'
-             for lon in ['156e', '165e', '140w', '110w', '170w']])
-                .drop(['QU_5205', 'QV_5206'])
-                .rename({'lon': 'longitude', 'lat': 'latitude',
-                         'u_1205': 'u', 'v_1206': 'v'}))
+        afiles = [root+'/obs/tao/adcp0n'+lon+'_hr.cdf'
+                  for lon in ['156e', '165e', '170w', '140w', '110w']]
+
+        ds = []
+        for file in tqdm.tqdm(afiles):
+            ds.append(xr.open_dataset(file)
+                      .drop(['QU_5205', 'QV_5206'])
+                      .rename({'lon': 'longitude', 'lat': 'latitude',
+                               'u_1205': 'u', 'v_1206': 'v'}))
+        adcp = xr.merge(xr.align(*ds, join='outer'))
 
     adcp = adcp.chunk({'latitude': 1, 'longitude': 1})
 
@@ -81,32 +85,60 @@ def read_tao_adcp(domain=None, freq='dy'):
 def read_eq_tao_temp_hr():
     ''' Read hourly resolution temperature for equatorial moorings. '''
 
-    ds = []
-
     # sfiles = [root+'/obs/tao/s0n'+lon+'_hr.cdf'
     #           for lon in ['156e', '165e', '140w', '110w', '170w']]
     # for file in tqdm.tqdm(sfiles):
     #     ds.append(xr.open_dataset(file)['S_41'])
 
-    tfiles = [root+'/obs/tao/t0n'+lon+'_hr.cdf'
-              for lon in ['156e', '165e', '140w', '110w']]
-    for file in tqdm.tqdm(tfiles):
-        ds.append(xr.load_dataset(file)['T_20'])
+    def _read_and_merge(suffix):
+        ds = []
+        tfiles = [f'{root}/obs/tao/t0n'+lon+'_'+suffix+'.cdf'
+                  for lon in ['156e', '165e', '170w', '140w', '110w']]
+        for file in tqdm.tqdm(tfiles):
+            try:
+                ds.append(xr.load_dataset(file)['T_20'])
+            except FileNotFoundError:
+                pass
 
-    # T at 170W is only available at 10min frequency
-    ds.append(xr.load_dataset(root+'/obs/tao/t0n170w_10m.cdf')['T_20']
-              .resample(time='H').mean('time'))
+        merged = (xr.merge(xr.align(*ds, join='outer'))
+                  .rename({'lon': 'longitude', 'lat': 'latitude',
+                           'T_20': 'T'}))
 
-    merged = (xr.merge(xr.align(*ds, join='outer'))
-              .rename({'lon': 'longitude', 'lat': 'latitude',
-                       'T_20': 'T'}))
+        merged['longitude'] -= 360
+        merged['depth'] *= -1
+        return merged
 
-    merged['longitude'] -= 360
-    merged['depth'] *= -1
+    m10 = _read_and_merge('10m')
+    hr = _read_and_merge('hr')
+
+    # resample is really slow because it doesn't know about dask.
+    # instead reindex to a 10min freq and use rolling.
+    new_index = pd.date_range(start=m10.time[0].dt.round('H').values,
+                              end=m10.time[-1].dt.round('H').values,
+                              freq='10min')
+    m10 = m10.reindex(time=new_index)
+    m10hr = (m10.chunk({'longitude': 1})
+             .rolling(time=6, min_periods=4)
+             .construct('window_dim', stride=6)
+             .mean('window_dim'))
+
+    new_hourly_index = pd.date_range(start=np.min([m10.time[0].values,
+                                                   hr.time[0].values]),
+                                     end=np.max([m10.time[-1].values,
+                                                 hr.time[-1].values]),
+                                     freq='H')
+
+    concat = xr.concat([m10hr.reindex(time=new_hourly_index),
+                        hr.reindex(time=new_hourly_index)],
+                       dim='concat')
+
+    # # T at 170W is only available at 10min frequency
+    # ds.append(xr.load_dataset(root+'/obs/tao/t0n170w_10m.cdf')['T_20']
+    #           .resample(time='H').mean('time'))
 
     # adcp = read_tao_adcp(freq='hr')
     # return xr.merge(ds)
-    return merged.T.squeeze()
+    return concat.mean('concat').squeeze()
 
 
 def read_tao(domain=None):

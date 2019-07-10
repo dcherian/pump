@@ -5,6 +5,7 @@ import xarray as xr
 import warnings
 
 import dcpy
+import dcpy.eos
 
 
 def calc_reduced_shear(data):
@@ -153,7 +154,6 @@ def get_euc_transport(u):
 
 def calc_tao_ri(adcp, temp):
     '''
-
     Calculate Ri for TAO dataset.
     Interpolates to 5m grid and then differentiates.
     Uses N^2 = g alpha dT/dz
@@ -173,16 +173,13 @@ def calc_tao_ri(adcp, temp):
 
     Smyth & Moum (2013)
     Pham et al. (2017)
-
     '''
 
-    V = adcp[['u', 'v']].load()
-    V['shear'] = np.hypot(V['u'].differentiate('depth'),
-                          V['v'].differentiate('depth'))
+    V = adcp[['u', 'v']]
+    S2 = (V['u'].differentiate('depth')**2
+          + V['v'].differentiate('depth')**2)
 
-    T = (temp.load()
-         .where(temp.depth > -500, drop=True)
-         .dropna('depth', how='all')
+    T = (temp
          .sel(time=V.time)
          .sortby('depth')
          .interpolate_na('depth', 'linear')
@@ -191,13 +188,14 @@ def calc_tao_ri(adcp, temp):
 
     # the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
     N2 = (9.81
-          * sw.alpha(35, T, xr.broadcast(T, T.depth)[1])
+          * dcpy.eos.alpha(35, T, T.depth)
           * T.differentiate('depth'))
-    S2 = V.shear ** 2
 
     N2 = N2
-    Ri = ((N2.where(N2 > 1e-7) / S2.where(S2 > 1e-10))
-          .dropna('depth', how='all'))
+    Ri = N2.where(N2 > 1e-7) / S2.where(S2 > 1e-10)
+
+    Ri.attrs['long_name'] = 'Ri'
+    Ri.name = 'Ri'
 
     return Ri
 
