@@ -2,6 +2,7 @@ import dcpy
 
 import numpy as np
 import pandas as pd
+import tqdm
 import xarray as xr
 
 from .constants import *
@@ -37,13 +38,23 @@ def read_johnson(filename=root+'/obs/johnson-eq-pac-adcp.cdf'):
     return ds
 
 
-def read_tao_adcp(domain=None):
-    adcp = (xr.open_dataset(root+'/obs/tao/adcp_xyzt_dy.cdf')
-            .rename({'lon': 'longitude',
-                     'lat': 'latitude',
-                     'U_1205': 'u',
-                     'V_1206': 'v'})
-            .chunk({'latitude': 1, 'longitude': 1}))
+def read_tao_adcp(domain=None, freq='dy'):
+
+    if freq == 'dy':
+        adcp = (xr.open_dataset(root+'/obs/tao/adcp_xyzt_dy.cdf')
+                .rename({'lon': 'longitude',
+                         'lat': 'latitude',
+                         'U_1205': 'u',
+                         'V_1206': 'v'}))
+    elif freq == 'hr':
+        adcp = (xr.open_mfdataset(
+            [root+'/obs/tao/adcp0n'+lon+'_hr.cdf'
+             for lon in ['156e', '165e', '140w', '110w', '170w']])
+                .drop(['QU_5205', 'QV_5206'])
+                .rename({'lon': 'longitude', 'lat': 'latitude',
+                         'u_1205': 'u', 'v_1206': 'v'}))
+
+    adcp = adcp.chunk({'latitude': 1, 'longitude': 1})
 
     for vv in adcp:
         adcp[vv] /= 100
@@ -65,6 +76,38 @@ def read_tao_adcp(domain=None):
     return (adcp
             .dropna('longitude', how='all')
             .dropna('depth', how='all'))
+
+
+def read_eq_tao_temp_hr():
+    ''' Read hourly resolution temperature for equatorial moorings. '''
+
+    ds = []
+
+    # sfiles = [root+'/obs/tao/s0n'+lon+'_hr.cdf'
+    #           for lon in ['156e', '165e', '140w', '110w', '170w']]
+    # for file in tqdm.tqdm(sfiles):
+    #     ds.append(xr.open_dataset(file)['S_41'])
+
+    tfiles = [root+'/obs/tao/t0n'+lon+'_hr.cdf'
+              for lon in ['156e', '165e', '140w', '110w']]
+    for file in tqdm.tqdm(tfiles):
+        ds.append(xr.load_dataset(file)['T_20'])
+
+    # T at 170W is only available at 10min frequency
+    ds.append(xr.load_dataset(root+'/obs/tao/t0n170w_10m.cdf')['T_20']
+              .resample(time='H').mean('time'))
+
+    merged = (xr.merge(xr.align(*ds, join='outer'))
+              .rename({'lon': 'longitude', 'lat': 'latitude',
+                       'T_20': 'T'}))
+
+    merged['longitude'] -= 360
+    merged['depth'] *= -1
+
+    # adcp = read_tao_adcp(freq='hr')
+    # return xr.merge(ds)
+    return merged.T.squeeze()
+
 
 def read_tao(domain=None):
     tao = (xr.open_mfdataset([root+'/obs/tao/'+ff
