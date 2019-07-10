@@ -22,8 +22,10 @@ def calc_reduced_shear(data):
     data['shear'].attrs['long_name'] = '|$u_z$|'
     data['shear'].attrs['units'] = 's$^{-1}$'
 
-    data['N2'] = (9.81 * 1.7e-4 * data.theta.differentiate('depth')
-                  - 9.81 * 7.6e-4 * data.salt.differentiate('depth'))
+    # data['N2'] = (9.81 * 1.7e-4 * data.theta.differentiate('depth')
+    #              - 9.81 * 7.6e-4 * data.salt.differentiate('depth'))
+
+    data['N2'] = -9.81/1025 * data.dens.differentiate('depth')
     data['N2'].attrs['long_name'] = '$N^2$'
     data['N2'].attrs['units'] = 's$^{-2}$'
 
@@ -87,10 +89,13 @@ def get_dcl_base_shear(data):
     Inoue et al. (2012)
     '''
 
-    if 'shear' in data:
+    if 'S2' in data:
+        s2 = data.S2
+    elif 'shear' in data:
         s2 = data['shear']**2
     else:
-        s2 = np.hypot(data.u.differentiate('depth'), data.v.differentiate('depth'))**2
+        s2 = (data.u.differentiate('depth')**2 +
+              data.v.differentiate('depth')**2)
 
     if 'euc_max' not in data:
         euc_max = get_euc_max(data.u)

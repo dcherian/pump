@@ -3,7 +3,6 @@ import glob
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import seawater as sw
 import time
 import xarray as xr
 import xmitgcm
@@ -13,6 +12,7 @@ from ..calc import (calc_reduced_shear, get_euc_max, get_dcl_base_Ri,
 from ..constants import *
 from ..obs import *
 from ..plot import plot_depths
+from ..mdjwf import dens
 
 
 class model:
@@ -143,6 +143,9 @@ class model:
                 self.full = xr.open_mfdataset(
                     self.dirname + '/Day_[0-9][0-9][0-9].nc',
                     engine='h5netcdf', parallel=True)
+            self.full['dens'] = dens(self.full.salt,
+                                     self.full.theta,
+                                     self.full.depth)
 
         if self.kind == 'roms':
             self.full = xr.Dataset()
@@ -252,12 +255,9 @@ class model:
         self.tao['euc_max'] = get_euc_max(self.tao.u)
         self.tao['dcl_base_shear'] = get_dcl_base_shear(self.tao)
         self.tao['dcl_base_Ri'] = get_dcl_base_Ri(self.tao)
-        self.tao['dens'] = xr.DataArray(
-            sw.pden(*xr.broadcast(self.tao.salt,
-                                  self.tao.theta,
-                                  self.tao.depth)),
-            dims=self.tao.salt.dims,
-            coords=self.tao.salt.coords)
+        self.tao['dens'] = dens(self.tao.salt,
+                                self.tao.theta,
+                                self.tao.depth)
         self.tao['mld'] = get_mld(self.tao.dens)
 
         if self.metrics:
