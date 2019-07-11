@@ -251,6 +251,7 @@ class model:
             self.tao = None
             return
 
+        self.tao['dens'] = dens(self.tao.salt, self.tao.theta, self.tao.depth)
         self.tao = calc_reduced_shear(self.tao)
         self.tao['euc_max'] = get_euc_max(self.tao.u)
         self.tao['dcl_base_shear'] = get_dcl_base_shear(self.tao)

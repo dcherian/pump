@@ -138,7 +138,7 @@ def read_eq_tao_temp_hr():
 
     # adcp = read_tao_adcp(freq='hr')
     # return xr.merge(ds)
-    return concat.mean('concat').squeeze()
+    return concat.mean('concat').squeeze().T
 
 
 def read_tao(domain=None):
