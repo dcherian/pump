@@ -1,6 +1,8 @@
-#+TITLE: PUMP
+#+title: PUMP
 #+hugo_base_dir: ./hugo/
 #+hugo_section:
+#+options: :eval never-export
+#+property: header-args:jupyter-python :session /jpy:localhost#8818:emacs
 
 * Todo                                                             :noexport:
 - [ ] Do velocity spectra (only at equator?)
@@ -17,59 +19,58 @@
 
 - What do profiles look like with daily data?
 
-* startup
+* startup :noexport:
 
 #+NAME: startup
-#+BEGIN_SRC ein :session localhost:8888/ein.ipynb :results raw drawer :exports none
+#+BEGIN_SRC jupyter-python :results none :exports none
 %matplotlib inline
 
-# import matplotlib as mpl
+import dask
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import seawater as sw
 import xarray as xr
+# import xmitgcm
+
+# import hvplot.xarray
 
 import dcpy
 import facetgrid
 import pump
 
+mpl.rcParams['savefig.dpi'] = 300
 mpl.rcParams['savefig.bbox'] = 'tight'
-mpl.rcParams['figure.dpi'] = 120
+mpl.rcParams['figure.dpi'] = 250
 
-# cluster, client = pump.utils.build_cluster()
-
-# client
+xr.set_options(keep_attrs=True)
 #+END_SRC
 
-#+RESULTS: startup
-:results:
-[....]
-:end:
+#+NAME: build-cluster
+#+BEGIN_SRC jupyter-python :results none
+import dask
+import distributed
+import ncar_jobqueue
 
-#+RESULTS: c13391af-fe47-449e-87e2-a6d85b041094
-:results:
-/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask_jobqueue/config.py:12: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
-  defaults = yaml.load(f)
+if 'client' in locals():
+    client.close(); cluster.close()
+cluster = ncar_jobqueue.NCARCluster(
+    cores=1, processes=1, memory='25GB',
+    walltime='02:00:00', project='UMIT0018')
 
-<Client: scheduler='tcp://10.12.205.27:42720' processes=0 cores=0>
-:end:
+client = dask.distributed.Client(cluster)
+
+# cluster, client = pump.utils.build_cluster()
+#+END_SRC
 
 #+NAME: scale-cluster
-#+BEGIN_SRC ein :session localhost:8888/pump/notebooks/validation.ipynb :results output drawer
-cluster.scale(6)
-client
+#+BEGIN_SRC jupyter-python :var n=2 :results output drawer
+cluster.scale(n)
 #+END_SRC
 #+RESULTS: scale-cluster
 :results:
 <Client: scheduler='tcp://10.12.205.27:42720' processes=6 cores=12>
 :end:
-
-#+NAME: a261958f-1a9b-4cb3-8839-ffacf67ca16b
-#+BEGIN_SRC ein :session localhost:8888 :results none
-import pump
-#+END_SRC
-#+CAPTION:
-[[file:images/temp/imgwQY4pU.png]]
-
 
 
 * gyaan
@@ -99,15 +100,19 @@ Ryan:
 
 * Data locations                                                   :noexport:
 
+|--------+-------------------|
 | ROMS   | glade/tpos20/OUT/ |
 | MITgcm | glade/TPOS_MITgcm  |
-| POP    |             g.xxx |
+| POP    | g.xxx             |
+|--------+-------------------|
 
+- heat budget output are 4 hourly snapshots
+- others are daily averages
 
 * Vertical resolution
 
 #+NAME: 541ec1bc-e56b-4910-8b49-ad9476538313
-#+BEGIN_SRC ein :session localhost:8888/pump/notebooks/validation.ipynb :results output drawer
+#+BEGIN_SRC jupyter-python :session localhost:8888/pump/notebooks/validation.ipynb :results output drawer
 %time gcm0 = pump.model('../glade/TPOS_MITgcm/HOLD/', 'gcm20 orig')
 %time gcm1 = pump.model('../glade/TPOS_MITgcm_1/HOLD/', 'gcm20 1m')
 %time gcm25 = pump.model('../glade/TPOS_MITgcm_2.5/HOLD/', 'gcm20 2.5m')
@@ -301,12 +306,6 @@ Large & Gent: Pacanowski & Philander scheme has much higher diffusivities becaus
 [[file:images/oisst-comparison.png]]
 
 
-* low S2, N2 anomaly
-
-- seems to be approx constant $u_z$
--
-
-
 * Diary
 
 ** <2019-06-10 Mon>
@@ -334,3 +333,321 @@ Large & Gent: Pacanowski & Philander scheme has much higher diffusivities becaus
 *** Comments
 - [ ] Do vertical profile of transport instead of mean velocity.
 *** Followup
+
+* TAO
+* Marginal stability
+
+** groupby_bins
+#+BEGIN_SRC jupyter-python :session py
+da = xr.DataArray([[0,1],[2,3]],
+                  {'lon': (['ny','nx'], [[30,40],[40,50]] ),
+                   'lat': (['ny','nx'], [[10,10],[20,20]] ),},
+                  dims=['ny','nx'])
+
+grouped = da.groupby('nx')
+
+for label, group in grouped:
+    print(group)
+#+END_SRC
+#+CAPTION:
+[[file:$1]]
+
+** TAO daily dataset
+** TAO hourly dataset
+
+#+BEGIN_SRC jupyter-python :file images/tao-marginal-stability-hourly.png
+adcp = pump.obs.read_tao_adcp(freq='hr')
+temp = pump.obs.read_eq_tao_temp_hr()
+Ri = pump.calc_tao_ri(adcp, temp)
+
+eucmax = pump.get_euc_max(adcp.u)
+Ri = Ri.to_dataset()
+Ri['zeuc'] = Ri.depth - eucmax
+
+seasonal = Ri.groupby('time.season')
+
+for season, Ris in seasonal:
+    Rigrouped = Ris.Ri.groupby_bins(Ris.zeuc, np.arange(0, 200, 10))
+    for bin, group in Rigrouped:
+        print(bin)
+
+seasonal = (Ri
+            .groupby('time.season').median('time')
+            .reindex(season=['DJF', 'MAM', 'JJA', 'SON']))
+
+fg = (seasonal.plot.line(col='longitude', hue='season', y='depth',
+                         ylim=[-150, 0], xlim=[0.1, 3.5], xscale='log'))
+fg.map(lambda: dcpy.plots.linex([0.25, 0.3]))
+plt.gcf().suptitle('Seasonal median 5m Ri | Hourly mean TAO ADCP, T '
+                   , y=1.02)
+plt.gcf().set_size_inches((8, 4))
+plt.gcf().set_dpi(200)
+# f, ax = plt.subplots(1, 1, constrained_layout=True)
+# f.savefig('images/tao-marginal-stability-hourly.png')
+#+END_SRC
+
+#+RESULTS:
+[[file:images/tao-marginal-stability-hourly.png]]
+
+
+Check Ri
+#+BEGIN_SRC jupyter-python
+V = adcp[['u', 'v']]
+S2 = (V['u'].differentiate('depth')**2
+      + V['v'].differentiate('depth')**2)
+
+T = (temp
+     .sel(time=V.time)
+     .sortby('depth')
+     .interpolate_na('depth', 'linear')
+     .sortby('depth', 'descending')
+     .interp(depth=V.depth))
+
+# the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
+N2 = (9.81
+      ,* dcpy.eos.alpha(35, T, T.depth)
+      ,* T.differentiate('depth'))
+
+N2 = N2
+Ri = N2.where(N2 > 1e-7) / S2.where(S2 > 1e-10)
+#+END_SRC
+#+CAPTION:
+[[file:images/temp/imgcsSb04.png]]
+
+*** EUC relative depth coordinate
+No luck yet.
+
+#+BEGIN_SRC jupyter-python
+
+def split_by_chunks(obj):
+    import itertools
+    chunk_slices = {}
+
+    if isinstance(obj, xr.DataArray):
+        dataset = obj._to_temp_dataset()
+    else:
+        dataset = obj
+    for dim, chunks in dataset.chunks.items():
+        slices = []
+        start = 0
+        for chunk in chunks:
+            stop = start + chunk
+            slices.append(slice(start, stop))
+            start = stop
+        chunk_slices[dim] = slices
+    for slices in itertools.product(*chunk_slices.values()):
+         selection = dict(zip(chunk_slices.keys(), slices))
+         yield (selection, dataset[selection])
+
+def reconstruct_from_chunks(template, chunks):
+    dsnew = xr.zeros_like(Ri.to_array())
+    for (selection, subset) in chunks:
+        dsnew.loc[selection] = subset
+    return dsnew
+
+
+chunks = [cc for cc in split_by_chunks(Ri.chunk({'time': 10000}))]
+Rinew = reconstruct_from_chunks(Ri, chunks)
+xr.testing.assert_equal(Ri, Rinew)
+
+
+import scipy as sp
+Ri['zeuc'] = Ri.zeuc.transpose(*Ri.Ri.dims)
+subset = Ri.isel(time=slice(8000, 2*8000), longitude=2)
+
+tmat = xr.broadcast(subset.zeuc, subset.time)[1].values
+Ri_binned = sp.stats.binned_statistic_2d(tmat,
+                                         subset.zeuc.values,
+                                         subset.Ri.values,
+                                         statistic='mean',
+                                         bins=np.arange(0, 200, 5))
+
+#+END_SRC
+
+
+* Upper Core Layer
+
+- seems to be approx constant $u_z$
+-
+
+** An example
+
+
+#+NAME: extract-ucl
+#+BEGIN_SRC jupyter-python :results none
+if 'gcm1' not in locals():
+    gcm1 = pump.model('/glade/p/nsc/ncgd0043/TPOS_MITgcm_1_hb/HOLD/')
+
+extract = (gcm1.full.sel(time=slice('1995-11-15', '1995-12-10'),
+                         depth=slice(0, -200),
+                         latitude=slice(-3, 3),
+                         longitude=slice(-150, -130)))
+
+extract.load()
+#+END_SRC
+
+#+BEGIN_SRC jupyter-python :file images/ucl-example.png :results none
+%matplotlib inline
+
+# extract = subset.where(subset.period == 5, drop=True).sel(depth=slice(-40, -150))
+region = dict(time='1995-11-22 00:00', longitude=-140, method='nearest')
+
+f, ax = plt.subplots(1, 3, sharex=True, sharey=True, constrained_layout=True)
+
+for aa, vv in zip(ax, ['theta', 'v', 'u']):
+    ((extract.salt
+      .sel(**region))
+      .plot(ax=aa, y='depth', cmap=mpl.cm.RdYlBu_r, robust=True,
+            cbar_kwargs={'orientation': 'horizontal', 'aspect': 20}))
+
+    (extract[vv].sel(**region)
+     .plot.contour(ax=aa, levels=22, add_labels=False, y='depth', colors='k', linewidths=0.4))
+
+    title = aa.get_title()
+    aa.set_title(f'salt [color] & {vv} [contours]')
+    aa.set_ylim([-180, 0])
+
+f.suptitle(title, y=1.05)
+f.set_size_inches((10, 5))
+#+END_SRC
+#+CAPTION:
+[[file:imags/ucl-example.png]]
+
+* TIW compositing
+* MLD calculation
+
+#+BEGIN_SRC jupyter-python :results none
+gcm5 = pump.model('../glade/TPOS_MITgcm_5/HOLD/',
+                  name='gcm5', full=True, budget=False)
+gcm5.full = gcm5.full.chunk({'depth': 68, 'latitude': 240, 'longitude': 500}) # 12MB chunks
+#+END_SRC
+
+#+BEGIN_SRC jupyter-python
+old_index = gcm5.full.indexes['time']
+
+new_index = old_index.copy()
+new_index.freq = pd.tseries.frequencies.to_offset(
+    pd.infer_freq(gcm5.full.indexes['time']))
+
+gcm5.full = gcm5.full.reindex(time=new_index)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC jupyter-python
+gcm25 = pump.model('../glade/TPOS_MITgcm_2.5/HOLD/',
+                   name='gcm2.5', full=True, budget=False)
+gcm25.full = (gcm25.full
+              .chunk({'depth': 100, 'latitude': 120, 'longitude': 500})) # 12MB chunks
+#+END_SRC
+
+#+BEGIN_SRC jupyter-python
+import pump.mdjwf
+# gcm25.full = gcm25.full.chunk({'depth': 100, 'latitude': 240, 'longitude': 500}) # 12MB chunks
+model = gcm5
+subset = model.full.sel(depth=slice(0, -240))
+# dens = dcpy.eos.dens(subset.salt, subset.theta, subset.depth)
+dens = pump.mdjwf.dens(subset.salt, subset.theta, subset.depth)
+mld = pump.get_mld(dens)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC jupyter-python :file images/temp/mld-test.png
+%matplotlib inline
+
+f, ax = plt.subplots(1, 1, constrained_layout=True)
+region = dict(latitude=0, longitude=-140, method='nearest')
+itime = 100
+subset2 = subset.isel(time=itime).sel(**region)
+dens.isel(time=itime).sel(**region).plot(ax=ax, y='depth')
+dcpy.plots.liney(mld.isel(time=itime).sel(**region))
+# f.savefig('..//images/mld-test.png')
+#+END_SRC
+
+#+RESULTS:
+[[file:images/temp/mld-test.png]]
+
+* xarray
+#+BEGIN_SRC jupyter-python :session py
+from xarray import DataArray
+
+arr1 = DataArray(np.ones((2, 3)), dims=['x', 'y'],
+                 coords={'x': ['a', 'b'], 'y': ['a', 'b', 'c']})
+arr2 = DataArray(np.ones((3, 2)), dims=['x', 'y'],
+                 coords={'x': ['a', 'b', 'c'], 'y': ['a', 'b']})
+orig1, orig2 = xr.broadcast(arr1, arr2)
+new1 = arr2.broadcast_like(arr1)
+new2 = arr1.broadcast_like(arr2)
+
+assert orig1.identical(new1)
+assert orig2.identical(new2)
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+# [goto error]
+#+begin_example
+
+ValueErrorTraceback (most recent call last)
+<ipython-input-10-70b38e663461> in <module>
+      5 arr2 = DataArray(np.ones((3, 2)), dims=['x', 'y'],
+      6                  coords={'x': ['a', 'b', 'c'], 'y': ['a', 'b']})
+----> 7 orig1, orig2 = xr.broadcast(arr1, arr2)
+      8 new1 = arr2.broadcast_like(arr1)
+      9 new2 = arr1.broadcast_like(arr2)
+
+~/work/python/xarray/xarray/core/alignment.py in broadcast(exclude, *args)
+    525     result = []
+    526     for arg in args:
+--> 527         result.append(_broadcast_helper(arg, exclude, dims_map, common_coords))
+    528
+    529     return tuple(result)
+
+~/work/python/xarray/xarray/core/alignment.py in _broadcast_helper(arg, exclude, dims_map, common_coords)
+    441         return _broadcast_dataset(arg)
+    442     else:
+--> 443         raise ValueError('all input must be Dataset or DataArray objects')
+    444
+    445
+
+ValueError: all input must be Dataset or DataArray objects
+#+end_example
+:END:
+
+#+CAPTION:
+[[file:images/temp/imgh7XFl6.png]]
+
+* read POP
+
+#+BEGIN_SRC jupyter-python
+pth = '/glade/scratch/altuntas/archive/g.e20.G.TL319_t13.control.001_hfreq/ocn/hist/mavg/'
+fls = 'g.e20.G.TL319_t13.control.001_hfreq.pop.h.00'
+
+years = range(33,53)
+offset = 1957
+months = [str(xx).zfill(2) for xx in range(1,13,1)]
+
+files = []
+for y in years:
+    for m in months:
+        files.append(pth + fls + str(y) + '-' + m + '.nc')
+#+END_SRC
+
+#+BEGIN_SRC jupyter-python
+def read_pop(files):
+    def preprocess(ds):
+        return ds[['VVEL', 'TEMP']].reset_coords(drop=True)
+
+    ds = xr.open_mfdataset(files, parallel=True, preprocess=preprocess)
+    file0 = xr.open_dataset(files[0])
+    ds.update(file0[['TLONG', 'TLAT', 'ULONG', 'ULAT']])
+    file0.close()
+
+    return ds
+#+END_SRC
+
+#+RESULTS:
+
+#+CAPTION:
+[[file:$1]]
