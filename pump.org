@@ -568,6 +568,93 @@ dcpy.plots.liney(mld.isel(time=itime).sel(**region))
 #+RESULTS:
 [[file:images/temp/mld-test.png]]
 
+* EQUIX analysis
+
+#+NAME: read-equix
+#+BEGIN_SRC jupyter-python :session py :results none
+import dcpy.util
+import dcpy.oceans
+import numpy as np
+import xarray as xr
+
+from scipy.io import loadmat
+
+import platform
+
+if platform.uname().node == 'darya':
+    dirname = 'obs/equix/'
+else:
+    dirname = 'glade/obs/equix/'
+
+
+adcpmat = loadmat(dirname + '03UP_10min_mag_corrected.mat')
+
+adcp = xr.Dataset()
+adcp['depth'] = xr.DataArray(adcpmat['Zgrid'].squeeze(),
+                             dims=['depth'])
+adcp['time'] = xr.DataArray(
+    dcpy.util.datenum2datetime(adcpmat['jday_gmt'].squeeze()),
+    dims=['time'],
+    attrs={'timezone': 'GMT'})
+
+adcp['u'] = (('depth', 'time'), adcpmat['Ug'])
+adcp['v'] = (('depth', 'time'), adcpmat['Vg'])
+adcp['w'] = (('depth', 'time'), adcpmat['Wg'])
+adcp.attrs['declination'] = adcpmat['magdeclination'].squeeze()
+
+ctdmat = loadmat(dirname + 'sbe37_eq08_10min.mat')
+ctd = xr.Dataset()
+ctd['depth'] = (('depth'), ctdmat['zgrid'].squeeze())
+ctd['time'] = (('time'),
+               dcpy.util.datenum2datetime(
+                   ctdmat['Jday_gmt'].squeeze()))
+ctd['T'] = (('depth', 'time'), ctdmat['T_tgrid_zgrid'])
+ctd['S'] = (('depth', 'time'), np.real(ctdmat['S_tgrid_zgrid']))
+ctd['C'] = (('depth', 'time'), ctdmat['C_tgrid_zgrid'])
+ctd['pden'] = (('depth', 'time'), ctdmat['pden_tgrid_zgrid'])
+
+ctd = ctd.sel(time=slice('2008-10-24 06:30', '2008-11-04 17:50'))
+adcp = adcp.sel(time=slice('2008-10-24 06:30', '2008-11-04 17:50'))
+
+ctd['time'] = ctd.time.dt.round('min')
+adcp['time'] = adcp.time.dt.round('min')
+
+xr.testing.assert_equal(ctd.time, adcp.time)
+#+END_SRC
+
+#+CALL: read-equix()
+#+BEGIN_SRC jupyter-python :session py
+def plot_2dspectrum(da, ax=None, dim=None, linthreshx=0.1, linscalex=0.05,
+                    linthreshy=1e-3, linscaley=0.01, diff=None, **kwargs):
+
+    from xrft import xrft
+
+    if ax is None:
+        ax = plt.gca()
+
+    spec = xrft.power_spectrum(da, dim=dim, detrend='constant', window=True, )
+
+    if diff:
+        spec = (2*np.pi * spec['freq_' + dim[0]])**2 * spec
+        spec = spec.where(spec > 0)
+
+    spec.plot(norm=mpl.colors.LogNorm(), ax=ax, robust=True, **kwargs)
+
+    # ax.set_yscale('symlog', linthreshy=linthreshy, linscaley=linscaley)
+    # ax.set_xscale('symlog', linthreshx=linthreshx, linscalex=linscalex)
+
+
+f, ax = plt.subplots(1, 1, constrained_layout=True)
+
+plot_2dspectrum(adcp.u.sel(depth=slice(-50, -20)), dim=['depth'], diff=True)
+f.savefig('images/temp/imgHqJpjd.png')
+#+END_SRC
+
+#+RESULTS:
+
+#+CAPTION:
+[[file:images/temp/imgHqJpjd.png]]
+
 * xarray
 #+BEGIN_SRC jupyter-python :session py
 from xarray import DataArray
