@@ -2,9 +2,9 @@
 #+hugo_base_dir: ./hugo/
 #+hugo_section:
 #+options: :eval never-export
-#+property: header-args:jupyter-python :session /jpy:localhost#8818:emacs
+#+property: header-args:jupyter-python :session /jpy:localhost#8800:emacs
 
-* Todo                                                             :noexport:
+* To do                                                            :noexport:
 - [ ] Do velocity spectra (only at equator?)
 - [ ] spectra vs TAO vs SST
 - [ ] filtered hovmoellerr for SST
@@ -19,7 +19,7 @@
 
 - What do profiles look like with daily data?
 
-* startup :noexport:
+* startup                                                          :noexport:
 
 #+NAME: startup
 #+BEGIN_SRC jupyter-python :results none :exports none
@@ -72,6 +72,66 @@ cluster.scale(n)
 <Client: scheduler='tcp://10.12.205.27:42720' processes=6 cores=12>
 :end:
 
+
+* read model runs :noexport:
+
+#+NAME: read-gcm1-hb
+#+BEGIN_SRC jupyter-python
+gcm1 = pump.model('../glade/TPOS_MITgcm_1_hb/HOLD/',
+                  name='gcm1', full=True, budget=False)
+#+END_SRC
+
+#+RESULTS: read-gcm1-hb
+#+begin_example
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: In xarray version 0.13 `auto_combine` will be deprecated.
+  coords=coords)
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine='by_coords'` option to `open_mfdataset` to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in in future, please use the
+new `combine_nested` function (or the `combine='nested'` option to
+open_mfdataset).
+  coords=coords)
+Reading all files took 53.04539155960083 seconds
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: In xarray version 0.13 `auto_combine` will be deprecated.
+  coords=coords)
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine='by_coords'` option to `open_mfdataset` to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in in future, please use the
+new `combine_nested` function (or the `combine='nested'` option to
+open_mfdataset).The datasets supplied require both concatenation and merging. From
+xarray version 0.14 this will operation will require either using the
+new `combine_nested` function (or the `combine='nested'` option to
+open_mfdataset), with a nested list structure such that you can combine
+along the dimensions None. Alternatively if your datasets have global
+dimension coordinates then you can use the new `combine_by_coords`
+function.
+  coords=coords)
+#+end_example
+
+#+NAME: read-gcm1
+#+BEGIN_SRC jupyter-python
+gcm1 = pump.model('../glade/TPOS_MITgcm_1/HOLD/',
+                  name='gcm1', full=False, budget=False)
+#+END_SRC
+
+#+RESULTS: read-gcm1
+#+begin_example
+metrics files not available.
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: In xarray version 0.13 `auto_combine` will be deprecated.
+  coords=coords)
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine='by_coords'` option to `open_mfdataset` to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in in future, please use the
+new `combine_nested` function (or the `combine='nested'` option to
+open_mfdataset).
+  coords=coords)
+#+end_example
 
 * gyaan
 
@@ -513,6 +573,28 @@ f.set_size_inches((10, 5))
 #+CAPTION:
 [[file:imags/ucl-example.png]]
 
+** PV calculation
+
+#+BEGIN_SRC jupyter-python
+# ds = gcm1.full
+def pv(ds):
+    ds['b'] = ds.dens * -9.81/1025
+    ds['b'].attrs['long_name'] = '$b$'
+    ds['b'].attrs['description'] = 'buoyancy'
+
+    f = 2*(np.pi/86400)  * np.sin(ds.latitude * np.pi/180)
+    zeta = ds.v.differentiate('longitude') - ds.u.differentiate('latitude')
+    q = ((f + zeta) * ds.b.differentiate('depth')
+         - ds.v.differentiate('depth') * ds.b.differentiate('longitude')
+         + ds.u.differentiate('depth') * ds.b.differentiate('latitude'))
+
+    return q
+
+# f, ax = plt.subplots(1, 1, constrained_layout=True)
+#+END_SRC
+#+CAPTION:
+[[file:$1]]
+
 * TIW compositing
 * MLD calculation
 
@@ -612,6 +694,7 @@ ctd['T'] = (('depth', 'time'), ctdmat['T_tgrid_zgrid'])
 ctd['S'] = (('depth', 'time'), np.real(ctdmat['S_tgrid_zgrid']))
 ctd['C'] = (('depth', 'time'), ctdmat['C_tgrid_zgrid'])
 ctd['pden'] = (('depth', 'time'), ctdmat['pden_tgrid_zgrid'])
+ctd['pden'] = np.real(ctd.pden)
 
 ctd = ctd.sel(time=slice('2008-10-24 06:30', '2008-11-04 17:50'))
 adcp = adcp.sel(time=slice('2008-10-24 06:30', '2008-11-04 17:50'))
@@ -619,6 +702,13 @@ adcp = adcp.sel(time=slice('2008-10-24 06:30', '2008-11-04 17:50'))
 ctd['time'] = ctd.time.dt.round('min')
 adcp['time'] = adcp.time.dt.round('min')
 
+ctd['depth'] = ctd.depth * -1
+adcp = adcp.sortby('depth', ascending=False)
+ctd = ctd.sortby('depth', ascending=False)
+
+adcp['shear'] = np.hypot(adcp.u, adcp.v)
+import pump
+adcp['t90'] = pd.to_datetime('2008-Oct-29 22:15')
 xr.testing.assert_equal(ctd.time, adcp.time)
 #+END_SRC
 
@@ -632,7 +722,8 @@ def plot_2dspectrum(da, ax=None, dim=None, linthreshx=0.1, linscalex=0.05,
     if ax is None:
         ax = plt.gca()
 
-    spec = xrft.power_spectrum(da, dim=dim, detrend='constant', window=True, )
+    spec = xrft.power_spectrum(da, dim=dim, detrend='constant', window=True,
+                               density=True)
 
     if diff:
         spec = (2*np.pi * spec['freq_' + dim[0]])**2 * spec
@@ -655,55 +746,21 @@ f.savefig('images/temp/imgHqJpjd.png')
 #+CAPTION:
 [[file:images/temp/imgHqJpjd.png]]
 
-* xarray
+
 #+BEGIN_SRC jupyter-python :session py
-from xarray import DataArray
+adcp = adcp.dropna('depth', how='any')
+adcp['shear'] = adcp.u.differentiate('depth') + 1j * adcp.v.differentiate('depth')
+spec = xrft.power_spectrum(adcp.shear, dim=['depth'], density=True, detrend='linear', window=True)
 
-arr1 = DataArray(np.ones((2, 3)), dims=['x', 'y'],
-                 coords={'x': ['a', 'b'], 'y': ['a', 'b', 'c']})
-arr2 = DataArray(np.ones((3, 2)), dims=['x', 'y'],
-                 coords={'x': ['a', 'b', 'c'], 'y': ['a', 'b']})
-orig1, orig2 = xr.broadcast(arr1, arr2)
-new1 = arr2.broadcast_like(arr1)
-new2 = arr1.broadcast_like(arr2)
+plt.figure)(git
+(spec.coarsen(dict(freq_time=5, freq_depth=4), boundary='trim')
+ .mean().plot(norm=mpl.colors.LogNorm(), robust=True, cmap=mpl.cm.Reds))
+# f, ax = plt.subplots(1, 1, constrained_layout=True)
 
-assert orig1.identical(new1)
-assert orig2.identical(new2)
+# f.savefig('images/temp/imgeoNH8r.png')
 #+END_SRC
-
-#+RESULTS:
-:RESULTS:
-# [goto error]
-#+begin_example
-
-ValueErrorTraceback (most recent call last)
-<ipython-input-10-70b38e663461> in <module>
-      5 arr2 = DataArray(np.ones((3, 2)), dims=['x', 'y'],
-      6                  coords={'x': ['a', 'b', 'c'], 'y': ['a', 'b']})
-----> 7 orig1, orig2 = xr.broadcast(arr1, arr2)
-      8 new1 = arr2.broadcast_like(arr1)
-      9 new2 = arr1.broadcast_like(arr2)
-
-~/work/python/xarray/xarray/core/alignment.py in broadcast(exclude, *args)
-    525     result = []
-    526     for arg in args:
---> 527         result.append(_broadcast_helper(arg, exclude, dims_map, common_coords))
-    528
-    529     return tuple(result)
-
-~/work/python/xarray/xarray/core/alignment.py in _broadcast_helper(arg, exclude, dims_map, common_coords)
-    441         return _broadcast_dataset(arg)
-    442     else:
---> 443         raise ValueError('all input must be Dataset or DataArray objects')
-    444
-    445
-
-ValueError: all input must be Dataset or DataArray objects
-#+end_example
-:END:
-
 #+CAPTION:
-[[file:images/temp/imgh7XFl6.png]]
+[[file:images/temp/imgeoNH8r.png]]
 
 * read POP
 
@@ -738,3 +795,40 @@ def read_pop(files):
 
 #+CAPTION:
 [[file:$1]]
+
+* johnson
+#+BEGIN_SRC jupyter-python :session py
+import pump
+
+johnson = pump.obs.read_johnson('~/datasets/johnson-eq-pac-mean-adcp.cdf')
+johnson['b'] = (-9.81/1025) * johnson.rho
+
+lat = 0
+f, ax = plt.subplots(2, 1, constrained_layout=True)
+
+johnson.u.sel(latitude=lat).plot.contourf(ax=ax[0], cmap=mpl.cm.RdBu_r, levels=20)
+hc = johnson.rho.sel(latitude=lat).plot.contour(ax=ax[0], colors='k', levels=11)
+ax[0].clabel(hc, fmt='%.1f')
+
+N2 = johnson.b.differentiate('depth')
+N2.attrs['long_name'] = '$N^2$'
+N2.sel(latitude=lat).plot.contourf(ax=ax[1], cmap=mpl.cm.Blues, levels=20, vmin=0)
+johnson.u.sel(latitude=lat).plot.contour(ax=ax[1], levels=10, colors='k')
+
+f, ax = plt.subplots(3, 1, constrained_layout=True)
+(johnson.u
+ .sel(latitude=0)
+ .differentiate('depth')
+ .plot.contourf(ax=ax[0], robust=True, levels=12,
+                cbar_kwargs=dict(label='$u_z$')))
+
+(johnson.b
+ .differentiate('latitude')
+ .sel(latitude=0)
+ .plot.contourf(ax=ax[1], robust=True, levels=12, cbar_kwargs=dict(label='$b_y$')))
+
+(johnson.b
+ .differentiate('longitude')
+ .sel(latitude=0)
+ .plot.contourf(ax=ax[2], robust=True, levels=12, cbar_kwargs=dict(label='$b_x$')))
+#+END_SRC
