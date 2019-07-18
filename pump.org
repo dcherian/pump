@@ -524,6 +524,234 @@ Ri_binned = sp.stats.binned_statistic_2d(tmat,
 
 #+END_SRC
 
+** Simple models for MI
+
+#+NAME: estimate-terms
+#+BEGIN_SRC jupyter-python :results none
+def estimate_euc_depth_terms(ds):
+
+    ds.load()
+    ds['us'] = ds.u.isel(depth=0)
+    ds['ueuc'] = ds.u.interp(depth=ds.eucmax, longitude=ds.longitude)
+    ds['du'] = ds.us - ds.ueuc
+    ds.du.attrs['long_name'] = '$\Delta$u'
+
+    if 'dens' in ds:
+        ds['b'] = ds.dens * -9.81/1025 + 9.81
+        ds['bs'] = ds.b.isel(depth=0)
+        ds['beuc'] = ds.b.interp(depth=ds.eucmax, longitude=ds.longitude)
+        ds['db'] = ds.bs - ds.beuc
+        ds.db.attrs['long_name'] = '$\Delta$b'
+
+    return ds
+
+subset = (gcm1.annual.sel(latitude=0, method='nearest')
+          .assign_coords(latitude=0)
+          .squeeze()
+          .sel(depth=slice(0, -250)))
+subset['dens'] = pump.mdjwf.dens(subset.salt, subset.theta, subset.depth)
+subset['eucmax'] = pump.calc.get_euc_max(subset.u)
+
+subset = estimate_euc_depth_terms(subset)
+
+jra = (pump.obs.read_jra()
+       .sel(latitude=0, method='nearest')
+       .sel(time='1996')
+       .load())
+jra['tau'] = jra.Uwind.copy(
+    data=airsea.windstress.stress(np.hypot(jra.Uwind, jra.Vwind)))
+
+mean_jra = jra.mean('time')
+ssh = xr.open_mfdataset(pump.obs.root + 'make_TPOS_MITgcm/1996/SSH*.nc').zos
+
+johnson = (pump.obs.read_johnson()
+           .sel(latitude=0)
+           .rename({'rho': 'dens'}))
+johnson['eucmax'] = pump.get_euc_max(johnson.u)
+johnson = estimate_euc_depth_terms(johnson)
+
+# need to fill to the surface
+tao_adcp = pump.obs.read_tao_adcp().mean('time').bfill('depth')
+tao_adcp['eucmax'] = pump.get_euc_max(tao_adcp.u)
+tao_adcp = estimate_euc_depth_terms(tao_adcp)
+
+tao_ctd = (pump.obs.read_tao()
+           .sel(latitude=0, longitude=tao_adcp.longitude)
+           .mean('time')
+           .compute())
+tao_ctd['dens'] = pump.mdjwf.dens(tao_ctd.salt, tao_ctd.temp, tao_ctd.depth)
+tao_ctd['eucmax'] = tao_adcp.eucmax
+tao_ctd = estimate_euc_depth_terms(tao_ctd
+.sortby('depth')
+.interpolate_na('depth')
+.sortby('depth', ascending=False)
+.bfill('depth'))
+
+tao = xr.merge([tao_adcp[['us', 'ueuc', 'du']],
+                tao_ctd[['bs', 'beuc', 'db']]])
+#+END_SRC
+
+*** Simple Ri calculation
+
+Another way to do this is to think of Ri=0.5 or something far east (e..g. 195W). Given crude estimates of longitudinal changes in Δb, EUCmax depth etc. can we explain the drop in Ri to 0.25 by 170W?
+
+Use a bulk definition of Richardson number
+#+begin_export latex
+\begin{align}
+Ri &= \frac{Δb h}{Δu²} \\
+\log Ri &= \log Δb + \log h - 2 \log Δu \\
+\frac{1}{Ri} ∂_x Ri = \frac 1h ∂_xh + \frac{1}{Δb} ∂_x Δb - 2 \frac{1}{Δu} ∂_x Δu
+\end{align}
+#+end_export
+
+Let RHS =  α,
+#+begin_export latex
+\begin{align}
+\pp{Ri}{x} &= \Ri α \\
+\Ri_0 + \pp{Ri}{x} Δx &= 0.25 \\
+\Ri_0 + \Ri_0 α Δx &= 0.25 \\
+α &= \frac{(0.25/\Ri_0 - 1)}{Δx} \\
+\end{align}
+#+end_export
+
+$\Ri_0$ is $\Ri$ at 195W = 0.5, Δx = (170W-195W) = 25° ⇒ α = -1/50° approx.
+
+1. I am averaging daily TAO mooring data over all time. Is this a good idea?
+
+*** Simple model
+
+#+begin_export latex
+\Ri = \frac{\bar{w} h Q}{\left(g(hη_x + Δb/2 h_x) + τ_w \right)²}
+#+end_export
+
+**** term magnitudes
+
+We haven't saved SSH!
+
+#+CALL: estimate-terms()
+#+BEGIN_SRC jupyter-python :file images/eq-simple-model-terms.png
+def plot_eucmax(ax):
+    heuc = eucmax.plot(ax=ax, x='longitude', color='k', lw=1, _labels=False)
+    dcpy.plots.annotate_end(heuc[0], 'eucmax')
+
+def plot_line(ax, da, label):
+    hu = da.plot(ax=ax, x='longitude')
+    dcpy.plots.annotate_end(hu[0], label)
+
+f, axx = plt.subplots(4, 2, sharex=True, constrained_layout=True)
+ax = dict(zip(['u', 'b', 'du', 'db', 'h', 'ssh', 'Q', 'tau'], axx.flat))
+# ax['Q'] = ax['tau'].twinx()
+
+label_kwargs = dict(fmt='%.1f', colors='k', fontsize='smaller')
+
+hu = subset.u.plot.contourf(levels=11, ax=ax['u'], y='depth',
+                            cbar_kwargs={'orientation': 'horizontal'})
+#ax['u'].clabel(hu, **label_kwargs)
+
+hb = (subset.b).plot.contourf(levels=11, ax=ax['b'], y='depth',
+                              cbar_kwargs={'label': 'b+9.81',
+                                           'orientation': 'horizontal'})
+# ax['b'].clabel(hb, **label_kwargs)
+heuc = subset.eucmax.plot(ax=ax['b'], x='longitude', color='k', lw=1, _labels=False)
+dcpy.plots.annotate_end(heuc[0], 'eucmax')
+
+[plot_eucmax(aa) for aa in [ax['u'], ax['b']]]
+
+[plot_line(ax['du'], da, label)
+ for (da, label) in zip([us, ueuc, du],
+                        ['$u_{surf}$', '$u_{euc}$', '$\Delta u$'])]
+
+[plot_line(ax['db'], da, label)
+ for (da, label) in zip([bs, beuc, db],
+                        ['$b_{surf}$', '$b_{euc}$', '$\Delta b$'])]
+
+dcpy.plots.liney(0, ax=[ax['du'], ax['db']])
+
+def mark_median(ax, hxmed):
+    hxmed = dhdx.median()
+    dcpy.plots.liney(hxmed, ax=ax)
+    ax.set_yticks(ax.get_yticks() + [hxmed])
+
+eucmax.plot(ax=ax['h'])
+johnson.eucmax.plot(ax=ax['h'])
+adcp.eucmax.plot(ax=ax['h'], marker='o')
+ax['h'].set_ylabel('$h$')
+
+ax['hx'] = ax['h'].twinx()
+dhdx = (eucmax.rolling(longitude=100).mean()
+        .differentiate('longitude') / 110e3)[10:-10]
+(dhdx.plot(ax=ax['hx'], x='longitude'))
+mark_median(ax['hx'], dhdx.median())
+
+dhdx = (johnson.eucmax.differentiate('longitude')/110e3)
+(dhdx.plot(ax=ax['hx'], x='longitude'))
+mark_median(ax['hx'], dhdx.median())
+
+dhdx = (adcp.eucmax.differentiate('longitude')/110e3)
+(dhdx.plot(ax=ax['hx'], x='longitude', marker='o'))
+mark_median(ax['hx'], dhdx.median())
+
+ax['hx'].set_ylabel('$h_x$')
+
+mean_ssh = (ssh.sel(latitude=0).mean('time')).load()
+mean_ssh.attrs['long_name'] = 'ssh'
+mean_ssh.plot(ax=ax['ssh'])
+
+ax['sshx'] = ax['ssh'].twinx()
+dsshdx = (mean_ssh.rolling(longitude=20).mean()
+          .differentiate('longitude') / 110e3)[10:-10]
+(dsshdx.plot(ax=ax['sshx'], x='longitude', _labels=False))
+sshxmed = dsshdx.median()
+dcpy.plots.liney(sshxmed, ax=ax['sshx'])
+ax['sshx'].set_yticks(ax['sshx'].get_yticks() + [sshxmed])
+ax['sshx'].set_ylabel('ssh$_x$')
+
+subset.oceQnet.plot(ax=ax['Q'])
+
+mean_jra.tau.plot(ax=ax['tau'], x='longitude')
+[aa.set_title('') for aa in ax.values()]
+
+axx[0,0].set_xlim([-230, -95])
+f.suptitle('latitude=0, 1996 annual mean')
+f.set_size_inches((10, 8))
+#+END_SRC
+
+ #+RESULTS:
+ [[file:images/eq-simple-model-terms.png]]
+
+#+BEGIN_SRC jupyter-python
+limits=dict(vmin=-5e-7, vmax=5e-7, cmap=mpl.cm.RdBu_r, ylim=[-250, 0])
+
+f, ax = plt.subplots(3, 1, constrained_layout=True, sharex=True, sharey=True)
+(subset.u.differentiate('longitude')/110e3).plot(
+    ax=ax[0], **limits, add_colorbar=False)
+
+(gcm1.annual.v.differentiate('latitude')/110e3).sel(latitude=0, method='nearest').plot(
+    ax=ax[1], **limits, add_colorbar=False)
+
+(-1*subset.w.differentiate('depth')).plot(
+    ax=ax[2], **limits, cbar_kwargs=dict(orientation='horizontal'))
+
+[plot_eucmax(aa) for aa in ax]
+[aa.set_title('') for aa in ax[1:]]
+[aa.set_xlabel('') for aa in ax[:-1]]
+#+END_SRC
+#+RESULTS:
+:RESULTS:
+| Text | (0.5 0 ) | Text | (0.5 0 ) |
+[[file:./.ob-jupyter/d24f4d57382966c72d47eadb7d817edffa521c5d.png]]
+:END:
+
+#+BEGIN_SRC jupyter-python
+johnson.u.plot(y='depth')
+johnson.eucmax.plot(color='k')
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+| <matplotlib.lines.Line2D | at | 0x2af69e8b15c0> |
+[[file:./.ob-jupyter/41d85dc5e7e3f620c92e7a0e32dfb1d2cdc839ae.png]]
+:END:
 
 * Upper Core Layer
 
@@ -532,11 +760,11 @@ Ri_binned = sp.stats.binned_statistic_2d(tmat,
 
 ** An example
 
-
 #+NAME: extract-ucl
 #+BEGIN_SRC jupyter-python :results none
 if 'gcm1' not in locals():
-    gcm1 = pump.model('/glade/p/nsc/ncgd0043/TPOS_MITgcm_1_hb/HOLD/')
+    gcm1 = pump.model('/glade/p/nsc/ncgd0043/TPOS_MITgcm_1_hb/HOLD/',
+                      name='gcm1', full=True)
 
 extract = (gcm1.full.sel(time=slice('1995-11-15', '1995-12-10'),
                          depth=slice(0, -200),
@@ -790,11 +1018,6 @@ def read_pop(files):
 
     return ds
 #+END_SRC
-
-#+RESULTS:
-
-#+CAPTION:
-[[file:$1]]
 
 * johnson
 #+BEGIN_SRC jupyter-python :session py
