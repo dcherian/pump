@@ -249,12 +249,17 @@ def get_tiw_phase(v, debug=False):
         coord="time",
         freq=1 / 10.0,
         cycles_per="D",
+        method='pad',
+        num_discard=0,
     )
+
+    if v.count() == 0:
+        raise ValueError('No good data in filtered depth-averaged v.')
 
     v.attrs["long_name"] = "v: (10, 80m) avg, 10d lowpass"
 
     if v.ndim == 1:
-        v = v.expand_dims("new_dim")
+        v = v.expand_dims("new_dim").copy()
         unstack = False
     elif v.ndim > 2:
         unstack = True
