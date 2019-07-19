@@ -31,13 +31,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seawater as sw
 import xarray as xr
-# import xmitgcm
 
 # import hvplot.xarray
 
 import dcpy
-import facetgrid
 import pump
+
+# import facetgrid
 
 mpl.rcParams['savefig.dpi'] = 300
 mpl.rcParams['savefig.bbox'] = 'tight'
@@ -414,7 +414,6 @@ for label, group in grouped:
 
 ** TAO daily dataset
 ** TAO hourly dataset
-
 #+BEGIN_SRC jupyter-python :file images/tao-marginal-stability-hourly.png
 adcp = pump.obs.read_tao_adcp(freq='hr')
 temp = pump.obs.read_eq_tao_temp_hr()
@@ -526,49 +525,54 @@ Ri_binned = sp.stats.binned_statistic_2d(tmat,
 
 ** Simple models for MI
 
-#+NAME: estimate-terms
+1. I am averaging daily TAO mooring data over all time. Is this a good idea?
+
+#+NAME: estimate-Ri-diagnosis-terms
 #+BEGIN_SRC jupyter-python :results none
 def estimate_euc_depth_terms(ds):
 
     ds.load()
     ds['us'] = ds.u.isel(depth=0)
-    ds['ueuc'] = ds.u.interp(depth=ds.eucmax, longitude=ds.longitude)
+    ds['ueuc'] = ds.u.sel(depth=ds.eucmax, longitude=ds.longitude, method='nearest')
     ds['du'] = ds.us - ds.ueuc
     ds.du.attrs['long_name'] = '$\Delta$u'
 
     if 'dens' in ds:
-        ds['b'] = ds.dens * -9.81/1025 + 9.81
+        ds['b'] = (ds.dens-1025) * -9.81/1025
         ds['bs'] = ds.b.isel(depth=0)
-        ds['beuc'] = ds.b.interp(depth=ds.eucmax, longitude=ds.longitude)
+        ds['beuc'] = ds.b.sel(depth=ds.eucmax, longitude=ds.longitude, method='nearest')
         ds['db'] = ds.bs - ds.beuc
         ds.db.attrs['long_name'] = '$\Delta$b'
 
     return ds
 
-subset = (gcm1.annual.sel(latitude=0, method='nearest')
-          .assign_coords(latitude=0)
-          .squeeze()
-          .sel(depth=slice(0, -250)))
-subset['dens'] = pump.mdjwf.dens(subset.salt, subset.theta, subset.depth)
-subset['eucmax'] = pump.calc.get_euc_max(subset.u)
+if 'gcm1' in locals():
+    print('skipping gcm1, jra, ssh')
+    subset = (gcm1.annual.sel(latitude=0, method='nearest')
+              .assign_coords(latitude=0)
+              .squeeze()
+              .sel(depth=slice(0, -250)))
+    subset['dens'] = pump.mdjwf.dens(subset.salt, subset.theta, subset.depth)
+    subset['eucmax'] = pump.calc.get_euc_max(subset.u)
 
-subset = estimate_euc_depth_terms(subset)
+    subset = estimate_euc_depth_terms(subset)
 
-jra = (pump.obs.read_jra()
-       .sel(latitude=0, method='nearest')
-       .sel(time='1996')
-       .load())
-jra['tau'] = jra.Uwind.copy(
-    data=airsea.windstress.stress(np.hypot(jra.Uwind, jra.Vwind)))
+    jra = (pump.obs.read_jra()
+           .sel(latitude=0, method='nearest')
+           .sel(time='1996')
+           .load())
+    jra['tau'] = jra.Uwind.copy(
+        data=airsea.windstress.stress(np.hypot(jra.Uwind, jra.Vwind)))
 
-mean_jra = jra.mean('time')
-ssh = xr.open_mfdataset(pump.obs.root + 'make_TPOS_MITgcm/1996/SSH*.nc').zos
+    mean_jra = jra.mean('time')
+    ssh = xr.open_mfdataset(pump.obs.root + 'make_TPOS_MITgcm/1996/SSH*.nc').zos
 
 johnson = (pump.obs.read_johnson()
            .sel(latitude=0)
            .rename({'rho': 'dens'}))
 johnson['eucmax'] = pump.get_euc_max(johnson.u)
 johnson = estimate_euc_depth_terms(johnson)
+johnson.attrs['name'] = 'Johnson'
 
 # need to fill to the surface
 tao_adcp = pump.obs.read_tao_adcp().mean('time').bfill('depth')
@@ -579,21 +583,26 @@ tao_ctd = (pump.obs.read_tao()
            .sel(latitude=0, longitude=tao_adcp.longitude)
            .mean('time')
            .compute())
-tao_ctd['dens'] = pump.mdjwf.dens(tao_ctd.salt, tao_ctd.temp, tao_ctd.depth)
 tao_ctd['eucmax'] = tao_adcp.eucmax
-tao_ctd = estimate_euc_depth_terms(tao_ctd
-.sortby('depth')
-.interpolate_na('depth')
-.sortby('depth', ascending=False)
-.bfill('depth'))
+tao_ctd['dens'] = pump.mdjwf.dens(np.array(35.0), tao_ctd.temp, tao_ctd.depth)
 
-tao = xr.merge([tao_adcp[['us', 'ueuc', 'du']],
+tao_ctd = estimate_euc_depth_terms(tao_ctd
+                                   .sortby('depth')
+                                   .interpolate_na('depth')
+                                   .sortby('depth', ascending=False)
+                                   .bfill('depth'))
+
+tao.attrs['name'] = 'TAO'
+tao = xr.merge([tao_adcp[['us', 'ueuc', 'du', 'eucmax']],
                 tao_ctd[['bs', 'beuc', 'db']]])
 #+END_SRC
 
 *** Simple Ri calculation
 
-Another way to do this is to think of Ri=0.5 or something far east (e..g. 195W). Given crude estimates of longitudinal changes in Δb, EUCmax depth etc. can we explain the drop in Ri to 0.25 by 170W?
+Another way to do this is to think of Ri=0.5 or something far east (e..g. 195W in the TAO image). Given crude estimates of longitudinal changes in Δb, EUCmax depth etc. can we explain the drop in Ri to 0.25 by 170W?
+
+#+CAPTION: Ri estimated using hourly TAO data.
+[[file:images/tao-marginal-stability-hourly.png]]
 
 Use a bulk definition of Richardson number
 #+begin_export latex
@@ -616,7 +625,140 @@ Let RHS =  α,
 
 $\Ri_0$ is $\Ri$ at 195W = 0.5, Δx = (170W-195W) = 25° ⇒ α = -1/50° approx.
 
-1. I am averaging daily TAO mooring data over all time. Is this a good idea?
+1. Johnson dataset don't show marginal stability at 0.25. So the estimates of Δu, Δb are probably wrong. But it looks like this dataset represents marginal stability at /bulk/ Ri ≅ 1.
+2. And there is a big change between 200W and 140W
+3. This big change is largely from Δu
+
+#+call: estimate-Ri-diagnosis-terms()
+#+NAME: Ri-diagnosis-johnson
+#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-johnson.png
+with xr.set_options(keep_attrs=False):
+    johnson['h'] = (johnson.eucmax)
+    johnson['h'].attrs['long_name'] = 'h'
+    johnson['Ri'] = johnson.db * np.abs(johnson.h) / (johnson.du**2)
+
+    tao['h'] = tao.eucmax
+    tao['h'].attrs['long_name'] = 'h'
+    tao['Ri'] = tao.db * np.abs(tao.h) / (tao.du ** 2)
+
+
+def plot_bulk_Ri_diagnosis(ds, **kwargs):
+
+    def plot_ri_contrib(ax1, ax2, v, Ri, factor=1, **kwargs):
+        #v2 = (v.copy(deep=True)
+        #      .rolling(longitude=3, min_periods=1, center=True)
+        #      .mean())
+        v2 = v
+        dvdx = v2.differentiate('longitude')
+        # dvdx = v.diff('longitude') / v.longitude.diff('longitude')
+        # dvdx = dvdx.reindex(longitude=v.longitude)
+        per = factor * dvdx / v2
+        hl = per.plot(ax=ax2, x='longitude',
+                      label=f'{factor}/{v.name} $∂_x${v.name}',
+                      ,**kwargs)
+        v2.plot(ax=ax1, x='longitude', color=hl[0].get_color(), **kwargs)
+        ax1.set_xlabel('')
+        ax1.set_title('')
+
+        return per
+
+    f, axx = plt.subplots(7, 1, constrained_layout=True, sharex=True,
+                          gridspec_kw={'height_ratios': [1, 1, 1, 1, 1, 1, 2]})
+    ax = dict(zip(['Ri', 'h', 'du', 'db', 'u', 'b'], axx[:-1]))
+
+    factor = dict(zip(ax.keys(), [1, 1, -2, 1]))
+    rhs = xr.zeros_like(ds.h)
+    for var in ax.keys():
+        if var not in ['u', 'b']:
+            per = plot_ri_contrib(ax[var], axx[-1], ds[var], ds.Ri, factor[var])
+        if var != 'Ri':
+            rhs += per
+
+    for vv in ['u', 'b']:
+        for vvar in ['s', 'euc']:
+            var = vv + vvar
+            ds[var].differentiate('longitude').plot(ax=ax[vv],
+                                                    label=f'$∂_x{vv}_{{{vvar}}}$',
+                                                    ,**kwargs)
+            ax[vv].legend()
+            ax[vv].set_title('')
+            ax[vv].set_xlabel('')
+            ax[vv].set_ylabel('')
+            dcpy.plots.liney(0, ax[vv])
+
+    ax['u'].set_ylim([-0.02, 0.02])
+    ax['b'].set_ylim([-0.0005, 0.0005])
+
+    rhs.plot(ax=axx[-1], x='longitude', color='k', label='RHS')
+    ax['Ri'].set_yscale('log')
+    ax['Ri'].set_yticks([0.25, 0.5, 1, 5, 10]);
+    ax['Ri'].grid(True)
+
+    axx[-1].set_ylabel('Fractional changes')
+    axx[-1].legend()
+    dcpy.plots.liney(0, ax=axx[-1])
+
+    name = ds.attrs['name']
+    axx[0].set_title(f"latitude = 0, {name} dataset")
+    f.set_size_inches(8, 10)
+
+plot_bulk_Ri_diagnosis(johnson)
+#+END_SRC
+
+#+RESULTS: Ri-diagnosis-johnson
+[[file:images/Ri-diagnosis-johnson.png]]
+
+With the Johnson data, it looks like the longitudinal variation in Δu is what dominates the reduction in Ri. This seems to be mostly due to an accelerating EUC but also due to a reversal in sign of surface current starting at 195W.
+
+#+BEGIN_SRC jupyter-python :file images/johnson-eq-section.png
+f, ax = plt.subplots(2, 1, constrained_layout=True)
+plt.sca(ax[0])
+johnson.u.plot()
+johnson.u.plot.contour(levels=10, colors='k', linewidths=1)
+johnson.h.plot(color='w', linewidth=2, linestyle='--')
+
+plt.sca(ax[1])
+(johnson.b-johnson.beuc).plot(cbar_kwargs={'label': '$b - b_{euc}$'})
+johnson.u.plot.contour(levels=10, colors='k', linewidths=1)
+johnson.h.plot(color='w', linewidth=2, linestyle='--')
+plt.gcf().set_size_inches(8, 8)
+
+ax[0].set_title('Johnson mean')
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: Text(0.5, 1.0, 'Johnson mean')
+[[file:images/johnson-eq-section.png]]
+:END:
+
+#+BEGIN_SRC jupyter-python
+v = ds.Ri;
+v2 = v.rolling(longitude=3,center=True, min_periods=1).mean()
+
+f, ax = plt.subplots(2, 1)
+v.plot(ax=ax[0])
+v2.plot(ax=ax[0])
+
+(v.differentiate('longitude')).plot(ax=ax[1])
+(v2.differentiate('longitude')).plot(ax=ax[1])
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+| <matplotlib.lines.Line2D | at | 0x2b9e2852b630> |
+[[file:./.ob-jupyter/b33f66676dbabe44345a64e27aa3bd23edb28892.png]]
+:END:
+
+
+Similar result holds for TAO though errors are larger. Why is that?
+
+#+BEGIN_SRC jupyter-python :file Ri-diagnosis-tao.png
+plot_bulk_Ri_diagnosis(tao)
+#+END_SRC
+
+#+RESULTS:
+[[file:Ri-diagnosis-tao.png]]
 
 *** Simple model
 
