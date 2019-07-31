@@ -5,6 +5,8 @@ import pandas as pd
 import tqdm
 import xarray as xr
 
+from . import mdjwf
+
 from .constants import *
 
 root = '/glade/p/nsc/ncgd0043/'
@@ -26,7 +28,7 @@ def read_johnson(filename=root+'/obs/johnson-eq-pac-adcp.cdf'):
                      'ZDEP1_50': 'depth',
                      'POTEMPM': 'temp',
                      'SALINITYM': 'salt',
-                     'SIGMAM': 'rho',
+                     'SIGMAM': 'dens',
                      'UM': 'u',
                      'XLONedges': 'lon_edges'}))
 
@@ -170,6 +172,8 @@ def read_tao(domain=None):
     for vv in tao:
         tao[vv] = tao[vv].where(tao[vv] < 1e4)
         tao[vv].attrs['long_name'] = ''
+
+    tao['dens'] = mdjwf.dens(tao.salt, tao.temp, tao.depth)
 
     if domain is not None:
         return tao.sel(**domain)
