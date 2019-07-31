@@ -119,26 +119,38 @@ gcm1 = pump.model('../glade/TPOS_MITgcm_1/HOLD/',
 #+END_SRC
 
 #+RESULTS: read-gcm1
+:RESULTS:
+# [goto error]
 #+begin_example
-metrics files not available.
-/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: In xarray version 0.13 `auto_combine` will be deprecated.
-  coords=coords)
-/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: The datasets supplied have global dimension coordinates. You may want
-to use the new `combine_by_coords` function (or the
-`combine='by_coords'` option to `open_mfdataset` to order the datasets
-before concatenation. Alternatively, to continue concatenating based
-on the order the datasets are supplied in in future, please use the
-new `combine_nested` function (or the `combine='nested'` option to
-open_mfdataset).
-  coords=coords)
+---------------------------------------------------------------------------
+OSError                                   Traceback (most recent call last)
+<ipython-input-53-2a69fa09d237> in <module>
+      1 gcm1 = pump.model('../glade/TPOS_MITgcm_1/HOLD/',
+----> 2                   name='gcm1', full=False, budget=False)
+
+~/pump/pump/model/model.py in __init__(self, dirname, name, kind, full, budget)
+     52         try:
+     53             self.annual = (xr.open_mfdataset(
+---> 54                 self.dirname + '/obs_subset/annual-mean*.nc')
+     55                             .squeeze())
+     56         except FileNotFoundError:
+
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py in open_mfdataset(paths, chunks, concat_dim, compat, preprocess, engine, lock, data_vars, coords, combine, autoclose, parallel, **kwargs)
+    743
+    744     if not paths:
+--> 745         raise IOError('no files to open')
+    746
+    747     # If combine='by_coords' then this is unnecessary, but quick.
+
+OSError: no files to open
 #+end_example
+:END:
 
 * gyaan
 
 ** Marginal instability
 
 1. In marginally unstable systems, Ri tends to cluster around 1/4 citep:Smyth2019 : this is /scale invariance/ --- This is why the usual averaging bias in Ri estimates is not a problem at the equator citep:Pham2017. This behaviour is seen for stratified turbulence forced by a mean shear that varies slowly on the time scale of the instabilities.
-
 2. cite:Smyth2013a grid T, ADCP on 5m grid and then differentiate. Use N2 = g α T_z.
 
 ** TIWs
@@ -156,7 +168,6 @@ Inoue papers:
 Ryan:
 - Zonal shear is the main thing. Meridional shear is not so important.
 -
-
 
 * Data locations                                                   :noexport:
 
@@ -396,7 +407,6 @@ Large & Gent: Pacanowski & Philander scheme has much higher diffusivities becaus
 
 * TAO
 * Marginal stability
-
 ** groupby_bins
 #+BEGIN_SRC jupyter-python :session py
 da = xr.DataArray([[0,1],[2,3]],
@@ -532,21 +542,31 @@ Ri_binned = sp.stats.binned_statistic_2d(tmat,
 def estimate_euc_depth_terms(ds):
 
     ds.load()
-    ds['us'] = ds.u.isel(depth=0)
-    ds['ueuc'] = ds.u.sel(depth=ds.eucmax, longitude=ds.longitude, method='nearest')
-    ds['du'] = ds.us - ds.ueuc
-    ds.du.attrs['long_name'] = '$\Delta$u'
+
+    ds['h'] = (ds.eucmax)
+    ds['h'].attrs['long_name'] = '$h$'
+
+    if 'u' in ds:
+        ds['us'] = ds.u.isel(depth=0)
+        ds['ueuc'] = ds.u.interp(depth=ds.eucmax, longitude=ds.longitude, method='linear')
+        ds['du'] = ds.us - ds.ueuc
+        ds.du.attrs['long_name'] = '$\Delta$u'
 
     if 'dens' in ds:
         ds['b'] = (ds.dens-1025) * -9.81/1025
         ds['bs'] = ds.b.isel(depth=0)
-        ds['beuc'] = ds.b.sel(depth=ds.eucmax, longitude=ds.longitude, method='nearest')
+        ds['beuc'] = ds.b.interp(depth=ds.eucmax, longitude=ds.longitude, method='linear')
         ds['db'] = ds.bs - ds.beuc
         ds.db.attrs['long_name'] = '$\Delta$b'
+
+    if 'db' in ds and 'du' in ds and 'h' in ds:
+        with xr.set_options(keep_attrs=False):
+            ds['Ri'] = ds.db * np.abs(ds.h) / (ds.du**2)
 
     return ds
 
 if 'gcm1' in locals():
+    import airsea
     print('skipping gcm1, jra, ssh')
     subset = (gcm1.annual.sel(latitude=0, method='nearest')
               .assign_coords(latitude=0)
@@ -556,6 +576,7 @@ if 'gcm1' in locals():
     subset['eucmax'] = pump.calc.get_euc_max(subset.u)
 
     subset = estimate_euc_depth_terms(subset)
+    subset.attrs['name'] = 'gcm 1m 1996 mean'
 
     jra = (pump.obs.read_jra()
            .sel(latitude=0, method='nearest')
@@ -568,8 +589,7 @@ if 'gcm1' in locals():
     ssh = xr.open_mfdataset(pump.obs.root + 'make_TPOS_MITgcm/1996/SSH*.nc').zos
 
 johnson = (pump.obs.read_johnson()
-           .sel(latitude=0)
-           .rename({'rho': 'dens'}))
+           .sel(latitude=0))
 johnson['eucmax'] = pump.get_euc_max(johnson.u)
 johnson = estimate_euc_depth_terms(johnson)
 johnson.attrs['name'] = 'Johnson'
@@ -577,27 +597,27 @@ johnson.attrs['name'] = 'Johnson'
 # need to fill to the surface
 tao_adcp = pump.obs.read_tao_adcp().mean('time').bfill('depth')
 tao_adcp['eucmax'] = pump.get_euc_max(tao_adcp.u)
-tao_adcp = estimate_euc_depth_terms(tao_adcp)
 
 tao_ctd = (pump.obs.read_tao()
            .sel(latitude=0, longitude=tao_adcp.longitude)
+           .drop(['u', 'v'])
            .mean('time')
            .compute())
 tao_ctd['eucmax'] = tao_adcp.eucmax
 tao_ctd['dens'] = pump.mdjwf.dens(np.array(35.0), tao_ctd.temp, tao_ctd.depth)
+tao_ctd = (tao_ctd
+           .sortby('depth')
+           .interpolate_na('depth')
+           .sortby('depth', ascending=False)
+           .bfill('depth'))
 
-tao_ctd = estimate_euc_depth_terms(tao_ctd
-                                   .sortby('depth')
-                                   .interpolate_na('depth')
-                                   .sortby('depth', ascending=False)
-                                   .bfill('depth'))
-
+tao = xr.merge([estimate_euc_depth_terms(tao_adcp)[['us', 'ueuc', 'du', 'eucmax']],
+                estimate_euc_depth_terms(tao_ctd)[['bs', 'beuc', 'db']]])
+tao = estimate_euc_depth_terms(tao)
 tao.attrs['name'] = 'TAO'
-tao = xr.merge([tao_adcp[['us', 'ueuc', 'du', 'eucmax']],
-                tao_ctd[['bs', 'beuc', 'db']]])
 #+END_SRC
 
-*** Simple Ri calculation
+*** Fractional contributions to bulk Ri
 
 Another way to do this is to think of Ri=0.5 or something far east (e..g. 195W in the TAO image). Given crude estimates of longitudinal changes in Δb, EUCmax depth etc. can we explain the drop in Ri to 0.25 by 170W?
 
@@ -629,85 +649,6 @@ $\Ri_0$ is $\Ri$ at 195W = 0.5, Δx = (170W-195W) = 25° ⇒ α = -1/50° approx
 2. And there is a big change between 200W and 140W
 3. This big change is largely from Δu
 
-#+call: estimate-Ri-diagnosis-terms()
-#+NAME: Ri-diagnosis-johnson
-#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-johnson.png
-with xr.set_options(keep_attrs=False):
-    johnson['h'] = (johnson.eucmax)
-    johnson['h'].attrs['long_name'] = 'h'
-    johnson['Ri'] = johnson.db * np.abs(johnson.h) / (johnson.du**2)
-
-    tao['h'] = tao.eucmax
-    tao['h'].attrs['long_name'] = 'h'
-    tao['Ri'] = tao.db * np.abs(tao.h) / (tao.du ** 2)
-
-
-def plot_bulk_Ri_diagnosis(ds, **kwargs):
-
-    def plot_ri_contrib(ax1, ax2, v, Ri, factor=1, **kwargs):
-        #v2 = (v.copy(deep=True)
-        #      .rolling(longitude=3, min_periods=1, center=True)
-        #      .mean())
-        v2 = v
-        dvdx = v2.differentiate('longitude')
-        # dvdx = v.diff('longitude') / v.longitude.diff('longitude')
-        # dvdx = dvdx.reindex(longitude=v.longitude)
-        per = factor * dvdx / v2
-        hl = per.plot(ax=ax2, x='longitude',
-                      label=f'{factor}/{v.name} $∂_x${v.name}',
-                      ,**kwargs)
-        v2.plot(ax=ax1, x='longitude', color=hl[0].get_color(), **kwargs)
-        ax1.set_xlabel('')
-        ax1.set_title('')
-
-        return per
-
-    f, axx = plt.subplots(7, 1, constrained_layout=True, sharex=True,
-                          gridspec_kw={'height_ratios': [1, 1, 1, 1, 1, 1, 2]})
-    ax = dict(zip(['Ri', 'h', 'du', 'db', 'u', 'b'], axx[:-1]))
-
-    factor = dict(zip(ax.keys(), [1, 1, -2, 1]))
-    rhs = xr.zeros_like(ds.h)
-    for var in ax.keys():
-        if var not in ['u', 'b']:
-            per = plot_ri_contrib(ax[var], axx[-1], ds[var], ds.Ri, factor[var])
-        if var != 'Ri':
-            rhs += per
-
-    for vv in ['u', 'b']:
-        for vvar in ['s', 'euc']:
-            var = vv + vvar
-            ds[var].differentiate('longitude').plot(ax=ax[vv],
-                                                    label=f'$∂_x{vv}_{{{vvar}}}$',
-                                                    ,**kwargs)
-            ax[vv].legend()
-            ax[vv].set_title('')
-            ax[vv].set_xlabel('')
-            ax[vv].set_ylabel('')
-            dcpy.plots.liney(0, ax[vv])
-
-    ax['u'].set_ylim([-0.02, 0.02])
-    ax['b'].set_ylim([-0.0005, 0.0005])
-
-    rhs.plot(ax=axx[-1], x='longitude', color='k', label='RHS')
-    ax['Ri'].set_yscale('log')
-    ax['Ri'].set_yticks([0.25, 0.5, 1, 5, 10]);
-    ax['Ri'].grid(True)
-
-    axx[-1].set_ylabel('Fractional changes')
-    axx[-1].legend()
-    dcpy.plots.liney(0, ax=axx[-1])
-
-    name = ds.attrs['name']
-    axx[0].set_title(f"latitude = 0, {name} dataset")
-    f.set_size_inches(8, 10)
-
-plot_bulk_Ri_diagnosis(johnson)
-#+END_SRC
-
-#+RESULTS: Ri-diagnosis-johnson
-[[file:images/Ri-diagnosis-johnson.png]]
-
 With the Johnson data, it looks like the longitudinal variation in Δu is what dominates the reduction in Ri. This seems to be mostly due to an accelerating EUC but also due to a reversal in sign of surface current starting at 195W.
 
 #+BEGIN_SRC jupyter-python :file images/johnson-eq-section.png
@@ -732,33 +673,75 @@ ax[0].set_title('Johnson mean')
 [[file:images/johnson-eq-section.png]]
 :END:
 
+**** testing discretization errors
+
+Looks like the best way is to calculate $∂/∂x(log(a))$ instead of $1/a  ∂a/∂x$.
 #+BEGIN_SRC jupyter-python
-v = ds.Ri;
-v2 = v.rolling(longitude=3,center=True, min_periods=1).mean()
+xr.testing.assert_allclose(
+    np.log10(johnson.Ri).differentiate('longitude'),
+    (np.log10(johnson.db).differentiate('longitude')
+     + np.log10(np.abs(johnson.h)).differentiate('longitude')
+     - 2 * np.log10(np.abs(johnson.du)).differentiate('longitude')))
 
-f, ax = plt.subplots(2, 1)
-v.plot(ax=ax[0])
-v2.plot(ax=ax[0])
+def diff(a):
+    return a.diff('longitude')/a.longitude.diff('longitude')
 
-(v.differentiate('longitude')).plot(ax=ax[1])
-(v2.differentiate('longitude')).plot(ax=ax[1])
+def fraction_diff(a):
+    return np.log(np.abs(a)).differentiate('longitude')
+
+xr.testing.assert_allclose(
+    fraction_diff(johnson.Ri),
+    fraction_diff(johnson.h) + fraction_diff(johnson.db) - 2 * fraction_diff(johnson.du)
+)
+
+# new_Ri = johnson.Ri.copy(deep=True)
+# new_Ri[0] = (new_Ri[0] + new_Ri[1])/2
+# new_Ri[-1] = (new_Ri[-2] + new_Ri[-1])/2
+# xr.testing.assert_allclose(
+#     diff(np.log(johnson.Ri)),
+#     1/new_Ri * diff(johnson.Ri)
+# )
+#+END_SRC
+
+#+RESULTS:
+
+**** Johnson dataset
+#+call: estimate-Ri-diagnosis-terms()
+#+NAME: Ri-diagnosis-johnson
+#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-johnson.png
+pump.plot.plot_bulk_Ri_diagnosis(johnson)
+#+END_SRC
+
+#+RESULTS: Ri-diagnosis-johnson
+[[file:images/Ri-diagnosis-johnson.png]]
+
+**** TAO
+
+Similar result holds for TAO!
+
+#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-tao.png
+pump.plot.plot_bulk_Ri_diagnosis(tao)
+#+END_SRC
+
+#+RESULTS:
+[[file:images/Ri-diagnosis-tao.png]]
+
+**** gcm1
+#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-gcm1.png
+smooth = subset.rolling(longitude=100, center=True, min_periods=1).mean()
+smooth.attrs = subset.attrs
+f, ax = pump.plot.plot_bulk_Ri_diagnosis(smooth)
+pump.plot.plot_bulk_Ri_diagnosis(johnson, f, ax, marker='^', ls='none')
+pump.plot.plot_bulk_Ri_diagnosis(tao, f, ax, marker='o', ls='none')
+ax['Ri'].legend(labels=['gcm1', 'johnson', 'TAO'], ncol=3, loc='upper right')
 #+END_SRC
 
 #+RESULTS:
 :RESULTS:
-| <matplotlib.lines.Line2D | at | 0x2b9e2852b630> |
-[[file:./.ob-jupyter/b33f66676dbabe44345a64e27aa3bd23edb28892.png]]
+: <matplotlib.legend.Legend at 0x2b6760847b00>
+[[file:images/Ri-diagnosis-gcm1.png]]
 :END:
 
-
-Similar result holds for TAO though errors are larger. Why is that?
-
-#+BEGIN_SRC jupyter-python :file Ri-diagnosis-tao.png
-plot_bulk_Ri_diagnosis(tao)
-#+END_SRC
-
-#+RESULTS:
-[[file:Ri-diagnosis-tao.png]]
 
 *** Simple model
 
