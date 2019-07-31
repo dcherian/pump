@@ -58,17 +58,19 @@ def _get_max(var, dim="depth"):
     return var[dim][da].drop(dim)
 
 
-def get_euc_max(u, kind="data"):
+def get_euc_max(u, kind="model"):
     """ Given a u field, returns depth of max speed i.e. EUC maximum. """
 
     if kind == "data" or np.any(np.isnan(u)):
         maxes = []
         for ll in u.longitude.values:
-            maxes.append(
-                _get_max(u.sel(longitude=ll).dropna("time", how="all")).reindex(
-                    time=u.time
-                )
-            )
+            us = u.sel(longitude=ll)
+            if "time" in u.dims:
+                us = us.dropna("time", how="all")
+            maxz = _get_max(us)
+            if "time" in u.dims:
+                maxz = maxz.reindex(time=u.time)
+            maxes.append(maxz)
         euc_max = xr.concat(maxes, "longitude")
     else:
         euc_max = _get_max(u, "depth")
