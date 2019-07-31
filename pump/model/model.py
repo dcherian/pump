@@ -49,6 +49,13 @@ class model:
         except FileNotFoundError:
             self.surface = xr.Dataset()
 
+        try:
+            self.annual = (xr.open_mfdataset(
+                self.dirname + '/obs_subset/annual-mean*.nc')
+                            .squeeze())
+        except FileNotFoundError:
+            self.annual = xr.Dataset()
+
         if full:
             self.read_full()
         else:
