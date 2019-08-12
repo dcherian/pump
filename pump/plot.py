@@ -29,18 +29,15 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
         # Better to call differentiate on log-transformed variable
         # This is a nicer estimate of the gradient and is analytically equal
         per = factor * np.log(np.abs(v)).differentiate('longitude')
-        per.plot(ax=ax2, x='longitude',
-                 label=f'{factor}/{v.name} $∂_x${v.name}',
-                 add_legend=False,
-                 **kwargs)
+        hdl = per.plot(ax=ax2, x='longitude',
+                       label=f'{factor}/{v.name} $∂_x${v.name}',
+                       add_legend=False,
+                       **kwargs)
         v.plot(ax=ax1, x='longitude', **kwargs)
         ax1.set_xlabel('')
         ax1.set_title('')
 
-        return per
-
-    if 'h' not in ds:
-        ds['h'] = ds.eucmax
+        return per, hdl
 
     if f is None and ax is None:
         f, axx = plt.subplots(7, 1, constrained_layout=True, sharex=True,
@@ -56,24 +53,26 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
                    'Ri': 'C0', 'h': 'C1', 'du': 'C2', 'db': 'C3'})
 
     factor = dict(zip(ax.keys(), [1, 1, -2, 1]))
-    rhs = xr.zeros_like(ds.h)
+    rhs = xr.zeros_like(ds.bs)
     per = dict()
     for var in ax.keys():
         if var not in ['u', 'b', 'contrib']:
-            per[var] = plot_ri_contrib(
+            per[var], hdl = plot_ri_contrib(
                 ax[var], ax['contrib'], ds[var], factor[var],
                 color=colors[var], **kwargs)
             if var != 'Ri':
                 rhs += per[var]
             else:
                 ri = per[var]
+                if 'marker' not in kwargs:
+                    hdl[0].set_marker('o')
 
     for vv in ['u', 'b']:
         for vvar in ['s', 'euc']:
             var = vv + vvar
             ds[var].differentiate('longitude').plot(
                 ax=ax[vv],
-                label=f'$∂_x{vv}_{{{vvar}}}$',
+                label=f'$∂_x {vv}_{{{vvar}}}$', # label=f'$∂_x{vv}_{{{vvar}}}$',
                 color=colors[var],
                 **kwargs)
             if add_legend:
@@ -83,9 +82,10 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
             ax[vv].set_xlabel('')
             ax[vv].set_ylabel('')
 
-    ax['u'].set_ylim([-0.02, 0.02])
-    ax['b'].set_ylim([-0.0005, 0.0005])
+    ax['u'].set_ylim([-0.025, 0.025])
+    # ax['b'].set_ylim([-0.0005, 0.0005])
 
+    ax['Ri'].set_ylabel('Ri$_b =  Δbh/Δu²$')
     ax['Ri'].set_yscale('log')
     ax['Ri'].set_yticks([0.25, 0.5, 1, 5, 10])
     ax['Ri'].grid(True)

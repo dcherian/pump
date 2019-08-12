@@ -32,6 +32,7 @@ def read_johnson(filename=root+'/obs/johnson-eq-pac-adcp.cdf'):
                      'UM': 'u',
                      'XLONedges': 'lon_edges'}))
 
+    ds['dens'] += 1000
     ds['longitude'] -= 360
     ds['depth'] *= -1
     ds['depth'].attrs['units'] = 'm'
