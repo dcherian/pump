@@ -762,7 +762,7 @@ ax['Ri'].legend(labels=['gcm1', 'johnson', 'TAO'], ncol=3, loc='upper right')
 [[file:images/Ri-diagnosis-gcm1.png]]
 :END:
 
-**** Small et  al 2014, CESM1 hires
+**** Small et al 2014, CESM1 hires
 
 - need to smooth EUC max
 #+BEGIN_SRC jupyter-python
@@ -787,6 +787,14 @@ pump.plot.plot_bulk_Ri_diagnosis(hires.sel(longitude=slice(None, -95)))
 :RESULTS:
 [[file:images/Ri-diagnosis-cesm-hires.png]]
 :END:
+
+**** CMPI5 LE
+#+BEGIN_SRC jupyter-python
+
+/glade/p/cesm/community/CESM-LE/data/CESM-CAM5-BGC-LE/ocn/proc/tseries/monthly
+
+
+#+END_SRC
 
 *** Simple model
 
@@ -1335,51 +1343,52 @@ f, ax = plt.subplots(3, 1, constrained_layout=True)
  .plot.contourf(ax=ax[2], robust=True, levels=12, cbar_kwargs=dict(label='$b_x$')))
 #+END_SRC
 
-* reading CESM output
+* reading CESM output: annual means
+** Small et al 2014
 
 #+BEGIN_SRC jupyter-python
-dirname = '/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly'
-
-kwargs = dict(data_vars='minimal', coords='minimal', compat='override',
-              concat_dim='time', combine='nested',
-              parallel=True,
-              chunks={'z_t': 7, 'nlat': 200, 'nlon': 1200})
-
-u = xr.open_mfdataset(dirname + '/*UVEL.*', **kwargs)
-T = xr.open_mfdataset(dirname + '/*TEMP.*', **kwargs)
-S = xr.open_mfdataset(dirname + '/*SALT.*', **kwargs)
-
-cesm = (xr.merge([u, T, S], compat='override')
-        .rename({'UVEL': 'u',
-                 "TEMP": "temp",
-                 "SALT": "salt",
-        }))
-
-# pop-tools says that this is using mdjwf
-# cesm['dens'] = pump.mdjwf.dens(cesm.salt, cesm.temp, cesm.z_t)
-
-cesm = cesm.roll(nlon=-300, roll_coords=True)
-cesm = cesm.isel(nlat=1182, nlon=slice(2400, 3600))
-cesm['ULONG'] = xr.where(cesm['ULONG']<0, cesm['ULONG']+360, cesm['ULONG'])
-
-cesm['latitude'] = 0.05
-cesm['longitude'] = (('longitude'), cesm['ULONG'].values)
-cesm = cesm.rename({'nlon': 'longitude'})
-cesm['z_t'] /= -100
-cesm['z_t'].attrs['units'] = 'm'
-cesm = cesm.sel(z_t=slice(0, -600))
-
-annual = cesm.mean('time').compute()
-annual = annual.sel(longitude=slice(None, 268))
-annual['longitude'] -= 360
-annual = annual.rename({'z_t': 'depth'})
-
-annual['u'] /= 100
-annual['u'].attrs['units'] = 'm/s'
-
+small = pump.cesm.read_small()
+annual = small.mean('time').compute()
 annual['dens'] = pump.mdjwf.dens(annual.salt, annual.temp, annual.depth)
 annual.attrs['name'] = 'hires CESM1'
 annual.to_netcdf('pump/glade/small-annual-mean.nc')
 #+END_SRC
 
 #+RESULTS:
+:RESULTS:
+# [goto error]
+#+begin_example
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+<ipython-input-328-f453befc0892> in <module>
+----> 1 small = pump.cesm.read_small()
+      2 annual = small.mean('time').compute()
+      3 annual['dens'] = pump.mdjwf.dens(annual.salt, annual.temp, annual.depth)
+      4 annual.attrs['name'] = 'hires CESM1'
+      5 annual.to_netcdf('pump/glade/small-annual-mean.nc')
+
+~/pump/pump/cesm.py in read_small()
+     39 def read_small():
+     40     return read_cesm(
+---> 41         "/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/"
+     42         "ocn/proc/tseries/monthly"
+     43     )
+
+~/pump/pump/cesm.py in read_cesm(dirname)
+      5               chunks={'z_t': 7, 'nlat': 200, 'nlon': 1200})
+      6
+----> 7     u = xr.open_mfdataset(dirname + '/*UVEL.*', **kwargs)
+      8     T = xr.open_mfdataset(dirname + '/*TEMP.*', **kwargs)
+      9     S = xr.open_mfdataset(dirname + '/*SALT.*', **kwargs)
+
+NameError: name 'xr' is not defined
+#+end_example
+:END:
+** CESM LE
+#+BEGIN_SRC jupyter-python
+le = pump.cesm.read_cesm_le()
+annual = le.mean('time').compute()
+annual['dens'] = pump.mdjwf.dens(annual.salt, annual.temp, annual.depth)
+annual.attrs['name'] = 'CESM LE'
+annual.to_netcdf('pump/glade/cesm-le-mean.nc')
+#+END_SRC
