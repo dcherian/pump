@@ -56,7 +56,7 @@ if 'client' in locals():
     client.close(); cluster.close()
 cluster = ncar_jobqueue.NCARCluster(
     cores=1, processes=1, memory='25GB',
-    walltime='02:00:00', project='UMIT0018')
+    walltime='02:00:00', project='NCGD0043')
 
 client = dask.distributed.Client(cluster)
 
@@ -76,41 +76,10 @@ cluster.scale(n)
 * read model runs :noexport:
 
 #+NAME: read-gcm1-hb
-#+BEGIN_SRC jupyter-python
+#+BEGIN_SRC jupyter-python :results none
 gcm1 = pump.model('../glade/TPOS_MITgcm_1_hb/HOLD/',
-                  name='gcm1', full=True, budget=False)
+                  name='gcm1', full=False, budget=False)
 #+END_SRC
-
-#+RESULTS: read-gcm1-hb
-#+begin_example
-/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: In xarray version 0.13 `auto_combine` will be deprecated.
-  coords=coords)
-/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: The datasets supplied have global dimension coordinates. You may want
-to use the new `combine_by_coords` function (or the
-`combine='by_coords'` option to `open_mfdataset` to order the datasets
-before concatenation. Alternatively, to continue concatenating based
-on the order the datasets are supplied in in future, please use the
-new `combine_nested` function (or the `combine='nested'` option to
-open_mfdataset).
-  coords=coords)
-Reading all files took 53.04539155960083 seconds
-/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: In xarray version 0.13 `auto_combine` will be deprecated.
-  coords=coords)
-/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:783: FutureWarning: The datasets supplied have global dimension coordinates. You may want
-to use the new `combine_by_coords` function (or the
-`combine='by_coords'` option to `open_mfdataset` to order the datasets
-before concatenation. Alternatively, to continue concatenating based
-on the order the datasets are supplied in in future, please use the
-new `combine_nested` function (or the `combine='nested'` option to
-open_mfdataset).The datasets supplied require both concatenation and merging. From
-xarray version 0.14 this will operation will require either using the
-new `combine_nested` function (or the `combine='nested'` option to
-open_mfdataset), with a nested list structure such that you can combine
-along the dimensions None. Alternatively if your datasets have global
-dimension coordinates then you can use the new `combine_by_coords`
-function.
-  coords=coords)
-#+end_example
 
 #+NAME: read-gcm1
 #+BEGIN_SRC jupyter-python
@@ -543,19 +512,23 @@ def estimate_euc_depth_terms(ds):
 
     ds.load()
 
-    ds['h'] = (ds.eucmax)
+    surface = {'depth': -20, 'method': 'nearest'}
+
+    ds['h'] = (ds.eucmax - surface['depth'])
     ds['h'].attrs['long_name'] = '$h$'
 
     if 'u' in ds:
-        ds['us'] = ds.u.isel(depth=0)
+        ds['us'] = ds.u.sel(**surface)
         ds['ueuc'] = ds.u.interp(depth=ds.eucmax, longitude=ds.longitude, method='linear')
         ds['du'] = ds.us - ds.ueuc
         ds.du.attrs['long_name'] = '$\Delta$u'
 
     if 'dens' in ds:
-        ds['b'] = (ds.dens-1025) * -9.81/1025
-        ds['bs'] = ds.b.isel(depth=0)
-        ds['beuc'] = ds.b.interp(depth=ds.eucmax, longitude=ds.longitude, method='linear')
+        ds['dens_euc'] = ds.dens.interp(depth=ds.eucmax, longitude=ds.longitude, method='linear')
+        ds['b'] = ds.dens * -9.81/ds.dens_euc
+        ds['bs'] = ds.b.sel(**surface)
+        ds['beuc'] = -9.81 * xr.ones_like(ds.bs)
+
         ds['db'] = ds.bs - ds.beuc
         ds.db.attrs['long_name'] = '$\Delta$b'
 
@@ -605,6 +578,7 @@ tao_ctd = (pump.obs.read_tao()
            .compute())
 tao_ctd['eucmax'] = tao_adcp.eucmax
 tao_ctd['dens'] = pump.mdjwf.dens(np.array(35.0), tao_ctd.temp, tao_ctd.depth)
+tao_ctd_raw = tao_ctd.copy(deep=True)
 tao_ctd = (tao_ctd
            .sortby('depth')
            .interpolate_na('depth')
@@ -621,6 +595,7 @@ tao.attrs['name'] = 'TAO'
 
 Another way to do this is to think of Ri=0.5 or something far east (e..g. 195W in the TAO image). Given crude estimates of longitudinal changes in Δb, EUCmax depth etc. can we explain the drop in Ri to 0.25 by 170W?
 
+Here Δ ≡ (surface) - (EUC max); define surface as 20m depth for now (this is where sampling starts basically)
 #+CAPTION: Ri estimated using hourly TAO data.
 [[file:images/tao-marginal-stability-hourly.png]]
 
@@ -649,7 +624,7 @@ $\Ri_0$ is $\Ri$ at 195W = 0.5, Δx = (170W-195W) = 25° ⇒ α = -1/50° approx
 2. And there is a big change between 200W and 140W
 3. This big change is largely from Δu
 
-With the Johnson data, it looks like the longitudinal variation in Δu is what dominates the reduction in Ri. This seems to be mostly due to an accelerating EUC but also due to a reversal in sign of surface current starting at 195W.
+With the Johnson data, it looks like the longitudinal variation in Δu is what dominates the reduction in Ri. This is due to both an accelerating EUC and but also due to a reversal in sign of surface current starting at 195W (i.e. appearance of the SEC). They contribute roughly equally to the change in Δu.
 This result is consistent with the TAO dataset.
 
 #+BEGIN_SRC jupyter-python :file images/johnson-eq-section.png
@@ -677,22 +652,26 @@ ax[0].set_title('Johnson mean')
 But is the TAO ADCP estimate good above 50m? Not much data to average in those depths.
 #+BEGIN_SRC jupyter-python :file images/johnson-tao-eq-adcp.png
 
-f, ax = plt.subplots(2, 1, constrained_layout=True,
+f, ax = plt.subplots(3, 1, constrained_layout=True,
                      sharex=True, sharey=True)
 
 kwargs = dict(ylim=(-500, 0), vmin=-1, vmax=1, cmap=mpl.cm.RdBu_r)
 tao_adcp.u.plot(ax=ax[0], y='depth', **kwargs)
-johnson.u.plot(ax=ax[1], y='depth', **kwargs)
+johnson.u.plot(ax=ax[1], y='depth', **kwargs, cbar_kwargs={'label': 'u'})
+((tao_adcp.u - johnson.u.interp(depth=tao_adcp.depth, longitude=tao_adcp.longitude))
+ .plot(ax=ax[2], y='depth', ylim=kwargs['ylim']))
 
 ax[0].set_xlabel('')
+ax[1].set_xlabel('')
 ax[0].set_title('TAO ADCP')
-ax[-1].set_title('Johnson ADCP')
+ax[1].set_title('Johnson ADCP')
+ax[-1].set_title('Difference')
 
 #+END_SRC
 
 #+RESULTS:
 :RESULTS:
-: Text(0.5, 1.0, 'Johnson ADCP')
+: Text(0.5, 1.0, 'Difference')
 [[file:images/johnson-tao-eq-adcp.png]]
 :END:
 
@@ -734,13 +713,14 @@ xr.testing.assert_allclose(
 #+call: estimate-Ri-diagnosis-terms()
 #+NAME: Ri-diagnosis-johnson
 #+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-johnson.png
-pump.plot.plot_bulk_Ri_diagnosis(johnson)
+pump.plot.plot_bulk_Ri_diagnosis(johnson);
 #+END_SRC
 
 #+RESULTS: Ri-diagnosis-johnson
 [[file:images/Ri-diagnosis-johnson.png]]
 
-The first longitude is missing because ADCP data only exist to 215m.
+The first longitude (two in gradient) is missing because ADCP data only exist to 215m.
+
 **** TAO
 
 Similar result holds for TAO!
@@ -750,13 +730,19 @@ pump.plot.plot_bulk_Ri_diagnosis(tao)
 #+END_SRC
 
 #+RESULTS:
+:RESULTS:
+| <Figure | size | 2000x2500 | with | 7 | Axes> | (Ri : <matplotlib.axes._subplots.AxesSubplot at 0x2ab666c2c0f0> h : <matplotlib.axes._subplots.AxesSubplot at 0x2ab66b2124a8> du : <matplotlib.axes._subplots.AxesSubplot at 0x2ab6696091d0> db : <matplotlib.axes._subplots.AxesSubplot at 0x2ab66691f278> u : <matplotlib.axes._subplots.AxesSubplot at 0x2ab6659b4a90> b : <matplotlib.axes._subplots.AxesSubplot at 0x2ab666947908> contrib : <matplotlib.axes._subplots.AxesSubplot at 0x2ab66bfe7c18>) |
 [[file:images/Ri-diagnosis-tao.png]]
+:END:
 
 **** gcm1
 #+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-gcm1.png
-smooth = subset.rolling(longitude=100, center=True, min_periods=1).mean()
+mpl.rcParams['figure.dpi'] = 180
+
+smooth = (subset.sel(longitude=slice(-165, -100))
+          .coarsen(longitude=100).mean())
 smooth.attrs = subset.attrs
-f, ax = pump.plot.plot_bulk_Ri_diagnosis(smooth)
+f, ax = pump.plot.plot_bulk_Ri_diagnosis(smooth, None, None, lw=1)
 pump.plot.plot_bulk_Ri_diagnosis(johnson, f, ax, marker='^', ls='none')
 pump.plot.plot_bulk_Ri_diagnosis(tao, f, ax, marker='o', ls='none')
 ax['Ri'].legend(labels=['gcm1', 'johnson', 'TAO'], ncol=3, loc='upper right')
@@ -764,7 +750,9 @@ ax['Ri'].legend(labels=['gcm1', 'johnson', 'TAO'], ncol=3, loc='upper right')
 
 #+RESULTS:
 :RESULTS:
-: <matplotlib.legend.Legend at 0x2b6760847b00>
+: /gpfs/u/home/dcherian/python/xarray/xarray/core/nanops.py:160: RuntimeWarning: Mean of empty slice
+:   return np.nanmean(a, axis=axis, dtype=dtype)
+: <matplotlib.legend.Legend at 0x2af7398d24a8>
 [[file:images/Ri-diagnosis-gcm1.png]]
 :END:
 
@@ -772,7 +760,7 @@ ax['Ri'].legend(labels=['gcm1', 'johnson', 'TAO'], ncol=3, loc='upper right')
 *** Simple model
 
 #+begin_export latex
-\Ri = \frac{\bar{w} h Q}{\left(g(hη_x + Δb/2 h_x) + τ_w \right)²}
+\Ri = \frac{\bar{w} h Q}{\left((-ghη_x + Δb/2 h h_x) + τ_w \right)²}
 #+end_export
 
 **** term magnitudes
@@ -781,13 +769,17 @@ We haven't saved SSH!
 
 #+CALL: estimate-terms()
 #+BEGIN_SRC jupyter-python :file images/eq-simple-model-terms.png
-def plot_eucmax(ax):
-    heuc = eucmax.plot(ax=ax, x='longitude', color='k', lw=1, _labels=False)
+def plot_eucmax(ax, subset):
+    heuc = subset.eucmax.plot(ax=ax, x='longitude', color='k', lw=1, _labels=False)
     dcpy.plots.annotate_end(heuc[0], 'eucmax')
+
+    return heuc
 
 def plot_line(ax, da, label):
     hu = da.plot(ax=ax, x='longitude')
     dcpy.plots.annotate_end(hu[0], label)
+
+eucmax = subset.eucmax
 
 f, axx = plt.subplots(4, 2, sharex=True, constrained_layout=True)
 ax = dict(zip(['u', 'b', 'du', 'db', 'h', 'ssh', 'Q', 'tau'], axx.flat))
@@ -800,20 +792,17 @@ hu = subset.u.plot.contourf(levels=11, ax=ax['u'], y='depth',
 #ax['u'].clabel(hu, **label_kwargs)
 
 hb = (subset.b).plot.contourf(levels=11, ax=ax['b'], y='depth',
-                              cbar_kwargs={'label': 'b+9.81',
+                              cbar_kwargs={'label': 'b',
                                            'orientation': 'horizontal'})
 # ax['b'].clabel(hb, **label_kwargs)
-heuc = subset.eucmax.plot(ax=ax['b'], x='longitude', color='k', lw=1, _labels=False)
-dcpy.plots.annotate_end(heuc[0], 'eucmax')
+[plot_eucmax(aa, subset) for aa in [ax['u'], ax['b']]]
 
-[plot_eucmax(aa) for aa in [ax['u'], ax['b']]]
-
-[plot_line(ax['du'], da, label)
- for (da, label) in zip([us, ueuc, du],
+[plot_line(ax['du'], subset[da], label)
+ for (da, label) in zip(['us', 'ueuc', 'du'],
                         ['$u_{surf}$', '$u_{euc}$', '$\Delta u$'])]
 
-[plot_line(ax['db'], da, label)
- for (da, label) in zip([bs, beuc, db],
+[plot_line(ax['db'], subset[da], label)
+ for (da, label) in zip(['bs', 'beuc', 'db'],
                         ['$b_{surf}$', '$b_{euc}$', '$\Delta b$'])]
 
 dcpy.plots.liney(0, ax=[ax['du'], ax['db']])
@@ -823,22 +812,22 @@ def mark_median(ax, hxmed):
     dcpy.plots.liney(hxmed, ax=ax)
     ax.set_yticks(ax.get_yticks() + [hxmed])
 
-eucmax.plot(ax=ax['h'])
+subset.eucmax.plot(ax=ax['h'])
 johnson.eucmax.plot(ax=ax['h'])
-adcp.eucmax.plot(ax=ax['h'], marker='o')
+tao.eucmax.plot(ax=ax['h'], marker='o')
 ax['h'].set_ylabel('$h$')
 
 ax['hx'] = ax['h'].twinx()
-dhdx = (eucmax.rolling(longitude=100).mean()
-        .differentiate('longitude') / 110e3)[10:-10]
-(dhdx.plot(ax=ax['hx'], x='longitude'))
-mark_median(ax['hx'], dhdx.median())
+subset['dhdx'] = (subset.eucmax.rolling(longitude=100).mean()
+                  .differentiate('longitude') / 110e3)[10:-10]
+(subset.dhdx.plot(ax=ax['hx'], x='longitude'))
+mark_median(ax['hx'], subset.dhdx.median())
 
 dhdx = (johnson.eucmax.differentiate('longitude')/110e3)
 (dhdx.plot(ax=ax['hx'], x='longitude'))
 mark_median(ax['hx'], dhdx.median())
 
-dhdx = (adcp.eucmax.differentiate('longitude')/110e3)
+dhdx = (tao.eucmax.differentiate('longitude')/110e3)
 (dhdx.plot(ax=ax['hx'], x='longitude', marker='o'))
 mark_median(ax['hx'], dhdx.median())
 
@@ -867,8 +856,45 @@ f.suptitle('latitude=0, 1996 annual mean')
 f.set_size_inches((10, 8))
 #+END_SRC
 
- #+RESULTS:
- [[file:images/eq-simple-model-terms.png]]
+#+RESULTS:
+[[file:images/eq-simple-model-terms.png]]
+
+
+I can simplify using medians for h_x, ssh_x but this doesn't really matter. The result is mostly sensitive to wbar.
+#+BEGIN_SRC jupyter-python :file images/Ri_simple_model.png
+subset['wbar'] = subset.w.sel(depth=-20, method='nearest').sel(longitude=slice(-165, -98))
+
+etax = dsshdx.interp(longitude=subset.longitude)
+tauw = mean_jra.tau.interp(longitude=subset.longitude) / 1025
+Q = subset.oceQnet * 9.81 * 1.7e-4/1025/4000
+
+subset['Ri_simple'] = 2 * (subset.wbar * np.abs(subset.eucmax) * Q
+                       / (subset.h * (-9.81 * etax + subset.db/2 * subset.dhdx) + tauw)**2)
+
+subset['Ri_supersimple'] = 2*subset.wbar.median() * np.abs(subset.eucmax) * Q
+                            / (subset.h * (-9.81 * etax + subset.db/2 * subset.dhdx) + tauw)**2)
+
+f, ax = plt.subplots(2, 1, constrained_layout=True, sharex=True)
+plt.sca(ax[0])
+subset.Ri.plot()
+subset.Ri_simple.plot()
+subset.Ri_supersimple.plot(ylim=(-2, 2))
+plt.gca().legend(['Ri$_b$', 'simple model Ri', 'simple model Ri (medians)'])
+ax[0].set_ylabel('')
+
+subset.wbar.plot(ax=ax[1], label='wbar')
+dcpy.plots.liney(subset.wbar.median(), ax=ax[1])
+
+winfer = 1/(subset.Ri_simple/subset.wbar/subset.Ri)
+winfer.plot(ax=ax[1], label='inferred wbar')
+ax[1].set_ylabel('w')
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: Text(0, 0.5, 'w')
+[[file:images/Ri_simple_model.png]]
+:END:
 
 #+BEGIN_SRC jupyter-python
 limits=dict(vmin=-5e-7, vmax=5e-7, cmap=mpl.cm.RdBu_r, ylim=[-250, 0])
@@ -883,7 +909,7 @@ f, ax = plt.subplots(3, 1, constrained_layout=True, sharex=True, sharey=True)
 (-1*subset.w.differentiate('depth')).plot(
     ax=ax[2], **limits, cbar_kwargs=dict(orientation='horizontal'))
 
-[plot_eucmax(aa) for aa in ax]
+[plot_eucmax(aa, subset) for aa in ax]
 [aa.set_title('') for aa in ax[1:]]
 [aa.set_xlabel('') for aa in ax[:-1]]
 #+END_SRC
@@ -1032,10 +1058,11 @@ dcpy.plots.liney(mld.isel(time=itime).sel(**region))
 * EQUIX analysis
 
 #+NAME: read-equix
-#+BEGIN_SRC jupyter-python :session py :results none
+#+BEGIN_SRC jupyter-python :results none
 import dcpy.util
 import dcpy.oceans
 import numpy as np
+import pandas as pd
 import xarray as xr
 
 from scipy.io import loadmat
@@ -1045,7 +1072,7 @@ import platform
 if platform.uname().node == 'darya':
     dirname = 'obs/equix/'
 else:
-    dirname = 'glade/obs/equix/'
+    dirname = '/glade/u/home/dcherian/pump/glade/obs/equix/'
 
 
 adcpmat = loadmat(dirname + '03UP_10min_mag_corrected.mat')
@@ -1072,8 +1099,8 @@ ctd['time'] = (('time'),
 ctd['T'] = (('depth', 'time'), ctdmat['T_tgrid_zgrid'])
 ctd['S'] = (('depth', 'time'), np.real(ctdmat['S_tgrid_zgrid']))
 ctd['C'] = (('depth', 'time'), ctdmat['C_tgrid_zgrid'])
-ctd['pden'] = (('depth', 'time'), ctdmat['pden_tgrid_zgrid'])
-ctd['pden'] = np.real(ctd.pden)
+ctd['dens'] = (('depth', 'time'), ctdmat['pden_tgrid_zgrid'])
+ctd['dens'] = np.real(ctd.dens)
 
 ctd = ctd.sel(time=slice('2008-10-24 06:30', '2008-11-04 17:50'))
 adcp = adcp.sel(time=slice('2008-10-24 06:30', '2008-11-04 17:50'))
@@ -1085,7 +1112,7 @@ ctd['depth'] = ctd.depth * -1
 adcp = adcp.sortby('depth', ascending=False)
 ctd = ctd.sortby('depth', ascending=False)
 
-adcp['shear'] = np.hypot(adcp.u, adcp.v)
+adcp['speed'] = np.hypot(adcp.u, adcp.v)
 import pump
 adcp['t90'] = pd.to_datetime('2008-Oct-29 22:15')
 xr.testing.assert_equal(ctd.time, adcp.time)
@@ -1140,6 +1167,76 @@ plt.figure)(git
 #+END_SRC
 #+CAPTION:
 [[file:images/temp/imgeoNH8r.png]]
+
+
+** Bulk Ri
+
+Hmmm... T sensors are limited to 10m. Though cite:Inoue2012 say there's an upward looking ADCP at 600m.
+
+I think I'll choose 20 and 80m.
+
+The current dataset has only CTDs which were only deployed in top 52.5m. Need to ask for T sensors that were deployed below that depth (up to 90m).
+
+#+BEGIN_SRC jupyter-python
+adcp.u.plot()
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.collections.QuadMesh at 0x2b8b738517b8>
+[[file:./.ob-jupyter/21d8c4e1e3324aa3fc05e10a4996805fb2ab744e.png]]
+:END:
+
+#+BEGIN_SRC jupyter-python
+equix = xr.Dataset()
+ctd['b'] = (ctd.dens-1025) * -9.81/1025
+equix['h'] = -45
+equix['bs'] = ctd.b.sel(depth=-20, method='nearest')
+equix['beuc'] = ctd.b.sel(depth=equix.h, method='nearest')
+equix['db'] = equix.bs - equix.beuc
+equix['us'] = adcp.u.sel(depth=-20, method='nearest')
+equix['ueuc'] = adcp.u.sel(depth=equix.h, method='nearest')
+equix['du'] = equix.us - equix.ueuc
+
+equix['Rib'] = np.abs(equix.h) * equix.db / equix.du**2
+
+ctd['N2'] = -9.81/1025 * ctd.dens.differentiate('depth')
+equix['Rig'] = ctd.N2.where(ctd.N2 > 1e-6)/adcp.speed.differentiate('depth')**2
+
+equix.Rib.plot(label='Ri$_b$')
+equix.Rig.mean('depth').plot(label='Ri$_g$', yscale='log')
+dcpy.plots.liney(0.25)
+#+END_SRC
+
+#+RESULTS:
+[[file:./.ob-jupyter/775f33c264b4dfa0fc9463bca1325f9f9af1b589.png]]
+
+#+BEGIN_SRC jupyter-python
+ctd.T.plot()
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.collections.QuadMesh at 0x2b8b71792c18>
+[[file:./.ob-jupyter/f5a59b8b03a01264135f110f14818233638dff60.png]]
+:END:
+
+#+BEGIN_SRC jupyter-python
+f, ax = plt.subplots(2, 1, constrained_layout=True, sharex=True)
+
+shred2 = (adcp.speed.differentiate('depth').interp(depth=ctd.depth)**2 - 4*ctd.N2)
+shred2.attrs['long_name'] = '$S² - 4N²$'
+(shred2
+ .sel(depth=slice(0, -48))
+ .plot(x='time', robust=True, ax=ax[0]))
+adcp.v.plot(ax=ax[1])
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.collections.QuadMesh at 0x2b8b7621a080>
+[[file:./.ob-jupyter/14759971e1eaf941ffe07ae80434e3c216266f20.png]]
+:END:
 
 * read POP
 

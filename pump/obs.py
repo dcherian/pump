@@ -292,3 +292,19 @@ def process_esrl_index(file, skipfooter=3):
           .to_xarray())
 
     return da.where(da > -90)['index']
+
+
+def read_jra():
+    files = f'{root}/make_TPOS_MITgcm/JRA_FORCING/combined/JRA55DO_*_*wind.nc'
+
+    jra = (xr.open_mfdataset(files, combine='by_coords', decode_times=False)
+           .rename({'lat': 'latitude', 'lon': 'longitude'}))
+
+    jra['time'] = jra.time - jra.time[0]
+    jra.time.attrs['units'] = 'days since 1995-09-01'
+
+    jra['longitude'] -= 360
+
+    jra = jra.sel(longitude=slice(-170, -95))
+
+    return xr.decode_cf(jra)
