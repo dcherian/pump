@@ -1,8 +1,8 @@
 #+title: PUMP
 #+hugo_base_dir: ./hugo/
 #+hugo_section:
-#+options: :eval never-export
-#+property: header-args:jupyter-python :session /jpy:localhost#8800:emacs
+#+options: :eval never-export :async nil
+#+property: header-args:jupyter-python :session /jpy:localhost#8888:emacs
 
 * To do                                                            :noexport:
 - [ ] Do velocity spectra (only at equator?)
@@ -589,6 +589,12 @@ tao = xr.merge([estimate_euc_depth_terms(tao_adcp)[['us', 'ueuc', 'du', 'eucmax'
                 estimate_euc_depth_terms(tao_ctd)[['bs', 'beuc', 'db']]])
 tao = estimate_euc_depth_terms(tao)
 tao.attrs['name'] = 'TAO'
+
+hires = xr.load_dataset('pump/glade/small-annual-mean.nc')
+hires['eucmax'] = (pump.calc.get_euc_max(hires.u)
+                   .rolling(longitude=100, center=True, min_periods=1)
+                   .mean())
+hires = estimate_euc_depth_terms(hires)
 #+END_SRC
 
 *** Fractional contributions to bulk Ri
@@ -756,6 +762,31 @@ ax['Ri'].legend(labels=['gcm1', 'johnson', 'TAO'], ncol=3, loc='upper right')
 [[file:images/Ri-diagnosis-gcm1.png]]
 :END:
 
+**** Small et  al 2014, CESM1 hires
+
+- need to smooth EUC max
+#+BEGIN_SRC jupyter-python
+hires.eucmax.plot()
+hires.eucmax.rolling(longitude=100, center=True).mean().plot()
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+| <matplotlib.lines.Line2D | at | 0x2adda920ef98> |
+[[file:./.ob-jupyter/e2fda7d9f0654bc4d203b11d1ae38c7bed9a974a.png]]
+:END:
+
+
+Ri looks OK actually *but* Δb seems to be as import as Δu between 200 and 170.
+
+#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-cesm-hires.png
+pump.plot.plot_bulk_Ri_diagnosis(hires.sel(longitude=slice(None, -95)))
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+[[file:images/Ri-diagnosis-cesm-hires.png]]
+:END:
 
 *** Simple model
 
@@ -1303,3 +1334,52 @@ f, ax = plt.subplots(3, 1, constrained_layout=True)
  .sel(latitude=0)
  .plot.contourf(ax=ax[2], robust=True, levels=12, cbar_kwargs=dict(label='$b_x$')))
 #+END_SRC
+
+* reading CESM output
+
+#+BEGIN_SRC jupyter-python
+dirname = '/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly'
+
+kwargs = dict(data_vars='minimal', coords='minimal', compat='override',
+              concat_dim='time', combine='nested',
+              parallel=True,
+              chunks={'z_t': 7, 'nlat': 200, 'nlon': 1200})
+
+u = xr.open_mfdataset(dirname + '/*UVEL.*', **kwargs)
+T = xr.open_mfdataset(dirname + '/*TEMP.*', **kwargs)
+S = xr.open_mfdataset(dirname + '/*SALT.*', **kwargs)
+
+cesm = (xr.merge([u, T, S], compat='override')
+        .rename({'UVEL': 'u',
+                 "TEMP": "temp",
+                 "SALT": "salt",
+        }))
+
+# pop-tools says that this is using mdjwf
+# cesm['dens'] = pump.mdjwf.dens(cesm.salt, cesm.temp, cesm.z_t)
+
+cesm = cesm.roll(nlon=-300, roll_coords=True)
+cesm = cesm.isel(nlat=1182, nlon=slice(2400, 3600))
+cesm['ULONG'] = xr.where(cesm['ULONG']<0, cesm['ULONG']+360, cesm['ULONG'])
+
+cesm['latitude'] = 0.05
+cesm['longitude'] = (('longitude'), cesm['ULONG'].values)
+cesm = cesm.rename({'nlon': 'longitude'})
+cesm['z_t'] /= -100
+cesm['z_t'].attrs['units'] = 'm'
+cesm = cesm.sel(z_t=slice(0, -600))
+
+annual = cesm.mean('time').compute()
+annual = annual.sel(longitude=slice(None, 268))
+annual['longitude'] -= 360
+annual = annual.rename({'z_t': 'depth'})
+
+annual['u'] /= 100
+annual['u'].attrs['units'] = 'm/s'
+
+annual['dens'] = pump.mdjwf.dens(annual.salt, annual.temp, annual.depth)
+annual.attrs['name'] = 'hires CESM1'
+annual.to_netcdf('pump/glade/small-annual-mean.nc')
+#+END_SRC
+
+#+RESULTS:
