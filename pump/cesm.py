@@ -7,15 +7,20 @@ def read_cesm(dirname):
         coords="minimal",
         compat="override",
         concat_dim="time",
-        combine="nested",
+        combine="by_coords",
         parallel=True,
-        chunks={"z_t": 7, "nlat": 200, "nlon": 1200},
+        chunks={"z_t": 7, "nlat": 600, "nlon": 1200},
     )
 
+    def preprocess(ds):
+        if "transport_components" in ds:
+            return ds.drop(["transport_components", "transport_regions"])
+        else:
+            return ds
+
     if "CESM-LE" in dirname:
-        u = xr.open_mfdataset(dirname + "/*UVEL/*", **kwargs).drop(
-            ["transport_components", "transport_regions"]
-        )
+        kwargs["preprocess"] = preprocess
+        u = xr.open_mfdataset(dirname + "/*UVEL/*", **kwargs)
         T = xr.open_mfdataset(dirname + "/*TEMP/*", **kwargs)
         S = xr.open_mfdataset(dirname + "/*SALT/*", **kwargs)
 
@@ -28,24 +33,26 @@ def read_cesm(dirname):
         {"UVEL": "u", "TEMP": "temp", "SALT": "salt"}
     )
 
-    # pop-tools says that this is using mdjwf
+    return cesm
+
+# pop-tools says that this is using mdjwf
     # cesm['dens'] = pump.mdjwf.dens(cesm.salt, cesm.temp, cesm.z_t)
 
-    cesm = cesm.roll(nlon=-300, roll_coords=True)
-    cesm = cesm.isel(nlat=1182, nlon=slice(2400, 3600))
-    cesm["ULONG"] = xr.where(cesm["ULONG"] < 0, cesm["ULONG"] + 360, cesm["ULONG"])
+    # cesm = cesm.roll(nlon=-300, roll_coords=True)
+    # cesm = cesm.isel(nlat=slice(1120, 1260), nlon=slice(2000, 3600))
+    # cesm["ULONG"] = xr.where(cesm["ULONG"] < 0, cesm["ULONG"] + 360, cesm["ULONG"])
+    # cesm["ULONG"] -= 360
+    # cesm["TLONG"] -= 360
 
-    cesm["latitude"] = 0.05
-    cesm["longitude"] = (("longitude"), cesm["ULONG"].values)
-    cesm = cesm.rename({"nlon": "longitude", "z_t": "depth"})
-    cesm["depth"] /= -100
-    cesm["depth"].attrs["units"] = "m"
-    cesm = cesm.sel(depth=slice(0, -600), longitude=slice(None, 268))
-    cesm["longitude"] -= 360
-    cesm["u"] /= 100
-    cesm["u"].attrs["units"] = "m/s"
+    # #cesm["longitude"] = (("longitude"), cesm["ULONG"].values)
+    # cesm = cesm.rename({"z_t": "depth"})
+    # cesm["depth"] /= -100
+    # cesm["depth"].attrs["units"] = "m"
+    # cesm = cesm.sel(depth=slice(0, -600))
+    # cesm["u"] /= 100
+    # cesm["u"].attrs["units"] = "m/s"
 
-    return cesm
+    # return cesm
 
 
 def read_small():
