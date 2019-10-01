@@ -51,29 +51,22 @@ def _get_max(var, dim="depth"):
     dims = list(var.dims)
     del dims[var.get_axis_num(dim)]
 
-    argmax = np.nanargmax(var.values, var.get_axis_num(dim))
+    non_nans = var
+    for dd in dims:
+        non_nans = non_nans.dropna(dd, how='all')
+    argmax = np.nanargmax(non_nans.values, non_nans.get_axis_num(dim))
 
-    da = xr.DataArray(argmax.squeeze(), dims=dims, coords=coords)
+    new_coords = dict(non_nans.coords)
+    new_coords.pop(dim)
 
-    return var[dim][da].drop(dim)
+    da = xr.DataArray(argmax.squeeze(), dims=dims, coords=new_coords)
+    return var[dim][da].drop(dim).reindex_like(var)
 
 
 def get_euc_max(u, kind="model"):
     """ Given a u field, returns depth of max speed i.e. EUC maximum. """
 
-    if kind == "data" or np.any(np.isnan(u)):
-        maxes = []
-        for ll in u.longitude.values:
-            us = u.sel(longitude=ll)
-            if "time" in u.dims:
-                us = us.dropna("time", how="all")
-            maxz = _get_max(us)
-            if "time" in u.dims:
-                maxz = maxz.reindex(time=u.time)
-            maxes.append(maxz)
-        euc_max = xr.concat(maxes, "longitude")
-    else:
-        euc_max = _get_max(u, "depth")
+    euc_max = _get_max(u, "depth")
 
     euc_max.attrs["long_name"] = "Depth of EUC max"
     euc_max.attrs["units"] = "m"

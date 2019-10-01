@@ -96,7 +96,7 @@ class model:
         except FileNotFoundError:
             self.johnson = None
 
-        self.tiw_trange = [slice('1995-10-01', '1996-03-01'),
+        self.tiw_trange = [slice('1995-09-01', '1996-01-15'),
                            slice('1996-08-01', '1997-03-01')]
 
     def __repr__(self):
@@ -145,7 +145,9 @@ class model:
             if '_hb' in self.dirname:
                 self.full = xr.open_mfdataset(
                     self.dirname + '/Day_[0-9][0-9][0-9][0-9].nc',
-                    engine='h5netcdf', parallel=True)
+                    engine='h5netcdf', parallel=True, compat='override',
+                    join='override', data_vars='minimal', coords='minimal',
+                )
             else:
                 self.full = xr.open_mfdataset(
                     self.dirname + '/Day_[0-9][0-9][0-9].nc',
@@ -239,6 +241,7 @@ class model:
 
         ph = []
         for tt in self.tiw_trange:
+            print(tt)
             ph.append(get_tiw_phase(v.sel(time=tt), debug=debug))
             if len(ph) > 1:
                 start_num = ph[-2].period.max()
@@ -310,16 +313,18 @@ class model:
                          **kwargs):
 
         if ax is None:
-            f, axx = plt.subplots(8, 1, sharex=True, sharey=True,
-                                  constrained_layout=True)
-            ax = dict(zip(['u', 'v', 'w', 'theta', 'S2', 'N2', 'Jq', 'Ri'],
+            f, axx = plt.subplots(9, 1, sharex=True, sharey=False,
+                                  constrained_layout=True,
+                                  gridspec_kw=dict(height_ratios=[2]+[1]*8))
+            ax = dict(zip(['sst', 'u', 'v', 'w', 'theta', 'S2', 'N2', 'Jq', 'Ri'],
                           axx))
             f.set_size_inches((6, 10))
 
         else:
             axx = list(ax.values())
 
-        cmaps = dict(u=mpl.cm.RdBu_r,
+        cmaps = dict(sst=mpl.cm.RdYlBu_r,
+                     u=mpl.cm.RdBu_r,
                      v=mpl.cm.RdBu_r,
                      w=mpl.cm.RdBu_r,
                      S2=mpl.cm.Reds,
@@ -354,10 +359,14 @@ class model:
             else:
                 pkwargs = {'robust': True}
 
-            handles[aa] = subset[aa].sel(depth=slice(0, -180)).plot(
-                ax=ax[aa], y='depth', ylim=[-180, 0],
-                cmap=cmaps[aa], **kwargs, **pkwargs)
-            plot_depths(subset, ax=ax[aa], x=x)
+            if aa == 'sst':
+                handles[aa] = subset[aa].plot(
+                    ax=ax[aa], y='sst_lat', cmap=cmaps[aa], **kwargs, **pkwargs)
+            else:
+                handles[aa] = subset[aa].sel(depth=slice(0, -180)).plot(
+                    ax=ax[aa], y='depth', ylim=[-180, 0],
+                    cmap=cmaps[aa], **kwargs, **pkwargs)
+                plot_depths(subset, ax=ax[aa], x=x)
 
         subset.salt.plot.contour(ax=ax['theta'], y='depth',
                                  levels=12, colors='gray', linewidths=0.5)
@@ -508,6 +517,10 @@ class model:
 
         if 'tiw_phase' not in subset:
             subset = xr.merge([subset, self.get_tiw_phase(subset.v)])
+        if 'sst' not in subset:
+            subset['sst'] = (self.surface.theta.sel(longitude=subset.longitude.values,
+                                                    method='nearest')
+                             .rename({'latitude': 'sst_lat'}))
 
         for period in tqdm.tqdm(np.unique(subset.period.dropna('time'))):
             self.plot_tiw_summary(subset.where(subset.period == period,
