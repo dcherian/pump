@@ -1,4 +1,5 @@
 import xarray as xr
+import modify_pop_for_xgcm
 
 
 def read_cesm(dirname):
@@ -33,26 +34,27 @@ def read_cesm(dirname):
         {"UVEL": "u", "TEMP": "temp", "SALT": "salt"}
     )
 
+    cesm = modify_pop_for_xgcm.relabel_pop_dims(cesm)
+
+    # pop-tools says that this is using mdjwf
+    # cesm["dens"] = pump.mdjwf.dens(cesm.salt, cesm.temp, cesm.z_t)
+
+    cesm = cesm.roll(nlon=-300, roll_coords=True)
+    cesm = cesm.isel(nlat=slice(1120, 1260), nlon=slice(2000, 3600))
+    cesm["ULONG"] = xr.where(cesm["ULONG"] < 0, cesm["ULONG"] + 360, cesm["ULONG"])
+    cesm["ULONG"] -= 360
+    cesm["TLONG"] -= 360
+
+    # cesm["longitude"] = (("longitude"), cesm["ULONG"].values)
+    cesm = cesm.rename({"z_t": "depth"})
+    cesm["depth"] /= -100
+    cesm["depth"].attrs["units"] = "m"
+    cesm = cesm.sel(depth=slice(0, -600))
+    for var in ["u", "v", "w"]:
+        cesm[var] /= 100
+        cesm[var].attrs["units"] = "m/s"
+
     return cesm
-
-# pop-tools says that this is using mdjwf
-    # cesm['dens'] = pump.mdjwf.dens(cesm.salt, cesm.temp, cesm.z_t)
-
-    # cesm = cesm.roll(nlon=-300, roll_coords=True)
-    # cesm = cesm.isel(nlat=slice(1120, 1260), nlon=slice(2000, 3600))
-    # cesm["ULONG"] = xr.where(cesm["ULONG"] < 0, cesm["ULONG"] + 360, cesm["ULONG"])
-    # cesm["ULONG"] -= 360
-    # cesm["TLONG"] -= 360
-
-    # #cesm["longitude"] = (("longitude"), cesm["ULONG"].values)
-    # cesm = cesm.rename({"z_t": "depth"})
-    # cesm["depth"] /= -100
-    # cesm["depth"].attrs["units"] = "m"
-    # cesm = cesm.sel(depth=slice(0, -600))
-    # cesm["u"] /= 100
-    # cesm["u"].attrs["units"] = "m/s"
-
-    # return cesm
 
 
 def read_small():

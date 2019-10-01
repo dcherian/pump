@@ -1,3 +1,4 @@
+import dask.delayed
 import dcpy.plots
 import glob
 import matplotlib as mpl
@@ -7,8 +8,14 @@ import time
 import xarray as xr
 import xmitgcm
 
-from ..calc import (calc_reduced_shear, get_euc_max, get_dcl_base_Ri,
-                    get_dcl_base_shear, get_mld, get_tiw_phase)
+from ..calc import (
+    calc_reduced_shear,
+    get_euc_max,
+    get_dcl_base_Ri,
+    get_dcl_base_shear,
+    get_mld,
+    get_tiw_phase,
+)
 from ..constants import *
 from ..obs import *
 from ..plot import plot_depths
@@ -19,8 +26,8 @@ class model:
 
     from . import validate
 
-    def __init__(self, dirname, name, kind='mitgcm', full=False, budget=False):
-        '''
+    def __init__(self, dirname, name, kind="mitgcm", full=False, budget=False):
+        """
         Create an object that represents one model run.
 
         Inputs
@@ -36,23 +43,23 @@ class model:
             Read in all output files using mfdataset?
         budget: bool, optional
             Read in heat budget terms using mfdataset?
-        '''
+        """
 
         self.dirname = dirname
         self.kind = kind
         self.name = name
 
         try:
-            self.surface = (xr.open_dataset(
-                self.dirname + '/obs_subset/surface.nc')
-                            .squeeze())
+            self.surface = xr.open_dataset(
+                self.dirname + "/obs_subset/surface.nc"
+            ).squeeze()
         except FileNotFoundError:
             self.surface = xr.Dataset()
 
         try:
-            self.annual = (xr.open_mfdataset(
-                self.dirname + '/obs_subset/annual-mean*.nc')
-                            .squeeze())
+            self.annual = xr.open_mfdataset(
+                self.dirname + "/obs_subset/annual-mean*.nc"
+            ).squeeze()
         except FileNotFoundError:
             self.annual = xr.Dataset()
 
@@ -68,18 +75,18 @@ class model:
             self.budget = xr.Dataset()
 
         self.domain = dict()
-        self.domain['xyt'] = dict()
+        self.domain["xyt"] = dict()
 
-        if self.domain['xyt']:
-            self.oisst = read_sst(self.domain['xyt'])
+        if self.domain["xyt"]:
+            self.oisst = read_sst(self.domain["xyt"])
 
         self.update_coords()
         self.read_metrics()
 
         try:
-            self.mean = (xr.open_dataset(
-                self.dirname + '/obs_subset/annual-mean.nc')
-                         .squeeze())
+            self.mean = xr.open_dataset(
+                self.dirname + "/obs_subset/annual-mean.nc"
+            ).squeeze()
         except FileNotFoundError:
             self.mean = None
 
@@ -92,150 +99,162 @@ class model:
 
         try:
             self.johnson = xr.open_dataset(
-                dirname + '/obs_subset/johnson-section-mean.nc')
+                dirname + "/obs_subset/johnson-section-mean.nc"
+            )
         except FileNotFoundError:
             self.johnson = None
 
-        self.tiw_trange = [slice('1995-09-01', '1996-01-15'),
-                           slice('1996-08-01', '1997-03-01')]
+        self.tiw_trange = [
+            slice("1995-10-01", "1996-03-01"),
+            slice("1996-08-01", "1997-03-01"),
+        ]
 
     def __repr__(self):
-        string = f'{self.name} [{self.dirname}]'
+        string = f"{self.name} [{self.dirname}]"
         # Add resolution
 
         return string
 
     def extract_johnson_sections(self):
-        (self.full.sel(longitude=section_lons, method='nearest')
-         .sel(time=str(self.mid_year))
-         .mean('time')
-         .load()
-         .to_netcdf(self.dirname + '/obs_subset/johnson-section-mean.nc'))
+        (
+            self.full.sel(longitude=section_lons, method="nearest")
+            .sel(time=str(self.mid_year))
+            .mean("time")
+            .load()
+            .to_netcdf(self.dirname + "/obs_subset/johnson-section-mean.nc")
+        )
 
     def extract_tao(self):
-        region = dict(longitude=[-170, -155, -140, -125, -110, -95],
-                      latitude=[-8, -5, -2, 0, 2, 5, 8],
-                      method='nearest')
-        datasets = [self.full.sel(**region)
-                    .sel(depth=slice(0, -500))
-                    .load()]
+        region = dict(
+            longitude=[-170, -155, -140, -125, -110, -95],
+            latitude=[-8, -5, -2, 0, 2, 5, 8],
+            method="nearest",
+        )
+        datasets = [self.full.sel(**region).sel(depth=slice(0, -500)).load()]
         if self.budget:
-            print('Merging in budget terms...')
-            datasets.append(self.budget.sel(**region)
-                            .sel(depth=slice(0, -500))
-                            .load())
+            print("Merging in budget terms...")
+            datasets.append(self.budget.sel(**region).sel(depth=slice(0, -500)).load())
             if not self.full.time.equals(self.budget.time):
                 datasets[0] = datasets[0].reindex(time=self.budget.time)
 
         self.tao = xr.merge(datasets)
 
         # round lat, lon
-        self.tao['latitude'].values = np.array([-8, -5, -2, 0, 2, 5, 8]) * 1.0
-        self.tao['longitude'].values = (
-            np.array([-170, -155, -140, -125, -110, -95]) * 1.0)
+        self.tao["latitude"].values = np.array([-8, -5, -2, 0, 2, 5, 8]) * 1.0
+        self.tao["longitude"].values = (
+            np.array([-170, -155, -140, -125, -110, -95]) * 1.0
+        )
 
-        print('Writing to file...')
-        (self.tao.load()
-         .to_netcdf(self.dirname + '/obs_subset/tao-extract.nc'))
+        print("Writing to file...")
+        (self.tao.load().to_netcdf(self.dirname + "/obs_subset/tao-extract.nc"))
 
     def read_full(self):
         start_time = time.time()
 
-        if self.kind == 'mitgcm':
-            if '_hb' in self.dirname:
+        if self.kind == "mitgcm":
+            if "_hb" in self.dirname:
                 self.full = xr.open_mfdataset(
-                    self.dirname + '/Day_[0-9][0-9][0-9][0-9].nc',
-                    engine='h5netcdf', parallel=True, compat='override',
-                    join='override', data_vars='minimal', coords='minimal',
+                    self.dirname + "/Day_[0-9][0-9][0-9][0-9].nc",
+                    engine="h5netcdf",
+                    parallel=True,
                 )
             else:
                 self.full = xr.open_mfdataset(
-                    self.dirname + '/Day_[0-9][0-9][0-9].nc',
-                    engine='h5netcdf', parallel=True)
-            self.full['dens'] = dens(self.full.salt,
-                                     self.full.theta,
-                                     self.full.depth)
+                    self.dirname + "/Day_[0-9][0-9][0-9].nc",
+                    engine="h5netcdf",
+                    parallel=True,
+                )
+            self.full["dens"] = dens(self.full.salt, self.full.theta, self.full.depth)
 
-        if self.kind == 'roms':
+        if self.kind == "roms":
             self.full = xr.Dataset()
 
-        print('Reading all files took {time} seconds'.format(
-                time=time.time()-start_time))
+        print(
+            "Reading all files took {time} seconds".format(
+                time=time.time() - start_time
+            )
+        )
 
         self.depth = self.full.depth
 
     def read_metrics(self):
-        dirname = self.dirname + '../'
+        dirname = self.dirname + "../"
 
         h = dict()
-        for ff in ['hFacC', 'RAC', 'RF']:
+        for ff in ["hFacC", "RAC", "RF"]:
             try:
                 h[ff] = xmitgcm.utils.read_mds(dirname + ff)[ff]
             except (FileNotFoundError, OSError):
-                print('metrics files not available.')
+                print("metrics files not available.")
                 self.metrics = None
                 return xr.Dataset()
 
-        hFacC = h['hFacC'].copy().squeeze().astype('float32')
-        RAC = h['RAC'].copy().squeeze().astype('float32')
-        RF = h['RF'].copy().squeeze().astype('float32')
+        hFacC = h["hFacC"].copy().squeeze().astype("float32")
+        RAC = h["RAC"].copy().squeeze().astype("float32")
+        RF = h["RF"].copy().squeeze().astype("float32")
 
         del h
 
-        RAC = xr.DataArray(RAC,
-                           dims=['latitude', 'longitude'],
-                           coords={'longitude': self.longitude,
-                                   'latitude': self.latitude},
-                           name='RAC')
+        RAC = xr.DataArray(
+            RAC,
+            dims=["latitude", "longitude"],
+            coords={"longitude": self.longitude, "latitude": self.latitude},
+            name="RAC",
+        )
 
-        self.depth = xr.DataArray((RF[1:] + RF[:-1])/2, dims=['depth'],
-                                  name='depth',
-                                  attrs={'long_name': 'depth',
-                                         'units': 'm'})
+        self.depth = xr.DataArray(
+            (RF[1:] + RF[:-1]) / 2,
+            dims=["depth"],
+            name="depth",
+            attrs={"long_name": "depth", "units": "m"},
+        )
 
-        dRF = xr.DataArray(np.diff(RF.squeeze()),
-                           dims=['depth'],
-                           coords={'depth': self.depth},
-                           name='dRF',
-                           attrs={'long_name': 'cell_height',
-                                  'units': 'm'})
+        dRF = xr.DataArray(
+            np.diff(RF.squeeze()),
+            dims=["depth"],
+            coords={"depth": self.depth},
+            name="dRF",
+            attrs={"long_name": "cell_height", "units": "m"},
+        )
 
-        RF = xr.DataArray(RF.squeeze(),
-                          dims=['depth_left'],
-                          name='depth_left')
+        RF = xr.DataArray(RF.squeeze(), dims=["depth_left"], name="depth_left")
 
-        hFacC = xr.DataArray(hFacC, dims=['depth', 'latitude', 'longitude'],
-                             coords={'depth': self.depth,
-                                     'latitude': self.latitude,
-                                     'longitude': self.longitude},
-                             name='hFacC')
+        hFacC = xr.DataArray(
+            hFacC,
+            dims=["depth", "latitude", "longitude"],
+            coords={
+                "depth": self.depth,
+                "latitude": self.latitude,
+                "longitude": self.longitude,
+            },
+            name="hFacC",
+        )
 
         metrics = xr.merge([dRF, hFacC, RAC])
 
-        metrics['cellvol'] = np.abs(metrics.RAC * metrics.dRF * metrics.hFacC)
+        metrics["cellvol"] = np.abs(metrics.RAC * metrics.dRF * metrics.hFacC)
 
-        metrics['cellvol'] = metrics.cellvol.where(metrics.cellvol > 0)
+        metrics["cellvol"] = metrics.cellvol.where(metrics.cellvol > 0)
 
-        metrics['RF'] = RF
+        metrics["RF"] = RF
 
         self.metrics = metrics
 
     def read_budget(self):
 
-        kwargs = dict(engine='h5netcdf',
-                      parallel=True,
-                     )
+        kwargs = dict(engine="h5netcdf", parallel=True)
 
-        files = sorted(glob.glob(self.dirname + 'Day_*_hb.nc'))
-        self.budget = xr.merge([
-            xr.open_mfdataset(files,
-                              drop_variables=['DFxE_TH', 'DFyE_TH', 'DFrE_TH'],
-                              **kwargs),
-            xr.open_mfdataset(self.dirname + 'Day_*_sf.nc',
-                              **kwargs)
-        ])
+        files = sorted(glob.glob(self.dirname + "Day_*_hb.nc"))
+        self.budget = xr.merge(
+            [
+                xr.open_mfdataset(
+                    files, drop_variables=["DFxE_TH", "DFyE_TH", "DFrE_TH"], **kwargs
+                ),
+                xr.open_mfdataset(self.dirname + "Day_*_sf.nc", **kwargs),
+            ]
+        )
 
-        self.budget['oceQsw'] = self.budget.oceQsw.fillna(0)
+        self.budget["oceQsw"] = self.budget.oceQsw.fillna(0)
 
     def get_tiw_phase(self, v, debug=False):
 
@@ -247,43 +266,40 @@ class model:
                 start_num = ph[-2].period.max()
             else:
                 start_num = 0
-            ph[-1]['period'] += start_num
+            ph[-1]["period"] += start_num
 
-        phase = xr.merge(ph).drop('variable').reindex(time=v.time)
+        phase = xr.merge(ph).drop("variable").reindex(time=v.time)
 
-        return phase.set_coords('period')['tiw_phase']
+        return phase.set_coords("period")["tiw_phase"]
 
     def read_tao(self):
         try:
-            self.tao = xr.open_mfdataset(
-                self.dirname + '/obs_subset/tao-*extract.nc')
+            self.tao = xr.open_mfdataset(self.dirname + "/obs_subset/tao-*extract.nc")
         except FileNotFoundError:
             self.tao = None
             return
 
-        self.tao['dens'] = dens(self.tao.salt, self.tao.theta, self.tao.depth)
+        self.tao["dens"] = dens(self.tao.salt, self.tao.theta, self.tao.depth)
         self.tao = calc_reduced_shear(self.tao)
-        self.tao['euc_max'] = get_euc_max(self.tao.u)
-        self.tao['dcl_base_shear'] = get_dcl_base_shear(self.tao)
-        self.tao['dcl_base_Ri'] = get_dcl_base_Ri(self.tao)
-        self.tao['dens'] = dens(self.tao.salt,
-                                self.tao.theta,
-                                self.tao.depth)
-        self.tao['mld'] = get_mld(self.tao.dens)
+        self.tao["euc_max"] = get_euc_max(self.tao.u)
+        self.tao["dcl_base_shear"] = get_dcl_base_shear(self.tao)
+        self.tao["dcl_base_Ri"] = get_dcl_base_Ri(self.tao)
+        self.tao["dens"] = dens(self.tao.salt, self.tao.theta, self.tao.depth)
+        self.tao["mld"] = get_mld(self.tao.dens)
 
         if self.metrics:
-            CV = (self.metrics.cellvol
-                  .sel(latitude=self.tao.latitude,
-                       longitude=self.tao.longitude,
-                       depth=self.tao.depth,
-                       method='nearest')
-                  .assign_coords(**dict(self.tao.isel(time=1).coords)))
+            CV = self.metrics.cellvol.sel(
+                latitude=self.tao.latitude,
+                longitude=self.tao.longitude,
+                depth=self.tao.depth,
+                method="nearest",
+            ).assign_coords(**dict(self.tao.isel(time=1).coords))
 
             dz = np.abs(self.metrics.dRF[0])
 
-            self.tao['Jq'] = (1035 * 3999 * dz * self.tao.DFrI_TH / CV)
-            self.tao['Jq'].attrs['long_name'] = "$J_q^t$"
-            self.tao['Jq'].attrs['units'] = 'W/m$^2$'
+            self.tao["Jq"] = 1035 * 3999 * dz * self.tao.DFrI_TH / CV
+            self.tao["Jq"].attrs["long_name"] = "$J_q^t$"
+            self.tao["Jq"].attrs["units"] = "W/m$^2$"
 
     def update_coords(self):
         if self.surface:
@@ -298,114 +314,132 @@ class model:
         self.time = ds.time
         self.mid_year = np.unique(self.time.dt.year)[1]
 
-        if 'depth' in ds.variables and not np.isscalar(ds['depth']):
+        if "depth" in ds.variables and not np.isscalar(ds["depth"]):
             self.depth = ds.depth
 
-        for dim in ['latitude', 'longitude', 'time']:
-            self.domain['xyt'][dim] = slice(
-                getattr(self, dim).values.min(),
-                getattr(self, dim).values.max())
+        for dim in ["latitude", "longitude", "time"]:
+            self.domain["xyt"][dim] = slice(
+                getattr(self, dim).values.min(), getattr(self, dim).values.max()
+            )
 
-        self.domain['xy'] = {'latitude': self.domain['xyt']['latitude'],
-                             'longitude': self.domain['xyt']['longitude']}
+        self.domain["xy"] = {
+            "latitude": self.domain["xyt"]["latitude"],
+            "longitude": self.domain["xyt"]["longitude"],
+        }
 
-    def plot_tiw_summary(self, subset, ax=None, normalize_period=False,
-                         **kwargs):
+    def plot_tiw_summary(self, subset, ax=None, normalize_period=False, **kwargs):
 
         if ax is None:
-            f, axx = plt.subplots(9, 1, sharex=True, sharey=False,
-                                  constrained_layout=True,
-                                  gridspec_kw=dict(height_ratios=[2]+[1]*8))
-            ax = dict(zip(['sst', 'u', 'v', 'w', 'theta', 'S2', 'N2', 'Jq', 'Ri'],
-                          axx))
+            f, axx = plt.subplots(
+                9,
+                1,
+                sharex=True,
+                sharey=False,
+                constrained_layout=True,
+                gridspec_kw=dict(height_ratios=[2] + [1] * 8),
+            )
+            ax = dict(zip(["sst", "u", "v", "w", "theta", "S2", "N2", "Jq", "Ri"], axx))
             f.set_size_inches((6, 10))
 
         else:
             axx = list(ax.values())
 
-        cmaps = dict(sst=mpl.cm.RdYlBu_r,
-                     u=mpl.cm.RdBu_r,
-                     v=mpl.cm.RdBu_r,
-                     w=mpl.cm.RdBu_r,
-                     S2=mpl.cm.Reds,
-                     N2=mpl.cm.Blues,
-                     Jq=mpl.cm.BuGn_r,
-                     KT=mpl.cm.Reds,
-                     Ri=mpl.cm.Reds,
-                     theta=mpl.cm.RdYlBu_r)
+        cmaps = dict(
+            sst=mpl.cm.RdYlBu_r,
+            u=mpl.cm.RdBu_r,
+            v=mpl.cm.RdBu_r,
+            w=mpl.cm.RdBu_r,
+            S2=mpl.cm.Reds,
+            N2=mpl.cm.Blues,
+            Jq=mpl.cm.BuGn_r,
+            KT=mpl.cm.Reds,
+            Ri=mpl.cm.Reds,
+            theta=mpl.cm.RdYlBu_r,
+        )
 
-        x = kwargs.get('x')
+        x = kwargs.get("x")
 
         handles = dict()
         for aa in ax:
-            if aa == 'KT':
+            if aa == "KT":
                 pkwargs = dict(norm=mpl.colors.LogNorm())
-            elif aa == 'S2':
+            elif aa == "S2":
                 pkwargs = dict(vmin=0, vmax=5e-4)
-            elif aa == 'Jq':
+            elif aa == "Jq":
                 pkwargs = dict(vmax=0, vmin=-300)
-            elif aa == 'u':
+            elif aa == "u":
                 pkwargs = dict(vmin=-0.8, vmax=0.8)
-            elif aa == 'v':
+            elif aa == "v":
                 pkwargs = dict(vmin=-0.5, vmax=0.5)
-            elif aa == 'w':
+            elif aa == "w":
                 pkwargs = dict(vmin=-1.5e-4, vmax=1.5e-4)
-            elif aa == 'S':
+            elif aa == "S":
                 pkwargs = dict()
-            elif aa == 'N2':
+            elif aa == "N2":
                 pkwargs = dict(vmin=0, vmax=3e-4)
-            elif aa == 'Ri':
+            elif aa == "Ri":
                 pkwargs = dict(levels=[0.1, 0.25, 0.35, 0.5])
             else:
-                pkwargs = {'robust': True}
+                pkwargs = {"robust": True}
 
-            if aa == 'sst':
+            if aa == "sst":
                 handles[aa] = subset[aa].plot(
-                    ax=ax[aa], y='sst_lat', cmap=cmaps[aa], **kwargs, **pkwargs)
+                    ax=ax[aa], y="sst_lat", cmap=cmaps[aa], **kwargs, **pkwargs
+                )
             else:
-                handles[aa] = subset[aa].sel(depth=slice(0, -180)).plot(
-                    ax=ax[aa], y='depth', ylim=[-180, 0],
-                    cmap=cmaps[aa], **kwargs, **pkwargs)
+                handles[aa] = (
+                    subset[aa]
+                    .sel(depth=slice(0, -180))
+                    .plot(
+                        ax=ax[aa],
+                        y="depth",
+                        ylim=[-180, 0],
+                        cmap=cmaps[aa],
+                        **kwargs,
+                        **pkwargs,
+                    )
+                )
                 plot_depths(subset, ax=ax[aa], x=x)
 
-        subset.salt.plot.contour(ax=ax['theta'], y='depth',
-                                 levels=12, colors='gray', linewidths=0.5)
+        subset.salt.plot.contour(
+            ax=ax["theta"], y="depth", levels=12, colors="gray", linewidths=0.5
+        )
 
         for aa in axx[:-1]:
-            aa.set_xlabel('')
+            aa.set_xlabel("")
 
         for aa in axx[1:]:
-            aa.set_title('')
+            aa.set_title("")
 
         if x:
-            if 'phase' in x:
+            if "phase" in x:
                 axx[0].set_xlim([0, 360])
 
         if normalize_period:
-            phase = subset.tiw_phase.copy(deep=True).dropna('time')
-            dtdp = ((phase.time[-1] - phase.time[0]).astype('float32')
-                    / (phase[-1] - phase[0]))
+            phase = subset.tiw_phase.copy(deep=True).dropna("time")
+            dtdp = (phase.time[-1] - phase.time[0]).astype("float32") / (
+                phase[-1] - phase[0]
+            )
 
             phase_times = []
             for pp in [0, 90, 180, 270]:
-                tt = (subset.time.where(subset.tiw_phase.isin(pp), drop=True)
-                      .values)
+                tt = subset.time.where(subset.tiw_phase.isin(pp), drop=True).values
 
                 if tt.size == 1:
                     phase_times.append(tt[0])
                 else:
                     delta_p = pp - phase[0]
-                    delta_t = (dtdp * delta_p).astype('timedelta64[ns]')
+                    delta_t = (dtdp * delta_p).astype("timedelta64[ns]")
                     phase_times.append(phase.time[0].values + delta_t.values)
 
             if phase[-1] < 359:
                 delta_p = 360 - phase[-1]
-                delta_t = (dtdp * delta_p).astype('timedelta64[ns]')
+                delta_t = (dtdp * delta_p).astype("timedelta64[ns]")
                 phase_times.append(phase.time[-1].values + delta_t.values)
 
-            assert(len(phase_times) >= 4)
+            assert len(phase_times) >= 4
 
-            dcpy.plots.linex(phase_times, ax=axx, zorder=10, color='k', lw=1)
+            dcpy.plots.linex(phase_times, ax=axx, zorder=10, color="k", lw=1)
 
             # plt.figure()
             # subset.tiw_phase.plot()
@@ -416,46 +450,59 @@ class model:
 
         return handles, ax
 
-    def plot_tiw_composite(self, region=dict(latitude=0, longitude=-140),
-                           ax=None, ds='tao', **kwargs):
+    def plot_tiw_composite(
+        self, region=dict(latitude=0, longitude=-140), ax=None, ds="tao", **kwargs
+    ):
 
         ds = getattr(self, ds)
 
         subset = ds.sel(**region)
 
         tiw_phase = self.get_tiw_phase(subset.v)
-        subset = (subset.rename({'KPP_diffusivity': 'KT'})
-                  .where(subset.depth < subset.mld - 5))
+        subset = subset.rename({"KPP_diffusivity": "KT"}).where(
+            subset.depth < subset.mld - 5
+        )
 
-        for vv in ['mld', 'dcl_base_shear', 'euc_max']:
-            subset[vv] = subset[vv].max('depth')
+        for vv in ["mld", "dcl_base_shear", "euc_max"]:
+            subset[vv] = subset[vv].max("depth")
 
         phase_bins = np.arange(0, 365, 10)
         grouped = subset.groupby_bins(tiw_phase, bins=phase_bins)
-        mean = grouped.mean('time')
+        mean = grouped.mean("time")
 
-        handles, ax = self.plot_tiw_summary(mean, x='tiw_phase_bins')
+        handles, ax = self.plot_tiw_summary(mean, x="tiw_phase_bins")
 
-        ax.get('u').set_xticks([0, 90, 180, 270, 360])
+        ax.get("u").set_xticks([0, 90, 180, 270, 360])
 
         for _, aa in ax.items():
-            aa.grid(True, axis='x')
+            aa.grid(True, axis="x")
 
-        return handles, ax
+        return handles, ax, f
 
-    def plot_dcl(self, region, ds='tao'):
+    def plot_dcl(self, region, ds="tao"):
 
         subset = getattr(self, ds).sel(**region)
 
-        f, axx = plt.subplots(6, 1, constrained_layout=True, sharex=True,
-                              gridspec_kw=dict(
-                                  height_ratios=[1, 1, 5, 5, 5, 5]))
+        f, axx = plt.subplots(
+            6,
+            1,
+            constrained_layout=True,
+            sharex=True,
+            gridspec_kw=dict(height_ratios=[1, 1, 5, 5, 5, 5]),
+        )
 
-        ax = dict(zip(['v', 'Q', 'KT', 'shear', 'N2', 'Ri'], axx))
+        ax = dict(zip(["v", "Q", "KT", "shear", "N2", "Ri"], axx))
 
-        (np.log10(subset.KPP_diffusivity)
-         .plot(ax=ax['KT'], x='time', vmin=-6, vmax=-2,
-               cmap=mpl.cm.GnBu, ylim=[-150, 0]))
+        (
+            np.log10(subset.KPP_diffusivity).plot(
+                ax=ax["KT"],
+                x="time",
+                vmin=-6,
+                vmax=-2,
+                cmap=mpl.cm.GnBu,
+                ylim=[-150, 0],
+            )
+        )
 
         # dcl_K = (subset.KPP_diffusivity.where(
         #     (subset.depth < (subset.mld - 5))
@@ -471,42 +518,65 @@ class model:
         # ax['dcl_KT'].set_ylabel('DCL $K$')
         # ax['dcl_KT'].legend()
 
-        subset.oceQnet.plot(ax=ax['Q'], x='time', _labels=False)
+        subset.oceQnet.plot(ax=ax["Q"], x="time", _labels=False)
 
-        subset.v.isel(depth=1).plot(ax=ax['v'], x='time', _labels=False)
+        subset.v.isel(depth=1).plot(ax=ax["v"], x="time", _labels=False)
 
-        (subset.shear**2).plot(ax=ax['shear'], x='time', ylim=[-150, 0],
-                               robust=True, cmap=mpl.cm.RdYlBu_r,
-                               norm=mpl.colors.LogNorm(1e-6, 1e-3))
-        (subset.N2).plot(ax=ax['N2'], x='time', ylim=[-150, 0],
-                         robust=True, cmap=mpl.cm.RdYlBu_r,
-                         norm=mpl.colors.LogNorm(1e-6, 1e-3))
+        (subset.shear ** 2).plot(
+            ax=ax["shear"],
+            x="time",
+            ylim=[-150, 0],
+            robust=True,
+            cmap=mpl.cm.RdYlBu_r,
+            norm=mpl.colors.LogNorm(1e-6, 1e-3),
+        )
+        (subset.N2).plot(
+            ax=ax["N2"],
+            x="time",
+            ylim=[-150, 0],
+            robust=True,
+            cmap=mpl.cm.RdYlBu_r,
+            norm=mpl.colors.LogNorm(1e-6, 1e-3),
+        )
 
-        inv_Ri = 1/(subset.N2 / subset.shear**2)
-        inv_Ri.attrs['long_name'] = 'Inv. Ri'
-        inv_Ri.attrs['units'] = ''
+        inv_Ri = 1 / (subset.N2 / subset.shear ** 2)
+        inv_Ri.attrs["long_name"] = "Inv. Ri"
+        inv_Ri.attrs["units"] = ""
 
-        (inv_Ri).plot(ax=ax['Ri'], x='time', ylim=[-150, 0],
-                      robust=True, cmap=mpl.cm.RdBu_r,
-                      center=4)
-        (inv_Ri).plot.contour(ax=ax['Ri'], x='time', ylim=[-150, 0],
-                              levels=[4], colors='gray', linewidths=0.5)
+        (inv_Ri).plot(
+            ax=ax["Ri"],
+            x="time",
+            ylim=[-150, 0],
+            robust=True,
+            cmap=mpl.cm.RdBu_r,
+            center=4,
+        )
+        (inv_Ri).plot.contour(
+            ax=ax["Ri"],
+            x="time",
+            ylim=[-150, 0],
+            levels=[4],
+            colors="gray",
+            linewidths=0.5,
+        )
 
-        for axx0 in [ax['KT'], ax['shear'], ax['N2']]:
-            heuc = (subset.euc_max.plot(ax=axx0, color='k', lw=1, _labels=False))
-            hdcl = (subset.dcl_base_shear.plot(ax=axx0, color='gray', lw=1, _labels=False))
-            hmld = ((subset.mld - 5).plot(ax=axx0, color='k', lw=0.5, _labels=False))
+        for axx0 in [ax["KT"], ax["shear"], ax["N2"]]:
+            heuc = subset.euc_max.plot(ax=axx0, color="k", lw=1, _labels=False)
+            hdcl = subset.dcl_base_shear.plot(
+                ax=axx0, color="gray", lw=1, _labels=False
+            )
+            hmld = (subset.mld - 5).plot(ax=axx0, color="k", lw=0.5, _labels=False)
 
-        ((subset.mld-5).plot(ax=ax['Ri'], color='k', lw=0.5, _labels=False))
-        (subset.euc_max.plot(ax=ax['Ri'], color='k', lw=0.5, _labels=False))
-        ax['v'].set_ylabel('v')
-        ax['Q'].set_ylabel('$Q_{net}$')
-        axx[0].set_title(ax['KT'].get_title())
-        [aa.set_title('') for aa in axx[1:]]
-        [aa.set_xlabel('') for aa in axx]
+        ((subset.mld - 5).plot(ax=ax["Ri"], color="k", lw=0.5, _labels=False))
+        (subset.euc_max.plot(ax=ax["Ri"], color="k", lw=0.5, _labels=False))
+        ax["v"].set_ylabel("v")
+        ax["Q"].set_ylabel("$Q_{net}$")
+        axx[0].set_title(ax["KT"].get_title())
+        [aa.set_title("") for aa in axx[1:]]
+        [aa.set_xlabel("") for aa in axx]
 
-        ax['v'].axhline(0, color='k', zorder=-1, lw=1, ls='--')
-        ax['Q'].axhline(0, color='k', zorder=-1, lw=1, ls='--')
+        ax["v"].axhline(0, color="k", zorder=-1, lw=1, ls="--")
+        ax["Q"].axhline(0, color="k", zorder=-1, lw=1, ls="--")
 
         f.set_size_inches((8, 8))
         dcpy.plots.label_subplots(ax.values())
@@ -515,22 +585,32 @@ class model:
 
         import tqdm
 
-        if 'tiw_phase' not in subset:
+        if "tiw_phase" not in subset:
             subset = xr.merge([subset, self.get_tiw_phase(subset.v)])
-        if 'sst' not in subset:
-            subset['sst'] = (self.surface.theta.sel(longitude=subset.longitude.values,
-                                                    method='nearest')
-                             .rename({'latitude': 'sst_lat'}))
+        if "sst" not in subset:
+            subset["sst"] = self.surface.theta.sel(
+                longitude=subset.longitude.values, method="nearest"
+            ).rename({"latitude": "sst_lat"})
 
-        for period in tqdm.tqdm(np.unique(subset.period.dropna('time'))):
-            self.plot_tiw_summary(subset.where(subset.period == period,
-                                               drop=True)
-                                  .drop('period')
-                                  .assign_coords(period=period),
-                                  x='time', normalize_period=True)
+        def _plot_func(subset, period):
+            _, _, f = self.plot_tiw_summary(
+                subset.where(subset.period == period, drop=True)
+                .drop("period")
+                .assign_coords(period=period),
+                x="time",
+                normalize_period=True,
+            )
 
-            plt.gcf().savefig(f'../images/{self.name}-tiw-period'
-                              f'-{subset.latitude.values}'
-                              f'-{np.abs(subset.longitude.values)}'
-                              f'-{period}.png',
-                              dpi=200)
+            f.savefig(
+                f"../images/{self.name}-tiw-period"
+                f"-{subset.latitude.values}"
+                f"-{np.abs(subset.longitude.values)}"
+                f"-{period:02.0f}.png",
+                dpi=200,
+            )
+
+        periods = subset.period.dropna("time")
+        subset = dask.delayed(subset)
+        return [
+            dask.delayed(_plot_func)(subset, period) for period in np.unique(periods)
+        ]
