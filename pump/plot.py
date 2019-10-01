@@ -70,20 +70,30 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
     for vv in ['u', 'b']:
         for vvar in ['s', 'euc']:
             var = vv + vvar
-            ds[var].differentiate('longitude').plot(
+            if vvar == 'euc':
+                factor = -1
+                prefix = '-'
+            else:
+                factor = 1
+                prefix = ''
+            (factor*ds[var].differentiate('longitude')).plot(
                 ax=ax[vv],
-                label=f'$∂_x {vv}_{{{vvar}}}$', # label=f'$∂_x{vv}_{{{vvar}}}$',
+                label=f'{prefix}$∂_x {vv}_{{{vvar}}}$', # label=f'$∂_x{vv}_{{{vvar}}}$',
                 color=colors[var],
                 **kwargs)
             if add_legend:
                 ax[vv].legend(ncol=2)
-                dcpy.plots.liney(0, ax[vv])
+
+            dcpy.plots.liney(0, ax[vv])
             ax[vv].set_title('')
             ax[vv].set_xlabel('')
             ax[vv].set_ylabel('')
 
-    ax['u'].set_ylim([-0.025, 0.025])
-    # ax['b'].set_ylim([-0.0005, 0.0005])
+    ax['u'].set_ylim([-0.04, 0.04])
+    ax['b'].set_ylim([-0.0007, 0.0007])
+
+    ax['du'].set_ylim([-1.3, -0.3])
+    ax['db'].set_ylim([0.005, 0.05])
 
     ax['Ri'].set_ylabel('Ri$_b =  Δbh/Δu²$')
     ax['Ri'].set_yscale('log')
@@ -97,6 +107,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
         dcpy.plots.liney(0, ax=ax['contrib'])
     ax['contrib'].set_ylabel('Fractional changes')
     ax['contrib'].set_title('')
+    ax['contrib'].set_ylim([-0.15, 0.1])
 
     name = ds.attrs['name']
     if add_legend:
