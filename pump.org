@@ -43,18 +43,18 @@ mpl.rcParams['savefig.dpi'] = 300
 mpl.rcParams['savefig.bbox'] = 'tight'
 mpl.rcParams['figure.dpi'] = 250
 
-xr.set_options(keep_attrs=True)
+xr.set_options(keep_attrs=False)
 #+END_SRC
 
 #+NAME: build-cluster
 #+BEGIN_SRC jupyter-python :results none
-import dask
 import distributed
-import ncar_jobqueue
+import dask_jobqueue
 
 if 'client' in locals():
     client.close(); cluster.close()
-cluster = ncar_jobqueue.NCARCluster(
+
+cluster = dask_jobqueue.SLURMCluster(
     cores=1, processes=1, memory='25GB',
     walltime='02:00:00', project='NCGD0043')
 
@@ -77,7 +77,7 @@ cluster.scale(n)
 
 #+NAME: read-gcm1-hb
 #+BEGIN_SRC jupyter-python :results none
-gcm1 = pump.model('../glade/TPOS_MITgcm_1_hb/HOLD/',
+gcm1 = pump.model('pump/glade/TPOS_MITgcm_1_hb/HOLD/',
                   name='gcm1', full=False, budget=False)
 #+END_SRC
 
@@ -88,34 +88,44 @@ gcm1 = pump.model('../glade/TPOS_MITgcm_1/HOLD/',
 #+END_SRC
 
 #+RESULTS: read-gcm1
-:RESULTS:
-# [goto error]
 #+begin_example
----------------------------------------------------------------------------
-OSError                                   Traceback (most recent call last)
-<ipython-input-53-2a69fa09d237> in <module>
-      1 gcm1 = pump.model('../glade/TPOS_MITgcm_1/HOLD/',
-----> 2                   name='gcm1', full=False, budget=False)
+/glade/u/home/dcherian/pump/pump/model/model.py:54: FutureWarning: In xarray version 0.13 the default behaviour of `open_mfdataset`
+will change. To retain the existing behavior, pass
+combine='nested'. To use future default behavior, pass
+combine='by_coords'. See
+http://xarray.pydata.org/en/stable/combining.html#combining-multi
 
-~/pump/pump/model/model.py in __init__(self, dirname, name, kind, full, budget)
-     52         try:
-     53             self.annual = (xr.open_mfdataset(
----> 54                 self.dirname + '/obs_subset/annual-mean*.nc')
-     55                             .squeeze())
-     56         except FileNotFoundError:
+  self.dirname + '/obs_subset/annual-mean*.nc')
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:929: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine='by_coords'` option to `open_mfdataset`) to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in future, please use the new
+`combine_nested` function (or the `combine='nested'` option to
+open_mfdataset).
+  from_openmfds=True,
+/glade/u/home/dcherian/pump/pump/model/model.py:256: FutureWarning: In xarray version 0.13 the default behaviour of `open_mfdataset`
+will change. To retain the existing behavior, pass
+combine='nested'. To use future default behavior, pass
+combine='by_coords'. See
+http://xarray.pydata.org/en/stable/combining.html#combining-multi
 
-/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py in open_mfdataset(paths, chunks, concat_dim, compat, preprocess, engine, lock, data_vars, coords, combine, autoclose, parallel, **kwargs)
-    743
-    744     if not paths:
---> 745         raise IOError('no files to open')
-    746
-    747     # If combine='by_coords' then this is unnecessary, but quick.
-
-OSError: no files to open
+  self.dirname + '/obs_subset/tao-*extract.nc')
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:929: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine='by_coords'` option to `open_mfdataset`) to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in future, please use the new
+`combine_nested` function (or the `combine='nested'` option to
+open_mfdataset).
+  from_openmfds=True,
+metrics files not available.
 #+end_example
-:END:
 
 * gyaan
+
+1. Maximum depth-integrated EUC transport at ≈ 135W.
+2.
 
 ** Marginal instability
 
@@ -137,6 +147,29 @@ Inoue papers:
 Ryan:
 - Zonal shear is the main thing. Meridional shear is not so important.
 -
+
+** large-scale circulation
+
+- advective terms intensify the EUC and SEC. Their curl is ≥ O(wind stress curl).
+- Eastward advection of cyclonic relative vorticity strengthens EUC, SEC well east of 90W (galapagos). The winds are quite weak east of 90W so there should be weak circulation but there is not...
+- indicating that the role of TIW advection is like a friction and acts to weaken the EUC and spread its eastward momentum to its flanks.
+- EUC shoaling in March-May is forced by westward-propagating annual cycle of zonal-wind along the equator
+
+*** Kessler et al (2003): Curl of nonlinear terms is really important
+
+\begin{align}
+        βV &= ∇ × τ \\
+        U_x + V_y &= 0 \\
+⇒ U &= \frac{-1}{β} ∫_{EB}^x ∂_y (∇×τ) dx + U_{EB}
+\end{align}
+By Sverdrup, eastern Pacific curl sets the zonal pattern. They express advection & friction as generalized stress : for advection,
+\begin{equation}
+        τ' = - ∫ (∇ \cdot uhu) dz
+\end{equation}
+#+begin_quote
+When ∂_y curl(τ') is integrated westward, the advective terms are seen to have the effect of intensifying the
+mean vertically integrated currents, both the eastward EUC^z and the westward SEC(N)^z and SEC(S)^z.
+#+end_quote
 
 * Data locations                                                   :noexport:
 
@@ -504,8 +537,6 @@ Ri_binned = sp.stats.binned_statistic_2d(tmat,
 
 ** Simple models for MI
 
-1. I am averaging daily TAO mooring data over all time. Is this a good idea?
-
 #+NAME: estimate-Ri-diagnosis-terms
 #+BEGIN_SRC jupyter-python :results none
 def estimate_euc_depth_terms(ds):
@@ -524,7 +555,9 @@ def estimate_euc_depth_terms(ds):
         ds.du.attrs['long_name'] = '$\Delta$u'
 
     if 'dens' in ds:
-        ds['dens_euc'] = ds.dens.interp(depth=ds.eucmax, longitude=ds.longitude, method='linear')
+        ds['dens_euc'] = ds.dens.interp(depth=ds.eucmax,
+                                        longitude=ds.longitude,
+                                        method='linear')
         ds['b'] = ds.dens * -9.81/ds.dens_euc
         ds['bs'] = ds.b.sel(**surface)
         ds['beuc'] = -9.81 * xr.ones_like(ds.bs)
@@ -590,16 +623,19 @@ tao = xr.merge([estimate_euc_depth_terms(tao_adcp)[['us', 'ueuc', 'du', 'eucmax'
 tao = estimate_euc_depth_terms(tao)
 tao.attrs['name'] = 'TAO'
 
-hires = xr.load_dataset('pump/glade/small-annual-mean.nc')
+hires = xr.load_dataset('~/pump/glade/small-eq-mean.nc').sel(longitude=slice(-221, None))
 hires['eucmax'] = (pump.calc.get_euc_max(hires.u)
-                   .rolling(longitude=100, center=True, min_periods=1)
+                   .rolling(longitude=200, center=True, min_periods=1)
                    .mean())
 hires = estimate_euc_depth_terms(hires)
 #+END_SRC
 
+
+1. I am averaging daily TAO mooring data over all time. Is this a good idea?
+
 *** Fractional contributions to bulk Ri
 
-Another way to do this is to think of Ri=0.5 or something far east (e..g. 195W in the TAO image). Given crude estimates of longitudinal changes in Δb, EUCmax depth etc. can we explain the drop in Ri to 0.25 by 170W?
+Another way to do this is to think of Ri=0.5 or something far east (e..g. 195W in the TAO image). Given crude estimates of longitudinal changes in Δb, EUCmax depth etc. can we explain the drop in Ri to 0.25 by 17W0?
 
 Here Δ ≡ (surface) - (EUC max); define surface as 20m depth for now (this is where sampling starts basically)
 #+CAPTION: Ri estimated using hourly TAO data.
@@ -624,11 +660,12 @@ Let RHS =  α,
 \end{align}
 #+end_export
 
-$\Ri_0$ is $\Ri$ at 195W = 0.5, Δx = (170W-195W) = 25° ⇒ α = -1/50° approx.
+$\Ri_0$ is \$Ri$ at 195W = 0.5, Δx = (170W-195W) = 25° ⇒ α = -1/50° approx.
 
 1. Johnson dataset don't show marginal stability at 0.25. So the estimates of Δu, Δb are probably wrong. But it looks like this dataset represents marginal stability at /bulk/ Ri ≅ 1.
 2. And there is a big change between 200W and 140W
 3. This big change is largely from Δu
+4. Bulk Ri and gradient Ri are both 0.25 in the marginally stable zone if shear is linear. Otherwise there is no general relationship.
 
 With the Johnson data, it looks like the longitudinal variation in Δu is what dominates the reduction in Ri. This is due to both an accelerating EUC and but also due to a reversal in sign of surface current starting at 195W (i.e. appearance of the SEC). They contribute roughly equally to the change in Δu.
 This result is consistent with the TAO dataset.
@@ -737,12 +774,12 @@ pump.plot.plot_bulk_Ri_diagnosis(tao)
 
 #+RESULTS:
 :RESULTS:
-| <Figure | size | 2000x2500 | with | 7 | Axes> | (Ri : <matplotlib.axes._subplots.AxesSubplot at 0x2ab666c2c0f0> h : <matplotlib.axes._subplots.AxesSubplot at 0x2ab66b2124a8> du : <matplotlib.axes._subplots.AxesSubplot at 0x2ab6696091d0> db : <matplotlib.axes._subplots.AxesSubplot at 0x2ab66691f278> u : <matplotlib.axes._subplots.AxesSubplot at 0x2ab6659b4a90> b : <matplotlib.axes._subplots.AxesSubplot at 0x2ab666947908> contrib : <matplotlib.axes._subplots.AxesSubplot at 0x2ab66bfe7c18>) |
+| <Figure | size | 1440x1800 | with | 7 | Axes> | (Ri : <matplotlib.axes._subplots.AxesSubplot at 0x2bacc007b780> h : <matplotlib.axes._subplots.AxesSubplot at 0x2bacc1552668> du : <matplotlib.axes._subplots.AxesSubplot at 0x2bacc157db38> db : <matplotlib.axes._subplots.AxesSubplot at 0x2bacc15ada58> u : <matplotlib.axes._subplots.AxesSubplot at 0x2bacc15e86d8> b : <matplotlib.axes._subplots.AxesSubplot at 0x2bacc161f940> contrib : <matplotlib.axes._subplots.AxesSubplot at 0x2bacc1655978>) |
 [[file:images/Ri-diagnosis-tao.png]]
 :END:
 
 **** gcm1
-#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-gcm1.png
+#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-gcm1.pnga
 mpl.rcParams['figure.dpi'] = 180
 
 smooth = (subset.sel(longitude=slice(-165, -100))
@@ -756,37 +793,169 @@ ax['Ri'].legend(labels=['gcm1', 'johnson', 'TAO'], ncol=3, loc='upper right')
 
 #+RESULTS:
 :RESULTS:
-: /gpfs/u/home/dcherian/python/xarray/xarray/core/nanops.py:160: RuntimeWarning: Mean of empty slice
-:   return np.nanmean(a, axis=axis, dtype=dtype)
-: <matplotlib.legend.Legend at 0x2af7398d24a8>
+: <matplotlib.legend.Legend at 0x2bac00285048>
 [[file:images/Ri-diagnosis-gcm1.png]]
 :END:
 
 **** Small et al 2014, CESM1 hires
 
-- need to smooth EUC max
+Ri looks (not so) OK actually *but* Δb seems to be as important as Δu between 200 and 170.
+This is because SEC is in the wrong direction?! and so shear is smaller. Sign of SEC in W.Pac. is consistent in TAO, Johnson, drifter climatology.
 #+BEGIN_SRC jupyter-python
-hires.eucmax.plot()
+f, ax = plt.subplots(2, 1, sharex=True, sharey=True)
+(annual.u.where(annual.ULONG < -5, drop=True)
+.isel(depth=0)
+.isel(nlon=slice(None, -50))
+.plot(x='ULONG', y='ULAT', xlim=[-250, -90], ax=ax[0], vmin=-1, vmax=1, cmap=mpl.cm.RdBu_r,))
+
+drifter.U.plot(x='longitude', vmin=-1, vmax=1, cmap=mpl.cm.RdBu_r,xlim=[-250, -90], ylim=[-6, 6])
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.collections.QuadMesh at 0x2b63ea34ac8>8
+[[file:./.ob-jupyter/725bfb61dbf360997dd6d31a4d0f0008dba2a463.png]]
+:END:
+
+#+BEGIN_SRC jupyter-python
+
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.collections.QuadMesh at 0x2b63e3bf8588>
+[[file:./.ob-jupyter/2356133e2fbf578a0443d2daaf2db17b14c2b5bc.png]]
+:END:
+
+#+BEGIN_SRC jupyter-python
+f, ax = plt.subplots(2, 1, sharex=True, sharey=True)
+plt.sca(ax[0])
+johnson.us.plot(marker='^')
+tao.us.plot(marker='o')
+hires.us.plot()
+drifter.U.sel(latitude=0, method='nearest').plot()
+dcpy.plots.liney(0)
+
+plt.sca(ax[1])
+johnson.ueuc.plot(marker='^')
+tao.ueuc.plot(marker='o')
+hires.ueuc.plot()
+dcpy.plots.liney(0)
+
+ax[0].legend(['Johnson', 'TAO', 'CESM-Hires', 'Drifter climatology'])
+ax[0].set_title('surface u')
+ax[1].set_title('u EUC')
+ax[0].set_xlabel('')
+#+END_SRC
+
+#+BEGIN_SRC jupyter-python
+f, ax = plt.subplots(2, 2, sharex=True, sharey='col', constrained_layout=True)
+plt.sca(ax[0,0])
+johnson.us.plot(marker='^')
+tao.us.plot(marker='o')
+hires.us.plot()
+drifter.U.sel(latitude=0, method='nearest').plot()
+dcpy.plots.liney(0)
+
+plt.sca(ax[1,0])
+johnson.ueuc.plot(marker='^')
+tao.ueuc.plot(marker='o')
+hires.ueuc.plot()
+dcpy.plots.liney(0)
+
+ax[0,0].legend(['Johnson', 'TAO', 'CESM-Hires', 'Drifter climatology'])
+ax[0,0].set_title('surface u')
+ax[1,0].set_title('u EUC')
+ax[0,0].set_xlabel('')
+
+plt.sca(ax[0,1])
+johnson.bs.plot(marker='^')
+tao.bs.plot(marker='o')
+hires.bs.plot()
+
+plt.sca(ax[1,1])
+johnson.beuc.plot(marker='^')
+tao.beuc.plot(marker='o')
+hires.beuc.plot()
+
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+| <matplotlib.lines.Line2D | at | 0x2b63e8523b70> |
+[[file:./.ob-jupyter/956d3d27bc0e069554e3cde7aeec195b0842d0a1.png]]
+:END:
+
+
+#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-cesm-hires.png
+f, ax = pump.plot.plot_bulk_Ri_diagnosis(hires.sel(longitude=slice(None, -95, 10)),
+                                         None, None, lw=1)
+pump.plot.plot_bulk_Ri_diagnosis(johnson, f, ax, marker='^', ls='none')
+pump.plot.plot_bulk_Ri_diagnosis(tao, f, ax, marker='o', ls='none')
+ax['Ri'].legend(labels=['cesm-hires', 'johnson', 'TAO'], ncol=3, loc='upper right')
+
+#pump.plot.plot_bulk_Ri_diagnosis(hires.sel(longitude=slice(None, -95)))
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.legend.Legend at 0x2bacb06c2470>
+[[file:images/Ri-diagnosis-cesm-hires.png]]
+:END:
+
+Bias is in surface velocity.
+***** tuning
+
+1. need to smooth EUC max
+#+BEGIN_SRC jupyter-python
+pump.calc.get_euc_max(hires.u).plot()
 hires.eucmax.rolling(longitude=100, center=True).mean().plot()
 #+END_SRC
 
 #+RESULTS:
 :RESULTS:
-| <matplotlib.lines.Line2D | at | 0x2adda920ef98> |
-[[file:./.ob-jupyter/e2fda7d9f0654bc4d203b11d1ae38c7bed9a974a.png]]
+| <matplotlib.lines.Line2D | at | 0x2bacc2204828> |
+[[file:./.ob-jupyter/a85bc52c50b9c7905a284cec67bfbe3396fdde88.png]]
 :END:
 
-
-Ri looks OK actually *but* Δb seems to be as import as Δu between 200 and 170.
-
-#+BEGIN_SRC jupyter-python :file images/Ri-diagnosis-cesm-hires.png
-pump.plot.plot_bulk_Ri_diagnosis(hires.sel(longitude=slice(None, -95)))
+2. Different vertical level for surface velocity doesn't change things
+#+BEGIN_SRC jupyter-python
+hires.u.isel(depth=slice(0, 5)).plot.line(hue='depth')
 #+END_SRC
 
 #+RESULTS:
 :RESULTS:
-[[file:images/Ri-diagnosis-cesm-hires.png]]
+| <matplotlib.lines.Line2D | at | 0x2bacc2dead30> | <matplotlib.lines.Line2D | at | 0x2bacc2e07828> | <matplotlib.lines.Line2D | at | 0x2bacc2e07a20> | <matplotlib.lines.Line2D | at | 0x2bacc2e07b70> | <matplotlib.lines.Line2D | at | 0x2bacc2e07cc0> |
+[[file:./.ob-jupyter/656a19b70270a6028919ca988776af0bc7a5bd51.png]]
 :END:
+
+#+BEGIN_SRC jupyter-python
+eucmax = pump.calc.get_euc_max(hires.u)
+hires.dens.interp(depth=eucmax, longitude=eucmax.longitude).plot()
+hires.dens.interp(depth=eucmax.rolling(longitude=200, center=True, min_periods=1).mean(),
+                  longitude=eucmax.longitude).plot()
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+| <matplotlib.lines.Line2D | at | 0x2bac658908d0> |
+[[file:./.ob-jupyter/dcd4573bddfe0dd0cd75b2a44703e923cc569a4c.png]]
+:END:
+
+#+BEGIN_SRC jupyter-python
+(hires.us - hires.ueuc).plot()
+hires.us.plot()
+(-hires.ueuc).plot()
+plt.gca().legend(['du', 'us', '-ueuc'])
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.legend.Legend at 0x2babf0ac68d0>
+[[file:./.ob-jupyter/59bd97a95acf8501609e513fbfd7ab872d040fc6.png]]
+:END:
+
+
 
 **** CMPI5 LE
 #+BEGIN_SRC jupyter-python
@@ -799,8 +968,17 @@ pump.plot.plot_bulk_Ri_diagnosis(hires.sel(longitude=slice(None, -95)))
 *** Simple model
 
 #+begin_export latex
-\Ri = \frac{\bar{w} h Q}{\left((-ghη_x + Δb/2 h h_x) + τ_w \right)²}
+\begin{align}
+\Ri &= \frac{2 \bar{w} h Q}{\left(-ghη_x + Δb/2 h h_x + τ_w \right)²}
+\Ri/w &= \frac{10^2 10^{-8}}{\left(10×10^2×10^{-8} + 10^{-2} × 10^2 × 10^{-5} + 10^{-5}\right)²}
+\end{align}
 #+end_export
+
+Here, $Q \sim Q_{net} g α / ρ_0 / c_p$
+
+
+Magnitudes
+
 
 **** term magnitudes
 
@@ -969,6 +1147,9 @@ johnson.eucmax.plot(color='k')
 [[file:./.ob-jupyter/41d85dc5e7e3f620c92e7a0e32dfb1d2cdc839ae.png]]
 :END:
 
+**** attempt 2
+
+
 * Upper Core Layer
 
 - seems to be approx constant $u_z$
@@ -1040,6 +1221,76 @@ def pv(ds):
 [[file:$1]]
 
 * TIW compositing
+
+**  periods: 110
+#+BEGIN_SRC jupyter-python
+gcm1.summarize_tiw_periods(gcm1.tao.sel(latitude=0, longitude=-110))
+tasks = gcm1.summarize_tiw_periods(gcm1.tao.sel(latitude=0, longitude=-140))
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+#+begin_example
+
+
+  0%|          | 0/14 [00:00<?, ?it/s][A[A
+
+  7%|▋         | 1/14 [00:05<01:05,  5.01s/it][A[A
+
+ 14%|█▍        | 2/14 [00:09<00:59,  4.93s/it][A[A
+
+ 21%|██▏       | 3/14 [00:14<00:55,  5.00s/it][A[A
+
+ 29%|██▊       | 4/14 [00:19<00:49,  4.97s/it][A[A
+
+ 36%|███▌      | 5/14 [00:24<00:44,  4.89s/it][A[A
+
+ 43%|████▎     | 6/14 [00:29<00:38,  4.82s/it][A[A
+
+ 50%|█████     | 7/14 [00:34<00:33,  4.83s/it][A[A
+
+ 57%|█████▋    | 8/14 [00:39<00:29,  4.91s/it][A[A
+
+ 64%|██████▍   | 9/14 [00:43<00:24,  4.87s/it][A[A
+
+ 71%|███████▏  | 10/14 [00:49<00:19,  4.98s/it][A[A
+
+ 79%|███████▊  | 11/14 [00:54<00:15,  5.07s/it][A[A
+
+ 86%|████████▌ | 12/14 [00:59<00:10,  5.18s/it][A[A
+
+ 93%|█████████▎| 13/14 [01:05<00:05,  5.42s/it][A[A
+
+100%|██████████| 14/14 [01:11<00:00,  5.40s/it][A[A
+#+end_example
+[[file:./.ob-jupyter/00a77a0bc2a7899f1f2053e4c05b6c29dd9d7e1c.png]]
+[[file:./.ob-jupyter/1853d20004d583b06259183875083063fcdb8d91.png]]
+[[file:./.ob-jupyter/7a71397153fd7b54f04da6a15fd55bcbdcedf8c4.png]]
+[[file:./.ob-jupyter/6368e8853f4c05da95367ac64a6eedc384269dc6.png]]
+[[file:./.ob-jupyter/37f7fda4a83532e2b206f6c2626f0d4558b47ce6.png]]
+[[file:./.ob-jupyter/902d0e5b9186795a8120be1f90b6b7ef91922462.png]]
+[[file:./.ob-jupyter/7b61045eafbcab026115f47c01d96483b5d148d1.png]]
+[[file:./.ob-jupyter/73cdc4e3284ba166d6be33b943cf5211fd2cf18e.png]]
+[[file:./.ob-jupyter/1f783c046545f95f456c1c32fcc9d5dcfb6f7436.png]]
+[[file:./.ob-jupyter/554d7e90d239acbb71033bbca4bd12095fb389a8.png]]
+[[file:./.ob-jupyter/f5514b7659d2100bf6bb4559e99cdf0f978e6b6b.png]]
+[[file:./.ob-jupyter/68315a074b60d44725c99744d4f8afa6bf496c34.png]]
+[[file:./.ob-jupyter/08df0ae914c34e49466443a85721db06826544ca.png]]
+[[file:./.ob-jupyter/274dc856fe7428d72bcd95c3040c71264b952ecb.png]]
+:END:
+
+** periods: 140
+
+#+BEGIN_SRC jupyter-python
+tao140 = gcm1.tao.sel(latitude=0, longitude=-140)
+tao140 = xr.merge([tao140, pump.calc.get_tiw_phase(tao140.v)])
+tao140['sst'] = (gcm1.surface.theta.sel(latitude=tao140.latitude.values,
+                                        longitude=tao140.longitude.values,
+                                        method='nearest')
+                 .rename({'latitude': 'sst_lat'}))
+gcm1.summarize_tiw_periods(tao140)
+#+END_SRC
+
 * MLD calculation
 
 #+BEGIN_SRC jupyter-python :results none
@@ -1345,13 +1596,28 @@ f, ax = plt.subplots(3, 1, constrained_layout=True)
 
 * reading CESM output: annual means
 ** Small et al 2014
+#+BEGIN_SRC jupyter-python
+small.TLONG.plot()
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.collections.QuadMesh at 0x2bac37c76be0>
+[[file:./.ob-jupyter/c0ccbee2aabf881b5cf4d9de3d366def0bb5085d.png]]
+:END:
+
 
 #+BEGIN_SRC jupyter-python
 small = pump.cesm.read_small()
 annual = small.mean('time').compute()
 annual['dens'] = pump.mdjwf.dens(annual.salt, annual.temp, annual.depth)
 annual.attrs['name'] = 'hires CESM1'
-annual.to_netcdf('pump/glade/small-annual-mean.nc')
+annual.to_netcdf('~/pump/glade/small-pac-mean.nc')
+
+eq = annual.isel(nlat=62).rename(nlon='longitude')
+eq['longitude'] = eq.ULONG
+eq.to_netcdf('~/pump/glade/small-eq-mean.nc')
+
 #+END_SRC
 
 #+RESULTS:
@@ -1384,6 +1650,17 @@ NameError                                 Traceback (most recent call last)
 NameError: name 'xr' is not defined
 #+end_example
 :END:
+
+#+BEGIN_SRC jupyter-python
+small.TLAT.isel().plot()
+#+END_SRC
+
+#+RESULTS:
+:RESULTS:
+: <matplotlib.collections.QuadMesh at 0x2baccd6afc88>
+[[file:./.ob-jupyter/f733f8df14687041e956eebec714e5e100277fbd.png]]
+:END:
+
 ** CESM LE
 #+BEGIN_SRC jupyter-python
 le = pump.cesm.read_cesm_le()
@@ -1392,3 +1669,14 @@ annual['dens'] = pump.mdjwf.dens(annual.salt, annual.temp, annual.depth)
 annual.attrs['name'] = 'CESM LE'
 annual.to_netcdf('pump/glade/cesm-le-mean.nc')
 #+END_SRC
+
+* paper outline
+** Observations
+
+#+CAPTION: Marginal stability in the TAO data.
+[[file:images/tao-marginal-stability-hourly.png]]
+
+#+CAPTION: Longitudinal transition to marginal stability in the eastern equatorial Pacific in three datasets (Johnson, TAO, CESM-H).
+[[file:images/Ri-diagnosis-cesm-hires.png]]
+
+** Model biases
