@@ -256,6 +256,13 @@ class model:
 
         self.budget["oceQsw"] = self.budget.oceQsw.fillna(0)
 
+        CV = self.metrics.cellvol
+        dz = np.abs(self.metrics.dRF[0])
+        self.budget["Jq"] = 1035 * 3999 * dz * self.budget.DFrI_TH / CV
+        self.budget["Jq"].attrs["long_name"] = "$J_q^t$"
+        self.budget["Jq"].attrs["units"] = "W/m$^2$"
+
+
     def get_tiw_phase(self, v, debug=False):
 
         ph = []
