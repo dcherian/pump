@@ -3,6 +3,6 @@ from .constants import *
 from .obs import *
 from .model.model import model
 
-import cesm
-import composite
-import utils
+from . import cesm
+from . import composite
+from . import utils

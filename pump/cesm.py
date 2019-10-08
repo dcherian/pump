@@ -1,5 +1,5 @@
 import xarray as xr
-import modify_pop_for_xgcm
+from . import modify_pop_for_xgcm
 
 
 def read_cesm(dirname):
