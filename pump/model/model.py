@@ -58,7 +58,7 @@ class model:
 
         try:
             self.annual = xr.open_mfdataset(
-                self.dirname + "/obs_subset/annual-mean*.nc"
+                self.dirname + "/obs_subset/annual-mean*.nc", combine="coords"
             ).squeeze()
         except FileNotFoundError:
             self.annual = xr.Dataset()
@@ -151,19 +151,18 @@ class model:
     def read_full(self):
         start_time = time.time()
 
+        chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
+
         if self.kind == "mitgcm":
-            if "_hb" in self.dirname:
-                self.full = xr.open_mfdataset(
-                    self.dirname + "/Day_[0-9][0-9][0-9][0-9].nc",
-                    engine="h5netcdf",
-                    parallel=True,
-                )
-            else:
-                self.full = xr.open_mfdataset(
-                    self.dirname + "/Day_[0-9][0-9][0-9].nc",
-                    engine="h5netcdf",
-                    parallel=True,
-                )
+            self.full = xr.open_mfdataset(
+                self.dirname + "/Day_*[0-9].nc",
+                concat_dim="time",
+                engine="h5netcdf",
+                parallel=True,
+                chunks=chunks,
+                combine="nested",
+            )
+
             self.full["dens"] = dens(self.full.salt, self.full.theta, self.full.depth)
 
         if self.kind == "roms":
@@ -242,13 +241,19 @@ class model:
 
     def read_budget(self):
 
-        kwargs = dict(engine="h5netcdf", parallel=True)
+        chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
+        kwargs = dict(
+            engine="h5netcdf", parallel=True, concat_dim="time", combine="nested"
+        )
 
         files = sorted(glob.glob(self.dirname + "Day_*_hb.nc"))
         self.budget = xr.merge(
             [
                 xr.open_mfdataset(
-                    files, drop_variables=["DFxE_TH", "DFyE_TH", "DFrE_TH"], **kwargs
+                    files,
+                    drop_variables=["DFxE_TH", "DFyE_TH", "DFrE_TH"],
+                    chunks=chunks,
+                    **kwargs,
                 ),
                 xr.open_mfdataset(self.dirname + "Day_*_sf.nc", **kwargs),
             ]
@@ -261,7 +266,6 @@ class model:
         self.budget["Jq"] = 1035 * 3999 * dz * self.budget.DFrI_TH / CV
         self.budget["Jq"].attrs["long_name"] = "$J_q^t$"
         self.budget["Jq"].attrs["units"] = "W/m$^2$"
-
 
     def get_tiw_phase(self, v, debug=False):
 
