@@ -116,7 +116,7 @@ def to_uniform_grid(data, coord, new_coord=np.arange(-4, 4, 0.01)):
     return result
 
 
-def make_compositedata:
+def make_composite(data):
     interped = to_uniform_grid(data, "yref", np.arange(-4, 4, 0.01))
     phase_grouped = interped.groupby_bins("tiw_phase", np.arange(0, 360, 5))
     data_vars = data.data_vars
