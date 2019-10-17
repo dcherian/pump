@@ -58,10 +58,19 @@ class model:
 
         try:
             self.annual = xr.open_mfdataset(
-                self.dirname + "/obs_subset/annual-mean*.nc", combine="coords"
+                self.dirname + "/obs_subset/annual-mean*.nc", combine="by_coords"
             ).squeeze()
         except FileNotFoundError:
             self.annual = xr.Dataset()
+
+        self.domain = dict()
+        self.domain["xyt"] = dict()
+
+        if self.domain["xyt"]:
+            self.oisst = read_sst(self.domain["xyt"])
+
+        self.update_coords()
+        self.read_metrics()
 
         if full:
             self.read_full()
@@ -73,15 +82,6 @@ class model:
             self.read_budget()
         else:
             self.budget = xr.Dataset()
-
-        self.domain = dict()
-        self.domain["xyt"] = dict()
-
-        if self.domain["xyt"]:
-            self.oisst = read_sst(self.domain["xyt"])
-
-        self.update_coords()
-        self.read_metrics()
 
         try:
             self.mean = xr.open_dataset(
@@ -285,7 +285,9 @@ class model:
 
     def read_tao(self):
         try:
-            self.tao = xr.open_mfdataset(self.dirname + "/obs_subset/tao-*extract.nc")
+            self.tao = xr.open_mfdataset(
+                self.dirname + "/obs_subset/tao-*extract.nc", combine="by_coords"
+            )
         except FileNotFoundError:
             self.tao = None
             return
