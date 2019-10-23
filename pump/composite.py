@@ -1,3 +1,4 @@
+import dcpy
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
@@ -52,6 +53,7 @@ def _get_latitude_reference(data, debug=False):
     y = y.interpolate_na("latitude", fill_value="extrapolate")
 
     if debug:
+        import dcpy
         data = data.copy().assign_coords(y=y)
         f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
         data.plot.line(hue="period", ax=ax[0])
@@ -77,7 +79,8 @@ def get_y_reference(theta, periods=None, debug=False):
         .mean("time")
     )
 
-    # plt.figure(); t180.plot.line(hue="period")
+    if debug:
+        plt.figure(); t180.plot.line(hue="period")
 
     yref = _get_latitude_reference(t180, debug=debug)
     ynew = xr.full_like(theta, fill_value=np.nan)
