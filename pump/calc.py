@@ -53,7 +53,7 @@ def _get_max(var, dim="depth"):
 
     non_nans = var
     for dd in dims:
-        non_nans = non_nans.dropna(dd, how='all')
+        non_nans = non_nans.dropna(dd, how="all")
     argmax = np.nanargmax(non_nans.values, non_nans.get_axis_num(dim))
 
     new_coords = dict(non_nans.coords)
@@ -89,6 +89,8 @@ def get_dcl_base_shear(data):
     elif "shear" in data:
         s2 = data["shear"] ** 2
     else:
+        if "u" not in data and "v" not in data:
+            raise ValueError("S2 or shear, or (u,v) not found in provided dataset.")
         s2 = data.u.differentiate("depth") ** 2 + data.v.differentiate("depth") ** 2
 
     if "euc_max" not in data:
@@ -191,17 +193,70 @@ def calc_tao_ri(adcp, temp):
     return Ri
 
 
+def kpp_diff_depth(obj, debug=False):
+    """
+    Determine KPP mixing layer depth by searching for the first depth where
+    diffusivity is less than the diffusivity at depth level 1
+    (depth level 0 is NaN).
+    """
+    z0 = 2
+    depth = xr.where(
+        (obj.isel(depth=slice(z0, None)) < obj.isel(depth=z0)),
+        obj.depth.isel(depth=slice(z0, None)),
+        np.nan,
+    ).max("depth")
+
+    if debug:
+        obj.plot(ylim=[-120, 0], y="depth", xscale="log", marker=".")
+        dcpy.plots.liney(depth, color="r")
+
+    depth.name = "kpp_diff_mld"
+    depth.attrs["long_name"] = "KPP MLD from diffusivity"
+    depth.attrs["units"] = "m"
+
+    return depth
+
+
+def get_kpp_mld(subset, debug=False):
+    """
+    Given subset.dens, subset.u, subset.v, estimate MLD as shallowest depth
+    where KPP Rib < 0.05.
+    """
+
+    import dask
+
+    b = (-9.81 / 1025) * subset.dens
+    V = np.hypot(subset.u, subset.v)
+    Rib = (b.isel(depth=0) - b) * (-b.depth) / (V.isel(depth=0) - V) ** 2
+    kpp_mld = xr.where(Rib > 0.1, Rib.depth, np.nan).max("depth")
+
+    kpp_mld.name = "kpp_mld"
+    kpp_mld.attrs["long_name"] = "KPP bulk Ri MLD"
+    kpp_mld.attrs["units"] = "m"
+
+    if debug:
+        assert "time" not in b.dims
+        import dcpy
+
+        # dRib.plot.line(y="depth")
+        Rib.plot.line(y="depth", ylim=[-120, 0], xlim=[-1, 1])
+        dcpy.plots.liney(kpp_mld)
+        dcpy.plots.linex([0, 0.3])
+
+    return kpp_mld
+
+
 def get_mld(dens):
     """
     Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
-    Interpolates density to 1m grid.
+    # Interpolates density to 1m grid.
     """
 
-    densi = dens.interp(depth=np.arange(0, -200, -1))
-    drho = densi - dens.isel(depth=0)
-    N2 = -9.81 / 1025 * densi.differentiate("depth")
+    # densi = dens  # .interp(depth=np.arange(0, -200, -1))
+    drho = dens - dens.isel(depth=0)
+    N2 = -9.81 / 1025 * dens.differentiate("depth")
 
-    thresh = xr.where((np.abs(drho) > 0.01) & (N2 > 1e-5), drho.depth, np.nan)
+    thresh = xr.where((np.abs(drho) > 0.015) & (N2 > 1e-5), drho.depth, np.nan)
     mld = thresh.max("depth")
 
     mld.name = "mld"
@@ -214,6 +269,27 @@ def get_mld(dens):
     )
 
     return mld
+
+
+def tiw_avg_filter_v(v):
+    import xfilter
+
+    v = xfilter.lowpass(
+        v.sel(depth=slice(-10, -80)).mean("depth"),
+        coord="time",
+        freq=1 / 10.0,
+        cycles_per="D",
+        method="pad",
+        gappy=False,
+        num_discard=0,
+    )
+
+    if v.count() == 0:
+        raise ValueError("No good data in filtered depth-averaged v.")
+
+    v.attrs["long_name"] = "v: (10, 80m) avg, 10d lowpass"
+
+    return v
 
 
 def get_tiw_phase(v, debug=False):
@@ -237,21 +313,8 @@ def get_tiw_phase(v, debug=False):
     """
 
     import scipy as sp
-    import xfilter
 
-    v = xfilter.lowpass(
-        v.sel(depth=slice(-10, -80)).mean("depth"),
-        coord="time",
-        freq=1 / 10.0,
-        cycles_per="D",
-        method='pad',
-        num_discard=0,
-    )
-
-    if v.count() == 0:
-        raise ValueError('No good data in filtered depth-averaged v.')
-
-    v.attrs["long_name"] = "v: (10, 80m) avg, 10d lowpass"
+    v = tiw_avg_filter_v(v)
 
     if v.ndim == 1:
         v = v.expand_dims("new_dim").copy()
