@@ -1,37 +1,145 @@
+import dask
 import dcpy
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 import scipy as sp
 import xarray as xr
 
+import toolz
 
-def _get_tiv_extent_single_period(data, debug=False):
+# from .calc import tiw_avg_filter_v
 
-    indexes, properties = sp.signal.find_peaks(-data, prominence=0.5)
+from toolz import keyfilter
 
+
+def pick(whitelist, d):
+    return keyfilter(lambda k: k in whitelist, d)
+
+
+class Composite:
+
+    data = dict()
+
+    def __init__(self, comp_dict):
+        self.data = comp_dict
+
+    def __getattr__(self, key):
+        return self.data[key]
+
+    def get(self, key, filter):
+        var = getattr(self, key)
+        if filter:
+            data = var.avg
+        else:
+            data = var.avg_full
+
+        return data
+
+    def plot(self, variable, filter=True, ax=None, **kwargs):
+
+        if ax is None:
+            ax = plt.gca()
+        data = self.get(variable, filter)
+        defaults = dict(y="mean_lat", robust=True, x="tiw_phase_bins")
+        [kwargs.setdefault(k, v) for k, v in defaults.items()]
+        cbar_kwargs = {"label": f"{data.name} variable"}
+        handle = data.plot(ax=ax, **kwargs, **cbar_kwargs)
+        return handle
+
+    def overlay_contours(self, variable, filter=False, ax=None, **kwargs):
+
+        if ax is None:
+            ax = plt.gca()
+        overlay = self.get(variable, filter)
+        defaults = dict(
+            y="mean_lat",
+            robust=True,
+            x="tiw_phase_bins",
+            cmap=mpl.cm.RdBu_r,
+            linewidths=1.5,
+            levels=9,
+        )
+        [kwargs.setdefault(k, v) for k, v in defaults.items()]
+        handle = overlay.plot.contour(ax=ax, add_colorbar=False, **kwargs)
+        return handle
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
+    def load(self, keys=None):
+        if keys is None:
+            keys = self.data.keys()
+        if isinstance(keys, str):
+            keys = [keys]
+
+        tasks = []
+        for key in keys:
+            tasks.append(self.data[key])
+
+        results = dask.compute(*tasks)
+        self.data.update(dict(zip(keys, results)))
+
+
+def tiw_avg_filter_v(v):
+    import xfilter
+
+    v = xfilter.lowpass(
+        v.sel(depth=slice(-10, -80)).mean("depth"),
+        coord="time",
+        freq=1 / 10.0,
+        cycles_per="D",
+        method="pad",
+        gappy=False,
+        num_discard=0,
+    )
+
+    if v.count() == 0:
+        raise ValueError("No good data in filtered depth-averaged v.")
+
+    v.attrs["long_name"] = "v: (10, 80m) avg, 10d lowpass"
+
+    return v
+
+
+def _get_tiv_extent_single_period(data, iy0, debug=False):
+
+    indexes, properties = sp.signal.find_peaks(-data, prominence=0.1)
+    indexes = np.array(indexes)
+    # only keep locations where sst anomaly is negative
+    indexes = indexes[data[indexes] < 0]
     if debug:
         import matplotlib.pyplot as plt
 
         plt.figure()
         plt.plot(data)
         dcpy.plots.linex(indexes)
+        plt.title("_get_tiv_extent_single_period")
         print(indexes)
 
-    assert len(indexes) == 2
-    return indexes
+    # pick the two closest to the "center"
+    final_indexes = [0, 0]
+
+    south = indexes[indexes < iy0]
+    north = indexes[indexes > iy0]
+    final_indexes[0] = south[np.argmin(np.abs(south - iy0))]
+    final_indexes[1] = north[np.argmin(np.abs(north - iy0))]
+
+    return np.array([final_indexes])
 
 
 def get_tiv_extent(data, dim="latitude", debug=False):
 
-    iy0 = data.where(np.abs(data.latitude) < 2.5).argmax(dim)
+    iy0 = data.where(np.abs(data.latitude) < 4).argmax(dim)
     y0 = data.latitude[iy0]
 
     indexes = xr.apply_ufunc(
         _get_tiv_extent_single_period,
         data,
+        iy0,
         vectorize=True,  # loops with numpy over core dim?
         dask="parallelized",  # loop with dask
-        input_core_dims=[[dim]],
+        input_core_dims=[[dim], []],
         output_core_dims=[["loc"]],  # added a new dimension
         output_dtypes=[np.int32],  # required for dask
         kwargs=dict(debug=debug),
@@ -40,11 +148,12 @@ def get_tiv_extent(data, dim="latitude", debug=False):
     indexes["loc"] = ["bot", "top"]
     indexes = indexes.reindex(loc=["bot", "cen", "top"], fill_value=0)
     indexes.loc[:, "cen"] = iy0
+
     return data.latitude[indexes]
 
 
 def _get_latitude_reference(data, debug=False):
-    reference = get_tiv_extent(data.sel(latitude=slice(-6, 6)), debug=debug)
+    reference = get_tiv_extent(data.sel(latitude=slice(-10, 10)), debug=debug)
 
     y = xr.full_like(data, fill_value=np.nan)
     y.loc[:, reference.sel(loc="bot")] = -1
@@ -54,6 +163,7 @@ def _get_latitude_reference(data, debug=False):
 
     if debug:
         import dcpy
+
         data = data.copy().assign_coords(y=y)
         f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
         data.plot.line(hue="period", ax=ax[0])
@@ -70,17 +180,33 @@ def get_y_reference(theta, periods=None, debug=False):
         subset = theta.where(theta.period.isin(periods), drop=True)
     else:
         subset = theta
-    mean_theta = theta.mean("time")  # sensitive to changing this to subset.mean("time")
-    anom = subset - mean_theta
+    mean_theta = subset.mean(
+        "time"
+    )  # sensitive to changing this to subset.mean("time")
+    anom = (
+        subset.rolling(latitude=10, center=True, min_periods=1).mean(allow_lazy=True)
+        - mean_theta
+    )
     # mean.plot.line(y="latitude", color='k')
+
+    # use phase=180 to determine warm extent
+    # t180 = (
+    #    anom.where((np.abs(subset.tiw_phase - 180) < 10), drop=True)
+    #    .groupby("period")
+    #    .mean("time")
+    # )
+
+    # use sst warm anomaly to determine warm extent
     t180 = (
-        anom.where((np.abs(subset.tiw_phase - 180) < 10), drop=True)
+        anom.sel(latitude=slice(-2, 2))
         .groupby("period")
-        .mean("time")
+        .apply(lambda x: anom.isel(time=x.mean("latitude").argmax("time").compute()))
     )
 
-    if debug:
-        plt.figure(); t180.plot.line(hue="period")
+    t180 = t180.copy(data=sp.signal.detrend(t180.values, type="linear"))
+    # if debug:
+    #    plt.figure()
+    #    t180.plot.line(hue="period")
 
     yref = _get_latitude_reference(t180, debug=debug)
     ynew = xr.full_like(theta, fill_value=np.nan)
@@ -126,6 +252,13 @@ def make_composite(data):
     composite = {name: xr.Dataset(attrs={"name": name}) for name in data_vars}
     attr_to_name = {"mean": "avg_full", "std": "dev"}
 
+    mean_yref = data.yref.groupby("period").mean().mean("period")
+    mean_lat = xr.DataArray(
+        np.interp(interped.yref, mean_yref, mean_yref.latitude),
+        name="latitude",
+        dims=["yref"],
+    )
+
     for attr in ["mean", "std"]:
         computed = getattr(phase_grouped, attr)()
         for name in data_vars:
@@ -134,10 +267,52 @@ def make_composite(data):
             # composite[name] = composite[name].transpose("yref", "tiw_phase_bins", "period")
 
     for name in data_vars:
+        composite[name] = composite[name].assign_coords(mean_lat=mean_lat)
         composite[name]["err"] = composite[name].dev / np.sqrt(
             len(composite[name].period)
         )
         is_significant = np.abs(composite[name]).avg_full >= 1.96 * composite[name].err
         composite[name]["avg"] = composite[name].avg_full.where(is_significant)
 
-    return composite
+    return Composite(composite)
+
+
+def test_composite_algorithm(full, tao, period, debug=False):
+
+    assert "sst" in full
+
+    sst = full.sst - full.sst.mean("time")
+    ynew = get_y_reference(full.sst, periods=period, debug=debug)
+    sst = sst.assign_coords(yref=ynew)
+
+    vavg = tiw_avg_filter_v(tao.v).where(full.period == period, drop=True)
+
+    t180 = full.time.where(
+        np.abs(full.tiw_phase.where(full.period == period, drop=True) - 180) < 10
+    ).mean("time")
+
+    f = plt.figure(constrained_layout=True)
+    gs = f.add_gridspec(2, 2)
+    ax = {}
+    ax["sst"] = f.add_subplot(gs[0, 0])
+    ax["sst_yref"] = f.add_subplot(gs[0, 1], sharex=ax["sst"])
+    ax["vavg"] = f.add_subplot(gs[1, 0], sharex=ax["sst"])
+
+    (
+        sst.where(sst.period == period, drop=True).plot(
+            x="time", ax=ax["sst"], robust=True
+        )
+    )
+    (
+        sst.where(ynew.notnull(), drop=True).plot(
+            y="yref", x="time", ax=ax["sst_yref"], robust=True
+        )
+    )
+
+    vavg.plot(x="time", ax=ax["vavg"])
+    ax["vavg"].axhline(0)
+    [axx.set_title("") for axx in ax.values()]
+    if t180.notnull():
+        dcpy.plots.linex(
+            t180, ax=pick(["sst", "sst_yref", "vavg"], ax).values(), zorder=10
+        )
