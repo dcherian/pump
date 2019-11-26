@@ -481,3 +481,42 @@ def get_tiw_phase(v, debug=False):
     phase["period"] = phase["period"].where(np.logical_not(phase.period.isin(drop_num)))
 
     return phase
+
+
+def estimate_euc_depth_terms(ds):
+
+    # ds.load()
+
+    surface = {"depth": -25, "method": "nearest"}
+
+    ds["h"] = ds.eucmax - surface["depth"]
+    ds["h"].attrs["long_name"] = "$h$"
+
+    euc = ds.where(ds.depth == ds.eucmax).max("depth")
+
+    if "u" in ds:
+        ds["us"] = ds.u.ffill("depth").sel(**surface)
+        ds["ueuc"] = euc.u
+        # ds["ueuc"] = ds.u.interp(
+        #    depth=ds.eucmax, longitude=ds.longitude, method="linear"
+        # )
+        ds["du"] = ds.us - ds.ueuc
+        ds.du.attrs["long_name"] = "$\Delta$u"
+
+    if "dens" in ds:
+        # ds["dens_euc"] = ds.dens.interp(
+        #    depth=ds.eucmax, longitude=ds.longitude, method="linear"
+        # )
+        ds["dens_euc"] = euc.dens
+        ds["b"] = ds.dens * -9.81 / ds.dens_euc
+        ds["bs"] = ds.b.ffill("depth").sel(**surface)
+        ds["beuc"] = -9.81 * xr.ones_like(ds.bs)
+
+        ds["db"] = ds.bs - ds.beuc
+        ds.db.attrs["long_name"] = "$\Delta$b"
+
+    if "db" in ds and "du" in ds and "h" in ds:
+        with xr.set_options(keep_attrs=False):
+            ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du ** 2)
+
+    return ds
