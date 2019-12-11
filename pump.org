@@ -15,9 +15,30 @@
 - [ ] Update script for heat budget runs
 - [ ] composite DCL / TIW
 
-- [ ] composite like Inoue et al (2019).
+- [X] composite like Inoue et al (2019).
 
 - What do profiles look like with daily data?
+
+** TIW compositing [6/14]
+  - [X] use warm anomaly to reference latitude
+  - [ ] could also use vorticity dipole to reference latitude
+  - [X] normalize temperature also? seems weird; but subtract mean temperature
+  - [ ] look at second year
+  - [X] Add daily filter - maybe add apply__ufunc to xfilter?
+  - [ ] need proper chunking for daily filter
+  - [ ] remove depth mean prior to compositing
+  - [ ] create lightweight composite class
+  - [X] MLD definition
+  - [X] check efficiency of MLD calculation
+  - [X] implement KPP mixing depth
+  - [ ] how does KPP mixing depth compare to deep cycle depth?
+  - [ ] anomalize Jq
+  - [ ] \bar{w'T'}
+
+Method:
+1. Use depth-mean v at equator to assign phase. (Inoue et al 2019)
+2. change t180 profile to where SST is max?
+3.
 
 * startup                                                          :noexport:
 
@@ -71,7 +92,6 @@ cluster.scale(n)
 :results:
 <Client: scheduler='tcp://10.12.205.27:42720' processes=6 cores=12>
 :end:
-
 
 * read model runs :noexport:
 
@@ -275,7 +295,6 @@ KeyboardInterrupt                         Traceback (most recent call last)
 KeyboardInterrupt:
 :end:
 
-
 * Validations
 :PROPERTIES:
 :EXPORT_FILE_NAME: validations
@@ -377,7 +396,6 @@ Large & Gent: Pacanowski & Philander scheme has much higher diffusivities becaus
 
 #+CAPTION: Hovmoeller plots of SST anomaly from OISST (color) & MITgcm (black)
 [[file:images/oisst-comparison.png]]
-
 
 * Diary
 
@@ -539,38 +557,8 @@ Ri_binned = sp.stats.binned_statistic_2d(tmat,
 
 #+NAME: estimate-Ri-diagnosis-terms
 #+BEGIN_SRC jupyter-python :results none
-def estimate_euc_depth_terms(ds):
 
-    ds.load()
-
-    surface = {'depth': -20, 'method': 'nearest'}
-
-    ds['h'] = (ds.eucmax - surface['depth'])
-    ds['h'].attrs['long_name'] = '$h$'
-
-    if 'u' in ds:
-        ds['us'] = ds.u.sel(**surface)
-        ds['ueuc'] = ds.u.interp(depth=ds.eucmax, longitude=ds.longitude, method='linear')
-        ds['du'] = ds.us - ds.ueuc
-        ds.du.attrs['long_name'] = '$\Delta$u'
-
-    if 'dens' in ds:
-        ds['dens_euc'] = ds.dens.interp(depth=ds.eucmax,
-                                        longitude=ds.longitude,
-                                        method='linear')
-        ds['b'] = ds.dens * -9.81/ds.dens_euc
-        ds['bs'] = ds.b.sel(**surface)
-        ds['beuc'] = -9.81 * xr.ones_like(ds.bs)
-
-        ds['db'] = ds.bs - ds.beuc
-        ds.db.attrs['long_name'] = '$\Delta$b'
-
-    if 'db' in ds and 'du' in ds and 'h' in ds:
-        with xr.set_options(keep_attrs=False):
-            ds['Ri'] = ds.db * np.abs(ds.h) / (ds.du**2)
-
-    return ds
-
+from pump.calc import estimate_euc_depth_terms
 if 'gcm1' in locals():
     import airsea
     print('skipping gcm1, jra, ssh')
@@ -1149,7 +1137,6 @@ johnson.eucmax.plot(color='k')
 
 **** attempt 2
 
-
 * Upper Core Layer
 
 - seems to be approx constant $u_z$
@@ -1215,14 +1202,27 @@ def pv(ds):
 
     return q
 
-# f, ax = plt.subplots(1, 1, constrained_layout=True)
+# f, ax = plt.subplots1, 1, constrained_layout=True
 #+END_SRC
 #+CAPTION:
-[[file:$1]]
+file:$1
 
 * TIW compositing
 
-**  periods: 110
+** surface 2D field compositing
+
+1. 110W seems like a nice place!
+2. Looks like setting t=0 at phase=-180, might be a good idea
+
+*** Method
+1. Average  v between 10 and 80m at equator, filter with 10 day lowpass and use peaks and troughs to determine phase.
+2. At phase=180, determine yref as 0 at maximum warm anomaly; -1, +1 at the north & south cold fronts.
+3.
+
+Is the time definition good?
+
+** 1D compositing
+*** periods: 110
 #+BEGIN_SRC jupyter-python
 gcm1.summarize_tiw_periods(gcm1.tao.sel(latitude=0, longitude=-110))
 tasks = gcm1.summarize_tiw_periods(gcm1.tao.sel(latitude=0, longitude=-140))
@@ -1279,7 +1279,7 @@ tasks = gcm1.summarize_tiw_periods(gcm1.tao.sel(latitude=0, longitude=-140))
 [[file:./.ob-jupyter/274dc856fe7428d72bcd95c3040c71264b952ecb.png]]
 :END:
 
-** periods: 140
+*** periods: 140
 
 #+BEGIN_SRC jupyter-python
 tao140 = gcm1.tao.sel(latitude=0, longitude=-140)
