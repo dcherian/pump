@@ -51,21 +51,29 @@ def _get_max(var, dim="depth"):
     dims = list(var.dims)
     del dims[var.get_axis_num(dim)]
 
-    non_nans = var
-    for dd in dims:
-        non_nans = non_nans.dropna(dd, how="all")
-    argmax = np.nanargmax(non_nans.values, non_nans.get_axis_num(dim))
+    # non_nans = var
+    # for dd in dims:
+    #    non_nans = non_nans.dropna(dd, how="all")
+    argmax = var.fillna(-123456).argmax(dim)
+    argmax = argmax.where(argmax != 0)
 
-    new_coords = dict(non_nans.coords)
+    new_coords = dict(var.coords)
     new_coords.pop(dim)
 
-    da = xr.DataArray(argmax.squeeze(), dims=dims, coords=new_coords)
-    return var[dim][da].drop(dim).reindex_like(var)
+    da = xr.DataArray(argmax.data.squeeze(), dims=dims, coords=new_coords).compute()
+    return (
+        var[dim][da.fillna(0).astype(int)]
+        .drop(dim)
+        .reindex_like(var)
+        .where(da.notnull())
+    )
 
 
 def get_euc_max(u, kind="model"):
     """ Given a u field, returns depth of max speed i.e. EUC maximum. """
 
+    if kind == "data":
+        u = u.fillna(-100)
     euc_max = _get_max(u, "depth")
 
     euc_max.attrs["long_name"] = "Depth of EUC max"
@@ -123,14 +131,15 @@ def get_dcl_base_Ri(data):
     if "Ri" not in data:
         raise ValueError("Ri not in provided dataset.")
 
-    if "euc_max" not in data:
+    if "eucmax" not in data:
         euc_max = get_euc_max(data.u)
     else:
-        euc_max = data.euc_max
+        euc_max = data.eucmax
 
-    depth = xr.broadcast(data.Ri, data.depth)[1]
+    if np.any(data.depth > 0):
+        raise ValueError("depth > 0!")
 
-    dcl_max = depth.where((data.Ri < 0.25)).min("depth")
+    dcl_max = data.depth.where((data.Ri > 0.5)).max("depth")
 
     dcl_max.attrs["long_name"] = "DCL Base (Ri)"
     dcl_max.attrs["units"] = "m"
