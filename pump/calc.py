@@ -170,16 +170,16 @@ def calc_tao_ri(adcp, temp, dim="depth"):
     Pham et al. (2017)
     """
 
-    V = adcp[["u", "v"]].interpolate_na(dim)
+    V = adcp[["u", "v"]].sortby(dim).interpolate_na(dim)
     S2 = V["u"].differentiate(dim) ** 2 + V["v"].differentiate(dim) ** 2
 
-    T = (
-        temp.sel(time=V.time)
-        .sortby(dim)
-        .interpolate_na(dim, "linear")
-        .sortby(dim, "descending")
-        .interp({dim: V[dim]})
-    )
+    T = temp.sortby(dim).interpolate_na(dim, "linear")
+
+    if not T.time.equals(V.time):
+        T = temp.sel(time=V.time)
+
+    if not T[dim].equals(V[dim]):
+        T = T.interp({dim: V[dim]})
 
     # the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
     N2 = 9.81 * dcpy.eos.alpha(35, T, T.depth) * T.differentiate(dim)
