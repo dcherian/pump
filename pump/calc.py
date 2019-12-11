@@ -483,9 +483,12 @@ def get_tiw_phase(v, debug=False):
     return phase
 
 
-def estimate_euc_depth_terms(ds):
+def estimate_euc_depth_terms(ds, inplace=True):
 
     # ds.load()
+
+    if not inplace:
+        ds = ds.copy()
 
     surface = {"depth": -25, "method": "nearest"}
 
