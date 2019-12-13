@@ -403,14 +403,16 @@ def read_drifters(kind="annual"):
 
 def read_tao_zarr(kind="gridded"):
 
-    if kind not in ["gridded", "merged"]:
+    if kind not in ["gridded", "merged", "ancillary"]:
         raise ValueError(
-            f"'kind' must be one of ['gridded', 'merged']. Received {kind}"
+            f"'kind' must be one of ['gridded', 'merged']. Received {kind!r}"
         )
 
     if kind == "merged":
         tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True)
-    else:
+    elif kind == "gridded":
+        tao = xr.open_zarr("tao_eq_hr_gridded.zarr")
+    elif kind == "ancillary":
         tao = xr.open_zarr("tao-gridded-ancillary.zarr")
 
     tao = tao.chunk({"depth": -1, "time": 10000})
