@@ -184,7 +184,7 @@ def calc_tao_ri(adcp, temp, dim="depth"):
 
     T = temp.sortby(dim).interpolate_na(dim, "linear")
 
-    if not T.time.equals(V.time):
+    if "time" in T.dims and not T.time.equals(V.time):
         T = temp.sel(time=V.time)
 
     if not T[dim].equals(V[dim]):
@@ -516,10 +516,10 @@ def estimate_euc_depth_terms(ds, inplace=True):
         ds.du.attrs["long_name"] = "$\Delta$u"
 
     if "dens" in ds:
-        # ds["dens_euc"] = ds.dens.interp(
-        #    depth=ds.eucmax, longitude=ds.longitude, method="linear"
-        # )
-        ds["dens_euc"] = euc.dens
+        ds["dens_euc"] = ds.dens.interp(
+            depth=ds.eucmax, longitude=ds.longitude, method="linear"
+        )
+        # ds["dens_euc"] = euc.dens
         ds["b"] = ds.dens * -9.81 / ds.dens_euc
         ds["bs"] = ds.b.ffill("depth").sel(**surface)
         ds["beuc"] = -9.81 * xr.ones_like(ds.bs)
