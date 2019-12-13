@@ -528,7 +528,11 @@ def estimate_euc_depth_terms(ds, inplace=True):
         ds.db.attrs["long_name"] = "$\Delta$b"
 
     if "db" in ds and "du" in ds and "h" in ds:
-        with xr.set_options(keep_attrs=False):
-            ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du ** 2)
+        ds = estimate_Rib(ds)
+    return ds
 
+
+def estimate_Rib(ds):
+    with xr.set_options(keep_attrs=False):
+        ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du ** 2)
     return ds
