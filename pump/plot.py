@@ -28,7 +28,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
     def plot_ri_contrib(ax1, ax2, v, factor=1, **kwargs):
         # Better to call differentiate on log-transformed variable
         # This is a nicer estimate of the gradient and is analytically equal
-        per = factor * np.log(np.abs(v)).differentiate("longitude")
+        per = factor * np.log(np.abs(v)).compute().differentiate("longitude")
         hdl = per.plot(
             ax=ax2,
             x="longitude",
@@ -50,7 +50,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
             sharex=True,
             gridspec_kw={"height_ratios": [1, 1, 1, 1, 1, 1, 2]},
         )
-        ax = dict(zip(["Ri", "h", "du", "db", "u", "b", "contrib"], axx))
+        ax = dict(zip(["Rib", "h", "du", "db", "u", "b", "contrib"], axx))
         add_legend = True
     else:
         add_legend = False
@@ -61,7 +61,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
             "ueuc": "C1",
             "bs": "C0",
             "beuc": "C1",
-            "Ri": "C0",
+            "Rib": "C0",
             "h": "C1",
             "du": "C2",
             "db": "C3",
@@ -81,7 +81,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
                 color=colors[var],
                 **kwargs,
             )
-            if var != "Ri":
+            if var != "Rib":
                 rhs += per[var]
             else:
                 ri = per[var]
@@ -97,7 +97,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
             else:
                 factor = 1
                 prefix = ""
-            (factor * ds[var].differentiate("longitude")).plot(
+            (factor * ds[var].compute().differentiate("longitude")).plot(
                 ax=ax[vv],
                 label=f"{prefix}$∂_x {vv}_{{{vvar}}}$",  # label=f'$∂_x{vv}_{{{vvar}}}$',
                 color=colors[var],
@@ -117,10 +117,10 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
     ax["du"].set_ylim([-1.3, -0.3])
     ax["db"].set_ylim([0.005, 0.05])
 
-    ax["Ri"].set_ylabel("Ri$_b =  Δbh/Δu²$")
-    ax["Ri"].set_yscale("log")
-    ax["Ri"].set_yticks([0.25, 0.5, 1, 5, 10])
-    ax["Ri"].grid(True)
+    ax["Rib"].set_ylabel("Ri$_b =  Δbh/Δu²$")
+    ax["Rib"].set_yscale("log")
+    ax["Rib"].set_yticks([0.25, 0.5, 1, 5, 10])
+    ax["Rib"].grid(True)
 
     rhs.plot(
         ax=ax["contrib"],
@@ -135,13 +135,13 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
         dcpy.plots.liney(0, ax=ax["contrib"])
     ax["contrib"].set_ylabel("Fractional changes")
     ax["contrib"].set_title("")
-    ax["contrib"].set_ylim([-0.15, 0.1])
+    # ax["contrib"].set_ylim([-0.15, 0.1])
 
     name = ds.attrs["name"]
     if add_legend:
-        ax["Ri"].set_title(f"latitude = 0, {name} dataset")
+        ax["Rib"].set_title(f"latitude = 0, {name} dataset")
     else:
-        ax["Ri"].set_title(f"latitude = 0")
+        ax["Rib"].set_title(f"latitude = 0")
 
     f.set_size_inches(8, 10)
 
