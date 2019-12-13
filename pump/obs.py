@@ -411,7 +411,7 @@ def read_tao_zarr(kind="gridded"):
     if kind == "merged":
         tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True)
     else:
-        tao = xr.open_zarr("tao_eq_hr_gridded.zarr", consolidated=True)
+        tao = xr.open_zarr("tao-gridded-ancillary.zarr")
 
     tao = tao.chunk({"depth": -1, "time": 10000})
     tao["dens"] = dcpy.eos.dens(35, tao.T, tao.depth)
