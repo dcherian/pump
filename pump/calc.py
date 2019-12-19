@@ -604,3 +604,56 @@ def estimate_Rib(ds):
 
 
 get_tiw_phase = get_tiw_phase_v
+
+
+def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
+    def minmax(group):
+        mx = group.where(group > 0).max("time")
+        mn = group.where(group < 0).min("time")
+
+        coord = xr.DataArray(["min", "max"], dims="minmax", name="minmax")
+        return xr.concat([mn, mx], coord)
+
+    dKdt = K.differentiate("time")
+    grouped = (
+        dKdt.groupby(dKdt.time.dt.floor("D")).apply(minmax).rename({"floor": "time"})
+    )
+    amp = grouped.diff("minmax").squeeze()
+    amp_cleaned = amp.sortby("depth").chunk({"depth": -1}).interpolate_na("depth")
+
+    dcl = (
+        amp_cleaned.depth.where(amp_cleaned / amp_cleaned.max("depth") < threshold)
+        .max("depth")
+        .reindex(time=dKdt.time, method="ffill")
+    )
+
+    if debug:
+        plt.figure()
+        (
+            dKdt
+            .groupby("time.day").plot(
+                col="day",
+                col_wrap=6,
+                x="time",
+                # sharey=True,
+                ylim=(-100, 0),
+                robust=True,
+            )
+        )
+        dcl.plot(x="time")
+
+        plt.figure()
+        fg = (
+            (amp_cleaned / amp_cleaned.max("depth"))
+            # .sel(depth=-20, method="nearest")
+            .plot(
+                col="time",
+                col_wrap=6,
+                y="depth",
+                # sharey=True,
+                ylim=(-100, 0),
+
+            )
+        )
+
+    return dcl
