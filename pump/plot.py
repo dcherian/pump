@@ -179,8 +179,9 @@ def plot_jq_sst(model, lon, periods, lat=0):
     # First SST
     plt.sca(ax[0])
     sst.sel(time=tperiod).plot(
-        x="time", cmap=mpl.cm.RdYlBu_r, robust=True, ylim=[-5, 5]
+        x="time", cmap=mpl.cm.RdYlBu_r, robust=True, ylim=[-8, 8]
     )
+    ax[0].axhline(tao.sel(**region).latitude, ls='--', color='w', lw=1)
 
     # Jq qwith eucmax, MLD, DCL
     plt.sca(ax[1])
