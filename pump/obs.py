@@ -94,36 +94,41 @@ def read_tao_adcp(domain=None, freq="dy"):
     return adcp.dropna("longitude", how="all").dropna("depth", how="all")
 
 
-def read_eq_tao_temp_hr():
-    """ Read hourly resolution temperature for equatorial moorings. """
+def tao_read_and_merge(suffix, kind):
+    """ read non-ADCP files. """
 
-    # sfiles = [root+'/obs/tao/s0n'+lon+'_hr.cdf'
-    #           for lon in ['156e', '165e', '140w', '110w', '170w']]
-    # for file in tqdm.tqdm(sfiles):
-    #     ds.append(xr.open_dataset(file)['S_41'])
+    if kind == "temp":
+        prefix = "t"
+        renamer = {"T_20": "T"}
 
-    def _read_and_merge(suffix):
-        ds = []
-        tfiles = [
-            f"{root}/obs/tao/t0n" + lon + "_" + suffix + ".cdf"
-            for lon in ["156e", "165e", "170w", "140w", "110w"]
-        ]
-        for file in tqdm.tqdm(tfiles):
-            try:
-                ds.append(xr.load_dataset(file)["T_20"])
-            except FileNotFoundError:
-                pass
+    elif kind == "cur":
+        prefix = "cur"
+        renamer = {"U_320": "u", "V_321": "v"}
 
-        merged = xr.merge(xr.align(*ds, join="outer")).rename(
-            {"lon": "longitude", "lat": "latitude", "T_20": "T"}
-        )
+    ds = []
+    tfiles = [
+        f"{root}/obs/tao/{prefix}0n{lon}_{suffix}.cdf"
+        for lon in ["156e", "165e", "170w", "140w", "110w"]
+    ]
+    for file in tqdm.tqdm(tfiles):
+        try:
+            ds.append(xr.load_dataset(file)[list(renamer.keys())])
+        except FileNotFoundError:
+            pass
 
-        merged["longitude"] -= 360
-        merged["depth"] *= -1
-        return merged
+    merged = xr.merge(xr.align(*ds, join="outer")).rename(
+        {"lon": "longitude", "lat": "latitude"}
+    )
 
-    m10 = _read_and_merge("10m")
-    hr = _read_and_merge("hr")
+    merged["longitude"] -= 360
+    merged["depth"] *= -1
+    return merged.rename_vars(renamer)
+
+
+def tao_merge_10m_and_hourly(kind):
+    """ Merge 10minute and hourly data into one record. """
+    m10 = tao_read_and_merge("10m", kind)
+    hr = tao_read_and_merge("hr", kind)
 
     # resample is really slow because it doesn't know about dask.
     # instead reindex to a 10min freq and use rolling.
@@ -157,7 +162,22 @@ def read_eq_tao_temp_hr():
 
     # adcp = read_tao_adcp(freq='hr')
     # return xr.merge(ds)
-    return concat.mean("concat").squeeze().T
+    return concat.mean("concat").squeeze()
+
+
+def read_eq_tao_cur_hr():
+    return tao_merge_10m_and_hourly("cur") / 100
+
+
+def read_eq_tao_temp_hr():
+    """ Read hourly resolution temperature for equatorial moorings. """
+
+    # sfiles = [root+'/obs/tao/s0n'+lon+'_hr.cdf'
+    #           for lon in ['156e', '165e', '140w', '110w', '170w']]
+    # for file in tqdm.tqdm(sfiles):
+    #     ds.append(xr.open_dataset(file)['S_41'])
+
+    return tao_merge_10m_and_hourly("temp").T
 
 
 def read_tao(domain=None):
@@ -379,3 +399,22 @@ def read_drifters(kind="annual"):
         - 360
     )
     return drifter.sel(longitude=slice(-230, -90))
+
+
+def read_tao_zarr(kind="gridded"):
+
+    if kind not in ["gridded", "merged", "ancillary"]:
+        raise ValueError(
+            f"'kind' must be one of ['gridded', 'merged']. Received {kind!r}"
+        )
+
+    if kind == "merged":
+        tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True)
+    elif kind == "gridded":
+        tao = xr.open_zarr("tao_eq_hr_gridded.zarr")
+    elif kind == "ancillary":
+        tao = xr.open_zarr("tao-gridded-ancillary.zarr")
+
+    tao = tao.chunk({"depth": -1, "time": 10000})
+    tao["dens"] = dcpy.eos.dens(35, tao.T, tao.depth)
+    return tao

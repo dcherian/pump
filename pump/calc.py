@@ -51,21 +51,29 @@ def _get_max(var, dim="depth"):
     dims = list(var.dims)
     del dims[var.get_axis_num(dim)]
 
-    non_nans = var
-    for dd in dims:
-        non_nans = non_nans.dropna(dd, how='all')
-    argmax = np.nanargmax(non_nans.values, non_nans.get_axis_num(dim))
+    # non_nans = var
+    # for dd in dims:
+    #    non_nans = non_nans.dropna(dd, how="all")
+    argmax = var.fillna(-123456).argmax(dim)
+    argmax = argmax.where(argmax != 0)
 
-    new_coords = dict(non_nans.coords)
+    new_coords = dict(var.coords)
     new_coords.pop(dim)
 
-    da = xr.DataArray(argmax.squeeze(), dims=dims, coords=new_coords)
-    return var[dim][da].drop(dim).reindex_like(var)
+    da = xr.DataArray(argmax.data.squeeze(), dims=dims, coords=new_coords).compute()
+    return (
+        var[dim][da.fillna(0).astype(int)]
+        .drop(dim)
+        .reindex_like(var)
+        .where(da.notnull())
+    )
 
 
 def get_euc_max(u, kind="model"):
     """ Given a u field, returns depth of max speed i.e. EUC maximum. """
 
+    if kind == "data":
+        u = u.fillna(-100)
     euc_max = _get_max(u, "depth")
 
     euc_max.attrs["long_name"] = "Depth of EUC max"
@@ -89,6 +97,8 @@ def get_dcl_base_shear(data):
     elif "shear" in data:
         s2 = data["shear"] ** 2
     else:
+        if "u" not in data and "v" not in data:
+            raise ValueError("S2 or shear, or (u,v) not found in provided dataset.")
         s2 = data.u.differentiate("depth") ** 2 + data.v.differentiate("depth") ** 2
 
     if "euc_max" not in data:
@@ -121,14 +131,15 @@ def get_dcl_base_Ri(data):
     if "Ri" not in data:
         raise ValueError("Ri not in provided dataset.")
 
-    if "euc_max" not in data:
+    if "eucmax" not in data:
         euc_max = get_euc_max(data.u)
     else:
-        euc_max = data.euc_max
+        euc_max = data.eucmax
 
-    depth = xr.broadcast(data.Ri, data.depth)[1]
+    if np.any(data.depth > 0):
+        raise ValueError("depth > 0!")
 
-    dcl_max = depth.where((data.Ri < 0.25)).min("depth")
+    dcl_max = data.depth.where((data.Ri > 0.5)).max("depth")
 
     dcl_max.attrs["long_name"] = "DCL Base (Ri)"
     dcl_max.attrs["units"] = "m"
@@ -145,7 +156,7 @@ def get_euc_transport(u):
     return euc
 
 
-def calc_tao_ri(adcp, temp):
+def calc_tao_ri(adcp, temp, dim="depth"):
     """
     Calculate Ri for TAO dataset.
     Interpolates to 5m grid and then differentiates.
@@ -168,22 +179,20 @@ def calc_tao_ri(adcp, temp):
     Pham et al. (2017)
     """
 
-    V = adcp[["u", "v"]]
-    S2 = V["u"].differentiate("depth") ** 2 + V["v"].differentiate("depth") ** 2
+    V = adcp[["u", "v"]].sortby(dim).interpolate_na(dim)
+    S2 = V["u"].differentiate(dim) ** 2 + V["v"].differentiate(dim) ** 2
 
-    T = (
-        temp.sel(time=V.time)
-        .sortby("depth")
-        .interpolate_na("depth", "linear")
-        .sortby("depth", "descending")
-        .interp(depth=V.depth)
-    )
+    T = temp.sortby(dim).interpolate_na(dim, "linear")
+
+    if "time" in T.dims and not T.time.equals(V.time):
+        T = temp.sel(time=V.time)
+
+    if not T[dim].equals(V[dim]):
+        T = T.interp({dim: V[dim]})
 
     # the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
-    N2 = 9.81 * dcpy.eos.alpha(35, T, T.depth) * T.differentiate("depth")
-
-    N2 = N2
-    Ri = N2.where(N2 > 1e-7) / S2.where(S2 > 1e-10)
+    N2 = 9.81 * dcpy.eos.alpha(35, T, T.depth) * T.differentiate(dim)
+    Ri = (N2 / S2).where((N2 > 1e-7) & (S2 > 1e-10))
 
     Ri.attrs["long_name"] = "Ri"
     Ri.name = "Ri"
@@ -191,17 +200,70 @@ def calc_tao_ri(adcp, temp):
     return Ri
 
 
+def kpp_diff_depth(obj, debug=False):
+    """
+    Determine KPP mixing layer depth by searching for the first depth where
+    diffusivity is less than the diffusivity at depth level 1
+    (depth level 0 is NaN).
+    """
+    z0 = 2
+    depth = xr.where(
+        (obj.isel(depth=slice(z0, None)) < obj.isel(depth=z0)),
+        obj.depth.isel(depth=slice(z0, None)),
+        np.nan,
+    ).max("depth")
+
+    if debug:
+        obj.plot(ylim=[-120, 0], y="depth", xscale="log", marker=".")
+        dcpy.plots.liney(depth, color="r")
+
+    depth.name = "kpp_diff_mld"
+    depth.attrs["long_name"] = "KPP MLD from diffusivity"
+    depth.attrs["units"] = "m"
+
+    return depth
+
+
+def get_kpp_mld(subset, debug=False):
+    """
+    Given subset.dens, subset.u, subset.v, estimate MLD as shallowest depth
+    where KPP Rib < 0.05.
+    """
+
+    import dask
+
+    b = (-9.81 / 1025) * subset.dens
+    V = np.hypot(subset.u, subset.v)
+    Rib = (b.isel(depth=0) - b) * (-b.depth) / (V.isel(depth=0) - V) ** 2
+    kpp_mld = xr.where(Rib > 0.1, Rib.depth, np.nan).max("depth")
+
+    kpp_mld.name = "kpp_mld"
+    kpp_mld.attrs["long_name"] = "KPP bulk Ri MLD"
+    kpp_mld.attrs["units"] = "m"
+
+    if debug:
+        assert "time" not in b.dims
+        import dcpy
+
+        # dRib.plot.line(y="depth")
+        Rib.plot.line(y="depth", ylim=[-120, 0], xlim=[-1, 1])
+        dcpy.plots.liney(kpp_mld)
+        dcpy.plots.linex([0, 0.3])
+
+    return kpp_mld
+
+
 def get_mld(dens):
     """
     Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
-    Interpolates density to 1m grid.
+    # Interpolates density to 1m grid.
     """
 
-    densi = dens.interp(depth=np.arange(0, -200, -1))
-    drho = densi - dens.isel(depth=0)
-    N2 = -9.81 / 1025 * densi.differentiate("depth")
+    # densi = dens  # .interp(depth=np.arange(0, -200, -1))
+    drho = dens - dens.isel(depth=0)
+    N2 = -9.81 / 1025 * dens.differentiate("depth")
 
-    thresh = xr.where((np.abs(drho) > 0.01) & (N2 > 1e-5), drho.depth, np.nan)
+    thresh = xr.where((np.abs(drho) > 0.015) & (N2 > 1e-5), drho.depth, np.nan)
     mld = thresh.max("depth")
 
     mld.name = "mld"
@@ -214,6 +276,27 @@ def get_mld(dens):
     )
 
     return mld
+
+
+def tiw_avg_filter_v(v):
+    import xfilter
+
+    v = xfilter.lowpass(
+        v.sel(depth=slice(-10, -80)).mean("depth"),
+        coord="time",
+        freq=1 / 10.0,
+        cycles_per="D",
+        method="pad",
+        gappy=False,
+        num_discard=0,
+    )
+
+    if v.count() == 0:
+        raise ValueError("No good data in filtered depth-averaged v.")
+
+    v.attrs["long_name"] = "v: (10, 80m) avg, 10d lowpass"
+
+    return v
 
 
 def get_tiw_phase(v, debug=False):
@@ -237,21 +320,8 @@ def get_tiw_phase(v, debug=False):
     """
 
     import scipy as sp
-    import xfilter
 
-    v = xfilter.lowpass(
-        v.sel(depth=slice(-10, -80)).mean("depth"),
-        coord="time",
-        freq=1 / 10.0,
-        cycles_per="D",
-        method='pad',
-        num_discard=0,
-    )
-
-    if v.count() == 0:
-        raise ValueError('No good data in filtered depth-averaged v.')
-
-    v.attrs["long_name"] = "v: (10, 80m) avg, 10d lowpass"
+    v = tiw_avg_filter_v(v)
 
     if v.ndim == 1:
         v = v.expand_dims("new_dim").copy()
@@ -420,3 +490,49 @@ def get_tiw_phase(v, debug=False):
     phase["period"] = phase["period"].where(np.logical_not(phase.period.isin(drop_num)))
 
     return phase
+
+
+def estimate_euc_depth_terms(ds, inplace=True):
+
+    # ds.load()
+
+    if not inplace:
+        ds = ds.copy()
+
+    surface = {"depth": -25, "method": "nearest"}
+
+    ds["h"] = ds.eucmax - surface["depth"]
+    ds["h"].attrs["long_name"] = "$h$"
+
+    euc = ds.where(ds.depth == ds.eucmax).max("depth")
+
+    if "u" in ds:
+        ds["us"] = ds.u.ffill("depth").sel(**surface)
+        ds["ueuc"] = euc.u
+        # ds["ueuc"] = ds.u.interp(
+        #    depth=ds.eucmax, longitude=ds.longitude, method="linear"
+        # )
+        ds["du"] = ds.us - ds.ueuc
+        ds.du.attrs["long_name"] = "$\Delta$u"
+
+    if "dens" in ds:
+        ds["dens_euc"] = ds.dens.interp(
+            depth=ds.eucmax, longitude=ds.longitude, method="linear"
+        )
+        # ds["dens_euc"] = euc.dens
+        ds["b"] = ds.dens * -9.81 / ds.dens_euc
+        ds["bs"] = ds.b.ffill("depth").sel(**surface)
+        ds["beuc"] = -9.81 * xr.ones_like(ds.bs)
+
+        ds["db"] = ds.bs - ds.beuc
+        ds.db.attrs["long_name"] = "$\Delta$b"
+
+    if "db" in ds and "du" in ds and "h" in ds:
+        ds = estimate_Rib(ds)
+    return ds
+
+
+def estimate_Rib(ds):
+    with xr.set_options(keep_attrs=False):
+        ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du ** 2)
+    return ds
