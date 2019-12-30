@@ -1,11 +1,85 @@
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy as sp
 import seawater as sw
 import xarray as xr
 import warnings
 
 import dcpy
 import dcpy.eos
+import xfilter
+
+
+def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug=False):
+    """
+    One version with phase=0 at points in phase_0
+    One version with 360 at points in phase_0
+    Then merge sensibly
+    """
+
+    if debug:
+        import matplotlib.pyplot as plt
+
+        f, ax = plt.subplots(2, 1, constrained_layout=True, sharex=True)
+        sig.plot(ax=ax[0])
+
+    phase = xr.zeros_like(sig) * np.nan
+    label = xr.zeros_like(sig) * np.nan
+    phase2 = phase.copy(deep=True)
+    start_num = 1
+    for idx, cc, ph in zip(
+        [phase_0, phase_90, phase_180, phase_270], "rgbk", [0, 90, 180, 270]
+    ):
+        if ph == 0:
+            label[idx] = np.arange(start_num, len(idx) + 1)
+
+        if debug:
+            sig[idx].plot(ax=ax[0], color=cc, ls="none", marker="o")
+            ax[1].plot(
+                sig.time[idx], ph * np.ones_like(idx), color=cc, ls="none", marker="o",
+            )
+
+        phase[idx] = ph
+        if ph < 10:
+            phase2[idx] = 360
+        else:
+            phase2[idx] = ph
+
+    if not (
+        np.all(np.isin(phase.dropna("time").diff("time"), [90, -270]))
+        or np.all(np.isin(phase2.dropna("time").diff("time"), [90, -270]))
+    ):
+        import warnings
+
+        warnings.warn("Secondary peaks detected!")
+
+    phase = phase.interpolate_na("time", method="linear")
+    phase2 = phase2.interpolate_na("time", method="linear")
+
+    dpdt = phase.differentiate("time")
+
+    phase_new = xr.where(
+        (phase2 >= 270) & (phase2 < 360) & (phase < 270) & (dpdt <= 0), phase2, phase,
+    )
+
+    if debug:
+        phase_new.plot(ax=ax[1], color="C0", zorder=-1)
+
+    label = label.ffill("time")
+
+    # periods don't necessarily start with phase = 0
+    phase_no_period = np.logical_and(~np.isnan(phase_new), np.isnan(label))
+    label.values[phase_no_period.values] = 0
+
+    if np.any(label == 0):
+        label += 1
+
+    if debug:
+        ax2 = ax[1].twinx()
+        label.plot(x="time", ax=ax2, color="k", lw=0.5)
+
+    return phase_new, label
 
 
 def calc_reduced_shear(data):
@@ -279,8 +353,6 @@ def get_mld(dens):
 
 
 def tiw_avg_filter_v(v):
-    import xfilter
-
     v = xfilter.lowpass(
         v.sel(depth=slice(-10, -80)).mean("depth"),
         coord="time",
@@ -299,7 +371,55 @@ def tiw_avg_filter_v(v):
     return v
 
 
-def get_tiw_phase(v, debug=False):
+def get_tiw_phase_sst(sst, debug=False):
+
+    sstfilt = xfilter.lowpass(
+        sst.sel(latitude=slice(0, 5)).mean("latitude"),
+        coord="time",
+        freq=1 / 15,
+        cycles_per="D",
+        num_discard=0,
+    )
+
+    if sstfilt.ndim > 1:
+        raise NotImplementedError("tiw phase estimation for SST not vectorized yet")
+
+    sig = sstfilt.compute()
+    peak_kwargs = {"prominence": 0.1}
+    phase_90 = sp.signal.find_peaks(-sig, **peak_kwargs)[0]
+    phase_270 = sp.signal.find_peaks(sig, **peak_kwargs)[0]
+    phase_180 = []
+    for i90, i270 in zip(phase_90, phase_270):
+        sig180 = (sig[i90] + sig[i270]) / 2
+        phase_180.append(np.abs(sig[i90:i270] - sig180).argmin().values + i90)
+
+    phase_0 = []
+    for i90, i270 in zip(phase_90[1:], phase_270):
+        sig0 = (sig[i90] + sig[i270]) / 2
+        phase_0.append(np.abs(sig[i270:i90] - sig0).argmin().values + i270)
+
+    phase, period = merge_phase_label_period(
+        sig, phase_0, phase_90, phase_180, phase_270, debug=debug,
+    )
+
+    # return np.stack([phase, period])
+
+    # phase_period = xr.apply_ufunc(
+    #     get_phase_1d,
+    #     sstfilt,
+    #     input_core_dims=[["time"]],
+    #     output_core_dims=[["variable", "time"]],
+    #     kwargs=dict(debug=debug),
+    #     vectorize=True,
+    #     dask="parallelized",
+    #     output_dtypes=[float],
+    #     output_sizes={"variable": 2},
+    # )
+
+    return phase, period
+
+
+def get_tiw_phase_v(v, debug=False):
     """
     Estimates TIW phase using 10 day low-passed meridional velocity
     averaged between 10m and 80m.
@@ -318,8 +438,6 @@ def get_tiw_phase(v, debug=False):
     ----------
     Inoue et. al. (2019)
     """
-
-    import scipy as sp
 
     v = tiw_avg_filter_v(v)
 
@@ -363,14 +481,30 @@ def get_tiw_phase(v, debug=False):
 
         zeros_unique = zeros[np.insert(np.diff(zeros), 0, 100) > 1]
 
-        phase_0 = sp.signal.find_peaks(vsub, **peak_kwargs)
-        phase_90 = [
-            zeros_unique[np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] < 0)[0]]
+        phase_0 = sp.signal.find_peaks(vsub, **peak_kwargs)[0]
+        phase_90 = zeros_unique[
+            np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] < 0)[0]
         ]
-        phase_180 = sp.signal.find_peaks(-vsub, **peak_kwargs)
-        phase_270 = [
-            zeros_unique[np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] > 0)[0]]
+        phase_180 = sp.signal.find_peaks(-vsub, **peak_kwargs)[0]
+        phase_270 = zeros_unique[
+            np.nonzero(dvdt.sel({dim2: dd}).values[zeros_unique] > 0)[0]
         ]
+
+        # 0 phase must be positive v
+        idx = phase_0
+        if not np.all(vsub[idx] > 0):
+            idx = np.where(vsub[idx] > 0, idx, np.nan)
+            idx = idx[~np.isnan(idx)].astype(np.int32)
+
+        # 180 phase must be negative v
+        idx = phase_180
+        if not np.all(vsub[idx] < 0):
+            idx = np.where(vsub[idx] < 0, idx, np.nan)
+            idx = idx[~np.isnan(idx)].astype(np.int32)
+
+        phase_new, label = merge_phase_label_period(
+            vsub, phase_0, phase_90, phase_180, phase_270
+        )
 
         vamp = np.abs(
             vsub.isel(
@@ -379,76 +513,8 @@ def get_tiw_phase(v, debug=False):
                 )
             ).diff("time", label="lower")
         )
-
-        # One version with phase=0 at points in phase_0
-        # One version with 360 at points in phase_0
-        # Then merge sensibly
-        phase = xr.zeros_like(vsub) * np.nan
-        label = xr.zeros_like(vsub) * np.nan
-        phase2 = phase.copy(deep=True)
-        start_num = 1
-        for pp, cc, ph in zip(
-            [phase_0, phase_90, phase_180, phase_270], "rgbk", [0, 90, 180, 270]
-        ):
-            idx = pp[0]
-
-            # 0 phase must be positive v
-            if ph == 0:
-                if not np.all(vsub[idx] > 0):
-                    idx = np.where(vsub[idx] > 0, idx, np.nan)
-                    idx = idx[~np.isnan(idx)].astype(np.int32)
-
-                label.values[idx] = np.arange(start_num, len(idx) + 1)
-
-            # 180 phase must be negative v
-            if ph == 180:
-                if not np.all(vsub[idx] < 0):
-                    idx = np.where(vsub[idx] < 0, idx, np.nan)
-                    idx = idx[~np.isnan(idx)].astype(np.int32)
-
-            if debug:
-                vsub[idx].plot(ax=ax[0], color=cc, ls="none", marker="o")
-                ax[1].plot(
-                    vsub.time[idx],
-                    ph * np.ones_like(idx),
-                    color=cc,
-                    ls="none",
-                    marker="o",
-                )
-
-            phase[idx] = ph
-            if ph < 10:
-                phase2[idx] = 360
-            else:
-                phase2[idx] = ph
-
-        if not (
-            np.all(np.isin(phase.dropna("time").diff("time"), [90, -270]))
-            or np.all(np.isin(phase2.dropna("time").diff("time"), [90, -270]))
-        ):
-            warnings.warn("Secondary peaks detected!")
-
-        phase = phase.interpolate_na("time", method="linear")
-        phase2 = phase2.interpolate_na("time", method="linear")
-
-        dpdt = phase.differentiate("time")
-
-        phase_new = xr.where(
-            (phase2 >= 270) & (phase2 < 360) & (phase < 270) & (dpdt <= 0),
-            phase2,
-            phase,
-        )
-        vampf = vamp.reindex(time=phase.time).ffill("time")
+        vampf = vamp.reindex(time=phase_new.time).ffill("time")
         phase_new = phase_new.where(vampf > 0.1)
-
-        label = label.ffill("time")
-
-        # periods don't necessarily start with phase = 0
-        phase_no_period = np.logical_and(~np.isnan(phase_new), np.isnan(label))
-        label.values[phase_no_period.values] = 0
-
-        if np.any(label == 0):
-            label += 1
 
         if debug:
             # vampf.plot.step(ax=ax[0])
@@ -536,3 +602,59 @@ def estimate_Rib(ds):
     with xr.set_options(keep_attrs=False):
         ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du ** 2)
     return ds
+
+
+get_tiw_phase = get_tiw_phase_v
+
+
+def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
+    def minmax(group):
+        mx = group.where(group > 0).max("time")
+        mn = group.where(group < 0).min("time")
+
+        coord = xr.DataArray(["min", "max"], dims="minmax", name="minmax")
+        return xr.concat([mn, mx], coord)
+
+    dKdt = K.differentiate("time")
+    grouped = (
+        dKdt.groupby(dKdt.time.dt.floor("D")).apply(minmax).rename({"floor": "time"})
+    )
+    amp = grouped.diff("minmax").squeeze()
+    amp_cleaned = amp.sortby("depth").chunk({"depth": -1}).interpolate_na("depth")
+
+    dcl = (
+        amp_cleaned.depth.where(amp_cleaned / amp_cleaned.max("depth") < threshold)
+        .max("depth")
+        .reindex(time=dKdt.time, method="ffill")
+    )
+
+    if debug:
+        plt.figure()
+        (
+            dKdt
+            .groupby("time.day").plot(
+                col="day",
+                col_wrap=6,
+                x="time",
+                # sharey=True,
+                ylim=(-100, 0),
+                robust=True,
+            )
+        )
+        dcl.plot(x="time")
+
+        plt.figure()
+        fg = (
+            (amp_cleaned / amp_cleaned.max("depth"))
+            # .sel(depth=-20, method="nearest")
+            .plot(
+                col="time",
+                col_wrap=6,
+                y="depth",
+                # sharey=True,
+                ylim=(-100, 0),
+
+            )
+        )
+
+    return dcl

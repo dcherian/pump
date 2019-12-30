@@ -19,7 +19,7 @@
 
 - What do profiles look like with daily data?
 
-** TIW compositing [6/14]
+** TIW compositing [6/22]
   - [X] use warm anomaly to reference latitude
   - [ ] could also use vorticity dipole to reference latitude
   - [X] normalize temperature also? seems weird; but subtract mean temperature
@@ -33,7 +33,19 @@
   - [X] implement KPP mixing depth
   - [ ] how does KPP mixing depth compare to deep cycle depth?
   - [ ] anomalize Jq
+
   - [ ] \bar{w'T'}
+
+  - [ ] is there a deep cycle away from the equator
+    - [ ] is this how TIWs enhance mixing?
+    - [ ] probably not
+  - [ ] what is the e-folding decay scale of the mixing signal.
+  - [ ] what processes lead to the upper core layer
+  - [ ] calculate MLD, DCL depth and save to zarr file
+  - [ ] calculate SST based TIW phase, period and save to TAO
+  - [ ] calculate sections and save to zarr
+  - [ ] 4 point smooth Jq in depth
+  - [ ] DCL needs to be bugfixed
 
 Method:
 1. Use depth-mean v at equator to assign phase. (Inoue et al 2019)
