@@ -50,17 +50,29 @@ class model:
         self.name = name
 
         try:
-            self.surface = xr.open_dataset(
-                self.dirname + "/obs_subset/surface.nc"
-            ).squeeze()
-        except FileNotFoundError:
+            if name == "gcm100":
+                self.surface = xr.open_mfdataset(
+                    f"{dirname}/SURFACE/*.nc",
+                    coords="minimal",
+                    data_vars="minimal",
+                    compat="override",
+                    combine="nested",
+                    parallel=True,
+                    concat_dim="time",
+                    chunks={"longitude": 1500, "latitude": 600, "depth": -1},
+                ).squeeze()
+            else:
+                self.surface = xr.open_dataset(
+                    self.dirname + "/obs_subset/surface.nc"
+                ).squeeze()
+        except (FileNotFoundError, OSError):
             self.surface = xr.Dataset()
 
         try:
             self.annual = xr.open_mfdataset(
                 self.dirname + "/obs_subset/annual-mean*.nc", combine="by_coords"
             ).squeeze()
-        except FileNotFoundError:
+        except (FileNotFoundError, OSError):
             self.annual = xr.Dataset()
 
         self.domain = dict()
@@ -68,9 +80,6 @@ class model:
 
         if self.domain["xyt"]:
             self.oisst = read_sst(self.domain["xyt"])
-
-        self.update_coords()
-        self.read_metrics()
 
         if full:
             self.read_full()
@@ -83,12 +92,10 @@ class model:
         else:
             self.budget = xr.Dataset()
 
-        try:
-            self.mean = xr.open_dataset(
-                self.dirname + "/obs_subset/annual-mean.nc"
-            ).squeeze()
-        except FileNotFoundError:
-            self.mean = None
+        self.update_coords()
+        self.read_metrics()
+
+        self.mean = self.annual  # forgot that I had read this in before!
 
         class obs_container:
             pass
@@ -151,11 +158,18 @@ class model:
     def read_full(self):
         start_time = time.time()
 
-        chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
+        if self.name == "gcm1":
+            files = "/Day_*[0-9].nc"
+            chunks = {"depth": None, "latitude": 120, "longitude": 500}
+        elif self.name == "gcm100":
+            files = "/cmpr_*.nc"
+            chunks = {"longitude": 500, "latitude": 120, "depth": -1}
+        else:
+            chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
 
         if self.kind == "mitgcm":
             self.full = xr.open_mfdataset(
-                self.dirname + "/Day_*[0-9].nc",
+                self.dirname + files,
                 concat_dim="time",
                 engine="h5netcdf",
                 parallel=True,
@@ -164,6 +178,9 @@ class model:
             )
 
             self.full["dens"] = dens(self.full.salt, self.full.theta, self.full.depth)
+
+            if self.name == "gcm100":
+                self.full["time"] = self.surface.time[::24]
 
         if self.kind == "roms":
             self.full = xr.Dataset()
@@ -177,7 +194,10 @@ class model:
         self.depth = self.full.depth
 
     def read_metrics(self):
-        dirname = self.dirname + "../"
+        if self.name == "gcm100":
+            dirname = self.dirname
+        else:
+            dirname = self.dirname + "../"
 
         h = dict()
         for ff in ["hFacC", "RAC", "RF"]:
@@ -288,7 +308,7 @@ class model:
             self.tao = xr.open_mfdataset(
                 self.dirname + "/obs_subset/tao-*extract.nc", combine="by_coords"
             )
-        except FileNotFoundError:
+        except (FileNotFoundError, OSError):
             self.tao = None
             return
 
@@ -315,12 +335,14 @@ class model:
             self.tao["Jq"].attrs["units"] = "W/m$^2$"
 
     def update_coords(self):
-        if self.surface:
+        if "latitude" in self.surface:
             ds = self.surface
-        elif self.full:
+        elif "latitude" in self.full:
             ds = self.full
-        elif self.budget:
+        elif "latitude" in self.budget:
             ds = self.budget
+        else:
+            return None
 
         self.latitude = ds.latitude
         self.longitude = ds.longitude
