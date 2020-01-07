@@ -92,13 +92,14 @@ class model:
             self.full = xr.Dataset()
             self.depth = None
 
+        self.update_coords()
+        self.read_metrics()
+
         if budget:
             self.read_budget()
         else:
             self.budget = xr.Dataset()
 
-        self.update_coords()
-        self.read_metrics()
 
         self.mean = self.annual  # forgot that I had read this in before!
 
