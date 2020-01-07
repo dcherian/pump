@@ -11,6 +11,9 @@ import dcpy.eos
 import xfilter
 
 
+from numba import int64, float32, guvectorize
+
+
 def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug=False):
     """
     One version with phase=0 at points in phase_0
@@ -79,6 +82,8 @@ def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug
         ax2 = ax[1].twinx()
         label.plot(x="time", ax=ax2, color="k", lw=0.5)
 
+    phase_new.name = "tiw_phase"
+    label.name = "period"
     return phase_new, label
 
 
@@ -332,6 +337,8 @@ def get_mld(dens):
     Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
     # Interpolates density to 1m grid.
     """
+    if not isinstance(dens, xr.DataArray):
+        raise ValueError(f"Expected DataArray, received {dens.__class__.__name__}")
 
     # densi = dens  # .interp(depth=np.arange(0, -200, -1))
     drho = dens - dens.isel(depth=0)
@@ -371,20 +378,15 @@ def tiw_avg_filter_v(v):
     return v
 
 
-def get_tiw_phase_sst(sst, debug=False):
+def _find_phase_single_lon(sig, debug=False):
 
-    sstfilt = xfilter.lowpass(
-        sst.sel(latitude=slice(0, 5)).mean("latitude"),
-        coord="time",
-        freq=1 / 15,
-        cycles_per="D",
-        num_discard=0,
-    )
+    if np.sum(sig.shape) == 0:
+        out = xr.Dataset()
+        out["tiw_phase"] = sig.copy()
+        out["period"] = sig.copy()
+        return out
 
-    if sstfilt.ndim > 1:
-        raise NotImplementedError("tiw phase estimation for SST not vectorized yet")
-
-    sig = sstfilt.compute()
+    sig = sig.squeeze()
     peak_kwargs = {"prominence": 0.1}
     phase_90 = sp.signal.find_peaks(-sig, **peak_kwargs)[0]
     phase_270 = sp.signal.find_peaks(sig, **peak_kwargs)[0]
@@ -402,21 +404,22 @@ def get_tiw_phase_sst(sst, debug=False):
         sig, phase_0, phase_90, phase_180, phase_270, debug=debug,
     )
 
-    # return np.stack([phase, period])
+    return xr.merge([phase, period]).expand_dims("longitude")
 
-    # phase_period = xr.apply_ufunc(
-    #     get_phase_1d,
-    #     sstfilt,
-    #     input_core_dims=[["time"]],
-    #     output_core_dims=[["variable", "time"]],
-    #     kwargs=dict(debug=debug),
-    #     vectorize=True,
-    #     dask="parallelized",
-    #     output_dtypes=[float],
-    #     output_sizes={"variable": 2},
-    # )
 
-    return phase, period
+def get_tiw_phase_sst(sst, debug=False):
+
+    sstfilt = xfilter.lowpass(
+        sst.sel(latitude=slice(0, 5)).mean("latitude"),
+        coord="time",
+        freq=1 / 15,
+        cycles_per="D",
+        num_discard=0,
+    )
+
+    output = sstfilt.map_blocks(_find_phase_single_lon, kwargs={"debug": debug})
+
+    return output["tiw_phase"], output["period"]
 
 
 def get_tiw_phase_v(v, debug=False):
