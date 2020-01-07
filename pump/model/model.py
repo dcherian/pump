@@ -151,7 +151,11 @@ class model:
     def read_full(self):
         start_time = time.time()
 
-        chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
+        if self.name == "gcm1":
+            chunks = {"depth": None, "latitude": 120, "longitude": 500}
+
+        else:
+            chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
 
         if self.kind == "mitgcm":
             self.full = xr.open_mfdataset(
@@ -295,10 +299,10 @@ class model:
         self.tao["dens"] = dens(self.tao.salt, self.tao.theta, self.tao.depth)
         self.tao = calc_reduced_shear(self.tao)
         self.tao["euc_max"] = get_euc_max(self.tao.u)
+        self.tao["mld"] = get_mld(self.tao.dens)
         self.tao["dcl_base_shear"] = get_dcl_base_shear(self.tao)
         self.tao["dcl_base_Ri"] = get_dcl_base_Ri(self.tao)
         self.tao["dens"] = dens(self.tao.salt, self.tao.theta, self.tao.depth)
-        self.tao["mld"] = get_mld(self.tao.dens)
 
         if self.metrics:
             CV = self.metrics.cellvol.sel(
