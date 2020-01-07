@@ -11,6 +11,7 @@ import toolz
 # from .calc import tiw_avg_filter_v
 
 from toolz import keyfilter
+from numba import guvectorize, float32, float64
 
 
 def pick(whitelist, d):
@@ -147,7 +148,7 @@ def get_tiv_extent(data, dim="latitude", debug=False):
 
     indexes["loc"] = ["bot", "top"]
     indexes = indexes.reindex(loc=["bot", "cen", "top"], fill_value=0)
-    indexes.loc[:, "cen"] = iy0
+    indexes.loc[{"loc": "cen"}] = iy0
 
     return data.latitude[indexes]
 
@@ -175,18 +176,13 @@ def _get_latitude_reference(data, debug=False):
 
 
 def get_y_reference(theta, periods=None, debug=False):
-
     if periods is not None:
         subset = theta.where(theta.period.isin(periods), drop=True)
     else:
         subset = theta
-    mean_theta = subset.mean(
-        "time"
-    )  # sensitive to changing this to subset.mean("time")
-    anom = (
-        subset.rolling(latitude=10, center=True, min_periods=1).mean(allow_lazy=True)
-        - mean_theta
-    )
+    # sensitive to changing this to subset.mean("time")
+    mean_theta = subset.mean("time")
+    anom = subset.rolling(latitude=10, center=True, min_periods=1).mean() - mean_theta
     # mean.plot.line(y="latitude", color='k')
 
     # use phase=180 to determine warm extent
@@ -196,36 +192,66 @@ def get_y_reference(theta, periods=None, debug=False):
     #    .mean("time")
     # )
 
+    def get_warm_anom_index(ds):
+        # squeeze out and drop longitude dim
+        ds = ds.unstack().squeeze().reset_coords(drop=True)
+        idx = ds.mean("latitude").argmax("time")
+        return idx
+
     # use sst warm anomaly to determine warm extent
-    t180 = (
-        anom.sel(latitude=slice(-2, 2))
-        .groupby("period")
-        .apply(lambda x: anom.isel(time=x.mean("latitude").argmax("time").compute()))
+    indexes = []
+    grouped = anom.sel(latitude=slice(-2, 2)).groupby("period")
+    for _, group in grouped:
+        indexes.append(get_warm_anom_index(group))
+
+    warm_index = xr.concat(dask.compute(indexes)[0], grouped._unique_coord)
+    idx0 = xr.DataArray(
+        [ind[0] for ind in grouped._group_indices],
+        dims=["period"],
+        coords={"period": grouped._unique_coord},
     )
 
-    t180 = t180.copy(data=sp.signal.detrend(t180.values, type="linear"))
-    # if debug:
-    #    plt.figure()
-    #    t180.plot.line(hue="period")
+    warm_index += idx0
+
+    t180 = anom.isel(time=warm_index.values)
+    t180 = t180.copy(
+        data=sp.signal.detrend(
+            t180.values, type="linear", axis=t180.get_axis_num("latitude")
+        )
+    )
+
+    if debug:
+        plt.figure()
+        t180.squeeze().plot.line(hue="time")
 
     yref = _get_latitude_reference(t180, debug=debug)
-    ynew = xr.full_like(theta, fill_value=np.nan)
-    for period in np.unique(yref.period.values):
-        ynew = xr.where(theta.period == period, yref.sel(period=period), ynew)
+    ynew = xr.full_like(theta, fill_value=np.nan).compute()
+    for lon in ynew.longitude.values:
+        for period in np.unique(yref.period.values):
+            ynew.loc[{"longitude": lon}] = xr.where(
+                theta.sel(longitude=lon).period == period,
+                yref.sel(longitude=lon).swap_dims({"time": "period"}).sel(period=period),
+                ynew.sel(longitude=lon),
+            )
 
     return ynew
+
+
+@guvectorize(
+    [(float64[:], float64[:], float64[:], float64[:])],
+    "(m),(m),(n)->(n)",
+    nopython=True,
+)
+def _wrap_interp(x, y, newx, out):
+    out[:] = np.interp(newx, x, y)
+    out[newx > np.max(x)] = np.nan
+    out[newx < np.min(x)] = np.nan
 
 
 def to_uniform_grid(data, coord, new_coord=np.arange(-4, 4, 0.01)):
 
     if isinstance(new_coord, np.ndarray):
         new_coord = xr.DataArray(new_coord, dims=[coord], name=coord)
-
-    def _wrap_interp(x, y, newy):
-        f = sp.interpolate.interp1d(
-            x.squeeze(), y.squeeze(), bounds_error=False, fill_value=np.nan
-        )
-        return f(newy)
 
     result = xr.apply_ufunc(
         _wrap_interp,
@@ -234,8 +260,8 @@ def to_uniform_grid(data, coord, new_coord=np.arange(-4, 4, 0.01)):
         new_coord,
         input_core_dims=[["latitude"], ["latitude"], ["yref"]],
         output_core_dims=[["yref"]],  # order is important
-        exclude_dims=set(["latitude"]),  # since size of dimension is changing
-        vectorize=True,
+        #exclude_dims=set(["latitude"]),  # since size of dimension is changing
+        # vectorize=True,
         dask="parallelized",
         output_dtypes=[np.float64],
     )
