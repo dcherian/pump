@@ -1,6 +1,10 @@
 import dask
 import dask.distributed
-import ncar_jobqueue
+try:
+    import ncar_jobqueue
+except (ImportError, TypeError, RuntimeError):
+    ncar_jobqueue = False
+
 import numpy as np
 import xarray as xr
 
@@ -13,6 +17,9 @@ def build_cluster():
     cluster: NCARCluster object
     client: distributed.Client object
     """
+
+    if not ncar_jobqueue:
+        raise ImportError("Could not import ncar_jobqueue succesfully.")
 
     cluster = ncar_jobqueue.NCARCluster()
     client = dask.distributed.Client(cluster)
