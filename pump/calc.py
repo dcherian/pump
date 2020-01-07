@@ -213,7 +213,9 @@ def get_dcl_base_Ri(data):
     if np.any(data.depth > 0):
         raise ValueError("depth > 0!")
 
-    dcl_max = data.depth.where((data.Ri > 0.5)).max("depth")
+    dcl_max = data.depth.where((data.Ri.where(data.depth < data.mld - 5) > 0.44)).max(
+        "depth"
+    )
 
     dcl_max.attrs["long_name"] = "DCL Base (Ri)"
     dcl_max.attrs["units"] = "m"
@@ -333,9 +335,11 @@ def get_mld(dens):
     # Interpolates density to 1m grid.
     """
 
-    # densi = dens  # .interp(depth=np.arange(0, -200, -1))
-    drho = dens - dens.isel(depth=0)
-    N2 = -9.81 / 1025 * dens.differentiate("depth")
+    # gcm1 is 1m
+    # densi = dcpy.interpolate.pchip(dens, "depth", np.arange(0, -200, -1))
+    densi = dens  # .interp(depth=np.arange(0, -200, -1))
+    drho = densi - densi.isel(depth=0)
+    N2 = -9.81 / 1025 * densi.differentiate("depth")
 
     thresh = xr.where((np.abs(drho) > 0.015) & (N2 > 1e-5), drho.depth, np.nan)
     mld = thresh.max("depth")
@@ -582,10 +586,11 @@ def estimate_euc_depth_terms(ds, inplace=True):
         ds.du.attrs["long_name"] = "$\Delta$u"
 
     if "dens" in ds:
-        ds["dens_euc"] = ds.dens.interp(
-            depth=ds.eucmax, longitude=ds.longitude, method="linear"
-        )
-        # ds["dens_euc"] = euc.dens
+
+        # ds["dens_euc"] = ds.dens.interp(
+        #     depth=ds.eucmax, longitude=ds.longitude, method="linear"
+        # )
+        ds["dens_euc"] = euc.dens
         ds["b"] = ds.dens * -9.81 / ds.dens_euc
         ds["bs"] = ds.b.ffill("depth").sel(**surface)
         ds["beuc"] = -9.81 * xr.ones_like(ds.bs)
