@@ -59,7 +59,12 @@ class model:
                     combine="nested",
                     parallel=True,
                     concat_dim="time",
-                    chunks={"longitude": 1500, "latitude": 600, "depth": -1},
+                    chunks={
+                        "longitude": 2500,
+                        "latitude": 800,
+                        "depth": -1,
+                        "time": 12,
+                    },
                 ).squeeze()
             else:
                 self.surface = xr.open_dataset(
@@ -160,7 +165,7 @@ class model:
 
         if self.name == "gcm1":
             files = "/Day_*[0-9].nc"
-            chunks = {"depth": None, "latitude": 120, "longitude": 500}
+            chunks = {"depth": -1, "latitude": 160, "longitude": 500}
         elif self.name == "gcm100":
             files = "/cmpr_*.nc"
             chunks = {"longitude": 500, "latitude": 120, "depth": -1}
