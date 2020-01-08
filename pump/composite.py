@@ -175,7 +175,23 @@ def _get_latitude_reference(data, debug=False):
     return y
 
 
+def get_warm_anom_index(ds):
+    # squeeze out and drop longitude dim
+    ds = ds.unstack().squeeze().reset_coords(drop=True)
+    mean = ds.mean("latitude")
+
+    if mean.count == 0:
+        return np.nan
+
+    idx = mean.argmax("time")
+    return idx
+
+
 def get_y_reference(theta, periods=None, debug=False):
+    import IPython
+
+    IPython.core.debugger.set_trace()
+
     if periods is not None:
         subset = theta.where(theta.period.isin(periods), drop=True)
     else:
@@ -192,25 +208,32 @@ def get_y_reference(theta, periods=None, debug=False):
     #    .mean("time")
     # )
 
-    def get_warm_anom_index(ds):
-        # squeeze out and drop longitude dim
-        ds = ds.unstack().squeeze().reset_coords(drop=True)
-        idx = ds.mean("latitude").argmax("time")
-        return idx
-
     # use sst warm anomaly to determine warm extent
-    indexes = []
-    grouped = anom.sel(latitude=slice(-2, 2)).groupby("period")
-    for _, group in grouped:
-        indexes.append(get_warm_anom_index(group))
+    indexes = dict()
+    idx0 = []
+    for lon in anom.longitude.values:
+        indexes[lon] = []
+        grouped = anom.sel(longitude=lon, latitude=slice(-2, 2)).groupby("period")
+        for per, group in grouped:
+            if per not in periods:
+                continue
+            indexes[lon].append(get_warm_anom_index(group))
+        idx0.append(
+            xr.DataArray(
+                [ind[0] for ind in grouped._group_indices],
+                dims=["period"],
+                coords={"period": grouped._unique_coord},
+            ).sel(period=periods)
+        )
 
-    warm_index = xr.concat(dask.compute(indexes)[0], grouped._unique_coord)
-    idx0 = xr.DataArray(
-        [ind[0] for ind in grouped._group_indices],
-        dims=["period"],
-        coords={"period": grouped._unique_coord},
+    import IPython; IPython.core.debugger.set_trace()
+
+    computed = dask.compute(list(indexes.values()))[0]
+
+    warm_index = xr.combine_nested(computed, ["longitude", "period"]).assign_coords(
+        {"period": periods, "longitude": anom.longitude}
     )
-
+    idx0 = xr.concat(idx0, anom.longitude)
     warm_index += idx0
 
     t180 = anom.isel(time=warm_index.values)
