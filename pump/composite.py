@@ -18,6 +18,16 @@ def pick(whitelist, d):
     return keyfilter(lambda k: k in whitelist, d)
 
 
+def detrend(data, dim):
+    return xr.apply_ufunc(
+        sp.signal.detrend,
+        data,
+        input_core_dims=[[dim]],
+        output_core_dims=[[dim]],
+        kwargs={"type": "linear"},
+    )
+
+
 class Composite:
 
     data = dict()
@@ -103,19 +113,51 @@ def tiw_avg_filter_v(v):
     return v
 
 
-def _get_tiv_extent_single_period(data, iy0, debug=False):
+def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 
-    indexes, properties = sp.signal.find_peaks(-data, prominence=0.1)
+    prom = 0.2
+    indexes, properties = sp.signal.find_peaks(-data, prominence=prom)
     indexes = np.array(indexes)
+
     # only keep locations where sst anomaly is negative
-    indexes = indexes[data[indexes] < 0]
+    # threshold = 0
+    # new_indexes = indexes[data[indexes] < threshold]
+    # while len(new_indexes[new_indexes < iy0]) == 0:
+    #     threshold -= 0.05
+    #     new_indexes = indexes[data[indexes] < threshold]
+    #     if threshold > 1:
+    #         raise ValueError("Infinite loop?")
+    # indexes = new_indexes
+
+    pos_indexes = indexes[indexes > iy0]
+    while len(pos_indexes) == 0:
+        prom -= 0.1
+        new_indexes, _ = sp.signal.find_peaks(-data, prominence=prom)
+        pos_indexes = np.array(new_indexes)[new_indexes > iy0]
+        if prom < 0.1:
+            raise ValueError("No northern location found")
+
+    neg_indexes = indexes[indexes < iy0]
+    while len(neg_indexes) == 0:
+        print('iterating south')
+        prom -= 0.1
+        new_indexes, _ = sp.signal.find_peaks(-data, prominence=prom)
+        neg_indexes = np.array(new_indexes)[new_indexes < iy0]
+        if prom < 0.1:
+            raise ValueError("No southern location found")
+
+    indexes = np.sort(np.concatenate([neg_indexes, pos_indexes]))
+
     if debug:
         import matplotlib.pyplot as plt
 
-        plt.figure()
-        plt.plot(data)
-        dcpy.plots.linex(indexes)
-        plt.title("_get_tiv_extent_single_period")
+        if debug_ax is None:
+            plt.figure()
+            debug_ax = plt.gca()
+
+        debug_ax.plot(data)
+        dcpy.plots.linex(indexes, ax=debug_ax)
+        dcpy.plots.linex(iy0, color="r", ax=debug_ax)
         print(indexes)
 
     # pick the two closest to the "center"
@@ -129,20 +171,41 @@ def _get_tiv_extent_single_period(data, iy0, debug=False):
     return np.array([final_indexes])
 
 
-def get_tiv_extent(data, dim="latitude", debug=False):
+def get_tiv_extent(data, kind, dim="latitude", debug=False):
 
-    iy0 = data.where(np.abs(data.latitude) < 4).argmax(dim)
-    y0 = data.latitude[iy0]
+    if kind == "warm":
+        data -= 0.15  # TODO: IS THIS RIGHT?
+        iy0 = data.where(np.abs(data.latitude) < 4).argmax(dim)
+        y0 = data.latitude[iy0]
+    elif kind == "cold":
+        data = data.squeeze()
+        near_eq = data.sel(latitude=slice(-3, 3))
+        data = np.abs((data / near_eq.min("latitude")) - 0.01)
+        iy0 = data.where((data.latitude <= 3) & (data.latitude >= -3)).argmax(
+            "latitude"
+        )
+    else:
+        raise ValueError(f"'kind' must be 'warm' or 'cold'. Received {kind} instead")
+
+    nperiod = data.sizes["period"]
+    if debug:
+        f, ax = plt.subplots(2, np.int(np.ceil(nperiod // 2)), sharey=True, sharex=True)
+        ax = np.array(ax.flat)
+        f.suptitle("_get_tiv_extent_single_period")
+        [aa.set_title(period) for aa, period in zip(ax, data.period.values)]
+    else:
+        ax = np.array([None] * nperiod)
 
     indexes = xr.apply_ufunc(
         _get_tiv_extent_single_period,
         data,
         iy0,
-        vectorize=True,  # loops with numpy over core dim?
-        dask="parallelized",  # loop with dask
-        input_core_dims=[[dim], []],
+        ax,
+        vectorize=True,
+        dask="parallelized",
+        input_core_dims=[[dim], [], []],
         output_core_dims=[["loc"]],  # added a new dimension
-        output_dtypes=[np.int32],  # required for dask
+        output_dtypes=[np.int32],
         kwargs=dict(debug=debug),
     )
 
@@ -153,56 +216,23 @@ def get_tiv_extent(data, dim="latitude", debug=False):
     return data.latitude[indexes]
 
 
-def _get_latitude_reference(data, debug=False):
-    reference = get_tiv_extent(data.sel(latitude=slice(-10, 10)), debug=debug)
-
-    y = xr.full_like(data, fill_value=np.nan)
-    y.loc[:, reference.sel(loc="bot")] = -1
-    y.loc[:, reference.sel(loc="cen")] = 0
-    y.loc[:, reference.sel(loc="top")] = +1
-    y = y.interpolate_na("latitude", fill_value="extrapolate")
-
-    if debug:
-        import dcpy
-
-        data = data.copy().assign_coords(y=y)
-        f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
-        data.plot.line(hue="period", ax=ax[0])
-        dcpy.plots.linex(reference.values.flat, ax=ax[0])
-        data.plot.line(x="y", hue="period", ax=ax[1])
-        dcpy.plots.linex([-1, 0, 1], ax=ax[1])
-
-    return y
-
-
-def get_y_reference(theta, periods=None, debug=False):
-    if periods is not None:
-        subset = theta.where(theta.period.isin(periods), drop=True)
-    else:
-        subset = theta
-    # sensitive to changing this to subset.mean("time")
-    mean_theta = subset.mean("time")
-    anom = subset.rolling(latitude=10, center=True, min_periods=1).mean() - mean_theta
-    # mean.plot.line(y="latitude", color='k')
-
-    # use phase=180 to determine warm extent
-    # t180 = (
-    #    anom.where((np.abs(subset.tiw_phase - 180) < 10), drop=True)
-    #    .groupby("period")
-    #    .mean("time")
-    # )
+def sst_for_y_reference_warm(anom):
+    """
+    use sst warm anomaly to determine warm extent
+    """
 
     def get_warm_anom_index(ds):
         # squeeze out and drop longitude dim
         ds = ds.unstack().squeeze().reset_coords(drop=True)
-        idx = ds.mean("latitude").argmax("time")
+        idx = ds.var("latitude").argmax("time")
         return idx
 
     # use sst warm anomaly to determine warm extent
     indexes = []
-    grouped = anom.sel(latitude=slice(-2, 2)).groupby("period")
+    grouped = anom.sel(latitude=slice(0, 5)).groupby("period")
     for _, group in grouped:
-        indexes.append(get_warm_anom_index(group))
+        mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 270)
+        indexes.append(get_warm_anom_index(group.where(mask)))
 
     warm_index = xr.concat(dask.compute(indexes)[0], grouped._unique_coord)
     idx0 = xr.DataArray(
@@ -213,28 +243,123 @@ def get_y_reference(theta, periods=None, debug=False):
 
     warm_index += idx0
 
-    t180 = anom.isel(time=warm_index.values)
-    t180 = t180.copy(
-        data=sp.signal.detrend(
-            t180.values, type="linear", axis=t180.get_axis_num("latitude")
+    t180 = anom.squeeze().isel(time=warm_index.values).swap_dims({"time": "period"})
+
+    return t180.expand_dims("longitude")
+
+
+def sst_for_y_reference_cold(anom):
+    """
+    use SST cold anomaly to determine y reference
+    """
+
+    def center(x):
+        mask = (x.tiw_phase >= 90) & (x.tiw_phase <= 180)
+        med = x.where(mask).median("time")
+        return med
+
+    median = anom.groupby("period").map(center)
+
+    return median  # .expand_dims("longitude")
+
+
+def _get_y_reference(theta, periods=None, kind="cold", debug=False):
+    if periods is not None:
+        subset = theta.where(theta.period.isin(periods), drop=True)
+    else:
+        subset = theta
+
+    # ATTEMPT 1:
+    # use phase=180 to determine warm extent
+    # doesn't work so well because the phase calculation may not line up well
+    # t180 = (
+    #    anom.where((np.abs(subset.tiw_phase - 180) < 10), drop=True)
+    #    .groupby("period")
+    #    .mean("time")
+    # )
+
+    if kind == "warm":
+        # ATTEMPT 2:
+        # try to find the warm anomaly and reference to that
+        # works well at -110, but not so well at -125, -140
+        # sensitive to changing this to subset.mean("time")
+
+        # TODO: need to change form time coordinate to period coordinate as for kind == "cold"
+        mean_theta = subset.mean("time")
+        anom = (
+            subset.rolling(latitude=10, center=True, min_periods=1).mean() - mean_theta
         )
-    )
+        mean.plot.line(y="latitude", color="k")
+        t180 = sst_for_y_reference_warm(anom)
+        t180 = t180.copy(
+            data=sp.signal.detrend(
+                t180.values, type="linear", axis=t180.get_axis_num("latitude"),
+            )
+        )
+
+    elif kind == "cold":
+        # ATTEMPT 3:
+        # reference to cold anomaly and use medians instead of means to avoid "warm bias"
+
+        def center(x):
+
+            x = detrend(x, "latitude")
+            # mask = (x.tiw_phase >=90) & (x.tiw_phase <=180)
+            # mean = x.where(mask).median()
+            mean = x.mean()
+            return x - mean
+
+        anom = theta.groupby("period").apply(center)
+        t180 = sst_for_y_reference_cold(anom)
 
     if debug:
         plt.figure()
-        t180.squeeze().plot.line(hue="time")
+        t180.squeeze().plot.line(y="latitude")
 
-    yref = _get_latitude_reference(t180, debug=debug)
+    reference = get_tiv_extent(
+        t180.sel(latitude=slice(-10, 10)), kind=kind, debug=debug
+    )
+
+    yref = xr.full_like(t180, fill_value=np.nan)
+    yref.loc[:, :, reference.sel(loc="bot")] = -1
+    yref.loc[:, :, reference.sel(loc="cen")] = 0
+    yref.loc[:, :, reference.sel(loc="top")] = +1
+    yref = yref.interpolate_na("latitude", fill_value="extrapolate")
+
+    if debug:
+        import dcpy
+
+        data = t180.copy().assign_coords(yref=yref).squeeze()
+        f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
+        data.plot.line(hue="period", ax=ax[0])
+        dcpy.plots.linex(reference.values.flat, ax=ax[0])
+        data.plot.line(x="yref", hue="period", ax=ax[1])
+        dcpy.plots.linex([-1, 0, 1], ax=ax[1])
+
     ynew = xr.full_like(theta, fill_value=np.nan).compute()
     for lon in ynew.longitude.values:
         for period in np.unique(yref.period.values):
             ynew.loc[{"longitude": lon}] = xr.where(
                 theta.sel(longitude=lon).period == period,
-                yref.sel(longitude=lon).swap_dims({"time": "period"}).sel(period=period),
+                yref.sel(longitude=lon)
+                # .swap_dims({"time": "period"})
+                .sel(period=period),
                 ynew.sel(longitude=lon),
             )
+    ynew.name = "yref"
+    reference.name = "reference"
+    return ynew, reference
 
-    return ynew
+
+def get_y_reference(theta, periods, kind="cold", debug=False):
+    y = []
+    r = []
+    for lon in theta.longitude:
+        yy, rr = _get_y_reference(theta.sel(longitude=[lon]), periods, kind, debug)
+        y.append(yy)
+        r.append(rr)
+
+    return xr.concat(y, "longitude"), xr.concat(r, "longitude")
 
 
 @guvectorize(
@@ -260,7 +385,7 @@ def to_uniform_grid(data, coord, new_coord=np.arange(-4, 4, 0.01)):
         new_coord,
         input_core_dims=[["latitude"], ["latitude"], ["yref"]],
         output_core_dims=[["yref"]],  # order is important
-        #exclude_dims=set(["latitude"]),  # since size of dimension is changing
+        # exclude_dims=set(["latitude"]),  # since size of dimension is changing
         # vectorize=True,
         dask="parallelized",
         output_dtypes=[np.float64],
