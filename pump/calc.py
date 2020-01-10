@@ -384,6 +384,10 @@ def tiw_avg_filter_v(v):
 
 def _find_phase_single_lon(sig, debug=False):
 
+    nlon = sig.sizes["longitude"]
+    if nlon > 1:
+        raise ValueError(f"Length in longitude dimension must be 1. Received {nlon} instead")
+
     if np.sum(sig.shape) == 0:
         out = xr.Dataset()
         out["tiw_phase"] = sig.copy()
@@ -392,8 +396,21 @@ def _find_phase_single_lon(sig, debug=False):
 
     sig = sig.squeeze()
     peak_kwargs = {"prominence": 0.1}
+    if debug:
+        plt.figure()
+        sig.plot()
     phase_90 = sp.signal.find_peaks(-sig, **peak_kwargs)[0]
     phase_270 = sp.signal.find_peaks(sig, **peak_kwargs)[0]
+    if debug:
+        print(phase_90)
+        print(phase_270)
+        dcpy.plots.linex(sig.time[phase_90])
+        dcpy.plots.linex(sig.time[phase_270])
+
+    if phase_90[0] > phase_270[0]:
+        # TODO: could be cleverer. This is throwing out data
+        phase_270 = phase_270[1:]
+
     phase_180 = []
     for i90, i270 in zip(phase_90, phase_270):
         sig180 = (sig[i90] + sig[i270]) / 2
@@ -411,15 +428,18 @@ def _find_phase_single_lon(sig, debug=False):
     return xr.merge([phase, period]).expand_dims("longitude")
 
 
-def get_tiw_phase_sst(sst, debug=False):
+def get_tiw_phase_sst(sst, filt=True, debug=False):
 
-    sstfilt = xfilter.lowpass(
-        sst.sel(latitude=slice(0, 5)).mean("latitude"),
-        coord="time",
-        freq=1 / 15,
-        cycles_per="D",
-        num_discard=0,
-    )
+    if filt:
+        sstfilt = xfilter.lowpass(
+            sst.sel(latitude=slice(0, 5)).mean("latitude"),
+            coord="time",
+            freq=1 / 15,
+            cycles_per="D",
+            num_discard=0,
+        )
+    else:
+        sstfilt = sst
 
     output = sstfilt.map_blocks(_find_phase_single_lon, kwargs={"debug": debug})
 
