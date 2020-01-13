@@ -263,7 +263,19 @@ def sst_for_y_reference_cold(anom):
     return median  # .expand_dims("longitude")
 
 
+def tiw_period_anom(x):
+
+    x = detrend(x, "latitude")
+
+    return x - x.mean()
+    # mask = (x.tiw_phase >=90) & (x.tiw_phase <=180)
+    # mean = x.where(mask).median()
+    # mean = x.mean()
+    # return x #  - mean
+
+
 def _get_y_reference(theta, periods=None, kind="cold", debug=False):
+
     if periods is not None:
         subset = theta.where(theta.period.isin(periods), drop=True)
     else:
@@ -289,11 +301,11 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
         anom = (
             subset.rolling(latitude=10, center=True, min_periods=1).mean() - mean_theta
         )
-        mean.plot.line(y="latitude", color="k")
-        t180 = sst_for_y_reference_warm(anom)
-        t180 = t180.copy(
+        # mean.plot.line(y="latitude", color="k")
+        sst_ref = sst_for_y_reference_warm(anom)
+        sst_ref = sst_ref.copy(
             data=sp.signal.detrend(
-                t180.values, type="linear", axis=t180.get_axis_num("latitude"),
+                sst_ref.values, type="linear", axis=sst_ref.get_axis_num("latitude"),
             )
         )
 
@@ -301,26 +313,18 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
         # ATTEMPT 3:
         # reference to cold anomaly and use medians instead of means to avoid "warm bias"
 
-        def center(x):
-
-            x = detrend(x, "latitude")
-            # mask = (x.tiw_phase >=90) & (x.tiw_phase <=180)
-            # mean = x.where(mask).median()
-            mean = x.mean()
-            return x - mean
-
-        anom = theta.groupby("period").apply(center)
-        t180 = sst_for_y_reference_cold(anom)
+        anom = theta.groupby("period").apply(tiw_period_anom)
+        sst_ref = sst_for_y_reference_cold(anom)
 
     if debug:
         plt.figure()
-        t180.squeeze().plot.line(y="latitude")
+        sst_ref.squeeze().plot.line(y="latitude")
 
     reference = get_tiv_extent(
-        t180.sel(latitude=slice(-10, 10)), kind=kind, debug=debug
+        sst_ref.sel(latitude=slice(-10, 10)), kind=kind, debug=debug
     )
 
-    yref = xr.full_like(t180, fill_value=np.nan)
+    yref = xr.full_like(sst_ref, fill_value=np.nan)
     yref.loc[:, :, reference.sel(loc="bot")] = -1
     yref.loc[:, :, reference.sel(loc="cen")] = 0
     yref.loc[:, :, reference.sel(loc="top")] = +1
@@ -329,7 +333,7 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
     if debug:
         import dcpy
 
-        data = t180.copy().assign_coords(yref=yref).squeeze()
+        data = sst_ref.copy().assign_coords(yref=yref).squeeze()
         f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
         data.plot.line(hue="period", ax=ax[0])
         dcpy.plots.linex(reference.values.flat, ax=ax[0])
@@ -348,6 +352,54 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
             )
     ynew.name = "yref"
     reference.name = "reference"
+
+    if debug:
+        fg = (
+            anom.squeeze()
+            .groupby("period")
+            .plot(
+                col="period",
+                col_wrap=4,
+                x="time",
+                sharey=True,
+                robust=True,
+                cmap=mpl.cm.RdBu_r,
+                add_colorbar=False,
+            )
+        )
+
+        for loc, ax in zip(fg.name_dicts.flat, fg.axes.flat):
+            if loc is not None:
+                phase = anom.tiw_phase.where(
+                    anom.period == loc["period"], drop=True
+                ).squeeze()
+
+                dcpy.plots.liney(
+                    reference.sel(loc).squeeze().values, ax=ax, color="k", zorder=20
+                )
+
+                phase_mask = phase.round().isin([0, 90, 180, 270])
+                phase_mask[-1] = True
+                (
+                    phase.where(phase_mask, drop=True).plot(
+                        x="time",
+                        ax=ax.twinx(),
+                        _labels=False,
+                        color="k",
+                        marker="o",
+                        lw=2,
+                    )
+                )
+                # theta.where(theta.period == loc["period"], drop=True).squeeze().plot(
+                #    x="time", ax=ax.twinx(), _labels=False
+                # )
+                (
+                    sst_ref.sel(loc).plot(
+                        y="latitude", ax=ax.twiny(), _labels=False, color="k"
+                    )
+                )
+
+        fg.fig.suptitle(f"longitude={anom.longitude.values}", y=1.08)
     return ynew, reference
 
 
