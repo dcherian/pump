@@ -395,15 +395,18 @@ def _find_phase_single_lon(sig, debug=False):
         return out
 
     sig = sig.squeeze()
-    peak_kwargs = {"prominence": 0.1}
+    peak_kwargs = {"prominence": 0.15}
+
     if debug:
         plt.figure()
         sig.plot()
+
     phase_90 = sp.signal.find_peaks(-sig, **peak_kwargs)[0]
     phase_270 = sp.signal.find_peaks(sig, **peak_kwargs)[0]
+
     if debug:
-        print(phase_90)
-        print(phase_270)
+        # print(phase_90)
+        # print(phase_270)
         dcpy.plots.linex(sig.time[phase_90])
         dcpy.plots.linex(sig.time[phase_270])
 
@@ -432,7 +435,7 @@ def get_tiw_phase_sst(sst, filt=True, debug=False):
 
     if filt:
         sstfilt = xfilter.lowpass(
-            sst.sel(latitude=slice(0, 5)).mean("latitude"),
+            sst.sel(latitude=slice(-1, 5)).mean("latitude"),
             coord="time",
             freq=1 / 15,
             cycles_per="D",
