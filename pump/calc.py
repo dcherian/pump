@@ -386,7 +386,9 @@ def _find_phase_single_lon(sig, debug=False):
 
     nlon = sig.sizes["longitude"]
     if nlon > 1:
-        raise ValueError(f"Length in longitude dimension must be 1. Received {nlon} instead")
+        raise ValueError(
+            f"Length in longitude dimension must be 1. Received {nlon} instead"
+        )
 
     if np.sum(sig.shape) == 0:
         out = xr.Dataset()
@@ -395,7 +397,7 @@ def _find_phase_single_lon(sig, debug=False):
         return out
 
     sig = sig.squeeze()
-    peak_kwargs = {"prominence": 0.15}
+    peak_kwargs = {"prominence": 0.3}
 
     if debug:
         plt.figure()
@@ -662,8 +664,7 @@ def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
     if debug:
         plt.figure()
         (
-            dKdt
-            .groupby("time.day").plot(
+            dKdt.groupby("time.day").plot(
                 col="day",
                 col_wrap=6,
                 x="time",
@@ -684,7 +685,6 @@ def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
                 y="depth",
                 # sharey=True,
                 ylim=(-100, 0),
-
             )
         )
 

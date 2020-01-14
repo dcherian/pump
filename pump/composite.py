@@ -140,15 +140,16 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 
     pos_indexes = indexes[indexes > iy0]
     while len(pos_indexes) == 0:
+        # print("iterating north")
         prom -= 0.01
         new_indexes, _ = sp.signal.find_peaks(-data, prominence=prom)
         pos_indexes = np.array(new_indexes)[new_indexes > iy0]
-        if prom < 0.1:
+        if prom < 0.01:
             raise ValueError("No northern location found")
 
     neg_indexes = indexes[indexes < iy0]
     while len(neg_indexes) == 0:
-        print("iterating south")
+        # print("iterating south")
         prom -= 0.01
         new_indexes, _ = sp.signal.find_peaks(-data, prominence=prom)
         neg_indexes = np.array(new_indexes)[new_indexes < iy0]
@@ -177,11 +178,11 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
     return np.array([final_indexes])
 
 
-def get_tiv_extent(data, kind, dim="latitude", debug=False):
+def get_tiv_extent(data, kind, dim="latitude", debug=False, savefig=False):
 
     if kind == "warm":
-        data = data - 0.15  # TODO: IS THIS RIGHT?
-        iy0 = data.where(np.abs(data.latitude) < 4).argmax(dim)
+        # data = data - 0.15
+        iy0 = data.where(np.abs(data.latitude) < 3).argmax(dim)
     elif kind == "cold":
         data = data.squeeze()
         near_eq = data.sel(latitude=slice(-3, 3))
@@ -218,6 +219,12 @@ def get_tiv_extent(data, kind, dim="latitude", debug=False):
     indexes = indexes.reindex(loc=["bot", "cen", "top"], fill_value=0)
     indexes.loc[{"loc": "cen"}] = iy0
 
+    if savefig:
+        f.savefig(
+            f"images/composite-debugging/tiv-extent-{np.abs(data.longitude.values[0])}.png",
+            bbox_inches="tight",
+        )
+
     return data.latitude[indexes]
 
 
@@ -237,21 +244,37 @@ def sst_for_y_reference_warm(anom):
     grouped = anom.sel(latitude=slice(-5, 5)).groupby("period")
     for period, group in grouped:
         if anom.longitude == -140:
-            if np.int(period) == 3:
-                mask = (group.tiw_phase >= 45) & (group.tiw_phase <= 105)
-            elif np.int(period) == 4:
+            if np.int(period) == 4:
                 mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 215)
+            elif np.int(period) == 5:
+                mask = (group.tiw_phase >= 225) & (group.tiw_phase <= 270)
+            elif np.int(period) == 6:
+                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 210)
             else:
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
+
         elif anom.longitude == -125:
-            if np.int(period) == 3.0:
+            if np.int(period) == 3:
                 mask = (group.tiw_phase >= 120) & (group.tiw_phase <= 180)
-            elif np.int(period) == 5.0:
+            elif np.int(period) == 5:
                 mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
             else:
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
+
         elif anom.longitude == -110:
-            mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
+            if np.int(period) == 7:
+                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 220)
+            else:
+                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
+
+        elif anom.longitude == -155:
+            if np.int(period) == 1:
+                mask = (group.tiw_phase >= 160) & (group.tiw_phase <= 210)
+            elif np.int(period) == 2:
+                mask = (group.tiw_phase >= 125) & (group.tiw_phase <= 180)
+            else:
+                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
+
         else:
             raise ValueError(f"Please add mask for longitude={anom.longitude.values}")
 
@@ -297,7 +320,7 @@ def tiw_period_anom(x):
     # return x #  - mean
 
 
-def _get_y_reference(theta, periods=None, kind="cold", debug=False):
+def _get_y_reference(theta, periods=None, kind="cold", debug=False, savefig=False):
 
     if periods is not None:
         subset = theta.where(theta.period.isin(periods), drop=True)
@@ -338,10 +361,6 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
         sst_ref = sst_for_y_reference_cold(anom)
 
     if debug:
-        plt.figure()
-        sst_ref.squeeze().plot.line(y="latitude")
-
-    if debug:
         nperiod = len(np.unique(anom.period))
         fg = (
             anom.squeeze()
@@ -378,9 +397,9 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
                 #    x="time", ax=ax.twinx(), _labels=False
                 # )
                 (
-                    sst_ref.sel(loc).squeeze().plot(
-                        y="latitude", ax=ax.twiny(), _labels=False, color="k"
-                    )
+                    sst_ref.sel(loc)
+                    .squeeze()
+                    .plot(y="latitude", ax=ax.twiny(), _labels=False, color="k")
                 )
 
                 if "time" in sst_ref.coords:
@@ -390,7 +409,7 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
         fg.fig.suptitle(f"longitude={anom.longitude.values}", y=1.08)
 
     reference = get_tiv_extent(
-        sst_ref.sel(latitude=slice(-8, 8)), kind=kind, debug=debug
+        sst_ref.sel(latitude=slice(-8, 8)), kind=kind, debug=debug, savefig=savefig,
     )
 
     yref = xr.full_like(sst_ref, fill_value=np.nan)
@@ -420,14 +439,26 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
                     reference.sel(loc).squeeze().values, ax=ax, color="k", zorder=20
                 )
 
+    if savefig:
+        fg.fig.savefig(
+            f"images/composite-debugging/yref-sst-{np.abs(anom.longitude.values)}.png",
+            bbox_inches="tight",
+        )
+        f.savefig(
+            f"images/composite-debugging/yref-{np.abs(anom.longitude.values)}.png",
+            bbox_inches="tight",
+        )
+
     return ynew, reference
 
 
-def get_y_reference(theta, periods, kind="cold", debug=False):
+def get_y_reference(theta, periods, kind="cold", debug=False, savefig=False):
     y = []
     r = []
     for lon in theta.longitude:
-        yy, rr = _get_y_reference(theta.sel(longitude=lon), periods, kind, debug)
+        yy, rr = _get_y_reference(
+            theta.sel(longitude=lon), periods, kind, debug, savefig
+        )
         y.append(yy)
         r.append(rr)
 
