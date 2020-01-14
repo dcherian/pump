@@ -131,7 +131,7 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 
     pos_indexes = indexes[indexes > iy0]
     while len(pos_indexes) == 0:
-        prom -= 0.1
+        prom -= 0.01
         new_indexes, _ = sp.signal.find_peaks(-data, prominence=prom)
         pos_indexes = np.array(new_indexes)[new_indexes > iy0]
         if prom < 0.1:
@@ -139,11 +139,11 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 
     neg_indexes = indexes[indexes < iy0]
     while len(neg_indexes) == 0:
-        print('iterating south')
-        prom -= 0.1
+        print("iterating south")
+        prom -= 0.01
         new_indexes, _ = sp.signal.find_peaks(-data, prominence=prom)
         neg_indexes = np.array(new_indexes)[new_indexes < iy0]
-        if prom < 0.1:
+        if prom < 0.01:
             raise ValueError("No southern location found")
 
     indexes = np.sort(np.concatenate([neg_indexes, pos_indexes]))
@@ -154,6 +154,9 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
         if debug_ax is None:
             plt.figure()
             debug_ax = plt.gca()
+    # prevent too "thin" vortices
+    # added for 125W, period=5
+    indexes = indexes[np.abs(indexes - iy0) > 30]
 
         debug_ax.plot(data)
         dcpy.plots.linex(indexes, ax=debug_ax)
@@ -174,13 +177,12 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 def get_tiv_extent(data, kind, dim="latitude", debug=False):
 
     if kind == "warm":
-        data -= 0.15  # TODO: IS THIS RIGHT?
+        data = data - 0.15  # TODO: IS THIS RIGHT?
         iy0 = data.where(np.abs(data.latitude) < 4).argmax(dim)
-        y0 = data.latitude[iy0]
     elif kind == "cold":
         data = data.squeeze()
         near_eq = data.sel(latitude=slice(-3, 3))
-        data = np.abs((data / near_eq.min("latitude")) - 0.01)
+        data = np.abs((data / near_eq.min("latitude")) - 0.1)
         iy0 = data.where((data.latitude <= 3) & (data.latitude >= -3)).argmax(
             "latitude"
         )
@@ -229,9 +231,27 @@ def sst_for_y_reference_warm(anom):
 
     # use sst warm anomaly to determine warm extent
     indexes = []
-    grouped = anom.sel(latitude=slice(0, 5)).groupby("period")
-    for _, group in grouped:
-        mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 270)
+    grouped = anom.sel(latitude=slice(-5, 5)).groupby("period")
+    for period, group in grouped:
+        if anom.longitude == -140:
+            if np.int(period) == 3:
+                mask = (group.tiw_phase >= 45) & (group.tiw_phase <= 105)
+            elif np.int(period) == 4:
+                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 215)
+            else:
+                mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
+        elif anom.longitude == -125:
+            if np.int(period) == 3.0:
+                mask = (group.tiw_phase >= 120) & (group.tiw_phase <= 180)
+            elif np.int(period) == 5.0:
+                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
+            else:
+                mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
+        elif anom.longitude == -110:
+            mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
+        else:
+            raise ValueError(f"Please add mask for longitude={anom.longitude.values}")
+
         indexes.append(get_warm_anom_index(group.where(mask)))
 
     warm_index = xr.concat(dask.compute(indexes)[0], grouped._unique_coord)
@@ -254,7 +274,7 @@ def sst_for_y_reference_cold(anom):
     """
 
     def center(x):
-        mask = (x.tiw_phase >= 90) & (x.tiw_phase <= 180)
+        mask = (x.tiw_phase >= 0) & (x.tiw_phase <= 180)
         med = x.where(mask).median("time")
         return med
 
@@ -297,17 +317,15 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
         # sensitive to changing this to subset.mean("time")
 
         # TODO: need to change form time coordinate to period coordinate as for kind == "cold"
-        mean_theta = subset.mean("time")
-        anom = (
-            subset.rolling(latitude=10, center=True, min_periods=1).mean() - mean_theta
-        )
-        # mean.plot.line(y="latitude", color="k")
-        sst_ref = sst_for_y_reference_warm(anom)
-        sst_ref = sst_ref.copy(
-            data=sp.signal.detrend(
-                sst_ref.values, type="linear", axis=sst_ref.get_axis_num("latitude"),
-            )
-        )
+        anom = subset.groupby("period") - subset.groupby("period").mean("time")
+        anom = detrend(anom, dim="latitude")
+        anom = anom.rolling(latitude=21, center=True, min_periods=1).mean()
+        sst_ref = sst_for_y_reference_warm(anom).copy()
+        # sst_ref = sst_ref.copy(
+        #    data=sp.signal.detrend(
+        #        sst_ref.values, type="linear", axis=sst_ref.get_axis_num("latitude"),
+        #    )
+        # )
 
     elif kind == "cold":
         # ATTEMPT 3:
@@ -407,7 +425,7 @@ def get_y_reference(theta, periods, kind="cold", debug=False):
     y = []
     r = []
     for lon in theta.longitude:
-        yy, rr = _get_y_reference(theta.sel(longitude=[lon]), periods, kind, debug)
+        yy, rr = _get_y_reference(theta.sel(longitude=lon), periods, kind, debug)
         y.append(yy)
         r.append(rr)
 
