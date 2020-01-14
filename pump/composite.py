@@ -129,6 +129,15 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
     #         raise ValueError("Infinite loop?")
     # indexes = new_indexes
 
+    if debug:
+        import matplotlib.pyplot as plt
+
+        if debug_ax is None:
+            plt.figure()
+            debug_ax = plt.gca()
+
+        debug_ax.plot(data)
+
     pos_indexes = indexes[indexes > iy0]
     while len(pos_indexes) == 0:
         prom -= 0.01
@@ -148,17 +157,11 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 
     indexes = np.sort(np.concatenate([neg_indexes, pos_indexes]))
 
-    if debug:
-        import matplotlib.pyplot as plt
-
-        if debug_ax is None:
-            plt.figure()
-            debug_ax = plt.gca()
     # prevent too "thin" vortices
     # added for 125W, period=5
     indexes = indexes[np.abs(indexes - iy0) > 30]
 
-        debug_ax.plot(data)
+    if debug:
         dcpy.plots.linex(indexes, ax=debug_ax)
         dcpy.plots.linex(iy0, color="r", ax=debug_ax)
         print(indexes)
@@ -338,46 +341,14 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
         plt.figure()
         sst_ref.squeeze().plot.line(y="latitude")
 
-    reference = get_tiv_extent(
-        sst_ref.sel(latitude=slice(-10, 10)), kind=kind, debug=debug
-    )
-
-    yref = xr.full_like(sst_ref, fill_value=np.nan)
-    yref.loc[:, :, reference.sel(loc="bot")] = -1
-    yref.loc[:, :, reference.sel(loc="cen")] = 0
-    yref.loc[:, :, reference.sel(loc="top")] = +1
-    yref = yref.interpolate_na("latitude", fill_value="extrapolate")
-
     if debug:
-        import dcpy
-
-        data = sst_ref.copy().assign_coords(yref=yref).squeeze()
-        f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
-        data.plot.line(hue="period", ax=ax[0])
-        dcpy.plots.linex(reference.values.flat, ax=ax[0])
-        data.plot.line(x="yref", hue="period", ax=ax[1])
-        dcpy.plots.linex([-1, 0, 1], ax=ax[1])
-
-    ynew = xr.full_like(theta, fill_value=np.nan).compute()
-    for lon in ynew.longitude.values:
-        for period in np.unique(yref.period.values):
-            ynew.loc[{"longitude": lon}] = xr.where(
-                theta.sel(longitude=lon).period == period,
-                yref.sel(longitude=lon)
-                # .swap_dims({"time": "period"})
-                .sel(period=period),
-                ynew.sel(longitude=lon),
-            )
-    ynew.name = "yref"
-    reference.name = "reference"
-
-    if debug:
+        nperiod = len(np.unique(anom.period))
         fg = (
             anom.squeeze()
             .groupby("period")
             .plot(
                 col="period",
-                col_wrap=4,
+                col_wrap=np.int(np.ceil(nperiod / 2)),
                 x="time",
                 sharey=True,
                 robust=True,
@@ -385,16 +356,11 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
                 add_colorbar=False,
             )
         )
-
         for loc, ax in zip(fg.name_dicts.flat, fg.axes.flat):
             if loc is not None:
                 phase = anom.tiw_phase.where(
                     anom.period == loc["period"], drop=True
                 ).squeeze()
-
-                dcpy.plots.liney(
-                    reference.sel(loc).squeeze().values, ax=ax, color="k", zorder=20
-                )
 
                 phase_mask = phase.round().isin([0, 90, 180, 270])
                 phase_mask[-1] = True
@@ -412,12 +378,48 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False):
                 #    x="time", ax=ax.twinx(), _labels=False
                 # )
                 (
-                    sst_ref.sel(loc).plot(
+                    sst_ref.sel(loc).squeeze().plot(
                         y="latitude", ax=ax.twiny(), _labels=False, color="k"
                     )
                 )
 
+                if "time" in sst_ref.coords:
+                    dcpy.plots.linex(
+                        sst_ref.sel(loc).time.values, ax=ax, color="k", zorder=20, lw=2,
+                    )
         fg.fig.suptitle(f"longitude={anom.longitude.values}", y=1.08)
+
+    reference = get_tiv_extent(
+        sst_ref.sel(latitude=slice(-8, 8)), kind=kind, debug=debug
+    )
+
+    yref = xr.full_like(sst_ref, fill_value=np.nan)
+    yref.loc[:, :, reference.sel(loc="bot")] = -1
+    yref.loc[:, :, reference.sel(loc="cen")] = 0
+    yref.loc[:, :, reference.sel(loc="top")] = +1
+    yref = yref.interpolate_na("latitude", fill_value="extrapolate")
+
+    if debug:
+        data = sst_ref.copy().assign_coords(yref=yref).squeeze()
+        f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
+        data.plot.line(hue="period", ax=ax[0])
+        dcpy.plots.linex(reference.values.flat, ax=ax[0])
+        data.plot.line(x="yref", hue="period", ax=ax[1])
+        dcpy.plots.linex([-1, 0, 1], ax=ax[1])
+
+    ynew = xr.full_like(theta, fill_value=np.nan).compute()
+    for period in np.unique(yref.period.values):
+        ynew = xr.where(theta.period == period, yref.sel(period=period), ynew)
+    ynew.name = "yref"
+    reference.name = "reference"
+
+    if debug:
+        for loc, ax in zip(fg.name_dicts.flat, fg.axes.flat):
+            if loc is not None:
+                dcpy.plots.liney(
+                    reference.sel(loc).squeeze().values, ax=ax, color="k", zorder=20
+                )
+
     return ynew, reference
 
 
@@ -508,7 +510,7 @@ def test_composite_algorithm(full, tao, period, debug=False):
 
     vavg = tiw_avg_filter_v(tao.v).where(full.period == period, drop=True)
 
-    t180 = full.time.where(
+    sst_ref = full.time.where(
         np.abs(full.tiw_phase.where(full.period == period, drop=True) - 180) < 10
     ).mean("time")
 
@@ -533,7 +535,7 @@ def test_composite_algorithm(full, tao, period, debug=False):
     vavg.plot(x="time", ax=ax["vavg"])
     ax["vavg"].axhline(0)
     [axx.set_title("") for axx in ax.values()]
-    if t180.notnull():
+    if sst_ref.notnull():
         dcpy.plots.linex(
-            t180, ax=pick(["sst", "sst_yref", "vavg"], ax).values(), zorder=10
+            sst_ref, ax=pick(["sst", "sst_yref", "vavg"], ax).values(), zorder=10
         )
