@@ -1,7 +1,8 @@
-#
-# converted from matlab version to python in Jan 2018
-
 import numpy as np
+import xarray as xr
+
+from numba import njit
+
 
 __doc__ = """
 Density of Sea Water using McDougall et al. 2003 (JAOT 20) polynomial
@@ -12,36 +13,8 @@ dens :: computes in-situ density from salinity, potential temperature
         and pressure
 """
 
-# coefficients nonlinear equation of state in pressure coordinates for
-eosMDJWFnum = [7.35212840e+00,
-               -5.45928211e-02,
-               3.98476704e-04,
-               2.96938239e+00,
-               -7.23268813e-03,
-               2.12382341e-03,
-               1.04004591e-02,
-               1.03970529e-07,
-               5.18761880e-06,
-               -3.24041825e-08,
-               -1.23869360e-11,
-               9.99843699e+02]
-
-eosMDJWFden = [7.28606739e-03,
-               -4.60835542e-05,
-               3.68390573e-07,
-               1.80809186e-10,
-               2.14691708e-03,
-               -9.27062484e-06,
-               -1.78343643e-10,
-               4.76534122e-06,
-               1.63410736e-09,
-               5.30848875e-06,
-               -3.03175128e-16,
-               -1.27934137e-17,
-               1.00000000e+00]
-
-
-def densmdjwf(s, theta, p):
+@njit(nogil=True)
+def densmdjwf(s, t, p):
     """
     densmdjwf    Density of sea water
    =========================================================================
@@ -72,13 +45,35 @@ def densmdjwf(s, theta, p):
     McDougall et al., 2003, JAOT 20(5), pp. 730-741
     """
 
-    # make sure arguments are floating point
-    s = s.astype('float32')
-    t = theta.astype('float32')
-    p = p.astype('float32')
+    # coefficients nonlinear equation of state in pressure coordinates for
+    eosMDJWFnum = [7.35212840e+00,
+                   -5.45928211e-02,
+                   3.98476704e-04,
+                   2.96938239e+00,
+                   -7.23268813e-03,
+                   2.12382341e-03,
+                   1.04004591e-02,
+                   1.03970529e-07,
+                   5.18761880e-06,
+                   -3.24041825e-08,
+                   -1.23869360e-11,
+                   9.99843699e+02]
+
+    eosMDJWFden = [7.28606739e-03,
+                   -4.60835542e-05,
+                   3.68390573e-07,
+                   1.80809186e-10,
+                   2.14691708e-03,
+                   -9.27062484e-06,
+                   -1.78343643e-10,
+                   4.76534122e-06,
+                   1.63410736e-09,
+                   5.30848875e-06,
+                   -3.03175128e-16,
+                   -1.27934137e-17,
+                   1.00000000e+00]
 
     p1 = p.copy()
-
     t1 = t.copy()
     t2 = t*t
 
@@ -122,4 +117,11 @@ def densmdjwf(s, theta, p):
 
 
 # aliases
-dens = densmdjwf
+def dens(s, theta, p):
+    return xr.apply_ufunc(densmdjwf,
+                          s.astype('float32'),
+                          theta.astype('float32'),
+                          p.astype('float32'),
+                          dask="parallelized",
+                          output_dtypes=[np.dtype('float32')])
+# dens = densmdjwf
