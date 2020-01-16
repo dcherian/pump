@@ -13,7 +13,7 @@ dens :: computes in-situ density from salinity, potential temperature
         and pressure
 """
 
-@njit(nogil=True)
+@njit(nogil=True, cache=True,)
 def densmdjwf(s, t, p):
     """
     densmdjwf    Density of sea water
@@ -73,8 +73,8 @@ def densmdjwf(s, t, p):
                    -1.27934137e-17,
                    1.00000000e+00]
 
-    p1 = p.copy()
-    t1 = t.copy()
+    p1 = p #.copy()
+    t1 = t #.copy()
     t2 = t*t
 
     s1 = s.copy()
