@@ -19,12 +19,22 @@ def pick(whitelist, d):
 
 
 def detrend(data, dim):
+    def _wrapper(data, type):
+        out = data.copy()
+        out[~np.isnan(data)] = sp.signal.detrend(
+            data[~np.isnan(data)], type=type, axis=-1
+        )
+        return out
+
     return xr.apply_ufunc(
-        sp.signal.detrend,
+        _wrapper,
         data,
+        vectorize=True,
         input_core_dims=[[dim]],
         output_core_dims=[[dim]],
         kwargs={"type": "linear"},
+        dask="parallelized",
+        output_dtypes=[data.dtype],
     )
 
 
@@ -212,12 +222,17 @@ def get_tiv_extent(data, kind, dim="latitude", debug=False, savefig=False):
         input_core_dims=[[dim], [], []],
         output_core_dims=[["loc"]],  # added a new dimension
         output_dtypes=[np.int32],
+        output_sizes={"loc": 2},
         kwargs=dict(debug=debug),
     )
 
     indexes["loc"] = ["bot", "top"]
-    indexes = indexes.reindex(loc=["bot", "cen", "top"], fill_value=0)
-    indexes.loc[{"loc": "cen"}] = iy0
+    center = iy0.expand_dims(loc=["cen"])
+    indexes = (
+        xr.concat([indexes, center], "loc")
+        .reindex(loc=["bot", "cen", "top"], fill_value=0)
+        .compute()
+    )
 
     if savefig:
         f.savefig(
@@ -455,7 +470,7 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False, savefig=Fals
 def get_y_reference(theta, periods, kind="cold", debug=False, savefig=False):
     y = []
     r = []
-    for lon in theta.longitude:
+    for lon in theta.longitude.values:
         yy, rr = _get_y_reference(
             theta.sel(longitude=lon), periods, kind, debug, savefig
         )
@@ -570,3 +585,32 @@ def test_composite_algorithm(full, tao, period, debug=False):
         dcpy.plots.linex(
             sst_ref, ax=pick(["sst", "sst_yref", "vavg"], ax).values(), zorder=10
         )
+
+
+def calc_ptp(sst, period=None, debug=False):
+    """ Estimate TIW SST PTP amplitude. """
+
+    def _calc_ptp(obj, dim="time"):
+        obj = obj.unstack()
+        obj -= obj.mean()
+        return obj.max(dim) - obj.min(dim)
+
+    if period is None:
+        period = sst["period"]
+
+    tiw_ptp = sst.groupby(period).map(_calc_ptp)
+
+    if debug:
+        plt.figure()
+        tiw_ptp.plot(x="period", hue="longitude")
+
+    tiw_ptp = (
+        tiw_ptp.sel(period=period.dropna("time"), longitude=period.longitude)
+        .reindex(time=period.time)
+        .drop("period")
+    )
+
+    tiw_ptp.name = "tiw_ptp"
+    tiw_ptp.attrs["description"] = "Peak to peak amplitude"
+
+    return tiw_ptp
