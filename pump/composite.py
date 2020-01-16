@@ -514,11 +514,11 @@ def to_uniform_grid(data, coord, new_coord=np.arange(-4, 4, 0.01)):
     return result
 
 
-def make_composite(data):
+def make_composite(data: xr.Dataset, masks: dict):
     interped = to_uniform_grid(data, "yref", np.arange(-4, 4, 0.01))
-    phase_grouped = interped.groupby_bins("tiw_phase", np.arange(0, 360, 5))
+
     data_vars = data.data_vars
-    composite = {name: xr.Dataset(attrs={"name": name}) for name in data_vars}
+
     attr_to_name = {"mean": "avg_full", "std": "dev"}
 
     mean_yref = data.yref.groupby("period").mean().mean("period")
@@ -528,22 +528,31 @@ def make_composite(data):
         dims=["yref"],
     )
 
-    for attr in ["mean", "std"]:
-        computed = getattr(phase_grouped, attr)()
+    masked = {key: interped.where(mask) for key, mask in masks}
+    final_composite = {}
+    for mask in masked:
+        composite = {name: xr.Dataset(attrs={"name": name}) for name in data_vars}
+        phase_grouped = masked[mask].groupby_bins("tiw_phase", np.arange(0, 360, 5))
+        for attr in ["mean", "std"]:
+            computed = getattr(phase_grouped, attr)()
+            for name in data_vars:
+                composite[name][attr_to_name[attr]] = computed[name]
+                composite[name]["period"] = np.unique(interped.period)
+                # composite[name] = composite[name].transpose("yref", "tiw_phase_bins", "period")
+
         for name in data_vars:
-            composite[name][attr_to_name[attr]] = computed[name]
-            composite[name]["period"] = np.unique(interped.period)
-            # composite[name] = composite[name].transpose("yref", "tiw_phase_bins", "period")
+            composite[name] = composite[name].assign_coords(mean_lat=mean_lat)
+            composite[name]["err"] = composite[name].dev / np.sqrt(
+                len(composite[name].period)
+            )
+            is_significant = (
+                np.abs(composite[name]).avg_full >= 1.96 * composite[name].err
+            )
+            composite[name]["avg"] = composite[name].avg_full.where(is_significant)
 
-    for name in data_vars:
-        composite[name] = composite[name].assign_coords(mean_lat=mean_lat)
-        composite[name]["err"] = composite[name].dev / np.sqrt(
-            len(composite[name].period)
-        )
-        is_significant = np.abs(composite[name]).avg_full >= 1.96 * composite[name].err
-        composite[name]["avg"] = composite[name].avg_full.where(is_significant)
+        final_composite[mask] = composite
 
-    return Composite(composite)
+    return Composite(final_composite)
 
 
 def test_composite_algorithm(full, tao, period, debug=False):
