@@ -210,10 +210,10 @@ def get_dcl_base_Ri(data):
     if "Ri" not in data:
         raise ValueError("Ri not in provided dataset.")
 
-    if "eucmax" not in data:
-        euc_max = get_euc_max(data.u)
-    else:
-        euc_max = data.eucmax
+    #if "eucmax" not in data:
+    #    euc_max = get_euc_max(data.u)
+    #else:
+    #    euc_max = data.eucmax
 
     if np.any(data.depth > 0):
         raise ValueError("depth > 0!")
