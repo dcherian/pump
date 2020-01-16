@@ -433,9 +433,9 @@ def _find_phase_single_lon(sig, debug=False):
     return xr.merge([phase, period]).expand_dims("longitude")
 
 
-def get_tiw_phase_sst(sst, filt=True, debug=False):
+def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
 
-    if filt:
+    if filt == "lowpass":
         sstfilt = xfilter.lowpass(
             sst.sel(latitude=slice(-1, 5)).mean("latitude"),
             coord="time",
@@ -443,8 +443,19 @@ def get_tiw_phase_sst(sst, filt=True, debug=False):
             cycles_per="D",
             num_discard=0,
         )
-    else:
-        sstfilt = sst
+    elif filt == "bandpass":
+        sstfilt = xfilter.bandpass(
+            sst.sel(latitude=slice(-1, 5)).mean("latitude"),
+            coord="time",
+            freq=[1/40, 1/10],
+            cycles_per="D",
+            num_discard=0,
+            method="pad"
+        )
+
+    return sstfilt
+
+def get_tiw_phase_sst(sstfilt, debug=False):
 
     output = sstfilt.map_blocks(_find_phase_single_lon, kwargs={"debug": debug})
 
