@@ -196,7 +196,7 @@ def get_dcl_base_shear(data):
     return dcl_max
 
 
-def get_dcl_base_Ri(data):
+def get_dcl_base_Ri(data, mld=None):
     """
     Estimates base of the deep cycle layer as max depth where Ri <= 0.25.
 
@@ -210,15 +210,17 @@ def get_dcl_base_Ri(data):
     if "Ri" not in data:
         raise ValueError("Ri not in provided dataset.")
 
-    #if "eucmax" not in data:
+    # if "eucmax" not in data:
     #    euc_max = get_euc_max(data.u)
-    #else:
+    # else:
     #    euc_max = data.eucmax
 
     if np.any(data.depth > 0):
         raise ValueError("depth > 0!")
 
-    dcl_max = data.depth.where((data.Ri.where(data.depth < data.mld - 5) > 0.44)).max(
+    if "mld" in data and mld is None:
+        mld = data.mld
+    dcl_max = data.depth.where((data.Ri.where(data.depth < mld - 5) > 0.44)).max(
         "depth"
     )
 
@@ -445,12 +447,12 @@ def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
         )
     elif filt == "bandpass":
         sstfilt = xfilter.bandpass(
-            sst.sel(latitude=slice(-1, 5)).mean("latitude"),
+            sst.sel(latitude=slice(-1, 3)).mean("latitude"),
             coord="time",
-            freq=[1/40, 1/10],
+            freq=[1 / 40, 1 / 10],
             cycles_per="D",
             num_discard=0,
-            method="pad"
+            method="pad",
         )
 
     return sstfilt

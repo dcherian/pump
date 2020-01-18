@@ -484,6 +484,8 @@ def get_y_reference(theta, periods, kind="cold", debug=False, savefig=False):
     [(float64[:], float64[:], float64[:], float64[:])],
     "(m),(m),(n)->(n)",
     nopython=True,
+    # nogil=True,
+    cache=True,
 )
 def _wrap_interp(x, y, newx, out):
     out[:] = np.interp(newx, x, y)
@@ -514,22 +516,55 @@ def to_uniform_grid(data, coord, new_coord=np.arange(-4, 4, 0.01)):
     return result
 
 
+def vectorized_groupby(data, dim, group, func, kind="groupby", **kwargs):
+    result = []
+    for lon in data[dim].values:
+        grouped = getattr(data.sel({dim: lon}), kind)(group, **kwargs)
+        result.append(grouped.map(func))
+    return xr.concat(result, dim)
+
+
 def make_composite(data):
+    # the next two paragraphs should move one level up so it only happens once instead of once per mask
     interped = to_uniform_grid(data, "yref", np.arange(-4, 4, 0.01))
-    phase_grouped = interped.groupby_bins("tiw_phase", np.arange(0, 360, 5))
+    # phase_grouped = interped.groupby_bins("tiw_phase", np.arange(0, 360, 5))
     data_vars = data.data_vars
     composite = {name: xr.Dataset(attrs={"name": name}) for name in data_vars}
     attr_to_name = {"mean": "avg_full", "std": "dev"}
 
-    mean_yref = data.yref.groupby("period").mean().mean("period")
-    mean_lat = xr.DataArray(
-        np.interp(interped.yref, mean_yref, mean_yref.latitude),
-        name="latitude",
-        dims=["yref"],
+    # mean_yref = data.yref.groupby("period").mean().mean("period")
+    mean_yref = vectorized_groupby(
+        data.yref, dim="longitude", group="period", func=lambda x: x.mean("time")
+    ).mean("period")
+
+    # TODO: remove this vectorize bit
+    mean_lat = xr.apply_ufunc(
+        np.interp,
+        interped.yref,
+        mean_yref,
+        mean_yref.latitude,
+        vectorize=True,
+        input_core_dims=[["yref"], ["latitude"], ["latitude"]],
+        output_core_dims=[["yref"]]
     )
+    mean_lat.name = "latitude"
+
+    #mean_lat = xr.DataArray(
+    #    np.interp(interped.yref, mean_yref, mean_yref.latitude),
+    #    name="latitude",
+    #    dims=["yref"],
+    #)
 
     for attr in ["mean", "std"]:
-        computed = getattr(phase_grouped, attr)()
+        computed = vectorized_groupby(
+            interped,
+            dim="longitude",
+            group="tiw_phase",
+            func=lambda x: getattr(x, attr)("time"),
+            kind="groupby_bins",
+            bins=np.arange(0, 360, 5),
+        )
+        # computed = getattr(phase_grouped, attr)()
         for name in data_vars:
             composite[name][attr_to_name[attr]] = computed[name]
             composite[name]["period"] = np.unique(interped.period)

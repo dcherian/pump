@@ -157,23 +157,25 @@ def plot_jq_sst(model, lon, periods, lat=0):
 
     sst = model.surface.theta.sel(longitude=lon, method="nearest")
 
-    period = model.tao.sel(longitude=lon, latitude=0, method="nearest").period
+    period = model.full.period.sel(longitude=lon, method="nearest")
     tperiod = sst.time.where(period.isin(periods), drop=True)[[0, -1]]
     tperiod = slice(*list(tperiod.values))
-
     tao = model.tao.sel(longitude=lon, time=tperiod, depth=slice(0, -500))
+
+    lat = np.atleast_1d(lat)
 
     region = dict(latitude=lat, method="nearest")
 
-    dcl_base = get_dcl_base_Ri(tao.sel(**region))
-    mld = get_mld(tao.dens.sel(**region))
+    mld = get_mld(tao.dens.sel(**region)).compute()
+    dcl_base = get_dcl_base_Ri(tao.sel(**region), mld).compute()
+    # tao = model.full.sel(longitude=lon, time=tperiod, depth=slice(0, -500))
 
     f, ax = plt.subplots(
-        3,
+        2 + len(lat),
         1,
         sharex=True,
         constrained_layout=True,
-        gridspec_kw={"height_ratios": [2, 2, 1]},
+        gridspec_kw={"height_ratios": [2] * (1 + len(lat)) + [1]},
     )
 
     # First SST
@@ -181,16 +183,23 @@ def plot_jq_sst(model, lon, periods, lat=0):
     sst.sel(time=tperiod).plot(
         x="time", cmap=mpl.cm.RdYlBu_r, robust=True, ylim=[-8, 8]
     )
-    ax[0].axhline(tao.sel(**region).latitude, ls='--', color='w', lw=1)
+    dcpy.plots.liney(
+        tao.sel(**region).latitude, ax=ax[0], ls="--", color="k", lw=1, zorder=10
+    )
 
     # Jq qwith eucmax, MLD, DCL
-    plt.sca(ax[1])
-    tao.sel(**region).Jq.plot(x="time", vmax=0, robust=True, cmap=mpl.cm.GnBu)
-    dcl_base.plot(x="time", color="k", _labels=False)
-    mld.plot(x="time", color="r", _labels=False)
-    tao.sel(latitude=0).euc_max.plot(x="time", color="w", _labels=False)
-    ax[1].set_ylim([-125, 0])
+    for la, axis in zip(lat[::-1], ax[1:-1]):
+        region = {"latitude": la, "method": "nearest"}
+        plt.sca(axis)
+        tao.sel(**region).Jq.rolling(depth=3).mean().plot(
+            x="time", vmax=0, robust=True, cmap=mpl.cm.GnBu
+        )
+        dcl_base.sel(**region).plot(x="time", color="k", _labels=False)
+        mld.sel(**region).plot(x="time", color="r", _labels=False)
+        tao.sel(latitude=0).euc_max.plot(x="time", color="w", _labels=False)
+        axis.set_ylim([-150, 0])
 
     # Just tiw phase
-    plt.sca(ax[2])
-    tao.sel(latitude=0).tiw_phase.plot(_labels=False)
+    plt.sca(ax[-1])
+    model.full.tiw_phase.sel(longitude=lon, method="nearest").plot(_labels=False)
+    [aa.set_xlabel("") for aa in ax[:-1]]
