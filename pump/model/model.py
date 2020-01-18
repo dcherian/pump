@@ -68,7 +68,8 @@ class model:
                 ).squeeze()
             else:
                 self.surface = xr.open_dataset(
-                    self.dirname + "/obs_subset/surface.nc"
+                    self.dirname + "/obs_subset/surface.nc",
+                    chunks={"time": 227, "longitude": 116, "latitude": -1}
                 ).squeeze()
         except (FileNotFoundError, OSError):
             self.surface = xr.Dataset()
