@@ -1,6 +1,7 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scipy as sp
 import seawater as sw
 import xarray as xr
@@ -384,7 +385,39 @@ def tiw_avg_filter_v(v):
     return v
 
 
-def _find_phase_single_lon(sig, debug=False):
+def crossings_nonzero_all(data):
+    pos = data > 0
+    npos = ~pos
+    return ((pos[:-1] & npos[1:]) | (npos[:-1] & pos[1:])).nonzero()[0]
+
+
+def fix_phase_using_sst_front(gr, debug=False):
+    ph = gr.tiw_phase
+    indexes, _ = sp.signal.find_peaks(
+        -1 * gr.where(ph < 180, drop=True).values, prominence=0.3
+    )
+
+    if len(indexes) > 0:
+        tfix = gr.time[indexes[0]]
+        if debug:
+            plt.figure()
+            gr.plot()
+            dcpy.plots.linex(gr.time[indexes])
+            dcpy.plots.linex(tfix, color="r")
+
+        last = ph[-1]
+        ph = ph.where(ph.isin([0, 180, 270]))
+        ph[-1] = last
+        ph.loc[tfix] = 90
+        ph = ph.interpolate_na("time")
+    return ph
+
+
+def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
+
+    ds = sig
+    sig = ds["sst"]
+    grad = ds["grad"].squeeze()
 
     nlon = sig.sizes["longitude"]
     if nlon > 1:
@@ -396,10 +429,11 @@ def _find_phase_single_lon(sig, debug=False):
         out = xr.Dataset()
         out["tiw_phase"] = sig.copy()
         out["period"] = sig.copy()
+        out["tiw_ptp"] = sig.copy()
         return out
 
     sig = sig.squeeze()
-    peak_kwargs = {"prominence": 0.3}
+    peak_kwargs = {"prominence": 0.1}
 
     if debug:
         plt.figure()
@@ -419,20 +453,74 @@ def _find_phase_single_lon(sig, debug=False):
         phase_270 = phase_270[1:]
 
     phase_180 = []
-    for i90, i270 in zip(phase_90, phase_270):
-        sig180 = (sig[i90] + sig[i270]) / 2
-        phase_180.append(np.abs(sig[i90:i270] - sig180).argmin().values + i90)
-
     phase_0 = []
-    for i90, i270 in zip(phase_90[1:], phase_270):
-        sig0 = (sig[i90] + sig[i270]) / 2
-        phase_0.append(np.abs(sig[i270:i90] - sig0).argmin().values + i270)
+
+    if algo_0_180 == "zero-crossing":
+        zeros = crossings_nonzero_all(sig.values)
+
+        for i90, i270 in zip(phase_90, phase_270):
+            mask = ((zeros > i90) & (zeros < i270)).nonzero()
+            if len(mask[0]) == 1:
+                phase_180.append(zeros[mask].item())
+
+        for i90, i270 in zip(phase_90[1:], phase_270):
+            mask = ((zeros < i90) & (zeros > i270)).nonzero()
+            if len(mask[0]) == 1:
+                phase_0.append(zeros[mask].item())
+
+        # import IPython; IPython.core.debugger.set_trace()
+        # zeros = sig.time[idx]
+
+    elif algo_0_180 == "mean":
+        for i90, i270 in zip(phase_90, phase_270):
+            sig180 = (sig[i90] + sig[i270]) / 2
+            phase_180.append(np.abs(sig[i90:i270] - sig180).argmin().values + i90)
+
+        for i90, i270 in zip(phase_90[1:], phase_270):
+            sig0 = (sig[i90] + sig[i270]) / 2
+            phase_0.append(np.abs(sig[i270:i90] - sig0).argmin().values + i270)
+    else:
+        raise ValueError("algo_0_180 must be one of ['mean', 'zero-crossing']")
 
     phase, period = merge_phase_label_period(
         sig, phase_0, phase_90, phase_180, phase_270, debug=debug,
     )
 
-    return xr.merge([phase, period]).expand_dims("longitude")
+    # estimate ptp and filter out "weak" waves
+    tiw_ptp = calc_ptp(sig, period)
+    ptp_mask = tiw_ptp > 1
+    phase = phase.where(ptp_mask)
+    period = period.where(ptp_mask)
+
+    # Use SST gradient to refine
+    mean_grad = (
+        grad.sel(latitude=slice(0, 1))
+        .mean("latitude")
+        .assign_coords(tiw_phase=phase, period=period)
+    )
+    dt = grad.time.diff("time").median("time")
+    imax = (
+        grad.time.groupby(period).first()
+        + mean_grad.groupby("period").apply(
+            # make sure we don't get distracted by stuff near the beginning of the period
+            lambda x: x.where(x.tiw_phase > 20).argmax("time")
+        )
+        * dt.values
+    )
+    bad_periods = imax.period[phase.sel(time=imax) < 90]
+
+    if len(bad_periods) > 0:
+        print(f"Found periods where SST front is before phase=90: {bad_periods.values}")
+        # if debug:
+        #    plt.figure()
+        #    grad.plot()
+        #    dcpy.plots.linex(imax)
+
+        gr = mean_grad.where(period.isin(bad_periods), drop=True)
+        fixed = gr.groupby("period").map(fix_phase_using_sst_front, debug=debug)
+        phase.loc[fixed.time] = fixed.values
+
+    return xr.merge([phase, period, tiw_ptp]).expand_dims("longitude")
 
 
 def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
@@ -457,11 +545,15 @@ def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
 
     return sstfilt
 
-def get_tiw_phase_sst(sstfilt, debug=False):
 
-    output = sstfilt.map_blocks(_find_phase_single_lon, kwargs={"debug": debug})
+def get_tiw_phase_sst(sstfilt, gradsst, debug=False):
 
-    return output["tiw_phase"], output["period"]
+    ds = xr.Dataset()
+    ds["sst"] = sstfilt
+    ds["grad"] = gradsst
+    output = ds.map_blocks(_find_phase_single_lon, kwargs={"debug": debug})
+
+    return output["tiw_phase"], output["period"], output["tiw_ptp"]
 
 
 def get_tiw_phase_v(v, debug=False):
@@ -702,3 +794,32 @@ def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
         )
 
     return dcl
+
+
+def calc_ptp(sst, period=None, debug=False):
+    """ Estimate TIW SST PTP amplitude. """
+
+    def _calc_ptp(obj, dim="time"):
+        obj = obj.unstack()
+        obj -= obj.mean()
+        return obj.max(dim) - obj.min(dim)
+
+    if period is None:
+        period = sst["period"]
+
+    tiw_ptp = sst.groupby(period).map(_calc_ptp)
+
+    if debug:
+        plt.figure()
+        tiw_ptp.plot(x="period", hue="longitude")
+
+    tiw_ptp = (
+        tiw_ptp.sel(period=period.dropna("time"))
+        .reindex(time=period.time)
+        .drop("period")
+    )
+
+    tiw_ptp.name = "tiw_ptp"
+    tiw_ptp.attrs["description"] = "Peak to peak amplitude"
+
+    return tiw_ptp

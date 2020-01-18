@@ -620,32 +620,3 @@ def test_composite_algorithm(full, tao, period, debug=False):
         dcpy.plots.linex(
             sst_ref, ax=pick(["sst", "sst_yref", "vavg"], ax).values(), zorder=10
         )
-
-
-def calc_ptp(sst, period=None, debug=False):
-    """ Estimate TIW SST PTP amplitude. """
-
-    def _calc_ptp(obj, dim="time"):
-        obj = obj.unstack()
-        obj -= obj.mean()
-        return obj.max(dim) - obj.min(dim)
-
-    if period is None:
-        period = sst["period"]
-
-    tiw_ptp = sst.groupby(period).map(_calc_ptp)
-
-    if debug:
-        plt.figure()
-        tiw_ptp.plot(x="period", hue="longitude")
-
-    tiw_ptp = (
-        tiw_ptp.sel(period=period.dropna("time"), longitude=period.longitude)
-        .reindex(time=period.time)
-        .drop("period")
-    )
-
-    tiw_ptp.name = "tiw_ptp"
-    tiw_ptp.attrs["description"] = "Peak to peak amplitude"
-
-    return tiw_ptp
