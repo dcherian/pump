@@ -449,8 +449,10 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
         dcpy.plots.linex(sig.time[phase_270])
 
     if phase_90[0] > phase_270[0]:
-        # TODO: could be cleverer. This is throwing out data
-        phase_270 = phase_270[1:]
+        phase_90 = np.insert(phase_90, 0, 0)
+        inserted_0 = True
+    else:
+        inserted_0 = False
 
     phase_180 = []
     phase_0 = []
@@ -486,7 +488,11 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
         sig, phase_0, phase_90, phase_180, phase_270, debug=debug,
     )
 
-    # estimate ptp and filter out "weak" waves
+    if inserted_0:
+        phase[:phase_90[1]] = np.nan
+        period = period.where(~np.isnan(phase))
+
+    # ptp and filter out "weak" waves
     tiw_ptp = calc_ptp(sig, period)
     ptp_mask = tiw_ptp > 1
     phase = phase.where(ptp_mask)
