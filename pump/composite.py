@@ -28,10 +28,10 @@ def pick(whitelist, d):
 
 def detrend(data, dim):
     def _wrapper(data, type):
-        out = data.copy()
-        out[~np.isnan(data)] = sp.signal.detrend(
-            data[~np.isnan(data)], type=type, axis=-1
-        )
+        out = np.full_like(data, fill_value=np.nan)
+        good = ~np.isnan(data)
+        if np.sum(good) > 1:
+            out[good] = sp.signal.detrend(data[good], type=type, axis=-1)
         return out
 
     return xr.apply_ufunc(
@@ -133,7 +133,7 @@ def tiw_avg_filter_v(v):
 
 def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 
-    prom = 0.2
+    prom = 0.1
     indexes, properties = sp.signal.find_peaks(-data, prominence=prom)
     indexes = np.array(indexes)
 
@@ -213,8 +213,8 @@ def get_tiv_extent(data, kind, dim="latitude", debug=False, savefig=False):
 
     nperiod = data.sizes["period"]
     if debug:
-        f, ax = plt.subplots(2, np.int(np.ceil(nperiod // 2)), sharey=True, sharex=True)
-        ax = np.array(ax.flat)
+        f, ax = plt.subplots(2, np.int(np.ceil(nperiod / 2)), sharey=True, sharex=True)
+        ax = np.array(ax.flat)[:nperiod]
         f.suptitle("_get_tiv_extent_single_period")
         [aa.set_title(period) for aa, period in zip(ax, data.period.values)]
     else:
@@ -268,14 +268,16 @@ def sst_for_y_reference_warm(anom):
     for period, group in grouped:
         if anom.longitude == -155:
             if np.int(period) == 1:
-                mask = (group.tiw_phase >= 160) & (group.tiw_phase <= 210)
-            elif np.int(period) == 2:
-                mask = (group.tiw_phase >= 125) & (group.tiw_phase <= 180)
-            else:
+                mask = (group.tiw_phase >= 220) & (group.tiw_phase <= 270)
+            elif np.int(period) == 10:
                 mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
+            else:
+                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 220)
 
         elif anom.longitude == -140:
-            if np.int(period) == 4:
+            if np.int(period) == 3:
+                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
+            elif np.int(period) == 4:
                 mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 215)
             elif np.int(period) == 5:
                 mask = (group.tiw_phase >= 225) & (group.tiw_phase <= 270)
@@ -285,18 +287,18 @@ def sst_for_y_reference_warm(anom):
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
 
         elif anom.longitude == -125:
-            if np.int(period) == 3:
-                mask = (group.tiw_phase >= 120) & (group.tiw_phase <= 180)
-            elif np.int(period) == 5:
+            #if np.int(period) == 3:
+            #    mask = (group.tiw_phase >= 120) & (group.tiw_phase <= 180)
+            if np.int(period) == 5:
                 mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
             else:
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
 
         elif anom.longitude == -110:
-            if np.int(period) == 7:
-                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 220)
-            else:
-                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
+            #if np.int(period) == 7:
+            #    mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 220)
+            #else:
+            mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
 
         else:
             raise ValueError(f"Please add mask for longitude={anom.longitude.values}")
@@ -349,6 +351,12 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False, savefig=Fals
         subset = theta.where(theta.period.isin(periods), drop=True)
     else:
         subset = theta
+
+    subset = subset.where(
+        subset.period.isin(good_periods[subset.longitude.values.item()]), drop=True
+    )
+
+    # import IPython; IPython.core.debugger.set_trace()
 
     # ATTEMPT 1:
     # use phase=180 to determine warm extent
