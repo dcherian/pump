@@ -542,15 +542,8 @@ def vectorized_groupby(data, dim, group, func, kind="groupby", **kwargs):
     return xr.concat(result, dim)
 
 
-def make_composite(data):
-    # the next two paragraphs should move one level up so it only happens once instead of once per mask
+def make_composite_multiple_masks(data, masks: dict):
     interped = to_uniform_grid(data, "yref", np.arange(-4, 4, 0.01))
-    # phase_grouped = interped.groupby_bins("tiw_phase", np.arange(0, 360, 5))
-    data_vars = data.data_vars
-    composite = {name: xr.Dataset(attrs={"name": name}) for name in data_vars}
-    attr_to_name = {"mean": "avg_full", "std": "dev"}
-
-    # mean_yref = data.yref.groupby("period").mean().mean("period")
     mean_yref = vectorized_groupby(
         data.yref, dim="longitude", group="period", func=lambda x: x.mean("time")
     ).mean("period")
@@ -563,16 +556,60 @@ def make_composite(data):
         mean_yref.latitude,
         vectorize=True,
         input_core_dims=[["yref"], ["latitude"], ["latitude"]],
-        output_core_dims=[["yref"]]
+        output_core_dims=[["yref"]],
     )
     mean_lat.name = "latitude"
 
-    #mean_lat = xr.DataArray(
+    comp = {}
+    for name in masks:
+        masked = data.where(masks[name])
+        if "sst" in masked:
+            masked["sst"] = data.sst
+        comp[name] = make_composite(
+            masked.mean("depth"),
+            interped=interped,
+            mean_yref=mean_yref,
+            mean_lat=mean_lat,
+        )
+
+    return comp
+
+
+def make_composite(data, interped=None, mean_yref=None, mean_lat=None):
+    # the next two paragraphs should move one level up so it only happens once instead of once per mask
+    if interped is None:
+        interped = to_uniform_grid(data, "yref", np.arange(-4, 4, 0.01))
+
+    # mean_yref = data.yref.groupby("period").mean().mean("period")
+    if mean_yref is None:
+        mean_yref = vectorized_groupby(
+            data.yref, dim="longitude", group="period", func=lambda x: x.mean("time")
+        ).mean("period")
+
+    if mean_lat is None:
+        # TODO: remove this vectorize bit
+        mean_lat = xr.apply_ufunc(
+            np.interp,
+            interped.yref,
+            mean_yref,
+            mean_yref.latitude,
+            vectorize=True,
+            input_core_dims=[["yref"], ["latitude"], ["latitude"]],
+            output_core_dims=[["yref"]],
+        )
+        mean_lat.name = "latitude"
+
+    # phase_grouped = interped.groupby_bins("tiw_phase", np.arange(0, 360, 5))
+    data_vars = data.data_vars
+    composite = {name: xr.Dataset(attrs={"name": name}) for name in data_vars}
+
+    # mean_lat = xr.DataArray(
     #    np.interp(interped.yref, mean_yref, mean_yref.latitude),
     #    name="latitude",
     #    dims=["yref"],
-    #)
+    # )
 
+    attr_to_name = {"mean": "avg_full", "std": "dev"}
     for attr in ["mean", "std"]:
         computed = vectorized_groupby(
             interped,
