@@ -433,7 +433,9 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
         return out
 
     sig = sig.squeeze()
-    peak_kwargs = {"prominence": 0.1}
+
+    prominences = {-110: 0.3, -125: 0.1, -140: 0.1, -155: 0.1}
+    peak_kwargs = {"prominence": prominences[sig.longitude.squeeze().values.item()]}
 
     if debug:
         plt.figure()
@@ -464,11 +466,19 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
             mask = ((zeros > i90) & (zeros < i270)).nonzero()
             if len(mask[0]) == 1:
                 phase_180.append(zeros[mask].item())
+            else:
+                phase_180.append(zeros[mask][-1].item())
+                # phase_180.append(np.mean(zeros[mask]).astype(np.int))
 
         for i90, i270 in zip(phase_90[1:], phase_270):
             mask = ((zeros < i90) & (zeros > i270)).nonzero()
             if len(mask[0]) == 1:
                 phase_0.append(zeros[mask].item())
+            else:
+                phase_0.append(zeros[mask][-1].item())
+                # phase_0.append(np.mean(zeros[mask]).astype(np.int))
+
+                # choose mean value if multiple zero crossings
 
         # import IPython; IPython.core.debugger.set_trace()
         # zeros = sig.time[idx]
@@ -489,14 +499,15 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
     )
 
     if inserted_0:
-        phase[:phase_90[1]] = np.nan
+        phase[: phase_270[0]] = np.nan
         period = period.where(~np.isnan(phase))
 
-    # ptp and filter out "weak" waves
+    # estimate ptp and filter out "weak" waves
+    # this doesn't work so well
     tiw_ptp = calc_ptp(sig, period)
-    ptp_mask = tiw_ptp > 1
-    phase = phase.where(ptp_mask)
-    period = period.where(ptp_mask)
+    # ptp_mask = tiw_ptp > tiw_ptp.quantile(dim="time", q=0.5)
+    # phase = phase.where(ptp_mask)
+    # period = period.where(ptp_mask)
 
     # Use SST gradient to refine
     mean_grad = (
@@ -540,14 +551,30 @@ def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
             num_discard=0,
         )
     elif filt == "bandpass":
-        sstfilt = xfilter.bandpass(
-            sst.sel(latitude=slice(-1, 3)).mean("latitude"),
-            coord="time",
-            freq=[1 / 40, 1 / 10],
-            cycles_per="D",
-            num_discard=0,
-            method="pad",
-        )
+        latmean = sst.sel(latitude=slice(-1, 3)).mean("latitude")
+        longitudes = latmean.longitude.values
+
+        kwargs = dict(coord="time", cycles_per="D", num_discard=0, method="pad",)
+
+        sstfilt = []
+        if -110 in longitudes:
+            sstfilt.append(
+                xfilter.bandpass(
+                    latmean.sel(longitude=[-110]), freq=[1 / 40, 1 / 15], **kwargs
+                )
+            )
+
+        other_than_110 = set(np.atleast_1d(longitudes)) - set((-110,))
+        if len(other_than_110) != 0:
+            sstfilt.append(
+                xfilter.bandpass(
+                    latmean.sel(longitude=sorted(list(other_than_110))),
+                    freq=[1 / 60, 1 / 30],
+                    **kwargs,
+                )
+            )
+
+        sstfilt = xr.concat(sstfilt, dim="longitude")
 
     return sstfilt
 

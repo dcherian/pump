@@ -14,6 +14,14 @@ from toolz import keyfilter
 from numba import guvectorize, float32, float64
 
 
+good_periods = {
+    -110: [1, 2, 3, 4, 5, 7, 11, 12, 13, 14, 15, 16],
+    -125: [2, 3, 4, 5, 6, 11, 12, 13],  # 10 is borderline
+    -140: [2, 3, 4, 5, 6, 10, 11, 12, 13],
+    -155: [1, 2, 3, 10],
+}
+
+
 def pick(whitelist, d):
     return keyfilter(lambda k: k in whitelist, d)
 
