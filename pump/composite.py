@@ -266,7 +266,15 @@ def sst_for_y_reference_warm(anom):
     indexes = []
     grouped = anom.sel(latitude=slice(-5, 5)).groupby("period")
     for period, group in grouped:
-        if anom.longitude == -140:
+        if anom.longitude == -155:
+            if np.int(period) == 1:
+                mask = (group.tiw_phase >= 160) & (group.tiw_phase <= 210)
+            elif np.int(period) == 2:
+                mask = (group.tiw_phase >= 125) & (group.tiw_phase <= 180)
+            else:
+                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
+
+        elif anom.longitude == -140:
             if np.int(period) == 4:
                 mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 215)
             elif np.int(period) == 5:
@@ -289,14 +297,6 @@ def sst_for_y_reference_warm(anom):
                 mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 220)
             else:
                 mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
-
-        elif anom.longitude == -155:
-            if np.int(period) == 1:
-                mask = (group.tiw_phase >= 160) & (group.tiw_phase <= 210)
-            elif np.int(period) == 2:
-                mask = (group.tiw_phase >= 125) & (group.tiw_phase <= 180)
-            else:
-                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
 
         else:
             raise ValueError(f"Please add mask for longitude={anom.longitude.values}")
