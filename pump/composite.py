@@ -15,7 +15,7 @@ from numba import guvectorize, float32, float64
 
 
 good_periods = {
-    -110: [1, 2, 3, 4, 5, 7, 11, 12, 13, 14, 15, 16],
+    -110: [1, 2, 3, 4, 5, 7, 11, 13, 14,],  # 16 is borderline
     -125: [2, 3, 4, 5, 6, 11, 12, 13],  # 10 is borderline
     -140: [2, 3, 4, 5, 6, 10, 11, 12, 13],
     -155: [1, 2, 3, 10],
@@ -177,8 +177,8 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
     indexes = np.sort(np.concatenate([neg_indexes, pos_indexes]))
 
     # prevent too "thin" vortices
-    # added for 125W, period=5
-    indexes = indexes[np.abs(indexes - iy0) > 30]
+    # added for 125W, period=5  # not true as of Jan 27, 2020
+    indexes = indexes[np.abs(indexes - iy0) > 10]
 
     if debug:
         dcpy.plots.linex(indexes, ax=debug_ax)
@@ -269,6 +269,8 @@ def sst_for_y_reference_warm(anom):
         if anom.longitude == -155:
             if np.int(period) == 1:
                 mask = (group.tiw_phase >= 220) & (group.tiw_phase <= 270)
+            elif np.int(period) == 3:
+                mask = (group.tiw_phase >= 220) & (group.tiw_phase <= 270)
             elif np.int(period) == 10:
                 mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
             else:
@@ -287,7 +289,7 @@ def sst_for_y_reference_warm(anom):
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
 
         elif anom.longitude == -125:
-            #if np.int(period) == 3:
+            # if np.int(period) == 3:
             #    mask = (group.tiw_phase >= 120) & (group.tiw_phase <= 180)
             if np.int(period) == 5:
                 mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
@@ -295,10 +297,10 @@ def sst_for_y_reference_warm(anom):
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
 
         elif anom.longitude == -110:
-            #if np.int(period) == 7:
-            #    mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 220)
-            #else:
-            mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
+            if np.int(period) == 3:
+                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 190)
+            else:
+                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
 
         else:
             raise ValueError(f"Please add mask for longitude={anom.longitude.values}")
@@ -452,9 +454,9 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False, savefig=Fals
     if debug:
         data = sst_ref.copy().assign_coords(yref=yref).squeeze()
         f, ax = plt.subplots(2, 1, sharey=True, constrained_layout=True)
-        data.plot.line(hue="period", ax=ax[0])
+        data.plot.line(hue="period", ax=ax[0], add_legend=False)
         dcpy.plots.linex(reference.values.flat, ax=ax[0])
-        data.plot.line(x="yref", hue="period", ax=ax[1])
+        data.plot.line(x="yref", hue="period", ax=ax[1], add_legend=False)
         dcpy.plots.linex([-1, 0, 1], ax=ax[1])
 
     ynew = xr.full_like(theta, fill_value=np.nan).compute()
