@@ -392,18 +392,26 @@ def crossings_nonzero_all(data):
 
 
 def fix_phase_using_sst_front(gr, debug=False):
+    # print(gr.period[0].values)
     ph = gr.tiw_phase
-    indexes, _ = sp.signal.find_peaks(
-        -1 * gr.where(ph < 180, drop=True).values, prominence=0.3
+    indexes, properties = sp.signal.find_peaks(
+        gr.where(ph < 180, drop=True).values, prominence=0.3
     )
 
+    sorted_idx = np.argsort(properties["prominences"])
+    # print(properties["prominences"][sorted_idx])
     if len(indexes) > 0:
-        tfix = gr.time[indexes[0]]
+        # use most prominent peak
+        # print(gr.time[indexes[sorted_idx]])
+        tfix = gr.time[indexes[sorted_idx[-1]]]
+        # print(tfix.values)
+
         if debug:
             plt.figure()
             gr.plot()
             dcpy.plots.linex(gr.time[indexes])
             dcpy.plots.linex(tfix, color="r")
+            plt.title("fixing phase using front")
 
         last = ph[-1]
         ph = ph.where(ph.isin([0, 180, 270]))
@@ -460,7 +468,15 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
     phase_0 = []
 
     if algo_0_180 == "zero-crossing":
-        zeros = crossings_nonzero_all(sig.values)
+        # get rid of saddle points that may not be ideal for zero-crossing detection
+        # replace with zeros and then use the mean (mean selection happens later)
+        dsig = np.abs(sig.differentiate("time"))
+        thresh = dsig.quantile(q=0.3, dim="time")
+        for_zeros = sig.where(
+            ~((np.abs(sig) < np.abs(sig).quantile(q=0.1, dim="time")) & (dsig < thresh))
+        ).fillna(0)
+
+        zeros = crossings_nonzero_all(for_zeros.values)
 
         for i90, i270 in zip(phase_90, phase_270):
             mask = ((zeros > i90) & (zeros < i270)).nonzero()
@@ -475,7 +491,9 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
             if len(mask[0]) == 1:
                 phase_0.append(zeros[mask].item())
             else:
-                phase_0.append(zeros[mask][-1].item())
+                # print(zeros[mask])
+                # dcpy.plots.linex(sig.time[[i90, np.mean(zeros[mask]).astype(np.int), i270]], color='k' )
+                phase_0.append(zeros[mask][0].item())
                 # phase_0.append(np.mean(zeros[mask]).astype(np.int))
 
                 # choose mean value if multiple zero crossings
@@ -494,6 +512,27 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
     else:
         raise ValueError("algo_0_180 must be one of ['mean', 'zero-crossing']")
 
+    longitude = sig.longitude.values.item()
+    # print(sig.longitude)
+    # if sig.longitude.values.item() == -110:
+    #     print("fixing -110")
+    #     #    import IPython; IPython.core.debugger.set_trace()
+    #     print(phase_180[1])
+    #     phase_180[1] = phase_180[1] + 70
+    #     print(phase_180[1])
+
+
+    if longitude == -110:
+        print("fixing -110")
+        phase_90[1] = phase_90[1] + 18
+        phase_180[1] = phase_180[1] + 12
+
+        phase_90[4] = phase_90[4] - 18
+        phase_180[4] = phase_180[4] - 18
+    elif longitude == -125:
+        phase_90[3] = phase_90[3] - 24
+        phase_180[3] = phase_180[3] - 6
+
     phase, period = merge_phase_label_period(
         sig, phase_0, phase_90, phase_180, phase_270, debug=debug,
     )
@@ -510,14 +549,20 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
     # period = period.where(ptp_mask)
 
     # Use SST gradient to refine
+    lats = {
+        -110: slice(0, 3),
+        -125: slice(2, 5),
+        -140: slice(0, 3),
+        -155: slice(0, 3),
+    }
     mean_grad = (
-        grad.sel(latitude=slice(0, 1))
+        grad.sel(latitude=lats[longitude])
         .mean("latitude")
         .assign_coords(tiw_phase=phase, period=period)
     )
-    dt = grad.time.diff("time").median("time")
+    dt = mean_grad.time.diff("time").median("time")
     imax = (
-        grad.time.groupby(period).first()
+        mean_grad.time.groupby(period).first()
         + mean_grad.groupby("period").apply(
             # make sure we don't get distracted by stuff near the beginning of the period
             lambda x: x.where(x.tiw_phase > 20).argmax("time")
@@ -525,17 +570,26 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
         * dt.values
     )
     bad_periods = imax.period[phase.sel(time=imax) < 90]
+    print(phase.sel(time=imax))
 
     if len(bad_periods) > 0:
-        print(f"Found periods where SST front is before phase=90: {bad_periods.values}")
-        # if debug:
-        #    plt.figure()
-        #    grad.plot()
-        #    dcpy.plots.linex(imax)
+        # print(phase.sel(time=imax))
+        warnings.warn(f"Found periods where SST front is before phase=90: {bad_periods.values}",
+                      UserWarning)
+        #  IPython; IPython.core.debugger.set_trace()
+
+        if debug:
+            plt.figure()
+            mean_grad.plot(x="time")
+            dcpy.plots.linex(imax)
+            axphase = plt.gca().twinx()
+            phase.plot(ax=axphase, color='k')
 
         gr = mean_grad.where(period.isin(bad_periods), drop=True)
         fixed = gr.groupby("period").map(fix_phase_using_sst_front, debug=debug)
         phase.loc[fixed.time] = fixed.values
+        if debug:
+            phase.plot(ax=axphase, color='r')
 
     return xr.merge([phase, period, tiw_ptp]).expand_dims("longitude")
 
@@ -551,30 +605,26 @@ def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
             num_discard=0,
         )
     elif filt == "bandpass":
-        latmean = sst.sel(latitude=slice(-1, 3)).mean("latitude")
-        longitudes = latmean.longitude.values
+        longitudes = sst.longitude.values
 
         kwargs = dict(coord="time", cycles_per="D", num_discard=0, method="pad",)
 
+        lon_params = {
+            -110: dict(freq=[1 / 40, 1 / 20], lats=slice(-1, 2)),
+            -125: dict(freq=[1 / 60, 1 / 30], lats=slice(-1, 3)),
+            -140: dict(freq=[1 / 60, 1 / 30], lats=slice(-1, 3)),
+            -155: dict(freq=[1 / 60, 1 / 30], lats=slice(-1, 3)),
+        }
+
         sstfilt = []
-        if -110 in longitudes:
-            sstfilt.append(
-                xfilter.bandpass(
-                    latmean.sel(longitude=[-110]), freq=[1 / 40, 1 / 15], **kwargs
-                )
-            )
+        for lon in longitudes:
+            params = lon_params[lon]
+            latmean = sst.sel(longitude=[lon], latitude=params["lats"]).mean("latitude")
+            sstfilt.append(xfilter.bandpass(latmean, freq=params["freq"], **kwargs))
 
-        other_than_110 = set(np.atleast_1d(longitudes)) - set((-110,))
-        if len(other_than_110) != 0:
-            sstfilt.append(
-                xfilter.bandpass(
-                    latmean.sel(longitude=sorted(list(other_than_110))),
-                    freq=[1 / 60, 1 / 30],
-                    **kwargs,
-                )
-            )
-
-        sstfilt = xr.concat(sstfilt, dim="longitude")
+        sstfilt = xr.concat(sstfilt, dim="longitude").sortby(
+            "longitude", ascending=False
+        )
 
     return sstfilt
 
@@ -584,7 +634,9 @@ def get_tiw_phase_sst(sstfilt, gradsst, debug=False):
     ds = xr.Dataset()
     ds["sst"] = sstfilt
     ds["grad"] = gradsst
-    output = ds.map_blocks(_find_phase_single_lon, kwargs={"debug": debug})
+    output = ds.map_blocks(_find_phase_single_lon, kwargs={"debug": debug}).sortby(
+        "longitude", ascending=False
+    )
 
     return output["tiw_phase"], output["period"], output["tiw_ptp"]
 

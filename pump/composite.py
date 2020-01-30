@@ -15,8 +15,10 @@ from numba import guvectorize, float32, float64
 
 
 good_periods = {
-    -110: [1, 2, 3, 4, 5, 7, 11, 13, 14,],  # 16 is borderline
-    -125: [2, 3, 4, 5, 6, 11, 12, 13],  # 10 is borderline
+    # -110: [1, 2, 3, 4, 5, 7, 11, 13, 14,],  # 16 is borderline
+    -110: [1, 2, 3, 4, 5],  # 16 is borderline
+    # -125: [2, 3, 4, 5, 6, 11, 12, 13],  # 10 is borderline
+    -125: [2, 3, 4],  # 10 is borderline
     -140: [2, 3, 4, 5, 6, 10, 11, 12, 13],
     -155: [1, 2, 3, 10],
 }
@@ -291,14 +293,14 @@ def sst_for_y_reference_warm(anom):
         elif anom.longitude == -125:
             # if np.int(period) == 3:
             #    mask = (group.tiw_phase >= 120) & (group.tiw_phase <= 180)
-            if np.int(period) == 5:
+            if np.int(period) == 4:
                 mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
             else:
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
 
         elif anom.longitude == -110:
-            if np.int(period) == 3:
-                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 190)
+            if np.int(period) == 3 or np.int(period) == 5:
+                mask = (group.tiw_phase >= 210) & (group.tiw_phase <= 240)
             else:
                 mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
 
