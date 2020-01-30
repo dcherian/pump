@@ -294,15 +294,15 @@ def sst_for_y_reference_warm(anom):
             # if np.int(period) == 3:
             #    mask = (group.tiw_phase >= 120) & (group.tiw_phase <= 180)
             if np.int(period) == 4:
-                mask = (group.tiw_phase >= 90) & (group.tiw_phase <= 180)
+                mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 170)
             else:
                 mask = (group.tiw_phase >= 130) & (group.tiw_phase <= 215)
 
         elif anom.longitude == -110:
             if np.int(period) == 3 or np.int(period) == 5:
-                mask = (group.tiw_phase >= 210) & (group.tiw_phase <= 240)
+                mask = (group.tiw_phase >= 220) & (group.tiw_phase <= 240)
             else:
-                mask = (group.tiw_phase >= 180) & (group.tiw_phase <= 225)
+                mask = (group.tiw_phase >= 210) & (group.tiw_phase <= 240)
 
         else:
             raise ValueError(f"Please add mask for longitude={anom.longitude.values}")
