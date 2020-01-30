@@ -562,11 +562,15 @@ def make_composite_multiple_masks(data, masks: dict):
     )
     mean_lat.name = "latitude"
 
+    # avoid where's annoying broadcasting behaviour
+    unmasked_vars = ["sst", "dcl", "mld"]
+
     comp = {}
     for name in masks:
         masked = data.where(masks[name])
-        if "sst" in masked:
-            masked["sst"] = data.sst
+        for varname in unmasked_vars:
+            if varname in masked:
+                masked[varname] = data[varname]
         comp[name] = make_composite(
             masked.mean("depth"),
             interped=interped,
@@ -602,7 +606,7 @@ def make_composite(data, interped=None, mean_yref=None, mean_lat=None):
         mean_lat.name = "latitude"
 
     # phase_grouped = interped.groupby_bins("tiw_phase", np.arange(0, 360, 5))
-    data_vars = data.data_vars
+    data_vars = set(data.data_vars) | set(["mld", "dcl"])
     composite = {name: xr.Dataset(attrs={"name": name}) for name in data_vars}
 
     # mean_lat = xr.DataArray(
