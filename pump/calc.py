@@ -197,7 +197,7 @@ def get_dcl_base_shear(data):
     return dcl_max
 
 
-def get_dcl_base_Ri(data, mld=None):
+def get_dcl_base_Ri(data, mld=None, eucmax=None):
     """
     Estimates base of the deep cycle layer as max depth where Ri <= 0.25.
 
@@ -221,9 +221,20 @@ def get_dcl_base_Ri(data, mld=None):
 
     if "mld" in data and mld is None:
         mld = data.mld
-    dcl_max = data.depth.where((data.Ri.where(data.depth < mld - 5) > 0.44)).max(
-        "depth"
-    )
+
+    dcl_max = data.depth.where(
+        data.Ri.where((data.depth <= mld) & (data.depth > -150)) > 0.5
+    ).max("depth")
+
+    mask_2 = (data.depth <= (mld - 7.5)) & (np.abs(data.Ri - 0.5) < 0.1)
+    if eucmax is not None:
+        mask_2 = mask_2 & (data.depth > eucmax)
+    dcl_max_2 = data.Ri.depth.where(mask_2)
+    counts = dcl_max_2.count("depth")
+    dcl_max_2 = dcl_max_2.fillna(-12345).max("depth")
+
+    maybe_too_shallow = np.abs(dcl_max - mld) < 7.5
+    dcl_max = xr.where(maybe_too_shallow & (counts > 0), dcl_max_2, dcl_max)
 
     dcl_max.attrs["long_name"] = "DCL Base (Ri)"
     dcl_max.attrs["units"] = "m"
