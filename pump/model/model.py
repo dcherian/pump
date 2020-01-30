@@ -1,3 +1,4 @@
+import dask
 import dask.delayed
 import dcpy.plots
 import glob
@@ -15,6 +16,8 @@ from ..calc import (
     get_dcl_base_shear,
     get_mld,
     get_tiw_phase,
+    get_tiw_phase_sst,
+    tiw_avg_filter_sst,
 )
 from ..constants import *
 from ..obs import *
@@ -69,7 +72,7 @@ class model:
             else:
                 self.surface = xr.open_dataset(
                     self.dirname + "/obs_subset/surface.nc",
-                    chunks={"time": 227, "longitude": 116, "latitude": -1}
+                    chunks={"time": 227, "longitude": 116, "latitude": -1},
                 ).squeeze()
         except (FileNotFoundError, OSError):
             self.surface = xr.Dataset()
@@ -100,7 +103,6 @@ class model:
             self.read_budget()
         else:
             self.budget = xr.Dataset()
-
 
         self.mean = self.annual  # forgot that I had read this in before!
 
@@ -167,7 +169,7 @@ class model:
 
         if self.name == "gcm1":
             files = "/Day_*[0-9].nc"
-            chunks = {"depth": -1, "latitude": 69*2, "longitude": 215*2}
+            chunks = {"depth": -1, "latitude": 69 * 2, "longitude": 215 * 2}
         elif self.name == "gcm100":
             files = "/cmpr_*.nc"
             chunks = {"longitude": 500, "latitude": 160, "depth": -1}
@@ -656,3 +658,34 @@ class model:
         return [
             dask.delayed(_plot_func)(subset, period) for period in np.unique(periods)
         ]
+
+    def get_quantities_for_composite(self, longitudes=[-110, -125, -140, -155]):
+        surf = (
+            self.surface.sel(longitude=longitudes, method="nearest")
+            .assign_coords(longitude=longitudes)
+            .drop("depth")
+        )
+        sst = surf.theta.sel(longitude=longitudes).chunk({"longitude": 1, "time": -1})
+        sstfilt = tiw_avg_filter_sst(sst, "bandpass")  # .persist()
+
+        # surf["theta"] = (
+        #    sst.pipe(xfilter.lowpass, coord="time", freq=1/7, cycles_per="D", num_discard=0, method="pad")
+        # )
+
+        Tx = self.surface.theta.differentiate("longitude")
+        Ty = self.surface.theta.differentiate("latitude")
+        gradT = (
+            np.hypot(Tx, Ty)
+            .sel(longitude=longitudes, method="nearest")
+            .assign_coords(longitude=longitudes)
+            .drop_vars("depth")
+        )
+
+        tiw_phase, period, tiw_ptp = dask.compute(
+            get_tiw_phase_sst(
+                sstfilt.chunk({"longitude": 1}),
+                gradT.chunk({"longitude": 1, "time": -1}),
+            ),
+        )[0]
+
+        return surf, sst, sstfilt, gradT, tiw_phase, period, tiw_ptp

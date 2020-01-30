@@ -203,3 +203,60 @@ def plot_jq_sst(model, lon, periods, lat=0):
     plt.sca(ax[-1])
     model.full.tiw_phase.sel(longitude=lon, method="nearest").plot(_labels=False)
     [aa.set_xlabel("") for aa in ax[:-1]]
+
+
+def plot_debug_sst_front(model, lon, periods):
+
+    _, sst, sstfilt, gradT, tiw_phase, period, _ = model.get_quantities_for_composite(
+        longitudes=[lon]
+    )
+
+    f, ax = plt.subplots(3, 1, sharex=True)
+
+    sst.sel(longitude=lon, method="nearest").plot(
+        x="time", ax=ax[0], add_colorbar=False, vmin=22, vmax=27, cmap=mpl.cm.Spectral_r
+    )
+
+    gradT_subset = (
+        gradT.sel(longitude=[lon])
+        .assign_coords(period=period, tiw_phase=tiw_phase)
+        .squeeze()
+    )
+    gradT_subset = gradT_subset.where(
+        gradT_subset.period.isin(periods), drop=True
+    ).load()
+
+    gradT_subset.plot(x="time", robust=True, ax=ax[1], add_colorbar=False)
+    dcpy.plots.liney([0, 1, 2, 3, 4, 5], ax=ax[:2], color="w", zorder=10)
+
+    (gradT_subset.sel(latitude=slice(0, 2)).mean("latitude") * 10).plot(
+        x="time", ax=ax[-1]
+    )
+    gradT_subset.tiw_phase.plot(x="time", ax=ax[-1].twinx(), color="k", _labels=False)
+
+    dcpy.plots.linex(
+        gradT_subset.tiw_phase.where(
+            gradT_subset.tiw_phase.isin([90, 180]), drop=True
+        ).time,
+        ax=ax,
+        zorder=10,
+        color="gray",
+    )
+
+    dcpy.plots.linex(
+        gradT_subset.tiw_phase.where(gradT_subset.tiw_phase.isin([0]), drop=True).time,
+        ax=ax,
+        zorder=10,
+        lw=1,
+        color="k",
+    )
+
+    (
+        (sstfilt.sel(longitude=lon) * 10)
+        .where(period.sel(longitude=lon).isin(periods), drop=True)
+        .plot(color="C1", ax=ax[-1])
+    )
+
+    ax[0].set_ylim([-5, 6])
+    ax[1].set_ylim([-5, 6])
+    f.set_size_inches((8, 8))

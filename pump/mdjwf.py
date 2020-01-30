@@ -77,7 +77,7 @@ def densmdjwf(s, t, p):
     t1 = t #.copy()
     t2 = t*t
 
-    s1 = s.copy()
+    s1 = s #.copy()
 
     # if np.any(s1 < 0):
     #     sys.stderr.write('negative salinity values! setting to nan\n')
