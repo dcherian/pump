@@ -1692,3 +1692,68 @@ annual.to_netcdf('pump/glade/cesm-le-mean.nc')
 [[file:images/Ri-diagnosis-cesm-hires.png]]
 
 ** Model biases
+* off-eq DCL behind TIW: cruise observations
+** data sources
+- Full inventory with hires data: https://www.nodc.noaa.gov/gocd/jasadcp/hr_access.html
+- Ron brown: https://currents.soest.hawaii.edu/ron_brown/
+- other ships: https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/htmfiles/datamang/ship.htm
+- http://ilikai.soest.hawaii.edu/sadcp/main_inv.html
+- (old version) https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/invntory/total.htm
+- +full+ decimated subset JASADCP data: ftp://ftp.soest.hawaii.edu/caldwell/adcp/DATABASE/
+  1. I replace http:// → ftp://
+  2. ~v3.nc~ instead of ~.html~
+  3. Use this emacs regexp to insert directories:
+    #+begin_src emacs-lisp
+    (while (re-search-forward "\\([0-9]+\\)v3" nil t)
+    (replace-match "\\1/\\1" nil nil nil 1))
+    #+end_src emacs-lisp
+
+
+** 110W (P18)
+
+1. [X] 33RB200311_1: 2003-11-09 : 2003-11-14 | RB0309, GP6-03-RB
+   ftp://ftp.soest.hawaii.edu/caldwell/adcp/DATABASE/01032/01032v3.nc
+2. [X] 33RB200411_1: 2004-11-16 : 2004-11-21 -RB0410 GP604
+    ftp://ftp.soest.hawaii.edu/caldwell/adcp/DATABASE/00899/00899v3.nc
+3. [ ] 31DSEP390_2: 1990-11-27 : 1990-12-03 (*WHERE IS THIS*)
+4. [ ] (maybe) 33RBGP700_1: 2000-10-24 : 2000-10-29 (*DATA LOST?!*)
+5. [X] 31DSEP391_1 : 1991-10-26 : 1991-10-31
+   https://www.nodc.noeaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00299.htm
+   https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00299/00299v3.nc
+6. [X] 33RBGP801_1: 2001-11-09 : 2001-11-15 | RB0109 GP6-01-RB
+   - ftp://ftp.soest.hawaii.edu/caldwell/adcp/DATABASE/01007/01007v3.nc
+7. [X] *** (maybe) 31DSEP692_2: 1992-11-02 : 1992-11-08
+   https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00295.htm
+   https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00295/00295v3.nc
+8. [X] (maybe) 33RBGP602_1 : 2002-10-28 : 2002-11-01
+   ftp://ftp.soest.hawaii.edu/caldwell/adcp/DATABASE/00995/00995v3.nc
+9. [X] *** 31DSEP393_1 : 1993-09-10 : 1993-09-13
+   https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00210.htm
+   https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00210/00210v3.nc
+
+* OSM
+1. Coral sea
+2. BoB
+3. mixing
+4. Pangeo
+5. Tom Haine
+
+* composite z
+#+BEGIN_SRC jupyter-python
+t = xr.DataArray(np.arange(100), dims=["time"])
+z = xr.DataArray(-1*np.arange(0, 200.0), dims=["z"])
+field = np.exp(-(t/40)**2+z/150).assign_coords(z=z, time=t)
+mld = -10 * xr.ones_like(t)
+dcl = -40 * xr.ones_like(t)
+dcl[50:] = -10
+
+field.plot(x="time", zorder=-10)
+mld.plot()
+dcl.plot()
+
+znew = xr.full_like(z, fill_value=np.nan)
+znew = xr.where(z > mld, z-mld, z)
+
+plt.figure()
+znew.plot()
+#+END_SRC
