@@ -171,7 +171,7 @@ def grid_ctd_adcp(ctd, adcp):
 
     binned["uz"] = adcp.u.differentiate("depth").assign_coords(latitude=lats)
     binned["vz"] = adcp.v.differentiate("depth").assign_coords(latitude=lats)
-    binned["S2"] = binned.uz**2 + binned.vz**2
+    binned["S2"] = binned.uz ** 2 + binned.vz ** 2
     binned["N2"] = 9.81 / 1025 * binned.density.compute().differentiate("depth")
     binned["Ri"] = binned.N2.where(binned.N2 > 1e-6) / binned.S2.where(binned.S2 > 1e-8)
 
@@ -226,10 +226,6 @@ def plot_section(ctd, adcp, binned, oisst):
         markersize=4,
     )
 
-    shred2 = binned.S2 - 4 * binned.N2
-    ushred = binned.uz ** 2 - 4 * binned.N2
-    vshred = binned.vz ** 2 - 4 * binned.N2
-
     # Ri with u,v,ρ
     # for axx in [ax["u"], ax["v"], ax["Ri"]]:
     #     hdl = binned.Ri.plot(
@@ -241,8 +237,14 @@ def plot_section(ctd, adcp, binned, oisst):
     #         add_colorbar=False,
     #     )
 
+    Ric = 0.27
+    norm = mpl.colors.DivergingNorm(vcenter=-1e-7, vmin=-5e-3, vmax=1e-4)
+
+    shred2 = binned.S2 - 1 / Ric * binned.N2
+    ushred = binned.uz ** 2 - 1 / Ric / 2 * binned.N2
+    vshred = binned.vz ** 2 - 1 / Ric / 2 * binned.N2
     shred2_kwargs = dict(
-        y="depth", yincrease=False, cmap=mpl.cm.RdYlBu_r, add_colorbar=True
+        y="depth", yincrease=False, cmap=mpl.cm.RdBu_r, add_colorbar=True, norm=norm,
     )
     hdl = shred2.plot(ax=ax["Ri"], **shred2_kwargs)
     ushred.plot(ax=ax["u"], **shred2_kwargs)
@@ -254,7 +256,7 @@ def plot_section(ctd, adcp, binned, oisst):
     ctd.density.plot.contour(
         ax=ax["Ri"], y="pressure", colors=color, levels=15, ylim=(150, 0)
     )
-    f.colorbar(hdl, ax=[ax["u"], ax["v"], ax["Ri"]])
+    # f.colorbar(hdl, ax=[ax["u"], ax["v"], ax["Ri"]])
 
     expected_lat = [0, 0.5, 1, 1.5, 2, 3, 4, 5]
     plotted_lats = []
@@ -265,7 +267,6 @@ def plot_section(ctd, adcp, binned, oisst):
         expected_lat,
     ):
         # import IPython; IPython.core.debugger.set_trace()
-        print(lat)
         if (
             np.abs(lat - expect_lat) > 0.3
             and np.round(lat, 1) != 3.5
@@ -287,7 +288,7 @@ def plot_section(ctd, adcp, binned, oisst):
         )
         axes.set_xlabel("Ri")
         axes.set_title(f"lat={np.round(lat, 1)}")
-        if expected_lat != 0:
+        if expect_lat != 0:
             axes.set_yticklabels([])
 
     [dcpy.plots.linex(0.25, ax=ax) for ax in ax["lats"]]
@@ -304,7 +305,7 @@ def plot_section(ctd, adcp, binned, oisst):
         adcp_str = (
             adcp.attrs["EXPOCODE"].strip() + "; " + adcp.attrs["CRUISE_NAME"].strip()
         )
-    else:
+    elif "cruise_id" in adcp.attrs:
         import re
 
         for strings in adcp.cruise_id.split():
