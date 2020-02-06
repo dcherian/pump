@@ -51,6 +51,8 @@ def trim_ctd_adcp(ctd, adcp):
     time_slice = slice(start_time, stop_time)
 
     ctd = ctd.swap_dims({"latitude": "time"}).sel(time=time_slice)
+    if "time" not in adcp.dims:
+        adcp = adcp.swap_dims({"latitude": "time"})
     adcp = adcp.sel(time=time_slice).sel(time=ctd.time.values, method="nearest")
     adcp = adcp.swap_dims({"time": "latitude"})
     ctd = ctd.swap_dims({"time": "latitude"})
@@ -186,7 +188,7 @@ def get_bins_around_levels(levels):
     )
 
 
-def plot_section(ctd, adcp, binned, oisst):
+def plot_section(ctd, adcp, binned, oisst, ladcp=None):
 
     f = plt.figure(constrained_layout=True)
     gsparent = f.add_gridspec(2, 1, height_ratios=[1.5, 1])
