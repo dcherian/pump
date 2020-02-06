@@ -15,14 +15,12 @@ def read_adcp(filename, longitude, debug=False):
     if "lat" in adcp:
         adcp = adcp.rename({"lat": "latitude", "lon": "longitude"})
 
-    if "depth_cell" in adcp:
-
+    if "depth_cell" in adcp.dims:
         xr.testing.assert_allclose(
             adcp.depth.diff("time"), xr.zeros_like(adcp.depth.diff("time"))
         )
-
-    adcp["depth_cell"] = adcp.depth.isel(time=0)
-    adcp = adcp.drop_vars("depth").rename({"depth_cell": "depth"})
+        adcp["depth_cell"] = adcp.depth.isel(time=0)
+        adcp = adcp.drop_vars("depth").rename({"depth_cell": "depth"})
 
     adcp = adcp.set_coords(["latitude", "longitude"])
     section_mask = (
@@ -316,10 +314,24 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
                 adcp_str = match.string[9:]
                 break
 
+    dcpy.plots.label_subplots(
+        list(ax.values())[:4],
+        labels=[
+            "OISST",
+            "$U_z² + V_z² - 4N²$ | $ρ$ contours",
+            "$U_z² - 2 N²$ | $U$ contours",
+            "$V_z² - 2 N²$ | $V$ contours",
+        ],
+        fontsize="medium",
+        y=0.05,
+        x=0.015,
+        backgroundcolor=[0.7, 0.7, 0.7, 0.4],
+    )
+
     f.suptitle(
         f"CTD: {ctd.attrs['EXPOCODE'].strip()} | ADCP: {adcp_str} | {str_time(ctd.time[0])} - {str_time(ctd.time[-1])}"
     )
 
     f.set_size_inches((12, 7.5))
 
-    return f
+    return f, ax
