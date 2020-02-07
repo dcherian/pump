@@ -88,6 +88,10 @@ def read_cruise_folders(dirname):
         if ds.sizes["time"] == 1:
             continue
         ds = ds.swap_dims({"time": "latitude"})
+        ds["density"] = dcpy.eos.pden(ds.salinity, ds.temperature, ds.pressure)
+        drho = ds.density - ds.density.bfill("pressure").isel(pressure=0)
+        ds["mld"] = xr.where(drho > 0.015, drho.pressure, np.nan).min("pressure")
+
         cruises.append(ds)
 
     return cruises
@@ -174,6 +178,7 @@ def grid_ctd_adcp(ctd, adcp):
     binned["S2"] = binned.uz ** 2 + binned.vz ** 2
     binned["N2"] = 9.81 / 1025 * binned.density.compute().differentiate("depth")
     binned["Ri"] = binned.N2.where(binned.N2 > 1e-6) / binned.S2.where(binned.S2 > 1e-8)
+    binned["mld"] = ctd.mld
 
     return binned
 
@@ -188,6 +193,8 @@ def get_bins_around_levels(levels):
 
 def plot_section(ctd, adcp, binned, oisst, ladcp=None):
 
+    expected_lat = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5]
+
     f = plt.figure(constrained_layout=True)
     gsparent = f.add_gridspec(2, 1, height_ratios=[1.5, 1])
     ax = dict()
@@ -201,8 +208,9 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
     ax["u"] = f.add_subplot(gs0[1, 0], sharex=ax["Ri"])
     ax["v"] = f.add_subplot(gs0[1, 1], sharex=ax["Ri"])
 
-    gs2 = gsparent[1].subgridspec(1, 8)
-    ax["lats"] = [f.add_subplot(gs2[nn]) for nn in range(8)]
+    gs2 = gsparent[1].subgridspec(1, len(expected_lat))
+    # ax["lats"] = [f.add_subplot(gs2[0])]
+    ax["lats"] = [f.add_subplot(gs2[nn]) for nn in range(len(expected_lat))]
 
     # SST
     obs_days = np.unique(ctd.time.mean("latitude").dt.round("D"))
@@ -258,7 +266,9 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
     )
     # f.colorbar(hdl, ax=[ax["u"], ax["v"], ax["Ri"]])
 
-    expected_lat = [0, 0.5, 1, 1.5, 2, 3, 4, 5]
+    for axx in [ax["u"], ax["v"], ax["Ri"]]:
+        binned.mld.plot(ax=axx, color="k", lw=2)
+
     plotted_lats = []
     # Ri profiles
     for axes, lat, expect_lat in zip(
@@ -266,12 +276,16 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
         binned.latitude.sel(latitude=expected_lat, method="nearest").values,
         expected_lat,
     ):
+
+        # print([lat, expect_lat])
+        # print(plotted_lats)
         # import IPython; IPython.core.debugger.set_trace()
         if (
             np.abs(lat - expect_lat) > 0.3
-            and np.round(lat, 1) != 3.5
-            and np.round(lat, 1) not in plotted_lats
+            # and np.round(lat, 1) != 3.5
+            and np.round(lat, 2) not in plotted_lats
         ):
+            print(f"skipping {expect_lat}")
             axes.remove()
             continue
 
@@ -284,10 +298,29 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
             yincrease=False,
             xlim=(0.1, 4),
             ylim=(100, 0),
+            marker=".",
+            color="k",
             _labels=False,
         )
+
+        axrho = axes.twiny()
+        drho = ctd.density - ctd.density.bfill("pressure").isel(pressure=0)
+        drho.sel(latitude=lat, pressure=slice(0, 150)).plot(
+            ax=axrho, y="pressure", ylim=(100, 0), _labels=False, xlim=(-0.1, 1)
+        )
+        dcpy.plots.liney(binned.mld.sel(latitude=lat), ax=axrho)
+        axrho.set_xlabel("drho")
+        dcpy.plots.set_axes_color(axrho, "C0", spine="top")
         axes.set_xlabel("Ri")
-        axes.set_title(f"lat={np.round(lat, 1)}")
+        # axes.set_title(f"lat={np.round(lat, 1)}")
+        axes.text(
+            x=0.95,
+            y=0.93,
+            s=f"{np.round(lat, 1)}N",
+            transform=axes.transAxes,
+            ha="right",
+            va="center",
+        )
         if expect_lat != 0:
             axes.set_yticklabels([])
 
