@@ -2,7 +2,9 @@
 #+hugo_base_dir: ./hugo/
 #+hugo_section:
 #+options: :eval never-export :async nil
-#+property: header-args:jupyter-python :session /jpy:localhost#8888:emacs
+#+property: header-args:jupyter-python :session pump
+
+/jpy:localhost#8888:emacs
 
 * To do                                                            :noexport:
 - [ ] Do velocity spectra (only at equator?)
@@ -1709,8 +1711,28 @@ annual.to_netcdf('pump/glade/cesm-le-mean.nc')
     #+end_src emacs-lisp
 
 
-** 110W (P18)
+https://www.nodc.noaa.gov/ocads/oceans/RepeatSections/index.html
+** 110W (PR16 / P18)
+*** LADCP
+Not sure these are much better since they are also being binned in 8m / 10m bins AFAICT .e.g https://currents.soest.hawaii.edu/clivar/ladcp/P18_1/table0.html
 
+R.C. & Ryan think that SADCP is a better choice for finer-scale shear. LADCP needs a bunch of smoothing because of the CTD cage motion. Also, LADCP's real strength is full depth velocity.
+
+*** SADCP
+**** P18
+1. [X] 33RO20071215 | 2007-12-26 - 20017-12-31 | RB-07-11 | 01601
+https://currents.soest.hawaii.edu/clivar_co2/nc_table.html#rb0711_data
+https://currents.soest.hawaii.edu/clivar_co2/year2007.html#rb0711
+ftp://ftp.nodc.noaa.gov/nodc/archive/arc0025/0049878/3.3/data/0-data/codas/01079/
+https://currents.soest.hawaii.edu/clivar/ladcp/P18_1/
+https://currents.soest.hawaii.edu/clivar/ladcp/P18_1/CLIVAR_P18.nc
+1. [X] 33RO20161119 | RB1606 | SACID 02292
+ftp://ftp.soest.hawaii.edu/caldwell/adcp/DATABASE/02292/02292v3.nc
+https://currents.soest.hawaii.edu/clivar_co2/year2016.html#rb1606_leg1
+https://currents.soest.hawaii.edu/clivar_co2/adcp_nc/rb1606_leg1_os75bb.nc
+https://currents.soest.hawaii.edu/go-ship/ladcp/2017_P18.html
+https://currents.soest.hawaii.edu/go-ship/ladcp/_downloads/processed_uv_netcdf_20170329.tgz
+**** PR16
 1. [X] 33RB200311_1: 2003-11-09 : 2003-11-14 | RB0309, GP6-03-RB
    ftp://ftp.soest.hawaii.edu/caldwell/adcp/DATABASE/01032/01032v3.nc
 2. [X] 33RB200411_1: 2004-11-16 : 2004-11-21 -RB0410 GP604
@@ -1730,6 +1752,53 @@ annual.to_netcdf('pump/glade/cesm-le-mean.nc')
 9. [X] *** 31DSEP393_1 : 1993-09-10 : 1993-09-13
    https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00210.htm
    https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/database/00210/00210v3.nc
+
+** process "short" ADCP files
+#+BEGIN_SRC jupyter-python
+import xarray as xr
+
+adcp = xr.load_dataset("datasets/adcp/31DSEP393_1_00210_short.nc")
+adcp2 = xr.load_dataset("datasets/adcp/decimated/31DSEP393_1_00210v3.nc")
+
+xr.testing.assert_allclose(
+    adcp.depth.diff("time"), xr.zeros_like(adcp.depth.diff("time"))
+)
+
+adcp["depth_cell"] = adcp.depth.isel(time=0)
+adcp = adcp.drop_vars("depth").rename({"depth_cell": "depth"})
+
+adcp["spd"] = np.hypot(adcp.uship, adcp.vship)
+
+spd2 = np.hypot(adcp2.ship_u, adcp2.ship_v)
+
+ctd = xr.open_mfdataset("datasets/ctd/28_pr16_h_nc_ctd/*.nc", combine="nested", concat_dim="time")
+
+#for tt in ctd.time.values:
+dt = np.timedelta64(3, "h")
+subctd = ctd.sel(time=tt).isel(latitude=14)
+subadcp = adcp.sel(time=slice(tt-dt, tt+dt))
+mask = (np.abs(adcp.lat - subctd.latitude.values) < 0.05) & (adcp.spd < 1)
+masked = subadcp.where(mask, drop=True)
+
+
+#+END_SRC
+
+#+BEGIN_SRC jupyter-python
+import matplotlib.pyplot as plt
+f, ax = plt.subplots(2, 1, sharex=True)
+spd.plot(ax=ax[0])
+spd2.plot(ax=ax[0])
+
+#adcp.lon.plot(ax=ax[1])
+#ax[1].plot(ctd.time, ctd.longitude)
+
+adcp.lat.plot(ax=ax[1])
+ax[1].plot(ctd.time, ctd.latitude)
+
+dcpy.plots.linex(ctd.time, ax=ax)
+#+END_SRC
+
+#+RESULTS:
 
 * OSM
 1. Coral sea
