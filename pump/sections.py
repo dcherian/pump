@@ -16,9 +16,9 @@ def read_adcp(filename, longitude, debug=False):
         adcp = adcp.rename({"lat": "latitude", "lon": "longitude"})
 
     if "depth_cell" in adcp.dims:
-        xr.testing.assert_allclose(
-            adcp.depth.diff("time"), xr.zeros_like(adcp.depth.diff("time"))
-        )
+        # xr.testing.assert_allclose(
+        #    adcp.depth.diff("time"), xr.zeros_like(adcp.depth.diff("time"))
+        # )
         adcp["depth_cell"] = adcp.depth.isel(time=0)
         adcp = adcp.drop_vars("depth").rename({"depth_cell": "depth"})
 
@@ -222,7 +222,8 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
             ax=ax["sst"],
             robust=True,
             cmap=mpl.cm.RdYlBu_r,
-            vmax=27,
+            vmin=22,
+            vmax=26,
             # cbar_kwargs={"orientation": "horizontal"}
         )
     )
@@ -304,12 +305,28 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
         )
 
         axrho = axes.twiny()
-        drho = ctd.density - ctd.density.bfill("pressure").isel(pressure=0)
-        drho.sel(latitude=lat, pressure=slice(0, 150)).plot(
-            ax=axrho, y="pressure", ylim=(100, 0), _labels=False, xlim=(-0.1, 1)
+
+        rem = ctd.sizes["pressure"] % 3
+        if rem != 0:
+            dens = ctd.density.isel(pressure=slice(-rem))
+        else:
+            dens = ctd.density
+        drho = (
+            9.81
+            / 1025
+            * dens.coarsen(pressure=3).mean().differentiate("pressure")
+        )  # ctd.density - ctd.density.bfill("pressure").isel(pressure=0)
+        (drho).sel(latitude=lat, pressure=slice(0, 150)).plot(
+            ax=axrho,
+            y="pressure",
+            ylim=(100, 0),
+            _labels=False,
+            xlim=(1e-6, 5e-4),
+            xscale="log",
         )
+        axrho.set_xticks([1e-6, 1e-5, 1e-4])
         dcpy.plots.liney(binned.mld.sel(latitude=lat), ax=axrho)
-        axrho.set_xlabel("drho")
+        axrho.set_xlabel("$N²$")
         dcpy.plots.set_axes_color(axrho, "C0", spine="top")
         axes.set_xlabel("Ri")
         # axes.set_title(f"lat={np.round(lat, 1)}")
@@ -368,3 +385,124 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
     f.set_size_inches((12, 7.5))
 
     return f, ax
+
+
+def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
+
+    # expected_lat = [0, 1, 3, 4]
+
+    # SST
+    obs_days = np.unique(ctd.time.mean("latitude").dt.round("D"))
+    (
+        oisst.sel(time=obs_days, method="nearest")
+        .sel(lon=slice(-120, -105), lat=slice(-3, 7))
+        .isel(time=-1)
+        .plot(
+            ax=ax["sst"],
+            robust=True,
+            cmap=mpl.cm.RdYlBu_r,
+            add_colorbar=False,
+            add_labels=False,
+            # cbar_kwargs={"orientation": "horizontal"}
+        )
+    )
+    ax["sst"].plot(
+        ctd.longitude.broadcast_like(ctd.latitude),
+        ctd.latitude,
+        marker="o",
+        color="k",
+        markersize=4,
+    )
+
+    plotted_lats = []
+    # Ri profiles
+    for axes, lat, expect_lat in zip(
+        ax["lats"],
+        binned.latitude.sel(latitude=expected_lat, method="nearest").values,
+        expected_lat,
+    ):
+
+        # print([lat, expect_lat])
+        # print(plotted_lats)
+        # import IPython; IPython.core.debugger.set_trace()
+        if (
+            np.abs(lat - expect_lat) > 0.3
+            and np.round(lat, 2) not in plotted_lats
+        ):
+            print(f"skipping {expect_lat}")
+            axes.remove()
+            continue
+
+        plotted_lats.append(lat)
+
+        binned.Ri.sel(latitude=lat).plot(
+            ax=axes,
+            y="depth",
+            xscale="log",
+            yincrease=False,
+            xlim=(0.1, 4),
+            ylim=(100, 0),
+            marker=".",
+            color="k",
+            _labels=False,
+        )
+
+        axrho = axes.twiny()
+
+        rem = ctd.sizes["pressure"] % 3
+        if rem != 0:
+            dens = ctd.density.isel(pressure=slice(-rem))
+        else:
+            dens = ctd.density
+        drho = (
+            9.81
+            / 1025
+            * dens.coarsen(pressure=3).mean().differentiate("pressure")
+        )  # ctd.density - ctd.density.bfill("pressure").isel(pressure=0)
+        (drho).sel(latitude=lat, pressure=slice(0, 150)).plot(
+            ax=axrho,
+            y="pressure",
+            ylim=(100, 0),
+            _labels=False,
+            xlim=(1e-6, 5e-4),
+            xscale="log",
+        )
+        axrho.set_xticks([1e-6, 1e-5, 1e-4])
+        dcpy.plots.liney(binned.mld.sel(latitude=lat), ax=axrho)
+        # axrho.set_xlabel("$N²$")
+        dcpy.plots.set_axes_color(axrho, "C0", spine="top")
+        axes.set_xlabel("Ri")
+        # axes.set_title(f"lat={np.round(lat, 1)}")
+        axes.text(
+            x=0.95,
+            y=0.93,
+            s=f"{np.round(lat, 1)}N",
+            transform=axes.transAxes,
+            ha="right",
+            va="center",
+        )
+        if expect_lat != 0:
+            axes.set_yticklabels([])
+
+    [dcpy.plots.linex(0.25, ax=ax) for ax in ax["lats"]]
+    ax["lats"][0].set_ylabel("depth")
+    ax["sst"].set_ylabel("lat")
+
+    # ax["v"].set_ylabel("")
+    # ax["v"].set_yticklabels([])
+
+    str_time = lambda x: x.dt.round("D").dt.strftime("%Y-%m-%d").values
+
+    adcp_str = "not found"
+    if "EXPOCODE" in adcp.attrs and "CRUISE_NAME" in adcp.attrs:
+        adcp_str = (
+            adcp.attrs["EXPOCODE"].strip() + "; " + adcp.attrs["CRUISE_NAME"].strip()
+        )
+    elif "cruise_id" in adcp.attrs:
+        import re
+
+        for strings in adcp.cruise_id.split():
+            match = re.search("EXPOCODE=(.*)", strings)
+            if match is not None:
+                adcp_str = match.string[9:]
+                break
