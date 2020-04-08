@@ -943,3 +943,47 @@ def calc_ptp(sst, period=None, debug=False):
     tiw_ptp.attrs["description"] = "Peak to peak amplitude"
 
     return tiw_ptp
+
+
+def estimate_shear_evolution_terms(ds):
+    f = dcpy.oceans.coriolis(ds.latitude)
+    uz = ds.u.differentiate("depth")
+    vz = ds.v.differentiate("depth")
+
+    #### zonal shear
+    duzdt = xr.Dataset()
+    # duzdt["shear"] = uz
+    duzdt["xadv"] = -ds.u * ddx(uz)
+    duzdt["yadv"] = -ds.v * ddy(uz)
+    duzdt["str"] = uz * ddy(ds.v)
+    duzdt["tilt"] = (f - ddy(ds.u)) * vz
+    duzdt = duzdt.isel(longitude=1)
+    duzdt.attrs["description"] = "Zonal shear evolution terms"
+
+    duzdt["xadv"].attrs["term"] = "$u ∂_xu_z$"
+    duzdt["yadv"].attrs["term"] = "$v ∂_yu_z$"
+    duzdt["str"].attrs["term"] = "$u_z v_y$"
+    duzdt["tilt"].attrs["term"] = "$(f-u_y) v_z$"
+
+    #### meridional shear
+    dvzdt = xr.Dataset()
+    # dvzdt["shear"] = vz
+    dvzdt["xadv"] = -ds.u * ddx(vz)
+    dvzdt["yadv"] = -ds.v * ddy(vz)
+    dvzdt["str"] = vz * ddx(ds.u)
+    dvzdt["tilt"] = -(f + ddx(ds.v)) * uz
+    dvzdt = dvzdt.isel(longitude=1)
+    dvzdt.attrs["description"] = "Meridional shear evolution terms"
+
+    dvzdt["xadv"].attrs["term"] = "$u ∂_xv_z$"
+    dvzdt["yadv"].attrs["term"] = "$v ∂_yv_z$"
+    dvzdt["str"].attrs["term"] = "$v_z u_x$"
+    dvzdt["tilt"].attrs["term"] = "$-(f+v_x) u_z$"
+
+    for dset in [duzdt, dvzdt]:
+        dset["xadv"].attrs["long_name"] = "zonal adv."
+        dset["yadv"].attrs["long_name"] = "meridional adv."
+        dset["str"].attrs["long_name"] = "stretching"
+        dset["tilt"].attrs["long_name"] = "tilting"
+
+    return duzdt, dvzdt
