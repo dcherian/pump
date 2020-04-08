@@ -15,6 +15,14 @@ import xfilter
 from numba import int64, float32, guvectorize
 
 
+def ddx(a):
+    return a.differentiate("longitude") / 110e3
+
+
+def ddy(a):
+    return a.differentiate("latitude") / 110e3
+
+
 def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug=False):
     """
     One version with phase=0 at points in phase_0
@@ -532,7 +540,6 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
     #     phase_180[1] = phase_180[1] + 70
     #     print(phase_180[1])
 
-
     if longitude == -110:
         print("fixing -110")
         phase_90[1] = phase_90[1] + 18
@@ -585,8 +592,10 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
 
     if len(bad_periods) > 0:
         # print(phase.sel(time=imax))
-        warnings.warn(f"Found periods where SST front is before phase=90: {bad_periods.values}",
-                      UserWarning)
+        warnings.warn(
+            f"Found periods where SST front is before phase=90: {bad_periods.values}",
+            UserWarning,
+        )
         #  IPython; IPython.core.debugger.set_trace()
 
         if debug:
@@ -594,13 +603,13 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
             mean_grad.plot(x="time")
             dcpy.plots.linex(imax)
             axphase = plt.gca().twinx()
-            phase.plot(ax=axphase, color='k')
+            phase.plot(ax=axphase, color="k")
 
         gr = mean_grad.where(period.isin(bad_periods), drop=True)
         fixed = gr.groupby("period").map(fix_phase_using_sst_front, debug=debug)
         phase.loc[fixed.time] = fixed.values
         if debug:
-            phase.plot(ax=axphase, color='r')
+            phase.plot(ax=axphase, color="r")
 
     return xr.merge([phase, period, tiw_ptp]).expand_dims("longitude")
 
