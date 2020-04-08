@@ -164,12 +164,16 @@ class model:
         print("Writing to file...")
         (self.tao.load().to_netcdf(self.dirname + "/obs_subset/tao-extract.nc"))
 
-    def read_full(self):
+    def read_full(self, preprocess=None):
         start_time = time.time()
 
         if self.name == "gcm1":
             files = "/Day_*[0-9].nc"
-            chunks = {"depth": -1, "latitude": 69 * 2, "longitude": 215 * 2}
+            chunks = {"depth": 50 * 2, "latitude": 69 * 2, "longitude": 215 * 2}
+        elif "gcm20" in self.name:
+            files = "/File_*buoy.nc"
+            #chunks = {"depth": 28 * 5, "latitude": 80 * 5, "longitude": 284 * 5}
+            chunks = None
         elif self.name == "gcm100":
             files = "/cmpr_*.nc"
             chunks = {"longitude": 500, "latitude": 160, "depth": -1}
@@ -184,6 +188,7 @@ class model:
                 parallel=True,
                 chunks=chunks,
                 combine="nested",
+                preprocess=preprocess,
             )
 
             self.full["dens"] = dens(self.full.salt, self.full.theta, self.full.depth)
@@ -203,10 +208,7 @@ class model:
         self.depth = self.full.depth
 
     def read_metrics(self):
-        if self.name == "gcm100":
-            dirname = self.dirname
-        else:
-            dirname = self.dirname + "../"
+        dirname = self.dirname
 
         h = dict()
         for ff in ["hFacC", "RAC", "RF"]:
@@ -270,7 +272,11 @@ class model:
 
     def read_budget(self):
 
-        chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
+        if self.name == "gcm1":
+            chunks = {"depth": 50 * 2, "latitude": 69 * 2, "longitude": 215 * 2}
+        else:
+            chunks = dict(zip(["depth", "latitude", "longitude"], ["auto"] * 3))
+
         kwargs = dict(
             engine="h5netcdf", parallel=True, concat_dim="time", combine="nested"
         )
@@ -290,7 +296,9 @@ class model:
 
         self.budget["oceQsw"] = self.budget.oceQsw.fillna(0)
 
-        CV = self.metrics.cellvol
+        chunks_dict = dict(zip(self.budget.DFrI_TH.dims, self.budget.DFrI_TH.chunks))
+        chunks_dict.pop("time")
+        CV = self.metrics.cellvol.chunk(chunks_dict)
         dz = np.abs(self.metrics.dRF[0])
         self.budget["Jq"] = 1035 * 3999 * dz * self.budget.DFrI_TH / CV
         self.budget["Jq"].attrs["long_name"] = "$J_q^t$"
