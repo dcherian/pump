@@ -370,9 +370,9 @@ def process_esrl_index(file, skipfooter=3):
 
 
 def read_jra():
-    files = f"{root}/make_TPOS_MITgcm/JRA_FORCING/combined/JRA55DO_*_*wind.nc"
+    files = f"{root}/make_TPOS_MITgcm/JRA_FORCING/combined/JRA55DO_*[a-z].nc"
 
-    jra = xr.open_mfdataset(files, combine="by_coords", decode_times=False).rename(
+    jra = xr.open_mfdataset(files, combine="by_coords", decode_times=False, chunks={"time": 1}).rename(
         {"lat": "latitude", "lon": "longitude"}
     )
 
@@ -381,7 +381,7 @@ def read_jra():
 
     jra["longitude"] -= 360
 
-    jra = jra.sel(longitude=slice(-170, -95))
+    jra = jra.sel(longitude=slice(-170, -95), latitude=slice(-12, 12))
 
     return xr.decode_cf(jra)
 
