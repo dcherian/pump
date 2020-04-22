@@ -9,7 +9,7 @@ from . import mdjwf
 
 from .constants import *
 
-root = "/glade/p/nsc/ncgd0043/"
+root = "/glade/work/dcherian/pump/"
 
 
 def read_all(domain=None):
@@ -36,8 +36,8 @@ def read_johnson(filename=root + "/obs/johnson-eq-pac-adcp.cdf"):
     )
 
     ds["dens"] += 1000
-    ds["longitude"] -= 360
-    ds["depth"] *= -1
+    ds["longitude"] = ds.longitude - 360
+    ds["depth"] = ds.depth * -1
     ds["depth"].attrs["units"] = "m"
     ds["u"].attrs["units"] = "m/s"
 
@@ -329,7 +329,8 @@ def process_nino34():
 
 def process_oni():
     oni = process_esrl_index("oni.data", skipfooter=8)
-    oni.to_netcdf(root + "/obs/oni.nc")
+    return oni
+    # oni.to_netcdf(root + "/obs/oni.nc")
 
 
 def process_esrl_index(file, skipfooter=3):
