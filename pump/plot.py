@@ -4,6 +4,7 @@ import dcpy.plots
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import xarray as xr
 
 from .calc import get_dcl_base_Ri, get_mld
@@ -159,14 +160,19 @@ def plot_jq_sst(
     model, lon, periods, lat=0, period=None, full=None, eucmax=None, time_Ri=None
 ):
 
-    sst = model.surface.theta.sel(longitude=lon, method="nearest")
-
-    if period is None:
-        period = model.full.period.sel(longitude=lon, method="nearest")
+    tao = None
+    if not isinstance(model, xr.Dataset):
+        sst = model.surface.theta.sel(longitude=lon, method="nearest")
+    else:
+        sst = model.sst
+        tao = model
 
     if isinstance(periods, slice):
         tperiod = periods
     else:
+        if period is None:
+            period = model.full.period.sel(longitude=lon, method="nearest")
+
         tperiod = sst.time.where(period.isin(periods), drop=True)[[0, -1]]
         tperiod = slice(*list(tperiod.values))
 
@@ -177,15 +183,16 @@ def plot_jq_sst(
         if la not in time_Ri:
             time_Ri[la] = tperiod
 
-    if full is None:
-        tao = model.tao.sel(longitude=lon, time=tperiod, depth=slice(0, -500))
-    else:
-        tao = full.sel(longitude=lon, method="nearest").sel(
-            time=tperiod, depth=slice(0, -500)
-        )
+    if tao is None:
+        if full is None:
+            tao = model.tao.sel(longitude=lon, time=tperiod, depth=slice(0, -500))
+        else:
+            tao = full.sel(longitude=lon, method="nearest").sel(
+                time=tperiod, depth=slice(0, -500)
+            )
 
     if eucmax is None:
-        eucmax = model.tao.eucmax
+        eucmax = tao.eucmax
     else:
         eucmax = eucmax.sel(longitude=lon, method="nearest").sel(time=tperiod)
 
@@ -200,7 +207,7 @@ def plot_jq_sst(
     # tao = model.full.sel(longitude=lon, time=tperiod, depth=slice(0, -500))
 
     f, ax = plt.subplots(
-        1 + len(lat),
+        2 + len(lat),
         2,
         sharex="col",
         sharey="row",
@@ -208,72 +215,89 @@ def plot_jq_sst(
         # gridspec_kw={"height_ratios": [2] * (lenlat1;5)},
         gridspec_kw={"width_ratios": [4, 1]},
     )
-    f.set_size_inches((8, 9))
+    width = dcpy.plots.pub_fig_width("jpo", "two column")
+    f.set_size_inches((width, 8))
+    f.set_constrained_layout_pads(wspace=0, w_pad=0)
 
     ax[0, 1].remove()
+    ax[1, 1].remove()
 
     # First SST
     plt.sca(ax[0, 0])
+    # cax = dcpy.plots.cbar_inset_axes(ax[0, 0])
     sst.name = "SST"
     sst.attrs["units"] = "°C"
     sst.sel(time=tperiod, latitude=slice(-2, 5)).plot(
-        x="time", cmap=mpl.cm.RdYlBu_r, robust=True, ax=ax[0, 0]
+        x="time",
+        cmap=mpl.cm.RdYlBu_r,
+        robust=True,
+        ax=ax[0, 0],
+        cbar_kwargs={"label": ""},
+    )
+    ax[0, 0].set_title(f"{np.abs(np.round(lon, 0))}°W")
+    # ax[0, 0].set_title("")
+    ax[0, 0].set_xlabel("")
+
+    # Jq
+    jq_kwargs = dict(
+        x="time",
+        levels=np.sort([-600, -450, -300, -200, -150, -100, -75, -50, -25, 0]),
+        cmap=mpl.cm.Blues_r,
+    )
+    # cax = dcpy.plots.cbar_inset_axes(ax[1, 0])
+
+    (
+        (
+            tao.Jq.where(tao.depth < tao.mld)
+            .sel(depth=slice(-100), time=tperiod, latitude=slice(-2, 5))
+            .sum("depth")
+            / 50
+        ).plot.contourf(
+            ax=ax[1, 0],
+            **jq_kwargs,
+            add_colorbar=True,
+            cbar_kwargs={
+                # "orientation": "horizontal",
+                #    "shrink": 0.8,
+                #    "aspect": 40,
+                "label": "",
+                "ticks": [-600, -400, -200, -100, -50, 0],
+                # "cax": cax,
+            },
+        )
     )
     dcpy.plots.liney(
         tao.sel(**region).latitude, ax=ax[0, 0], ls="--", color="k", lw=1, zorder=10
     )
-    ax[0, 0].set_title(f"{np.abs(np.round(lon, 0))}°W")
-    ax[0, 0].set_xlabel("")
+    ax[1, 0].set_xlabel("")
+    ax[1, 0].set_title("")
+
+    dcpy.plots.liney(
+        tao.sel(**region).latitude, ax=ax[:2, 0], ls="--", color="k", lw=1, zorder=10
+    )
 
     # Jq with eucmax, MLD, DCL
-    for index, (la, axis, axRi) in enumerate(zip(lat[::-1], ax[1:, 0], ax[1:, 1])):
+    for index, (la, axis, axRi) in enumerate(zip(lat[::-1], ax[2:, 0], ax[2:, 1])):
         tRi = time_Ri[la]
         region = {"latitude": la, "method": "nearest"}
         plt.sca(axis)
-        if index > 0:
-            kwargs = dict(add_colorbar=False)
-        else:
-            kwargs = dict(
-                add_colorbar=True,
-                cbar_kwargs={
-                    "orientation": "horizontal",
-                    "shrink": 0.8,
-                    "aspect": 40,
-                    "label": "KPP turbulence heat flux [W/m²]",
-                    "ticks": [-600, -300, -150, -50, 0],
-                },
-            )
-        jq = tao.sel(**region).Jq.rolling(depth=2, min_periods=1).mean()
-        jq.plot.contourf(
-            x="time",
-            levels=np.sort([-600, -450, -300, -200, -150, -100, -75, -50, -25, 0]),
-            cmap=mpl.cm.Blues_r,
-            **kwargs,
-        )
-        # jq.plot.contourf(
-        #     x="time",
-        #     robust=True,
-        #     levels=np.sort(),
-        #     cmap=mpl.cm.Blues_r,
-        #     **kwargs,
-        # )
-        # jq.plot.contour(
-        #     x="time",
-        #     levels=np.sort([-350, -400, -450]),
-        #     colors="w",
-        #     add_labels=False,
-        #     linewidths=0.5,
-        #     linestyles="-",
-        # )
-        # colorcet.cm.CET_L17_r
+        jq = tao.sel(**region).Jq.rolling(depth=2, min_periods=1, center=True).mean()
+        jq.plot.contourf(**jq_kwargs, add_colorbar=False)
 
-        ri_q = (
-            full.Ri.sel(time=tRi, longitude=lon)
+        rii = (
+            tao.Ri.sel(time=tRi)
+            .where((tao.depth < mld) & (tao.depth > dcl_base))
             .sel(**region)
             .chunk({"time": -1})
-            .quantile(dim="time", q=[0.25, 0.5, 0.75])
-        ).compute()
+        )
+        rii = rii.where(rii.count("time") > 15)
+        ri_q = (rii.chunk({"time": -1}).quantile(dim="time", q=[0.25, 0.5, 0.75])).compute()
+
         # .plot.line(ax=axRi, xscale="log", hue="quantile", y="depth", xlim=(0.1, 2))
+
+        # mark Ri distribution time
+        t = pd.date_range(tRi.start, tRi.stop)
+        axis.plot(t, -90 * np.ones(t.shape), color="r", lw=4)
 
         dcpy.plots.fill_between(
             ri_q.sel(quantile=[0.25, 0.75]),
@@ -293,16 +317,17 @@ def plot_jq_sst(
         hdl = dcl_base.sel(**region).plot(x="time", color="k", _labels=False)
         dcpy.plots.annotate_end(hdl[0], "$z_{Ri}$", va="top")
         hdl = mld.sel(**region).plot(x="time", color="C1", _labels=False)
-        dcpy.plots.annotate_end(hdl[0], "$MLD$", va="bottom")
+        dcpy.plots.annotate_end(hdl[0], "$z_{MLD}$", va="bottom")
         if eucmax is not None and np.abs(la) < 2:
             hdl = eucmax.plot(x="time", color="k", linestyle="--", _labels=False)
-            dcpy.plots.annotate_end(hdl[0], "$EUC_{max}$")
+            dcpy.plots.annotate_end(hdl[0], "$z_{EUC}$")
 
         axis.set_ylim([-100, 0])
         axis.set_title(f"latitude={la}°N")
         axis.set_xlabel("")
         # axis.text(0.03, 0.05, f"latitude={la}°N", color="k", transform=axis.transAxes)
 
+    ax[1, 1].set_xlabel("")
     # Just tiw phase
     # plt.sca(ax[-1])
     # model.full.tiw_phase.sel(longitude=lon, method="nearest").plot(_labels=False)
