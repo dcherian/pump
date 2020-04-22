@@ -429,7 +429,7 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     kwargs = dict(
         # vmin=-0.02,
         # vmax=0.02,
-        norm=mpl.colors.DivergingNorm(vcenter=-5e-7, vmin=-5e-4, vmax=1e-4),
+        norm=mpl.colors.TwoSlopeNorm(vcenter=-5e-7, vmin=-5e-4, vmax=1e-4),
         cmap=mpl.cm.RdBu_r,
         add_colorbar=False,
     )
@@ -447,6 +447,7 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
             ax=[ax["u"], ax["v"], ax["Ri"]],
             orientation="horizontal",
             shrink=0.8,
+            aspect=37,
             extend="both",
         )
 
@@ -463,7 +464,7 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     #    cbar_kwargs={"orientation": "horizontal"} if add_colorbar else None,
     # )
 
-    tsub.Jq.rolling(depth=7, center=True).mean().plot(
+    tsub.Jq.rolling(depth=2, center=True, min_periods=1).mean().plot(
         ax=ax["Jq"],
         cmap=mpl.cm.Blues_r,
         vmin=-250,
@@ -475,19 +476,22 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     )
 
     def annotate(tsub, ax):
-        tsub.dcl_base.plot(ax=ax, color="w", lw=3, _labels=False)
-        tsub.dcl_base.plot(ax=ax, color="k", lw=1.25, _labels=False)
-        tsub.mld.plot(ax=ax, color="w", lw=3, _labels=False)
-        tsub.mld.plot(ax=ax, color="orange", lw=1.25, _labels=False)
+        tsub.dcl_base.plot(ax=ax, color="w", lw=2, _labels=False)
+        tsub.dcl_base.plot(ax=ax, color="k", lw=1, _labels=False)
+        tsub.mld.plot(ax=ax, color="w", lw=2, _labels=False)
+        tsub.mld.plot(ax=ax, color="orange", lw=1, _labels=False)
         # dcpy.plots.liney(tsub.eucmax, ax=ax, zorder=10, color="k")
 
     axx = list(ax.values())
+    mask = xr.where((tsub.depth > tsub.mld) | (tsub.depth < tsub.dcl_base), 1, np.nan)
+    [dcpy.plots.plot_mask(aa, mask) for aa in axx]
+
     [
         aa.set_title(tt)
         for aa, tt in zip(
             axx,
             [
-                "KPP heat flux",
+                "$J_q^t$",
                 "$u_z^2 + v_z^2- N²/Ri_c$",
                 "$u_z^2 - N²/2/Ri_c$",
                 "$v_z^2 - N²/2/Ri_c$",
@@ -496,39 +500,39 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     ]
     [aa.set_ylabel("") for aa in axx[1:]]
     [aa.set_xticks(np.arange(-5, 6, 1)) for aa in axx]
-    [aa.tick_params(top=True,) for aa in axx]
+    [aa.tick_params(top=False,) for aa in axx]
     [aa.tick_params(labelbottom=False) for aa in axx]
     [annotate(tsub, aa) for aa in axx]
 
 
 def plot_tiw_period_snapshots(full_subset, lon, period, times):
-    subset = full_subset.sel(longitude=lon)
-    subset = subset.where(subset.period == period, drop=True)
+    subset = full_subset.sel(longitude=lon, method="nearest")
+    subset.depth.attrs["units"] = "m"
+
+    if period is not None:
+        subset = subset.where(subset.period == period, drop=True)
 
     # times = subset.time.where(subset.tiw_phase.isin(np.arange(45, 290, 45)), drop=True)
 
     nextra = 2
 
-    plt.rcParams["font.size"] = 14
+    plt.rcParams["font.size"] = 9
+
     f = plt.figure(constrained_layout=True)
-    f.set_size_inches((16, 8))
-    gsparent = f.add_gridspec(1, 2, width_ratios=[1, 2])
-    left = gsparent[0].subgridspec(2, 1)
+    width = dcpy.plots.pub_fig_width("jpo", "two column")
+    f.set_size_inches((width, 8.5))
+    gsparent = f.add_gridspec(2, 1, height_ratios=[1, 1.5])
+    left = gsparent[0].subgridspec(2, 2)
     ax = dict()
-    ax["sst"] = f.add_subplot(left[0])
-    ax["dcl"] = f.add_subplot(left[1], sharex=ax["sst"], sharey=ax["sst"])
+    ax["sst"] = f.add_subplot(left[0, 0])
+    ax["dcl"] = f.add_subplot(left[0, 1], sharex=ax["sst"], sharey=ax["sst"])
+    ax["uz"] = f.add_subplot(left[1, 0], sharex=ax["sst"], sharey=ax["sst"])
+    ax["vz"] = f.add_subplot(left[1, 1], sharex=ax["sst"], sharey=ax["sst"])
 
-    from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+    axtop = np.array(list(ax.values())).reshape((2, 2))
 
-    inset_kwargs = dict(
-        width="50%",  # width = 50% of parent_bbox width
-        height="5%",  # height : 5%
-        loc="lower left",
-        bbox_to_anchor=[0, 0.075, 1, 1],
-    )
-
-    cax_sst = inset_axes(ax["sst"], **inset_kwargs, bbox_transform=ax["sst"].transAxes)
-    cax_dcl = inset_axes(ax["dcl"], **inset_kwargs, bbox_transform=ax["dcl"].transAxes)
+    # cax_sst = inset_axes(ax["sst"], **inset_kwargs, bbox_transform=ax["sst"].transAxes)
+    # cax_dcl = inset_axes(ax["dcl"], **inset_kwargs, bbox_transform=ax["dcl"].transAxes)
 
     right = gsparent[1].subgridspec(len(times), 4)
     axx = np.empty((len(times), 4), dtype=np.object)
@@ -538,25 +542,70 @@ def plot_tiw_period_snapshots(full_subset, lon, period, times):
 
     # Surface fields
     cbar_kwargs = dict(aspect=40, label="", orientation="horizontal", extend="both")
-    surf_kwargs = dict(add_colorbar=False, x="time", robust=True, ylim=[-5, 5],)
+    surf_kwargs = dict(add_colorbar=True, x="time", robust=True, ylim=[-5, 5],)
 
-    hdl = subset.sst.plot(ax=ax["sst"], **surf_kwargs, cmap=mpl.cm.RdYlBu_r,)
-    f.colorbar(hdl, cax=cax_sst, **cbar_kwargs)
+    hdl = subset.sst.plot(
+        ax=ax["sst"],
+        **surf_kwargs,
+        cmap=mpl.cm.RdYlBu_r,
+        cbar_kwargs={"extend": "both", "label": ""},
+    )
+    #    f.colorbar(hdl, cax=cax_sst, **cbar_kwargs)
 
     hdl = (
         (subset.mld - subset.dcl_base)
         .resample(time="D")
         .mean()
-        .plot(ax=ax["dcl"], **surf_kwargs, cmap=mpl.cm.GnBu, vmin=5,)
+        .plot(
+            ax=ax["dcl"],
+            **surf_kwargs,
+            cmap=mpl.cm.GnBu,
+            vmin=5,
+            cbar_kwargs={"extend": "both", "label": ""},
+        )
     )
-    f.colorbar(hdl, cax=cax_dcl, **cbar_kwargs)
+    #   f.colorbar(hdl, cax=cax_dcl, **cbar_kwargs)
 
-    dcpy.plots.linex(times, color="k", zorder=2, ax=[ax["sst"], ax["dcl"]])
+    shear_kwargs = dict(vmin=-0.02, vmax=0.02, x="time", cmap=mpl.cm.RdBu_r)
 
-    # row snapshots
+    subset.uz.sel(depth=slice(-60)).mean("depth").plot(
+        ax=ax["uz"], **shear_kwargs, add_colorbar=False,
+    )
+    hdl = (
+        subset.vz.sel(depth=slice(-60))
+        .mean("depth")
+        .plot(
+            ax=ax["vz"],
+            **shear_kwargs,
+            add_colorbar=True,
+            cbar_kwargs={"extend": "both", "label": ""},
+        )
+    )
+    # f.colorbar(hdl, ax=axtop.flat[-1:], extend="both")
+
+    dcpy.plots.linex(times, color="k", zorder=2, ax=list(axtop.flat), lw=0.5)
+    dcpy.plots.clean_axes(axtop)
+    [aa.set_xlabel("") for aa in axtop[1, :]]
+    [aa.set_title("") for aa in axtop.flat]
+    for aa in axtop.flat:
+        dcpy.plots.concise_date_formatter(aa, minticks=6, show_offset=False)
+
+    dcpy.plots.label_subplots(
+        axtop.flat, labels=["SST", "$z_{MLD} - z_{Ri}$", "$u_z$", "$v_z$"]
+    )
+
+    sstmean = subset.sst.sel(latitude=slice(-3, None)).resample(time="D").mean()
+    kwargs = dict(levels=[22.4, 23.75], x="time", add_labels=False,)
+    for aa in axtop.flat:
+        kwargs["ax"] = aa
+        sstmean.plot.contour(colors="w", linewidths=1.5, **kwargs)
+        sstmean.plot.contour(**kwargs, colors="k", linewidths=0.75)
+
+    ####### row snapshots
     sub = (
         subset[["u", "v", "uz", "vz", "N2", "Ri", "Jq"]]
         .sel(latitude=slice(-5, 5), depth=slice(-100))
+        .sel(time=times, method="nearest")
         .compute()
     )
 
@@ -590,17 +639,23 @@ def plot_tiw_period_snapshots(full_subset, lon, period, times):
         if idx != 0:
             [aa.set_title("") for aa in axrow]
 
-    ax["sst"].set_xticklabels([])
-    ax["sst"].set_xlabel("")
-    ax["sst"].set_title("SST [°C]")
-    ax["dcl"].set_title("Low Ri layer width [m]")
-    ax["dcl"].set_xlabel("")
-    dcpy.plots.concise_date_formatter(ax["dcl"], minticks=6)
+    # ax["sst"].set_xticklabels([])
+    # ax["sst"].set_xlabel("")
+    # ax["sst"].set_title("SST [°C]")
+    # ax["dcl"].set_title("Low Ri layer width [m]")
+    # ax["dcl"].set_xlabel("")
     # dcpy.plots.concise_date_formatter(ax["sst"], minticks=6)
 
     [aa.set_yticks([-100, -60, -30, 0]) for aa in axx.flat]
     [aa.set_yticklabels([str(num) for num in [-100, -60, -30, 0]]) for aa in axx[:, 0]]
     [aa.set_yticklabels([]) for aa in axx[:, 1:].flat]
     # [tt.set_visible(True) for tt in aa.get_yticklabels() for aa in axx[:, 0]]
+
+    [
+        aa.set_xticklabels(["", "4°S", "", "2°S", "", "0", "", "2°N", "", "4°N", ""])
+        for aa in axx[-1, :]
+    ]
+    [aa.set_xlabel("") for aa in axx[-1, :]]
+    dcpy.plots.label_subplots(axx.flat, start="e")
 
     return axx
