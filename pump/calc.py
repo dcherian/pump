@@ -957,13 +957,17 @@ def estimate_shear_evolution_terms(ds):
     duzdt["yadv"] = -ds.v * ddy(uz)
     duzdt["str"] = uz * ddy(ds.v)
     duzdt["tilt"] = (f - ddy(ds.u)) * vz
+    duzdt["vtilt"] = (f + ddx(ds.v) - ddy(ds.u)) * vz
+    duzdt["htilt"] = -ddx(ds.v) * vz
     duzdt = duzdt.isel(longitude=1)
     duzdt.attrs["description"] = "Zonal shear evolution terms"
 
-    duzdt["xadv"].attrs["term"] = "$u ∂_xu_z$"
-    duzdt["yadv"].attrs["term"] = "$v ∂_yu_z$"
+    duzdt["xadv"].attrs["term"] = "$-u ∂_xu_z$"
+    duzdt["yadv"].attrs["term"] = "$-v ∂_yu_z$"
     duzdt["str"].attrs["term"] = "$u_z v_y$"
     duzdt["tilt"].attrs["term"] = "$(f-u_y) v_z$"
+    duzdt["vtilt"].attrs["term"] = "$ζ v_z$"
+    duzdt["htilt"].attrs["term"] = "$-v_x v_z$"
 
     #### meridional shear
     dvzdt = xr.Dataset()
@@ -972,18 +976,24 @@ def estimate_shear_evolution_terms(ds):
     dvzdt["yadv"] = -ds.v * ddy(vz)
     dvzdt["str"] = vz * ddx(ds.u)
     dvzdt["tilt"] = -(f + ddx(ds.v)) * uz
+    dvzdt["vtilt"] = -(f + ddx(ds.v) - ddy(ds.u)) * uz
+    dvzdt["htilt"] = - ddy(ds.u) * uz
     dvzdt = dvzdt.isel(longitude=1)
     dvzdt.attrs["description"] = "Meridional shear evolution terms"
 
-    dvzdt["xadv"].attrs["term"] = "$u ∂_xv_z$"
-    dvzdt["yadv"].attrs["term"] = "$v ∂_yv_z$"
+    dvzdt["xadv"].attrs["term"] = "$-u ∂_xv_z$"
+    dvzdt["yadv"].attrs["term"] = "$-v ∂_yv_z$"
     dvzdt["str"].attrs["term"] = "$v_z u_x$"
     dvzdt["tilt"].attrs["term"] = "$-(f+v_x) u_z$"
+    dvzdt["vtilt"].attrs["term"] = "$-ζ u_z$"
+    dvzdt["htilt"].attrs["term"] = "$-u_y u_z$"
 
     for dset in [duzdt, dvzdt]:
         dset["xadv"].attrs["long_name"] = "zonal adv."
         dset["yadv"].attrs["long_name"] = "meridional adv."
         dset["str"].attrs["long_name"] = "stretching"
         dset["tilt"].attrs["long_name"] = "tilting"
+        dset["vtilt"].attrs["long_name"] = "vvort tilting"
+        dset["htilt"].attrs["long_name"] = "hvort tilting"
 
     return duzdt, dvzdt
