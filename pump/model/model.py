@@ -191,7 +191,7 @@ class model:
                 preprocess=preprocess,
             )
 
-            self.full["dens"] = dens(self.full.salt, self.full.theta, self.full.depth)
+            self.full["dens"] = dens(self.full.salt, self.full.theta, np.array([0.0]))
 
             if self.name == "gcm100":
                 self.full["time"] = self.surface.time[::24]
