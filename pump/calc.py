@@ -997,3 +997,51 @@ def estimate_shear_evolution_terms(ds):
         dset["htilt"].attrs["long_name"] = "hvort tilting"
 
     return duzdt, dvzdt
+
+
+def coare_fluxes_jra(ocean, forcing):
+    """
+    Calculates COARE3.5 bulk fluxes using MITgcm output and JRA forcing files.
+    1. ignores rain for now.
+    2. Remember to do forcing['time'] = forcing.time.dt.floor("h") to work around some
+       weird bug.
+    """
+
+    import xcoare
+
+    ocean = ocean.sel(depth=0, method="nearest", drop=True)
+
+    sst = ocean.theta
+
+    fluxes = xcoare.xcoare35(
+        u=np.hypot(forcing.uas - ocean.u, forcing.vas - ocean.v),
+        zu=10,
+        t=forcing.tas - 273.15,  # K to C
+        zt=10,
+        rh=None,
+        zq=10,
+        P=forcing.psl / 100,  # Pa to mbar
+        ts=sst,
+        Rs=forcing.rsds,
+        Rl=forcing.rlds,
+        lat=ocean.latitude,
+        rain=None,  # forcing.prra,
+        jcool=True,
+        qspec=forcing.huss,
+    )
+
+    flux = xr.Dataset()
+
+    # mitgcm values: bulkf_readparams.f
+    ε = 0.97
+    stefan = 5.67e-8
+    albedo = 0.1
+
+    flux["long"] = -1 * ε * ((stefan * (sst + 273.16) ** 4) - forcing.rlds)
+    flux["short"] = (1 - albedo) * forcing.rsds  # using mitgcm albedo
+    flux["sens"] = -fluxes.hsb
+    flux["lat"] = -fluxes.hlb
+    flux["random_offset"] = -12.5
+    flux["netflux"] = flux.to_array().sum("variable")
+    flux["stress"]  = fluxes["tau"]
+    return flux
