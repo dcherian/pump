@@ -1,7 +1,7 @@
 from .calc import *
 from .constants import *
 from .obs import *
-from .model.model import model
+from .model.model import Model, read_metrics
 
 from . import cesm
 from . import composite

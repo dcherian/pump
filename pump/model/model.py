@@ -25,7 +25,130 @@ from ..plot import plot_depths
 from ..mdjwf import dens
 
 
-class model:
+def read_metrics(dirname):
+    """
+
+    This function needs longitude, latitude, depth to assign the right metadata.
+    If size of the metrics variables are not the same as (longitude, latitude),
+    the code assumes that a boundary region has been cut out at the low-end and
+    high-end of the appropriate axis.
+
+    If the size in depth-axis is different, then it assumes that the provided depth
+    is a slice from surface to the Nth-point where N=len(depth).
+
+    """
+    import xmitgcm
+
+    h = dict()
+    for ff in ["hFacC", "RAC", "RF", "DXC", "DYC", "XC", "YC"]:
+        try:
+            h[ff] = (
+                xmitgcm.utils.read_mds(dirname + ff)[ff]
+                .copy()
+                .squeeze()
+                .astype("float")
+            )
+        except (FileNotFoundError):
+            print(f"metrics files not available. {dirname + ff}")
+            metrics = None
+            return xr.Dataset()
+
+    hFacC = h["hFacC"]
+    RAC = h["RAC"]
+    RF = h["RF"]
+    DXC = h["DXC"]
+    DYC = h["DYC"]
+    longitude = h["XC"][0, :].compute()
+    latitude = h["YC"][:, 0].compute()
+
+    del h
+
+    if len(longitude) != RAC.shape[1]:
+        dlon = RAC.shape[1] - len(longitude)
+        lons = slice(dlon // 2, -dlon // 2)
+    else:
+        lons = slice(None, None)
+
+    if len(latitude) != RAC.shape[0]:
+        dlat = RAC.shape[0] - len(latitude)
+        lats = slice(dlat // 2, -dlat // 2)
+    else:
+        lats = slice(None, None)
+
+    RAC = xr.DataArray(
+        RAC[lats, lons],
+        dims=["latitude", "longitude"],
+        coords={"longitude": longitude, "latitude": latitude},
+        name="RAC",
+    )
+    DXC = xr.DataArray(
+        DXC[lats, lons],
+        dims=["latitude", "longitude"],
+        coords={"longitude": longitude, "latitude": latitude},
+        name="DXC",
+    )
+    DYC = xr.DataArray(
+        DYC[lats, lons],
+        dims=["latitude", "longitude"],
+        coords={"longitude": longitude, "latitude": latitude},
+        name="DYC",
+    )
+
+    depth = xr.DataArray(
+        (RF[1:] + RF[:-1]) / 2,
+        dims=["depth"],
+        name="depth",
+        attrs={"long_name": "depth", "units": "m"},
+    )
+
+    dRF = xr.DataArray(
+        np.diff(RF.squeeze()),
+        dims=["depth"],
+        coords={"depth": depth},
+        name="dRF",
+        attrs={"long_name": "cell_height", "units": "m"},
+    )
+
+    RF = xr.DataArray(RF.squeeze(), dims=["depth_left"], name="depth_left")
+
+    hFacC = xr.DataArray(
+        hFacC[:, lats, lons],
+        dims=["depth", "latitude", "longitude"],
+        coords={"depth": depth, "latitude": latitude, "longitude": longitude,},
+        name="hFacC",
+    )
+
+    metrics = xr.merge([dRF, hFacC, RAC, DXC, DYC])
+
+    metrics["cellvol"] = np.abs(metrics.RAC * metrics.dRF * metrics.hFacC)
+
+    metrics["cellvol"] = metrics.cellvol.where(metrics.cellvol > 0)
+
+    metrics["RF"] = RF
+
+    metrics["rAw"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/RAW")["RAW"][lats, lons].astype("float32"),
+        dims=["latitude", "longitude"],
+    )
+    metrics["hFacW"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/hFacW")["hFacW"][:, lats, lons].astype(
+            "float32"
+        ),
+        dims=["depth", "latitude", "longitude"],
+    )
+    metrics["hFacW"] = metrics.hFacW.where(metrics.hFacW > 0)
+
+    metrics["drF"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/DRF")["DRF"].squeeze().astype("float32"),
+        dims=["depth"],
+    )
+
+    # metrics = metrics.isel(depth=slice(budget.sizes["depth"]), depth_left=slice(budget.sizes["depth"]+1))
+
+    return metrics
+
+
+class Model:
 
     from . import validate
 
@@ -172,7 +295,7 @@ class model:
             chunks = {"depth": 50 * 2, "latitude": 69 * 2, "longitude": 215 * 2}
         elif "gcm20" in self.name:
             files = "/File_*buoy.nc"
-            #chunks = {"depth": 28 * 5, "latitude": 80 * 5, "longitude": 284 * 5}
+            # chunks = {"depth": 28 * 5, "latitude": 80 * 5, "longitude": 284 * 5}
             chunks = None
         elif self.name == "gcm100":
             files = "/cmpr_*.nc"
