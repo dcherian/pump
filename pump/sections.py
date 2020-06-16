@@ -312,9 +312,7 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
         else:
             dens = ctd.density
         drho = (
-            9.81
-            / 1025
-            * dens.coarsen(pressure=3).mean().differentiate("pressure")
+            9.81 / 1025 * dens.coarsen(pressure=3).mean().differentiate("pressure")
         )  # ctd.density - ctd.density.bfill("pressure").isel(pressure=0)
         (drho).sel(latitude=lat, pressure=slice(0, 150)).plot(
             ax=axrho,
@@ -388,24 +386,43 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
 
 
 def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
+    """
+    Intended for use with OSM20 plot or paper figure.
+    Plots one row for a cruise.
+    """
 
     # expected_lat = [0, 1, 3, 4]
 
     # SST
-    obs_days = np.unique(ctd.time.mean("latitude").dt.round("D"))
+    obs_days = np.unique(ctd.sel(latitude=expected_lat[-1], method="nearest").time)
+    print(obs_days)
+    cax = dcpy.plots.cbar_inset_axes(ax["sst"])
     (
         oisst.sel(time=obs_days, method="nearest")
-        .sel(lon=slice(-120, -105), lat=slice(-3, 7))
-        .isel(time=-1)
+        .squeeze()
+        .sel(lon=slice(-120, -105), lat=slice(-2, 6))
         .plot(
+            # levels=21,
             ax=ax["sst"],
             robust=True,
             cmap=mpl.cm.RdYlBu_r,
-            add_colorbar=False,
+            # add_colorbar=False,
             add_labels=False,
-            # cbar_kwargs={"orientation": "horizontal"}
+            cbar_kwargs={"orientation": "horizontal", "cax": cax}
         )
     )
+
+    ax["sst"].set_ylabel("")
+
+    stations = ctd.sel(latitude=expected_lat, method="nearest")
+    ax["sst"].plot(
+        stations.longitude.broadcast_like(stations.latitude),
+        stations.latitude,
+        marker="o",
+        color="w",
+        markersize=8,
+    )
+
     ax["sst"].plot(
         ctd.longitude.broadcast_like(ctd.latitude),
         ctd.latitude,
@@ -415,6 +432,7 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
     )
 
     plotted_lats = []
+    axes_rho = []
     # Ri profiles
     for axes, lat, expect_lat in zip(
         ax["lats"],
@@ -425,10 +443,7 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
         # print([lat, expect_lat])
         # print(plotted_lats)
         # import IPython; IPython.core.debugger.set_trace()
-        if (
-            np.abs(lat - expect_lat) > 0.3
-            and np.round(lat, 2) not in plotted_lats
-        ):
+        if np.abs(lat - expect_lat) > 0.3 and np.round(lat, 2) not in plotted_lats:
             print(f"skipping {expect_lat}")
             axes.remove()
             continue
@@ -454,12 +469,9 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
             dens = ctd.density.isel(pressure=slice(-rem))
         else:
             dens = ctd.density
-        drho = (
-            9.81
-            / 1025
-            * dens.coarsen(pressure=3).mean().differentiate("pressure")
-        )  # ctd.density - ctd.density.bfill("pressure").isel(pressure=0)
-        (drho).sel(latitude=lat, pressure=slice(0, 150)).plot(
+        N2 = 9.81 / 1025 * dens.coarsen(pressure=3).mean().differentiate("pressure")
+        # ctd.density - ctd.density.bfill("pressure").isel(pressure=0)
+        N2.sel(latitude=lat, pressure=slice(0, 150)).plot(
             ax=axrho,
             y="pressure",
             ylim=(100, 0),
@@ -469,14 +481,14 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
         )
         axrho.set_xticks([1e-6, 1e-5, 1e-4])
         dcpy.plots.liney(binned.mld.sel(latitude=lat), ax=axrho)
-        # axrho.set_xlabel("$N²$")
+        axrho.set_xlabel("$N²$")
         dcpy.plots.set_axes_color(axrho, "C0", spine="top")
-        axes.set_xlabel("Ri")
+        axes.set_xlabel("$Ri$")
         # axes.set_title(f"lat={np.round(lat, 1)}")
         axes.text(
             x=0.95,
             y=0.93,
-            s=f"{np.round(lat, 1)}N",
+            s=f"{np.round(np.abs(lat), 1)}N",
             transform=axes.transAxes,
             ha="right",
             va="center",
@@ -484,6 +496,7 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
         if expect_lat != 0:
             axes.set_yticklabels([])
 
+        axes_rho.append(axrho)
     [dcpy.plots.linex(0.25, ax=ax) for ax in ax["lats"]]
     ax["lats"][0].set_ylabel("depth")
     ax["sst"].set_ylabel("lat")
@@ -506,3 +519,23 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
             if match is not None:
                 adcp_str = match.string[9:]
                 break
+
+
+    return axes_rho
+
+
+def process_adcp_file(adcp_file: str):
+    """ processes an adcp adcp_file; finds matching CTD section. """
+
+    expocode = os.path.split(adcp_file)[-1].split("_")[0].strip()
+    print(expocode)
+    ctd = find_cruise(cruises, expocode)
+    if ctd is None:
+        return [None,] * 4
+    # ctd["density"] = dcpy.eos.pden(ctd.salinity, ctd.temperature, ctd.pressure)
+    adcp = read_adcp(adcp_file, -110)
+    ctd = ctd.sortby("time")
+    ctd, adcp = trim_ctd_adcp(ctd, adcp)
+    binned = grid_ctd_adcp(ctd, adcp)
+
+    return expocode, ctd, adcp, binned
