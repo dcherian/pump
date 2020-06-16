@@ -14,6 +14,8 @@ import xfilter
 
 from numba import int64, float32, guvectorize
 
+from . import KPP
+
 
 def ddx(a):
     return a.differentiate("longitude") / 110e3
@@ -1013,8 +1015,13 @@ def coare_fluxes_jra(ocean, forcing):
 
     sst = ocean.theta
 
-    fluxes = xcoare.xcoare35(
-        u=np.hypot(forcing.uas - ocean.u, forcing.vas - ocean.v),
+    # mitgcm values
+    ε = 0.97
+    stefan = 5.67e-8
+    albedo = 0.1
+
+    coare = xcoare.xcoare35(
+        u=np.hypot(forcing.uas, forcing.vas),
         zu=10,
         t=forcing.tas - 273.15,  # K to C
         zt=10,
@@ -1025,23 +1032,56 @@ def coare_fluxes_jra(ocean, forcing):
         Rs=forcing.rsds,
         Rl=forcing.rlds,
         lat=ocean.latitude,
-        rain=None,  # forcing.prra,
-        jcool=True,
+        rain=forcing.prra / 1000 * 1000 / 3600,  # kg/m²/s to mm/hour
+        jcool=False,
         qspec=forcing.huss,
+        albedo=albedo,
+        emissivity=ε,
     )
 
     flux = xr.Dataset()
 
-    # mitgcm values: bulkf_readparams.f
-    ε = 0.97
-    stefan = 5.67e-8
-    albedo = 0.1
-
-    flux["long"] = -1 * ε * ((stefan * (sst + 273.16) ** 4) - forcing.rlds)
+    flux["long"] = -ε * ((stefan * (sst + 273.16) ** 4) - forcing.rlds)
     flux["short"] = (1 - albedo) * forcing.rsds  # using mitgcm albedo
-    flux["sens"] = -fluxes.hsb
-    flux["lat"] = -fluxes.hlb
-    flux["random_offset"] = -12.5
+    flux["sens"] = -coare.hsb
+    flux["lat"] = -coare.hlb
     flux["netflux"] = flux.to_array().sum("variable")
-    flux["stress"]  = fluxes["tau"]
-    return flux
+    flux["stress"] = coare["tau"]
+
+    wind_angle = np.arctan2(forcing.vas, forcing.uas)
+    flux["taux"] = coare.tau * np.cos(wind_angle)
+    flux["tauy"] = coare.tau * np.sin(wind_angle)
+    return flux, coare
+
+
+def calc_kpp_hbl(station, debug=False):
+
+    station = station.sel(depth=slice(-500))
+    h = xr.apply_ufunc(
+        KPP.kpp,
+        station.u,
+        station.v,
+        station.theta,
+        station.salt,
+        station.depth,
+        np.arange(0, station.depth[-1] - 2.5, -2.5),
+        station.taux / 1035,
+        station.tauy / 1035,
+        -(station.netflux - station.short) / 1035 / 3999,
+        xr.zeros_like(station.netflux),
+        -station.short / 1035 / 3999,
+        kwargs=dict(
+            COR=0, hbl=12, debug=False, r1=0.62, amu1=0.6, r2=1 - 0.62, amu2=20
+        ),
+        vectorize=True,
+        # dask="allowed",  # too many assert statements to do this!
+        input_core_dims=[["depth"]] * 5 + [["depth2"]] + [[],] * 5,
+        # output_core_dims=[["time"]]
+    )
+
+    if debug:
+        h.plot()
+        # kpp.KPPhbl.plot()
+        station.KPPhbl.plot()
+
+    return h
