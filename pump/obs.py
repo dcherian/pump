@@ -1,3 +1,4 @@
+import dask
 import dcpy
 
 import numpy as np
@@ -390,6 +391,62 @@ def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
     jra = jra.sel(longitude=slice(-170, -95), latitude=slice(-12, 12))
 
     return xr.decode_cf(jra)
+
+
+def read_jra_20():
+
+    jradir = "/glade/campaign/cgd/oce/people/bachman/make_TPOS_MITgcm/1_20_1999-2018/JRA_FORCING"
+
+    jrafull = xr.concat(
+        [
+            read_jra(
+                [
+                    f"{jradir}/1999/JRA55DO_1.3_Tair_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Uwind_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Qair_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Vwind_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Pair_1999.nc",
+                ],
+                chunks={"time": 1200},
+            ),
+            # pump.obs.read_jra(f"{jradir}/200[0-1]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
+        ],
+        dim="time",
+    )
+
+    jrafull2 = xr.concat(
+        [
+            read_jra(
+                [
+                    f"{jradir}/1999/JRA55DO_1.3_rain_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_lwrad_down_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_swrad_1999.nc",
+                ],
+                chunks={"time": 1200},
+            ),
+            # pump.obs.read_jra(f"{jradir}/200[0-1]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
+        ],
+        dim="time",
+    )
+    jrafull2["time"] = jrafull2.time - pd.Timedelta("1.5h")
+
+    jrafull = jrafull.merge(jrafull2)
+    jrafull["time"] = jrafull.time - pd.Timedelta("7h")
+
+    return jrafull
+
+
+def interp_jra_to_station(jrafull, station):
+    jra = jrafull.interp(
+        longitude=station.longitude.values, latitude=station.latitude.values
+    ).sel(time=slice(station.time[0].values, station.time[-1].values))
+
+    for var in jra.variables:
+        if isinstance(jra[var].data, dask.array.Array):
+            jra[var] = jra[var].copy(data=jra[var].data.map_blocks(np.copy))
+
+    jrai = jra.compute().interpolate_na("time").interp(time=station.time)
+    return jrai
 
 
 def read_drifters(kind="annual"):
