@@ -25,6 +25,34 @@ from ..plot import plot_depths
 from ..mdjwf import dens
 
 
+
+def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*"):
+    metrics = read_metrics(dirname)
+    metrics["longitude"] = metrics.longitude - 170
+
+    stationdirname = f"{dirname}/STATION_DATA/Day_0*"
+    station = (
+        xr.open_mfdataset(
+            f"{stationdirname}/{globstr}",
+            parallel=True,
+            combine="by_coords",
+            decode_times=False,
+        )
+        .squeeze()
+        .sortby("latitude")
+    )
+
+    metrics = metrics.sel(longitude=station.longitude.values, method="nearest")
+    station.time.attrs["units"] = "seconds since 1999-01-01 00:00"
+    station = xr.decode_cf(station)
+    station["time"] = station.time - pd.Timedelta("7h")
+
+    station["Jq"] = 1035 * 3994 * (station.DFrI_TH + station.KPPg_TH) / metrics.RAC
+    station["nonlocal_flux"] = 1035 * 3994 * (station.KPPg_TH) / metrics.RAC
+    station["dens"] = dens(station.salt, station.theta, np.array([0.0]))
+    return station
+
+
 def read_metrics(dirname):
     """
 
