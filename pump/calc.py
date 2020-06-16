@@ -234,11 +234,13 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None):
     elif mld is None:
         raise ValueError("Please provide mld in dataset or as kwarg")
 
+    Ric = 0.54
+
     dcl_max_1 = data.depth.where(
-        data.Ri.where((data.depth <= mld) & (data.depth > -150)) > 0.5
+        data.Ri.where((data.depth <= mld) & (data.depth > -150)) > Ric
     ).max("depth")
 
-    mask_2 = (data.depth <= (mld - 25)) & (np.abs(data.Ri - 0.5) < 0.1)
+    mask_2 = (data.depth <= (mld - 25)) & (np.abs(data.Ri - Ric) < 0.1)
     if eucmax is not None:
         mask_2 = mask_2 & (data.depth > eucmax)
     dcl_max_2 = data.Ri.depth.where(mask_2)
@@ -248,7 +250,7 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None):
     # cum_Ri = data.Ri.where(mask_2).cumsum("depth") / data.Ri.depth.copy(
     #    data=np.arange(1, data.sizes["depth"] + 1)
     # )
-    # dcl_max = data.Ri.depth.where(cum_Ri < 0.5).min("depth")
+    # dcl_max = data.Ri.depth.where(cum_Ri < Ric).min("depth")
 
     maybe_too_shallow = np.abs(dcl_max_1 - mld) < 25
     dcl_max = xr.where(maybe_too_shallow & (counts > 0), dcl_max_2, dcl_max_1)
@@ -257,13 +259,13 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None):
     if eucmax is not None:
         mask_3 = mask_3 & (data.depth > eucmax)
     median_dcl_Ri = data.Ri.where(mask_3).median("depth")
-    median_Ri_too_high = median_dcl_Ri > 0.6
+    median_Ri_too_high = median_dcl_Ri > (Ric + 0.05)
     dcl_max = dcl_max.where(np.logical_not(median_Ri_too_high), mld)
     # dcl_max = dcl_max.ffill("time")
 
     dcl_max.attrs["long_name"] = "DCL Base (Ri)"
     dcl_max.attrs["units"] = "m"
-    dcl_max.attrs["description"] = "Deepest depth above EUC where Ri=0.25"
+    dcl_max.attrs["description"] = f"Deepest depth above EUC where Ri={Ric}"
 
     return dcl_max
 
