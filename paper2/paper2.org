@@ -1,0 +1,441 @@
+#+LATEX_CLASS: dcarticle
+#+TITLE: An off-equatorial deep cycle of turbulence forced by Tropical Instability Waves in the equatorial Pacific
+#+AUTHOR: D.A. Cherian, S.D. Bachman, R.M. Holmes, W.L. Large, R.-C. Lien, D.B. Whitt (alphabetical)
+#+OPTIONS: toc:nil broken-links:mark
+
+#+begin_export latex
+\chapterstyle{dash}
+\renewcommand{\bibsection}{}
+\setcounter{tocdepth}{3}
+\vspace{-10em}
+\tableofcontents*
+\newpage
+
+\newcommand{\Rig}{\Ri_g}
+\newcommand{\Rib}{\Ri_b}
+\newcommand{\Qnet}{Q_\text{net}}
+
+\newcommand{\euc}{_\text{euc}}
+\newcommand{\surf}{_\text{surf}}
+\newcommand{\zeuc}{z_\text{EUC}}
+\newcommand{\zmld}{z_\text{MLD}}
+\newcommand{\hkpp}{H_\text{KPP}}
+\newcommand{\zri}{z_\Ri}
+\newcommand{\zRi}{\zri}
+#+end_export
+
+* Notes :noexport:
+:PROPERTIES:
+:UNNUMBERED:
+:END:
+
+Here are some things that I feel are weak / need addressing.
+1. Figure 1d shows heat flux below /mixed/ layer, not KPP boundary layer. So this may be an incorrect too-high value; high because we get quite high heat fluxes when KPPhbl = monin-obukhov length > MLD for 1-2 hours a day (Section 3.2.2).
+
+2. Missing a validation image.
+
+# 2. Flow streamlines are probably quite innacurate near the equator (Figure 5). Equatorial disturbances travel westward at 0.8m/s and disturbances north of 2°N / 3°N travel at 0.3m/s in cite:Kennan2000. I think the streamlines need to be more closed north of 2°N in general, based on what I've read, but who knows what this particular TIW would look like. Not sure there is a good way to address this without actually advecting particles.
+
+   \newpage
+
+* Introduction
+
+The equatorial Pacific cold tongue is a zonal band of cold upper-ocean water in the eastern equatorial Pacific extending between the Pacific's eastern margin and approximately 155°W.
+Being cold water in a region of large solar insolation, the cold tongue is a region of large heat uptake by the ocean (for example citealp:Holmes2019).
+Such heat uptake is only possible if the heat taken in by the ocean is quickly transported away from the equatorial sea surface — the equatorial region then remains cool enabling further heat uptake.
+Mixed layer budgets for the eastern Pacific shown that the downward transport of heat by microscale turbulence is essential to keeping the sea surface cool citep:Moum2013,Wang1999,Wang2000a,Warner2019,Ray2018.
+Submonthly avection then transports that heat poleward citep:Ray2018.
+The turbulence is strong enough that there is only a single peak in the annual cycle of equatorial SST despite a double peak in solar insolation as the sun "crosses" the equator twice through the year citep:Moum2013.
+On longer timescales, the rate of change of SST during ENSO phase transitions is seen to approximately agree with both amplitude /and/ phase of turbulence heat flux divergence across the mixed layer citep:Warner2019.
+Equatorial mixing might be critical to one of the Earth's most consequential climate phenomena.
+
+There have been numerous observational campaigns aimed at quantifying equatorial turbulence through microstructure measurements, though these experiments do not capture all the temporal and spatial scales of flow variability.
+# The measurements support the idea that dissipation is crucial to the equatorial flow regime: time-limited measurements show rate of turbulent dissipation to be similar in magnitude to surface fluxes of both momentum and heat citep:Crawford1981,Moum1985,Gregg1985,Peters1994.
+At the equator, winds maintain a strong zonal mean flow with intense vertical shear between the eastward flowing Equatorial Undercurrent (EUC) at depth and the westward flowing near-surface South Equatorial Current (SEC).
+Observations at 0°N, 140°W repeatedly show the existence of a deep-reaching daily cycle of shear-driven turbulence  — the "deep cycle of turbulence" — in the high shear zone /above/ the core of the EUC but beneath the base of the mixed layer citep:Gregg1985,Moum1985,Lien1995,Moum2009b.
+Here the flow's gradient Richardson number $\Ri = b_z/(u_z² + v_z²) ≈ 0.25$[fn::Buoyancy $b=-gρ/ρ_0$ and $(u,v)$ are the horizontal components of velocity.] throughout the year i.e. this layer is marginally stable to shear instability citep:Smyth2013,Pham2017.
+During the day, momentum from the wind is trapped in a near-surface stratified layer built by penetrating daytime solar radiation forcing a near-surface ``diurnal warm-layer jet''.
+As the solar forcing weakens in the nightime, the near-surface stratification decreases and the warm-layer jet begins to go unstable, triggering turbulence at the base of the mixed layer citep:Pham2017.
+This turbulence transports momentum downward, locally increasing shear in the marginally stable layer, reducing $\Ri$ and triggering further shear instability.
+As this process continues, the envelope of actively turbulent fluid propagates downward and is visible as a downward descent of a local maximum in vertical shear citep:Smyth2013b.
+Turbulence persists during the next morning at depths up to 80-100m at 0°N, 140°W despite the cessation of near-surface convection.
+cite:Smyth2019 argues that turbulent diffusion tends to reduce buoyancy and velocity gradients, $b_z$ and $u_z$ at roughly similar rates, thereby increasing $\Ri=b_z/u_z^2$.
+As $\Ri$ nears approximately 0.25, the turbulence is extinguished and the flow is now marginally stable with $\Ri≈0.25$ citep:Smyth2019.
+Large eddy simulations initialized with mean fields representative of each of the four seasons show that the deep cycle exists throughout the year, though the depths to which it reaches varies as the EUC shoals and deepens through the year citep:Pham2017.
+
+The equatorial current system in unstable to both barotropic and barolinic instability; these instabilities give rise to Tropical Instability Waves (TIWs; for e.g. citealp:Lyman2005,Philander1976).
+TIWs are waves with zonal wavelengths of \SIrange{1000}{2000}{\km} and periods of \SIrange{15}{40}{days} that propagate westward with a phase speed of approximately \SI{0.5}{\m\per\s} citep:Qiao1995.
+There are two modes of variability: 17-day fluctuations between 2°S and 2°N and a 33 day fluctuation north of 2°N citep:Lyman2007.
+# - TIWs result from resonance between free equatorial Rossby waves citep:Lyman2005.
+At finite amplitude, they are prominently visible in SST as narrow cold salty crests or "cusps" followed by a broad region of warmer fresher water citep:Legeckis1977,Chelton2000,Lee2012.
+The narrow cusps are associated with strong convergence, high chlorophyll concentrations and narrow peaks in fluorescence citep:Strutton2001,Yoder1994.
+The warm troughs are characterized by strong anticyclonic relative vorticity north of the equator and are termed Tropical Instability Vortices (TIVs).
+TIVs are not perfectly coherent structures but are instead quite leaky citep:Dutrieux2008,Holmes2014.
+The anticyclonic circulation in the warm trough wraps the cold cusp around redirecting it eastward ("eastward extension").
+TIWs energize submesoscale motions in high resolution models citep:Holmes2014,Marchesiello2011 and have been observed to generate extremely sharp trailing edge fronts citep:Warner2018.
+TIWs exhibit both seasonality (active between July and February) and interannual variability (active during La Niña and ENSO-neutral conditions).
+
+TIWs have been observed to modulate cold tongue turbulence.
+cite:Lien2008 reported intense mixing at the base of the mixed layer recorded by a Lagrangian float that meandered through two TIWs between 2°S and 1°N in 2005 with a peak heat flux estimate of \SI{1000}{\W\per\square\m}.
+During the EQUIX experiment at (0, 140°W) in 2008, a La Nina year, TIWs significantly increased turbulence heat fluxes at the equator to approximately \SI{400}{\W\per\square\m} when averaged over two weeks citep:Moum2009b compared to the approximately \SI{50}{\W\per\square\meter} measured previously citep:Lien1995.
+These observations agree with modeling studies that show enhanced turbulence both at the equator as well as in the cold cusp off the equator citep:Menkes2006,Holmes2015.
+cite:Holmes2015 proposed a dynamical explanation for the enhancement of equatorial turbulence by TIWs: meridional diffluence i.e. positive $v_y$[fn:: subscripts indicate differentiation] of TIW flow at the equator during the cold phase stretches the southward-oriented meridional component of horizontal vorticity ($ω^y = w_x - u_z$).
+The stretching increases $ω^y$, intensifies the pre-existing $u_z$ at the equator, and forces intense turbulence.
+During the warm phase, the reverse happens: vortex tubes are squashed and $u_z$ weakens with a corresponding weakening of turbulence.
+Observational evidence for this mechanism is inconclusive citep:Inoue2019.
+However TIWs do appear to modulate the deep cycle.
+For example the base of the marginally stable layer appeared to shallow by a factor of two to \SI{50}{m} during the warm phase of the TIW as compared to that during the cold phase citep:Moum2009b,Inoue2012,Inoue2019.
+Mixing was stronger during the "cold phase" (the cold cusp) and weaker during the following "warm phase".
+Note that published microstructure profiler observations have not yet captured one entire TIW period.
+#  - cite:Liu2016a?
+#  - cite:Liu2019
+#    - 17 day TIW intensifies mean shear during westward phase; decreases Ri to 0.5
+
+Most microstructure measurements have been made right at the equator, primarily at (0°, 140°W).
+This sampling bias means that large unknowns remain in our knowledge of the longitudinal and latitudinal extents, as well as the spatial scales of variability of equatorial upper-ocean mixing.
+For example cite:Crawford1981 and cite:Carr1996 observed a peak in mixing at the equator.
+However cite:Moum1986a found no such peak and attributed the results of cite:Crawford1981 to an artifact of sampling.
+
+Here we use a realistically forced regional model of the cold tongue between 170°W and 95°W to study how TIWs modulate turbulence /off the equator/.
+The simulated TIWs force an off-equatorial deep cycle of turbulence by forcing intense shear ($v_z$) in the eastward extension of a TIW's cold cusp (Sections ref:sec:dcl and ref:sec:dyn).
+This shear results from the rotation or tilting of horizontal vorticity generated by horizontal vortex stretching at the equator (Section ref:sec:dyn).
+Indirect observational evidence for this TIW-forced off-equatorial deep cycle is presented through $\Ri$ profiles from three cruise sections through TIWs at 110° W (Section ref:sec:obs).
+These results emphasize the need to observe turbulence variability off the equator.
+
+** notes                                                          :noexport:
+- cold tongue SST and heat uptake important to climate (CITATION)
+    - "half of the seasonal cycle in the peak vertical mixing heat flux is associated with shear instability in the tropical Pacific cold tongue, highlighting this region’s global importance"
+    - "diabatic mixing processes must transport ~1.6 PW of heat across the 21.5°C isotherm."
+    - Ryan: Also, even without referring to the seasonal cycle you can highlight that a large fraction of the heat that enters the ocean enters in the eastern Pacific cold tongue (e.g. Fig. 1a of Holmes et al. 2019, I think there is some numbers in there somewhere too). This heat uptake is enabled largely by mixing which keeps the surface cool. Furthermore - this gives you further motivation for the off-equatorial mixing. The TIWs and the presence of strong mixing away from the Equator expands the area of cold ocean surface available to take up heat.
+    - In the global budget, shear mixing in eq. Pacific is responsible for the largest fluxes (annual average > 150W/m²)
+
+* Methods
+** Model configuration
+We use a regional configuration of the MITgcm citep:Marshall1997,Adcroft2004 to model the equatorial Pacific cold tongue.
+The domain extends from 170°W to 95°W, 12°S to 12°N with a horizontal grid spacing of 1/20° and 345 vertical levels.
+Vertical spacing is 1m in the top 250m and then increases to a maximum of 250m.
+The model is forced at the surface with fields from the JRA-55do reanalysis citep:jra55 and lateral boundary conditions are specified using daily averaged fields from the Mercator GLORYS12V1 1/12° ocean reanalysis product [fn::Copernicus identifier @@latex:\texttt{GLOBAL\_REANALYSIS\_PHY\_001\_030}@@].
+The simulated time period is from 01 Sep 1995 to 28 Feb 1997.
+There is no tidal forcing.
+Sub-grid scale vertical mixing is parameterized using the K Profile Parametrization (KPP) scheme of cite:Large1994 with standard parameter values citep:Large1999.
+The time axis, when presented in figures, is "local time" chosen to be UTC-7.
+
+The model appears to simualte the equatorial Pacific reasonably with some biases (Figure ref:fig:validation).
+The EUC maximum is approximately 15-20m deeper than the TAO data and the cite:Johnson2002 climatology (Figure [[fig:validation]]b), though the depth-integrated zonal velocity in the top 250m (Figure [[fig:validation]]c).
+There is a subsurface warm bias relative to both observational datasets (Figure [[fig:validation]]a).
+# Despite these biases the model does simulate TIW variability that is
+
+#+CAPTION: (a,b) Annual mean fields (solid line) and standard deviation of the annual cycle in the model for 1996, the TAO dataset between 1990 and 2000, and the cite:Johnson2002 climatology. (c) Vertically integrated zonal velocity in the top 250m from the model and the Johnson dataset.
+#+ATTR_LaTeX: width: 33pc
+#+LABEL: fig:validation
+[[file:../images/gcm-20-validation.png]]
+
+** Diagnostics
+The Richardson number $\Ri=N²/S²$ with $N²=-gρ_z/ρ_0$, $S²=u_z^2 + v_z^2$, $ρ_0=\SI{1025}{\kg\per\m\cubed}$.
+All derivatives are estimated using centered differences.
+$\Ri$ is set to NaN when $N² < \SI{1e-6}{\per\square\second}$ or $S² < \SI{1e-6}{\per\square\second}$.
+The mixed layer depth $\zmld$ is computed using as the shallowest depth at which the density exceeds the surface density by $\SI{0.015}{\kg\per\m\cubed}$.
+# and $N² > \SI{1e-6}{\per\sec\square}$.
+The base of the deep cycle layer $\zri$ is computed as the shallowest depth below the mixed layer base when $\Ri$ exceeds 0.5.
+Our choice of 0.5 instead of 0.25 is discussed later in Section [[sec:dcl]]
+The width of the low Richardson number layer or "low $\Ri$ layer" is defined as $H = \zmld - \zri$.
+Turbulent heat flux $J_q^t = -ρ_0 c_p K_T T_z$ where $c_p$ is the specific heat capacity of water, negative values indicate heat moving downward.
+
+#  - how do we define that a deep cycle is happening?
+#  - daily cycle in turbulent heat flux below the mixed layer but above EUC?
+#  - see cite:Inoue2019 : ∂ε/∂t definition: look for daily cycle in turbulence quantity at depth
+* Results
+** TIW modulated turbulence in the cold tongue
+<<sec:dcl>>
+
+TIW variability imprints itself strongly on SST and subsurface turbulent mixing both on and off the equator (Figure ref:fig:snapshot).
+Energetic TIW variability is visible in all fields between approximately 5°S and 5°N: net surface heat flux $\Qnet$, SST, integrated heat flux in the low $\Ri$ layer and width of the low $\Ri$ layer (top to bottom).
+The cold tongue is a region of heat uptake (positive $\Qnet$ in Figure [[fig:snapshot]]a) but this is complemented by intense vertical mixing in the cold cusps of TIWs (Figure [[fig:snapshot]]d).
+The heat entering the ocean at the surface is being moved deeper into the water column by turbulence in the TIW cold cusp.
+The low $\Ri$ layer too extends off the equator and its patterns match those in SST suggesting both TIW influence and the existence of an off-equatorial deep cycle of turbulence.
+In the east, the EUC is concentrated in an approximately 1° wide latitudinal band around the equator (Figure [[fig:snapshot]]c), indicating that the off-equatorial low $\Ri$ flow and associated mixing is not directly associated with the EUC.
+The rest of this manuscript focuses on one particular TIW highlighted by the black box in Figure [[fig:snapshot]]d.
+
+#+NAME: fig:snapshot
+#+CAPTION: Daily averaged fields for 05 Dec 1995. (a) Net surface heat flux $Q_\text{net}$ (positive warms the ocean). (b) SST. (c) Mean zonal velocity between 50- and 250-m. (d) Integrated turbulent heat flux in the low Ri layer ($\zri ≤ z < \zmld$) normalized by a depth of 50m (e) Thickness of the low Ri layer ($\zmld - \zri$). The black rectangle in (d) marks the TIW that is studied in detail later in this paper (e.g. Figure [[fig:dcl035]]).
+[[file:~/pump/images/snapshot-sflx-sst-jq-dcl.png]]
+
+The vertical structure of mixing associated with this particular TIW at 110°W shows a deep cycle of mixing both on and off the equator at 3.5°N (Figure [[fig:dcl035]]c,e).
+# Panels (a, b) are latitude-time plots of SST and $J_q^t$ averaged in the low $\Ri$ layer; again note that these have similar patterns as in Figure [[fig:snapshot]].
+# Panels (c, e) highlight daily cycles in $J_q^t$ at 0°N and at 3.5°N, the latter being the approximate latitude of the eastward extension of the cold cusp.
+At both latitudes, there is a daily cycle in turbulence beneath the mixed layer base ($\zmld$; orange) and above the base of the low $\Ri$ layer ($\zri$, black).
+At the equator the depth of the deep cycle layer is seen to shallow during the warm phase as observed and described by cite:Inoue2012,Inoue2019 and cite:Moum2009b.
+At 3.5°N, the deep cycle starts when the cold cusp reaches that latitude and ceases when the cold cusp leaves, lasting for a total of 11-12 days.
+There is almost no turbulence beneath the mixed layer prior to the arrival of the cold cusp and after its departure.
+Associated daily cycles are also visible in $\Ri$, $S²$, $N²$ at 3.5°N beneath the mixed layer base for the time period when the deep cycle is active (Figure ref:fig:dcl35).
+Such daily cycles in shear, stratification and $\Ri$ are qualitatively similar to observations and LES at 0°N, 140°W citep:Moum2009b,Pham2017.
+We defer a more detailed discussion of the daily cycle to Section [[sec:daily]].
+
+$\Ri$ in the observed deep cycle layer has a median value of 0.25 citep:Smyth2013.
+$\Ri$ in the /simulated/ deep cycle layer has a median value of 0.4, a notable bias (Figure [[fig:dcl035]]d,f).
+# The distribution of $\Ri$ at depths between $\zmld$ and $\zri$ for the time period marked by the solid red line (panels d,f) show relatively low Richardson numbers $\Ri ≲ 0.4$ (median in solid line, shading indicates interquartile range).
+KPP's shear mixing scheme parameterizes diffusivity $K_T$ as a smooth function of $\Ri$ that is non-zero for $Ri < 0.7$ citep:Large1994.
+Diffusivities are enhanced for relatively large $\Ri$ values, when compared to the enhancement observed for $\Ri≈0.25$ in observations citep:Zaron2009, thereby making it impossible to represent a state of marginal stability at $\Ri ≈ 0.25$ citep:Holmes2015.
+The $\Ri$-based shear-mixing model only crudely reflects the dynamics that are thought to underpin observations of shear instability, e.g. hydrodynamic stability theory citep:Miles1961,Howard1961, the energetics of stratified turbulence in the laboratory or direct numerical simulations (e.g., citealp:Rohr1988,Holt1992); and may overestimate heat fluxes in the marginally stable layer citep:Zaron2009.
+The model nominally achieves marginally stable equilibrium at a range of $\Ri$ smaller than 0.7 (approximately 0.4 in Figure [[fig:dcl035]]d,f).
+The precise $\Ri$ at equilibrium likely depends on the large scale forcing as well as the model parameters (e.g. citealp:Holmes2015).
+Note however that the scheme's parameters are specifically tuned to reproduce the deep cycle at the equator especially the timing of its onset citep:Large1999.
+
+Though this manuscript focuses on one particular TIW, the off-equatorial deep cycle is frequently visible in the simulation.
+Low $\Ri$ below the mixed layer off the equator is generally seen outside the EUC's direct influence and tends to be associated with TIW cold cusps (Figure [[fig:Risim]]).
+These patterns are qualitatively similar to the snapshot in Figure [[fig:snapshot]]d,e.
+
+# These cycles are similar to those at the equator (not shown) leading us to interpret Figures ref:fig:dcl035 and ref:fig:dcl35 as illustrating a deep cycle of turbulence forced by TIWs at 3.5°N.
+
+#+NAME: fig:dcl035
+#+CAPTION: Deep cycle turbulence at the equator and 3.5°N. (a) SST. (b, c, e) KPP heat flux $J_q^t$. (d, f) Median (solid line) and interquartile range (shading) of $\Ri$ in the low Ri layer $\zRi \le z \le \zmld$ for the time period marked by red horizontal lines in panels (c, e) respectively. Dashed vertical lines in (d, f) indicate $\Ri = 0.25$ and $\Ri = 0.4$.
+[[file:~/pump/images/sst-deep-cycle-3N.png]]
+
+#+NAME: fig:dcl35
+#+CAPTION: Daily cycles in $\Ri$, squared shear $S²$, buoyancy frequency $N²$, and $J_q^t$ at 3.5°N. This time period is a subset of the time period shown in Figure ref:fig:dcl035. Also shown are the mixed layer depth $\zmld$ and the depth of the base of the low $\Ri$ layer $\zRi$.
+[[file:~/pump/images/110-deep-cycle-35.png]]
+
+#+NAME: fig:Risim
+#+CAPTION: Low $\Ri$ seen in the off-equatorial region during the entire simulation. (left) Median $\Ri$ in the region \( \zmld - 40 ≤ z ≤ \zmld\) (right) Daily averaged SST. Black lines on all panels show the EUC maximum and its latitudinal extent. The EUC's extent is defined using the latitudes north and south of the core at which the eastward velocity drops by a factor of 2. The latitudes are determined using $u$ at the depth of maximum eastward velocity.
+[[file:~/pump/images/Ri-lat-time.png]]
+
+*** TODO Figure [[fig:dclval]]: model seasonal median Ri + 0,140 deep cycle? :noexport:
+
+- figure to show that there is a deep cycle at (0, 140).
+  - Ideally this would present a deep cycle without TIW influence and show daily cycles of shear, strat, Ri etc.
+  - Maybe also seasonal median Ri?
+
+#+NAME: fig:dclval
+#+CAPTION: Seasonal median Ri showing empirical "marginal stability" at 0.4. Upper row is from TAO observations at (0, 140W) for 1995-96. Lower row is from the model at (0, 140W). Colors indicate season. X-axis is $\Ri$ on log scale calculated using $N² ≈ gαT_z$ as this is necessary for the TAO data. Vertical dashed lines are at $\Ri=[0.25, 0.5]$. *Question* Should we also show equivalent of Figure ref:fig:dcl35 but at (0, 140W) i.e. daily cycles in S², N², Ri etc. *TODO* add tick labels, legends etc.
+[[file:../images/Ri-tao-validation.png]]
+
+** Dynamics of the off-equatorial deep cycle
+<<sec:dyn>>
+
+A deep cycle of turbulence can only exist with continuous shear forcing that acts to reduce $\Ri$ and a diurnal trigger to initiate turbulence which in turn increases $\Ri$ citep:Smyth2019.
+At (0°, 140°W), equatorial winds maintain intense zonal shear $u_z$ between the SEC and the EUC and the diurnal trigger is now thought to be the nighttime instability of the surface-trapped diurnal warm-layer jet citep:Pham2017.
+In contrast, the simulated deep cycle at 3.5°N, 110°W is forced by meridional shear $v_z$ associated with the TIW flow (Section ref:sec:shear).
+The diurnal deepening of the shear maximum and near-surface mixing layer is modelled by the late-afternoon increase in the Monin-Obukhov scale driven by weakening stable surface buoyancy flux (Section ref:sec:daily).
+
+*** Shear forcing of off-equatorial deep cycle turbulence
+<<sec:shear>>
+
+The off-equatorial low $\Ri$ layer is closely associated with the TIW's SST signature i.e. the cold cusp (Figure [[fig:shred]]a,b, also Figure [[fig:snapshot]]b,d,e and Figure [[fig:Risim]]).
+Behind the cold cusp, the vertical shear field is largely east-west oriented (top \SI{60}{m} average; Figure [[fig:shred]]c,d).
+Between 1°S and 2°N, the vertical shear of the flow is largely associated with $u_z$.
+North of 2°N, the shear is largely $v_z$ so the off-equatorial low $\Ri$ layer is forced by $v_z$.
+Combining the shear fields (Figure [[fig:shred]]c,d) with the map of low $\Ri$ layer width (Figure [[fig:shred]]b) indicates that $u_z$ drives the flow toward marginal instability south of 2°N while $v_z$ drives the flow toward marginal instability north of 2°N, in the eastward extension of the cold cusp.
+
+We can quantitatively demonstrate this switch from control by $u_z$ to control by $v_z$ by considering a reduced shear-like quantity.
+This approximation is necessary because we find empirically that low $\Ri$ layer in our simulations is associated with a median Richardson number $\Ri_c$ of approximately 0.4 (our results are qualitatively insensitive to a range of values between 0.35 and 0.55):
+# We expect stronger turbulence when $Ri$ drops to a value less than $\Ri_c$
+#+BEGIN_EXPORT latex
+\begin{align}
+\label{eq:shred}
+(u²_z + v_z^2) - \frac{N²}{Ri_c} &≥ 0 \\
+\left[ u_z² – \frac{N²}{2Ri_c} \right] + \left[v_z² – \frac{N²}{2Ri_c}\right] &≥ 0
+\label{eq:shredsplit}
+\end{align}
+#+END_EXPORT
+Splitting the LHS into two terms allow us to evaluate whether $u_z$ or $v_z$ is large enough to overcome half the stratification necessary to drive the flow toward marginal stability.
+# The factor of a half is arbitrary but useful in comparing the magnitudes of $u_z²$ and $v_z²$ to $N²$ without dividing by small numbers.
+
+Snapshots of heat flux $J_q$, reduced shear $u_z² + v_z² - N²/Ri_c$ and the two terms on the LHS of \eqref{eq:shredsplit} computed using $\Ri_c = 0.4$ are shown in Figure [[fig:shred]]e--p at three different times indicated by vertical dashed lines in Figure [[fig:shred]]a--d.
+Enhanced turbulence is present in the low $\Ri$ layer between $\zmld$ (orange) and $\zri$ (black) --- this region is highlighted.
+The regions of enhanced turbulence coincide with positive values of reduced shear.
+Zonal shear $u_z$ is responsible for shear turbulence both at the equator (Figure [[fig:shred]]g) and in the northward-oriented cold cusp between 0 and 3°N (Figure [[fig:shred]]g and k respectively).
+The corresponding $v_z$ is weak, the low $\Ri$ layer is mostly blue in Figure [[fig:shred]]h,i.
+This pattern reverses in the eastward extension of the cold cusp: $v_z$ is strong but $u_z$ is weak between 2°N and 4°N (Figure [[fig:shred]]o,p).
+These three cross-sections show that $u_z$ acts to force turbulence in a near-equatorial region (1°S --2°N) while $v_z$ forces the off-equatorial deep cycle turbulence, as inferred from Figure [[fig:shred]]b--d.
+
+#+NAME: fig:shred
+#+ATTR_LATEX: :width \textwidth
+#+CAPTION: Zonal shear drives enhanced equatorial turbulence while meridional shear drives enhanced off-equatorial turbulence. In both cases, the turbulence is in the low $\Ri$ layer. (a) SST, (b) low $\Ri$ layer width, (c) $u_z$, and (d) $v_z$ as a function of latitude and time. (e-p) Turbulent heat flux $J_q^t$ and reduced shear from (ref:eq:shredsplit) as a function of depth and latitude at three different time instants marked by vertical lines in (a-d). Values within the low $\Ri$ layer between $\zmld$ and $\zri$ are highlighted.
+[[file:~/pump/images/sst-shear-dcl-shred2.png]]
+
+The enhanced off-equatorial $v_z$ is a consequence of the rotation of horizontal vorticity vector by the TIW's off-equatorial flow, illustrated in Figure ref:fig:horvort.
+Streamlines (green) calculated using velocities relative to an approximate TIW westward translation speed[fn::The westward translation speed was determined from Hovmoeller plots of SST as well as 0-60m depth-averaged meridional velocity at latitudes between 0 and 4N. In all cases, \SI{0.5}{\meter\per\second} was judged to be a good approximation of the westward propagation speed. Near-equatorial disturbances near the EUC propagate faster than off-equatorial disturbances citep:Kennan2000 so the streamlines likely to be quite innacurate near the EUC core.] of \SI{0.5}{\meter\per\second} show that water parcels follow a vortex-like circular path between 1°N and 4°N.
+# [fn::The streamlines are not closed because TIWs are leaky citep:Dutrieux2008].
+Parcels pass through the near-equatorial region of high zonal shear, then move northward and eastward approximately parallel to the SST front (black contour; 23.8°C).
+During this transit the horizontal vorticity vector $ω^x \hat{i} + ω^y \hat{j} = (w_y - v_z) \hat{i} + (u_z - w_x) \hat{j}$ (black) rotates from pointing southward to pointing westward.
+This rotation illustrated that vortex tilting transforms $ω^y$ is to $ω^x$ during the parcel's transit i.e. negative $u_z$ in the near-equatorial region is rotated to become positive $v_z$ off the equator.
+
+#+NAME: fig:horvort
+#+ATTR_LATEX: :width 0.6\textwidth
+#+CAPTION: The horizontal vorticity vector rotates as parcels travel northward from the equator and then eastward. Depth-averaged horizontal vorticity vectors $\omega^x\hat{i} + \omega^y \hat{j} = (w_y - v_z) \hat{i} + (u_z - w_x) \hat{j}$ (black vectors) over depth-averaged $-u_y$ (color). Streamlines, in green, are calculated using depth-averaged horizontal velocities with a TIW westward translation speed of \SI{0.5}{\m\per\s} removed. All quantities are depth averaged to \SI{60}{\m}. The daily averaged SST = 23.8°C contour is shown in black. The latitude of the EUC core (defined as maximum $u$ averaged between \SI{30}{m} and \SI{120}{m}) is marked in gray.
+[[file:~/pump/images/110-period-4-vort-vec-rot.png]]
+
+The dynamics of this transformation can be illustrated by considering the evolution equation for the two shear components.
+These equations are written so that the tilting term is decomposed into the tilting of the vertical and horizontal vorticity:
+#+begin_export latex
+\label{eq:shear}
+\begin{align}
+∂_t u_z &= \underbrace{- u ∂_xu_z}_\textit{X ADV} \quad \underbrace{- v ∂_yu_{z}}_\textit{Y ADV} \quad \underbrace{+ u_z v_y}_\textit{STR} \quad\underbrace{+ ζ v_z}_\textit{TILT V.VORT} \quad \underbrace{- v_x v_z}_\textit{TILT H.VORT} & \underbrace{- b_x}_\textit{BUOY} &+ \underbrace{F^x_z}_\textit{FRIC} \\
+∂_t v_z &= - u ∂_xv_{z} \qquad - v ∂_yv_{z} \quad + v_z u_x \qquad- ζ u_z \qquad- u_y u_z &- b_y &+ F^y_z
+\end{align}
+#+end_export
+where $ζ = (f + v_x - u_y)$ is the total vertical vorticity, $b_x, b_y$ are buoyancy terms and $F^x_z, F^y_z$ are the frictional terms.
+We present both components of vertical shear as well as the evolution terms in \eqref{eq:shear} averaged over the top \SI{60}{m} in Figure ref:fig:shearev along with a contours of low $\Ri$ layer width for reference.
+The remaining discussion centers on the magnitudes of the evolution terms within the 30m contour.
+# Figure ref:fig:shearev highlights the portion of the flow with low $\Ri$ layer widths larger than \SI{30}{m}.
+# The baroclinic terms are weak and hence ignored.
+TIW meridional diffluence (positive $v_y$) acts to stretch the horizontal vortex tube, $u_z v_y$, intensifying $u_z$ and forcing turbulence in the northward-oriented cold cusp between 0° and 3°N (Figure [[fig:shearev]]d, Figure [[fig:shred]]i-l) as described by cite:Holmes2015.
+North of approximately 2°N, the zonal shear weakens and meridional shear intensifies as the horizontal vorticity vector rotates from pointing southward to pointing westward i.e. negative $u_z$ is converted to positive $v_z$.
+The rotation is illustrated by the relatively large magnitude of the tilting terms for both $u_z$ and $v_z$ in Figure [[fig:shearev]]e,f,k,l.
+The sign of the tilting terms within the highlighed region is such that $u_z$ is decreased from a negative value to 0 while $v_z$ is increased from 0 to a postive value (see Figure [[fig:shearev]]a,g).
+$v_z$ is then decreased to 0 by frictional torque associated with turbulence.
+
+The generation of $u_z$ in a near-equatorial region by horizontal vortex stretching citep:Holmes2015 and subsequent rotation of $u_z$ to $v_z$, or $ω^y$ to $ω^x$, by the anticyclonic TIW flow $u_y$ (Figure [[fig:shearev]]f) is the continuous shear forcing that forces a deep cycle off the equator.
+This shear is then reduced by the deep cycle turbulence.
+
+#+NAME: fig:shearev
+#+ATTR_LATEX: :width 33pc
+#+CAPTION: Horizontal shear components $u_z$, $v_z$ and terms controlling their evolution as in \eqref{eq:shear}. All quantities are depth-averaged in the top 60m. Black contours show low $\Ri$ layer widths of \SI{30}{\meter} and \SI{60}{\meter} for reference. Vertical lines mark the same timestamps as those in Figure ref:fig:shred. 
+[[file:~/pump/images/shear-evolution.png]]
+
+*** Simulated trigger of deep cycle turbulence
+<<sec:daily>>
+
+#+NAME: fig:kppdcl
+#+ATTR_LATEX: :width 33pc
+#+CAPTION: Turbulence at 3.5°N, 110°W triggered by deepening boundary layer in the afternoon. (a) Surface forcing. Net surface heat flux in blue and wind stress in orange. (b) $S²$ (c) $N²$ (d) Gradient $\Ri$ (e) Diffusivity $K_T$. Panels (b-e) also show heat flux $J_q^t$ (black contours; solid lines are negative, dashed are positive), mixed layer depth ($\zmld$, orange dashed line), KPP boundary layer depth (black line), Monin Obukhov length ($L_{MO}$, red line with dots), and depth at which KPP bulk $\Ri$ reaches 0.3 ($H_{0.3}$, red line). Vertical white dashed lines mark time at which net surface heat flux changes sign.
+[[file:~/work/pump/images/kpp-deep-cycle-35.png]]
+
+As at the equator, turbulence in the low $\Ri$ layer must be triggered daily for a deep cycle to exist.
+How does the KPP scheme trigger that turbulence off the equator?
+First note that the KPP turbulence scheme divides the water column into three parts: an interior region, a boundary layer, and a surface layer (defined to be the top 10% of the boundary layer near the surface).
+The KPP boundary layer depth $\hkpp$ is usually chosen as the depth at which the /bulk/ Richardson number
+\begin{equation}
+Ri_b = \frac{Δb \hkpp}{\abs{ΔV}² + ΔV_t²}
+\end{equation}
+exceeds a critical value chosen to be 0.3 ($H_{0.3}$).
+Here $Δb$ and $ΔV$ are the differences between values of resolved buoyancy $b$ and resolved velocity $V$ at the surface and $z=\hkpp$.
+$ΔV_t$ represents a parameterized velocity shear due to unresolved turbulent eddies.
+In addition, $\hkpp$ is restricted to be less that the Monin-Obukhov length scale
+\begin{equation}
+L_{MO} = \frac{-u³_*}{κ \, B_0}
+\end{equation}
+so that
+\begin{equation}
+\hkpp = \min\left[ {L_{MO}, H_{0.3}}\right]
+\end{equation}
+Here $u_*$ is a friction velocity at the ocean surface, $B_0$ is the surface buoyancy flux, and $κ=0.42$ is the von Karman constant.
+
+During times of TIW influence our simulations show some diurnal variation in the depth of the $Ri_b=0.3$ contour off the equator (Figure ref:fig:kppdcl), but the daytime $\hkpp$ (black) is significantly shallower than $H_{0.3}$ (thick red).
+Daytime values of $\hkpp$ are limited to the Monin Obukhov scale; after peak sun in the afternoon, $L_{MO}$ deepens and so does $\hkpp$ (Figure [[fig:kppdcl]]b-e).
+In this way, the descent of the daytime shear layer in the late afternoon citep:Smyth2013b is entirely modelled by the change in surface fluxes and $L_{MO}$ rather than a dynamical instability resulting from increased interior shear relative to the stratification.
+# There is no observational evidence to suggest that this is realistic.
+Note that $L_{MO} > \zmld$ for approximately an hour before the onset of convection.
+Diffusivities are enhanced within the boundary layer i.e. within the stratified water beneath the mixed layer resulting in large heat fluxes just prior to the onset of nighttime convection.
+When the surface heat flux turns destabilizing, $L_{MO}$ is undefined and $\hkpp$ now deepens to the depth of the $\Ri_b=0.3$ contour.
+The descent of the boundary layer then triggers shear turbulence in the interior low $\Ri$ region.
+$\Ri$ increases during the night which in turn reduces $J_q^t$ (Figure [[fig:kppdcl]]b,e).
+When the sun rises, $L_{MO}$ is now well-defined and $\hkpp$ shallows to that shallow value.
+Daytime $\Ri$ values in the low $\Ri$ layer are in the 0.4-0.5 range, so the parameterized shear turbulence is never completely extinguished since KPP enhances diffusivities for $\Ri < 0.7$.
+The daily cycle then repeats.
+
+** Indirect observational evidence
+<<sec:obs>>
+
+There appears to be no reported observational evidence for an off-equatorial deep cycle of turbulence associated with TIWs.
+Ideally one would have direct microstructure measurements clearly showing a daily cycle in turbulence beneath the mixed layer as has been observed repeatedly at the equator (for e.g. citealp:Gregg1985).
+Indirectly one might look at /in-situ/ $\Ri$ estimates since marginal stability is detectable using coarse measurements of shear and stratification at least at the equator citep:Smyth2013,Pham2017.
+The absence of ADCPs on the off-equatorial TAO moorings prevents replicating the analysis of cite:Smyth2013 or cite:Pham2017.
+Instead we will use coincident measurements of velocity from shipboard ADCPs and density from CTD casts obtained during cruises that sampled a TIW by chance.
+
+$\Ri$ estimated using high resolution velocity and stratification measurements indicate that deep cycle turbulence is associated with a $\Ri$ distribution with mode 0.25 (2-m velocity bins; citealp:Smyth2013).
+The mode remains at 0.25 even when the velocity measurements are significantly degraded to 16-m bins.
+The limitation here is that their observations were at a single location (0°N, 140°W) for a short period of time (two weeks) during a period of strong TIW forcing.
+Guided by these observations, we /assume/ that deep cycle turbulence everywhere is characterized by a $\Ri$ distribution with mode 0.25, and that $\Ri$ in the deep cycle layer can be estimated from relatively coarse observations.
+Since the mode is 0.25, we expect the most likely observed $\Ri$ value to be 0.25 in a deep cycle layer.
+
+#+NAME: tab:cruise
+#+CAPTION: Cruise sections at 110°W used for analysis in Section [[sec:obs]]
+| Cruise | Vessel           | Dates                     | Sampling Line | ADCP bin size |
+|--------+------------------+---------------------------+---------------+---------------|
+| EP692  | /R/V Discoverer/ | 1992/10/15 -- 1992/11/19  | WOCE PR16     | \SI{10}{m}    |
+| EP393  | /R/V Discoverer/ | 1993/08/24 -- 1993/09/18  | WOCE PR16     | \SI{8}{m}     |
+| RB0711 | /R/V Ron Brown/  | 2007/12/15  -- 2008/01/18 | CLIVAR P18N   | \SI{8}{m}     |
+
+We infer low values of $Ri$, less than 1, below the mixed layer both at the equator (as expected) as well as off the equator at 4°N and 5°N in profiles from three sections at 110°W through TIWs (Table [[tab:cruise]]; Figure ref:fig:ctdadcp).
+Cruise CTD and ADCP data were obtained from the CLIVAR and Carbon Hydrographic Data Office (CCHDO) and the Joint Archive for Shipboard ADCP (JASADCP) respectively.
+We estimate $\Ri$ by first averaging the \SI{1}{m} binned CTD data in the bins used for the ADCP data (either \SI{8}{m} or \SI{10}{m} bins), and then estimating $N²$ and $S²$ using centered differences[fn::Bins where $N² < \SI{1e-6}{\per\s\squared}$ and $S² < \SI{1e-8}{\per\square\second}$ are excluded.].
+These $\Ri$ profiles are presented in Figure [[fig:ctdadcp]]b,c;e,f;h,i along with a higher-resolution $N²$ profile estimated using \SI{3}{\m} averaged CTD profiles.
+In general, $Ri < 1$ off the equator with values close to 0.25 in three to five successive bins below the mixed layer (where $N² ≈ \SIrange{1e-5}{1e-4}{\per\second\squared}$).
+As in the model, $v_z$ is the dominant shear term (not shown).
+The data in Figure ref:fig:ctdadcp are noisy but suggest that further examination of such sections might be useful given the lack of moored ADCPs and microstructure data.
+A more thorough analysis would use all sections at 110°W, 125°W and 140°W to estimate a median $\Ri$ profile through the TIW cold cusp.
+This work is ongoing.
+
+#+NAME: fig:ctdadcp
+#+ATTR_LATEX: :width 0.8\textwidth
+#+CAPTION: Indirect evidence for an off-equatorial deep cycle from three cruises (Table ref:tab:cruise). (a,d,g) SST from the daily 0.25° OISST product citep:Reynolds2007 with CTD stations marked (note changing color scale). (b,c; e,f; h,i) Profiles of $\Ri$ (black) and $N²$ (blue) at stations marked with white circles in (a, d, g). Vertical line is $\Ri=0.25$, horizontal line is mixed layer depth estimated as the shallowest depth at which the potential density exceeds the shallowest recorded density value by \SI{0.015}{\kg\per\m\cubed}. *Should I add $u_z$, $v_z$*
+[[file:~/pump/images/cruise-Ri-summary.png]]
+
+* Summary
+
+The primary result here is that the simulated TIWs force a deep cycle of turbulence off the equator (Figure ref:fig:dcl035).
+Horizontal vortex stretching by meridional diffluence $v_y$ of the TIW's flow increases $u_z$ within 2° north of the equator as shown by cite:Holmes2015.
+The TIW's anticyclonic flow then rotates these horizontal vortex tube anticyclonically, converting $u_z$ to $v_z$ in the eastward extension of the cold cusp (Figure ref:fig:shearev).
+The continuous stretching and tilting acts to create a region of intense shear and low $\Ri$ below the mixed layer, mimicing flow at the equator where intense shear between the SEC and EUC exists below the mixed layer (Figure ref:fig:shred).
+Turbulence in the off-equatorial low $\Ri$ layer is triggered diurnally and is associated by a downward descending shear layer in the afternoon.
+The KPP mixing scheme models the descending shear and mixing layer off the equator by specifying high diffusivities in a boundary layer whose vertical scale is the Monin-Obukhov scale (Figure ref:fig:kppdcl).
+The Monin-Obukhov scale increases in the afternoon as the buoyancy flux weakens; this leads to a high diffusivity boundary layer that descends in the afternoon associated with high shear at its base.
+The deepening boundary layer triggers mixing the low $\Ri$ layer beneath leading to a daily cycles of parameterized turbulence, $\Ri, S²$ and $N²$ in the low $\Ri$ layer (Figure ref:fig:dcl35).
+
+Observational evidence for an off-equatorial deep cycle is nonexistent with the exception of the small number of $\Ri$ profilesshowing quite low values of $\Ri$ off the equator in a TIW cold cusp (Figure ref:fig:ctdadcp).
+It is plausible though perhaps unlikely that the current simulation with the KPP parameterization accurately captures all the details of the off-equatorial deep cycle.
+# particularly the diurnal deepening of the mixing layer.
+Understanding the off-equatorial deep cycle in detail will require further work with LES simulations that account for the large-scale TIW shear forcing, as well as high resolution observational evidence to validate the simulations.
+
+The deep cycle transports heat absorbed by the near-surface ocean during daytime to depths deeper than the base of the convective mixed layer; keeping it away from reabsorption by the atmosphere during convection the following night.
+In doing so, the deep cycle helps keep the sea surface cool, enabling significant heat uptake by the eastern equatorial Pacific.
+Our simulations indicate that this effective subduction of heat is taking place over an area larger than what might be expected from shear turbulence associated with SEC-EUC shear i.e. north of the 3°S-3°N region.
+# Shear mixing in the cold tongue is an important influence on the Earth's climate with possible links to ENSO citep:Warner2019,
+Yet direct microstructure measurements have mostly been made at the equator.
+Our results, and the associated uncertainties, suggest a need to constrain the magnitude, the dynamics, and the long term impact of off-equatorial turbulence in the eastern Pacific cold tongue.
+
+# The prevailing explanation for the diurnal trigger of deep cycle turbulence is the instability of the diurnal warm layer jet once solar forcing weakens in the evening citep:Pham2017.
+# This explanation is quite general and diurnal warm layers are present over large regions of the eastern equatorial Pacific (for example citealp:Clayson2013).
+# Therefore a working hypothesis is that the same instability forces the diurnal cycle both on and off the equator.
+
+# - work to expand Figure ref:fig:ctdadcp to more sections and different longitudes
+# - LES of TIW-forced turbulence at 3N
+
+** importance of deep cycle turbulence: :noexport:
+- low Ri at 2°N at cold cusp cite:Johnson1996
+
+Deep cycle and the ECT heat budget
+  - Deep cycle mixing extracts heat from mixed layer; redistributes it in a layer between ML base and DCL base.
+  - Monthly mean advection in this layer moves the heat poleward cite:Ray2018
+  - Does the vertical profile of monthly mean $v$ matter? Does the depth of deep cycle mixing enable more export?
+  - How would this look in temperature coordinates?
+  - TIWs stir cold ECT water poleward, where it absorbs heat from the atmosphere, and stir warm off-equatorial water into the ECT, weakening the ECT via meridional advective warming (Jochum et al. 2005; Menkes et al. 2006)
+
+  - cite:Holmes2019 diffusive mixing peaks at equator, not much at 4-5°N. Also see Anna's stuff
+  - deep cycle helps keep the cold cusp cold → SST-wind feedback citep:Chelton2001.
+
+ - In the high-resolution OGCM, however, TIWs did not cool the warm waters north of the equator to heat the ECT. Instead, they increased the atmosphere–ocean heat flux near the equator. Thus, TIWs act as a vertical heat pump, rather than a horizontal mixer of temperature. The focus of Jochum et al. (2005) was the large-scale SST, not the detailed processes by which TIWs change the SST.
+
+  - What isothermal layers is the deep cycle pumping heat into?
+  - how important is diathermal heat transport at 3N relative to that at equator?
+    - is it more efficient at pumping heat to the "right" isothermal class?
+  - ITCZ?
+    - need studies relating SST anomalies in ITCZ region
+    - expansion of the cold water area allows more heat uptake?
+** is there a similar signal in the equatorial atlantic? :noexport:
+ - common features between eq. atl & eq Pac
+   - seems to be marginal stability + TIWs + (deep?) daily cycles
+   - daily cycles: cite:Wenegrat2015,Foltz2020,Perez2019
+   - these papers have hourly high-res shear so possibly a nice place to look  (if they havent published that already)
+
+* References
+bibliography:/home/deepak/Papers/bibtexLibrary
+bibliographystyle:elsarticle-harv
+* Supplement :noexport:
+** TODO Figure ref:fig:val: TIW variability | EUC depth | volume transport | SST
+- Add figure to show that the model does OK relative to TAO moorings / climatologies
+
+#+NAME: fig:val
+#+CAPTION: A validation figure showing TIW variability, EUC depth relative to cite:Johnson2002?
+[[file:/home/deepak/fake-fig.png]]
