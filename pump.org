@@ -7,6 +7,19 @@
 /jpy:localhost#8888:emacs
 
 * To do                                                            :noexport:
+- [-] read eq pac budget papers [2/5]
+  - [ ] menkes
+  - [X] ray 1
+  - [X] ray 2
+  - [ ] read Foltz paper
+  - [ ] read Perez paper
+
+- cruise analysis [0/3]
+  - [ ] email billy about more sections
+  - [ ] do cruise section not in TIW / La Nina season
+  - [ ] matchup NDBC sections with JASADCP stuff
+  - [ ] look at JGOFS data
+
 - [ ] Do velocity spectra (only at equator?)
 - [ ] spectra vs TAO vs SST
 - [ ] filtered hovmoellerr for SST
@@ -38,9 +51,6 @@
 
   - [ ] \bar{w'T'}
 
-  - [ ] is there a deep cycle away from the equator
-    - [ ] is this how TIWs enhance mixing?
-    - [ ] probably not
   - [ ] what is the e-folding decay scale of the mixing signal.
   - [ ] what processes lead to the upper core layer
   - [ ] calculate MLD, DCL depth and save to zarr file
@@ -1696,6 +1706,7 @@ annual.to_netcdf('pump/glade/cesm-le-mean.nc')
 ** Model biases
 * off-eq DCL behind TIW: cruise observations
 ** data sources
+*** sadcp
 - Full inventory with hires data: https://www.nodc.noaa.gov/gocd/jasadcp/hr_access.html
 - Ron brown: https://currents.soest.hawaii.edu/ron_brown/
 - other ships: https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/htmfiles/datamang/ship.htm
@@ -1710,8 +1721,16 @@ annual.to_netcdf('pump/glade/cesm-le-mean.nc')
     (replace-match "\\1/\\1" nil nil nil 1))
     #+end_src emacs-lisp
 
-
+*** CTD sections
 https://www.nodc.noaa.gov/ocads/oceans/RepeatSections/index.html
+
+2007 onward: https://dods.ndbc.noaa.gov/thredds/catalog/data/tao-ctd/catalog.html
+cruise reports 2007 onward>: https://tao.ndbc.noaa.gov/refreshed/taoCruiseInfo.php?hist=true
+before 2007: https://tao.ndbc.noaa.gov/tao/kaimi/ctd/ctd_ndbc.shtml
+Interface to above: https://tao.ndbc.noaa.gov/refreshed/ctd_delivery.php
+
+Ka'imimoana: https://cchdo.ucsd.edu/search?q=KA%27IMIMOANA
+more ADCP: https://www.nodc.noaa.gov/woce/woce_v3/wocedata_1/sadcp/invntory/kaimoana.htm
 ** 110W (PR16 / P18)
 *** LADCP
 Not sure these are much better since they are also being binned in 8m / 10m bins AFAICT .e.g https://currents.soest.hawaii.edu/clivar/ladcp/P18_1/table0.html
@@ -1800,12 +1819,75 @@ dcpy.plots.linex(ctd.time, ax=ax)
 
 #+RESULTS:
 
-* OSM
-1. Coral sea
-2. BoB
-3. mixing
-4. Pangeo
-5. Tom Haine
+** 140W JGOFS
+ADCP: http://uhslc.soest.hawaii.edu/sadcp/DATABASE/00348.html
+CTD: http://usjgofs.whoi.edu/jg/serv/jgofs/merged_objects/US_JGOFS/Equatorial_Pacific/ctd_eqpac.html1?cruise_id%20eq%20TT-011
+
+** siphon tao ctd sections from ndbc
+
+- this should be in ~intake_thredds~ somehow
+#+BEGIN_SRC jupyter-python
+from siphon.catalog import TDSCatalog
+
+import os
+import tqdm
+import xarray
+
+base_dir = "datasets/tao-ctd/"
+base_url = "https://dods.ndbc.noaa.gov/thredds/catalog/tao-ctd/"
+base_catalog = TDSCatalog(f"{base_url}/catalog.xml")
+# each cruises is a sub-catalog ... looks like a "folder"
+cruises = base_catalog.catalog_refs
+
+for cruise in cruises:
+    cruise_dir = f"{base_dir}/{cruise}"
+    try:
+        os.mkdir(cruise_dir)
+    except FileExistsError:
+        pass
+    cruise_cat = TDSCatalog(f"{base_url}/{cruise}/catalog.xml")
+    for ds in tqdm.tqdm(cruise_cat.datasets):
+        cruise_cat.datasets[ds].download(f"{cruise_dir}/{ds}.nc")
+#+END_SRC
+
+#+RESULTS:
+
+* Moum (2009) MUR SST
+#+BEGIN_SRC jupyter-python
+import xarray as xr
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+ds = xr.open_mfdataset("/home/deepak/work/pump/datasets/mur/2008*.nc")
+
+
+f, ax = plt.subplots(1,1,constrained_layout=True)
+(ds.analysed_sst-273).sel(time=slice("2008-10-25", "2008-11-09 00:00"), lon=-140, lat=slice(-3, 8)).plot(x="time", cmap=mpl.cm.RdYlBu_r, robust=True, vmin=25, add_labels=False, ax=ax, add_colorbar=True, cbar_kwargs={"aspect": 50})
+f.set_size_inches((8, 1.5))
+ax.set_xticks([])
+f.savefig("images/moum-2009-sst.png", bbox_inches="tight")
+#+END_SRC
+
+* argo MLD
+#+BEGIN_SRC jupyter-python
+import dcpy
+
+mld = dcpy.oceans.argo_mld_clim()
+#+END_SRC
+
+#+BEGIN_SRC jupyter-python
+%matplotlib qt
+
+mld.mlpd_da.sel(lon=slice(-170, -95), lat=slice(-2, 8)).plot(col="month", col_wrap=4, robust=True)
+#+END_SRC
+
+* shear evolution equations
+#+begin_export latex
+\begin{align*}
+D_t u_z = u_z v_y + (f - u_y) v_z - b_x + F^x_z \\
+D_t v_z = v_z u_x - (f + v_x) u_z - b_y + F^y_z
+\end{align*}
+#+end_export
 
 * composite z
 #+BEGIN_SRC jupyter-python
@@ -1826,3 +1908,320 @@ znew = xr.where(z > mld, z-mld, z)
 plt.figure()
 znew.plot()
 #+END_SRC
+* Deep cycle notes
+1. detect descending shear layer depth
+2. does this coincide with KPPhbl?
+
+Off the equator descending shear coincides with descending KPP boundary layer
+At the equator it doesn't coincide /always/
+* NSF proposal notes
+
+** proposal abstract
+
+The equatorial Pacific is the site of large oceanic heat uptake enabled by small-scale turbulence, and the site of a severe error in climate models: too cold temperatures that extend too far westward.
+Lead PI Prof. James Moum (Oregon State University), has been making time series measurements of turbulence on moorings in the tropical Pacific since 2005.
+This unique dataset has been used to document turbulence variability on monthly, seasonal and interannual (ENSO) timescales.
+Independently, NCAR (Bachman, CGD) has recently run a 20 year 1/20° realistically forced MITgcm simulation saving both hourly averaged fields, at virtual moorings in the same locations as those of Moum's instruments, as well as domain-wide daily averaged fields.
+These saved fields include turbulence terms.
+
+Our goal is to exploit this synergy by jointly analyzing the MITgcm simulation and Moum's turbulence dataset to
+1. understand the physical mechanisms through which turbulence varies on daily (deep cycle turbulence) to monthly (Tropical Instability Waves) to seasonal to interannual (ENSO) to decadal time scales (global warming hiatus vs. post-hiatus); and
+2. assess the fidelity and shortcomings, across this large range of timescales, of a widely used ocean turbulence parameterization scheme developed at NCAR (KPP; Large, McWilliams & Doney 1994).
+
+This work will serve the university community by
+1. using NCAR modelling expertise and NCAR-produced datasets to enable a thorough dynamical analysis of public observational datasets collected by the OSU Ocean Mixing Group;
+2. evaluating a widely used ocean turbulence parameterization scheme over a wide range of time scales in a region where said parameterization is particularly influential in setting the mean state
+
+** prior results
+
+Cascading of Ocean Waters at the Continental Shelf Edge: Winds, Cooling and Stability
+OCE1433953
+Period: 08/15/2014 - 07/31/2019
+
+Intellectual Merit: This award to PI K. Brink (WHOI) partially funded Cherian's thesis research work on a long-standing problem in coastal oceanography viz. the the export of shelf water by Gulf Stream warm-core rings at northeastern US shelfbreak. The work used idealized numerical model experiments to illustrate that shelf-eddy interaction spins up multiple O(10km) small-scale cyclones containing shelf water, and that the resulting shelf-water export is permanent (Cherian & Brink, 2016). A second facet of the work developed scalings for the vertical structure of cross-shelf flows, the on-shelf origin of exported shelf water as well as the extent to which eddy water penetrates on to the shelf (Cherian & Brink, 2018).
+Broader Impacts: The simulations produced formed the basis for summer undergraduate research projects supervised by WHOI scientists Dr. I. Rypina & Dr. L. Pratt; with research conducted by liberal-arts undergraduates (S. Entner, A. Anderson). Cherian helped Anderson & Entner with aspects of data analysis and interpretation. This project resulted in one publication with both Anderson and Entner as co-authors (Rypina et al 2020)
+
+** budget justification
+
+Cherian (NCAR) will be responsible for jointly analyzing the NCAR model output along with the OSU observational data from the tropical Pacific. He will work closely with lead PI Moum (OSU) on all aspects of the analysis and will draw on prior experience working with both χpod data as well as NCAR simulations. Salary support of 2, 2, 2, 2, 0 months is requested.
+
+** summary
+*** NCAR resources:
+- 1/20°; 20 year; 10S-10N; 95W-170W; 1999-2018
+  - daily averaged heat & momentum budget terms in full domain
+  - "moorings" with hourly averaged state vars; visc, diff at TAO locations
+- 1/100°: 1 year; Sep-1995 - Feb 1997
+  - has submesoscales
+  - heat, momentum budget terms
+- LES of TIW influenced deep cycle [to be run]:
+  - at least two (Dan?)
+  - one at equator; one off equator;
+  - forced with tendencies from MITgcm simulations
+- 1/10° POP output
+  - ???
+
+- other climate simulations
+
+*** Analysis
+- How do TIWs modulate deep cycle at the equator?
+  - data in 2008 show weak modulation of
+  - extend Inoue et al (1/3°);
+  - higher res model; resolve daily cycle with mooring output;
+  - much longer χpod data record
+
+- How well does KPP represent modulation of deep cycle by TIWs?
+  - Use EQUIX microstructure data (2008) with both models.
+
+- dynamics of the upper core layer
+  - EQUIX microstructure + models
+
+- hiatus
+
+** text
+*** general shear mixing text
+
+The eastern equatorial Pacific is where shear mixing turbulence schemes are most influential, contributing significant heat uptake citep:Holmes2019 helping to keep the sea surface cool.
+These cold SSTs are what make the equatorial Pacific a pacemaker of the global climate system.
+It is thus /essential/ that these mixing schemes accurately represent the magnitude and phase of turbulence variability from daily to decadal timescales.
+So far, the long term performance of shear mixing parameterization schemes has only been judged /indirectly/ by comparing mean property fields even though biases in such fields may results from other model errors (for e.g. citealp:Large1994,Large1999).
+The χpod observations offer the possibility of testing the performance of existing schemes (e.g. KPP; citealp:Large1994) /directly/ by comparing heat flux and diffusivity estimates over a wide range of time scales.
+# Such joint model-microstructure analysis has only been attempted once before citep:Zaron2009.
+*** model resources
+
+Our model analysis will center around a realistically forced 1/20° simulation of the eastern equatorial Pacific between 95°W to 170°W, 12°S to 12°N from 1999 to 2018.
+The JRA55-do cite:jra55 dataset is used for atmospheric forcing and lateral boundary condition are prescribed using output from the Mercator GLORYS 1/12° reanalysis product.
+Vertical mixing is paramterized using the KPP citep:Large1994 scheme.
+Saved output includes daily averaged state variables as well as daily averages of all heat and momentum budget terms.
+In addition, hourly averaged state and turbulence variables were saved at multiple virtual moorings.
+These moorings were placed at the TAO mooring locations as well as one grid point north, south, east and west of the TAO mooring allowing us to estimate lateral gradients of all saved quantities.
+
+A second NCAR model resource is an approximately 1/10° global simulation using the ”Parallel Ocean Program” (POP2) forced by the JRA55-do citep:jra55 dataset and previously reported in cite:Bryan2015.
+Vertical resolution is 10 m in the top 200m and increases to 250m in the deep ocean.
+Vertical mixing is parameterized using the KPP citep:Large1994 scheme.
+The saved output includes 5-day averages of all heat budget terms including the diffusive flux.
+This dataset will be used primarily for comparison with the PIRATA \cpod data, and as an independent dataset with which to check KPP's performance over long timeperiods in the tropical Pacific.
+
+*** TIW modulation of mixing
+
+Years with energetic TIW activity tend to have cooler annual mean SSTs citep:Moum2009b.
+Is this because of mixing? Or is it that anomalously cool years have more energetic TIWs?
+
+| Dataset               | mean heat flux | Reference      | Note                        |
+|-----------------------+----------------+----------------+-----------------------------|
+| EQUIX profiling       | 400 W/m²       | cite:Moum2009  | Half a TIW period           |
+| EQUIX χpods           | 100 W/m²       | cite:Inoue2019 | 7 TIW periods               |
+| Tropic Heat 1984      | 50W/m² ?       | ???            |                             |
+| TIWE 1991             | 40W/m²         | ???            |                             |
+| Long-term χpod record | 50-100 W/m²    | cite:Moum2013  | seasonal means of χpod data |
+
+TIWs apepar to drastically increase shear mixing in the cold tongue (Table 1).
+The observational evidence for this modulation rests on 2 weeks of microstructure profiling (average heat flux O(400W/m²) citealp:Moum2009b) and 6 months of moored χpod data (average heat flux O(100W/m²) over 7 TIWs citealp:Inoue2019) obtained as part of the EQUIX experiment.
+When compared with seasonal means of O(50W/m²) to O(100W/m²) citep:Moum2013, these short observations suggest that TIWs significantly modulate equatorial mixing at 140°W.
+The EQUIX data also show that TIWs modulate the deep cycle: during the southward phase, the deep cycle is seen to shoal by approximately a factor of 2.
+There are two explanations for this behaviour:
+1. The southward advection of higher stratification water caps the deep cycle layer citep:Inoue2019. However a zone of high mixing appears just above the EUC and below the deep cycle layer (the "upper core layer") mitigating the shallowing of the deep cycle.
+2. A recently discovered mode-2 TIW variability (called subsurface TIWs or subTIWs) appears to significantly modulate the shear and stratification above the EUC.
+Despite the factor of 2 change in deep cycle layer depth, cite:Inoue2019 suggest that vertically-averaged heat flux only changes by O(20W/m²) or so during an entire TIW period. /But is this a representative result?/
+
+We will constrain the magnitude and phase variations of TIW-forced mixing by using the long χpod record along with hourly averaged "mooring" output from the 1/20° MITgcm model.
+Our target questions and proposed approaches are:
+1. *Question* Are the EQUIX observations over a single TIW season a statistically robust estimate of TIW modulated turbulence?
+   *Approach:* We will generate a TIW composite over all χpod data to characterize the average magnitude and phase variation of turbulence modulated by TIWs
+   1. We will work in a non-dimensional depth-time coordinate system where time (or phase) is referenced using band-pass filtered vertically averaged $v$ as in cite:Inoue2019; and with depth normalized by the depth of the EUC maximum.
+   2. All turbulence quantities will be normalized by their maximum value in a TIW period. This approach has been shown to be necessary in a compositing analysis using similar turbulence data citep:Becherer2020.
+   3. A composite average using all available χpod data will be constructed in a depth-time frame; extending the vertically averaged analysis of cite:Inoue2019 to account for variations in the vertical structure of the mixing; as well as adding statistical robustness from the much longer χpod data record.
+   4. The procedure to construct such composites will be refined by using both the model output, as well as the intensive EQUIX microstructure profiling and χpod observations.
+2. *Question* Does KPP accurately reflect the quantitative variations of mixing with TIW phase?
+   *Approach* Construct equivalent composites using the hourly averaged mooring output and evaluate against the observational composite.
+3. *Question* ????
+   *Approach* Use the EQUIX observations to nudge LES (collaboration with D. Whitt)
+   1. This aspect of the project will work closely with current NOAA-funded research by D. Whitt and colleagues at NCAR (see letter of support). We request funding to consolidate the EQUIX microstructure and state variable observations into a clean dataset that can then be used to confront the LES simulation as well as function as a nudging dataset for that LES simulation.
+   2. If successful, this work will result in a clean observational dataset, an LES simulation and a detailed analysis of the regional simulation with parameterized turbulence during the same time period. These pieces can then be used to guide the development of a future shear mixing parameterization scheme.
+
+
+Long term effects of TIW-modulated mixing
+  - "One possibility is that cooler temperatures may increase TIW activity through enhanced baroclinicity. However, if our detailed observations are broadly representative, then TIWs induce the cooling via mixing"
+  - "Our results suggest that the cool anomalies (1–2 K) on annual timescales can be more than fully accounted for by the shear-induced mixing caused by TIWs"
+  - Can we use heat budget terms in the model to examine this over 20 years?
+
+**** old
+- cite:Moum2009: Stronger TIW → cooler annual mean SSTs in data
+  - "One possibility is that cooler temperatures may increase TIW activity through enhanced baroclinicity. However, if our detailed observations are broadly representative, then TIWs induce the cooling via mixing"
+  - "Our results suggest that the cool anomalies (1–2 K) on annual timescales can be more than fully accounted for by the shear-induced mixing caused by TIWs"
+  - Can we use heat budget terms in the model to examine this over 20 years?
+
+- Hypothesis for TIW influence on turbulence: horizontal vortex stretching v_y u_z ⇒ more negative u_z citep:Holmes2015
+  - EQUIX obs: ship ADCP + TAO mooring → estimate v_y. (during IOP could also use shipboard ADCP)
+  - citep:Inoue2019 show v_y for one period (their Figure 9).
+  - could do TIW composites of v_y u_z; why is this not in citep:Inoue2019
+  - Can we estimate $v_y$ using χpod pitot velocities and the TAO ADCP buoy that is offset from the mooring with Χpods, T, S etc? Actually aren't there current meters on the T, S mooring?
+
+- modulation of the deep cycle layer by TIWs
+  - Combined analysis of the long-term χpod data and shorter EQUIX data in a "deep-cycle" vertical coordinate frame e.g. referenced to the base of the mixed layer and to the base of the deep cycle layer.
+  - Focus on TIW modulation of vertical structure of deep cycle layer. (visibile in cite:Inoue2019 figures but not really discussed in the text)
+  - cite:Inoue2019 suggest that phase modulation is somewhat weak.
+    - but this is only one season
+    - Long χpod record = better statistics
+  - citep:Inoue2019 (mostly) work with vertical averages. Also the residuals are as big as the tendencies in their S², N² budgets (!)
+
+- Biases in KPP representation of a deep cycle?
+  - Daily shear layer descent is (sometimes) represented by increasing Monin-Obukhov length in the afternoon.
+  - We can test this using bullk fluxes from shipboard met measurements that are coincident with microstructure profiles
+
+*** Timeline:
+1. Y1: focus on EQUIX and variation of turbulence with TIW phase
+   1. Consolidate EQUIX datasets (TAO mooring, UW APL mooring, microstructure profiles) into a clean gridded T, S, u, v dataset that can be used as "relaxation" in LES simulations (led by Whitt). Turbulence data will be analyzed together with LES output to build a picture of 1D dynamics at TIW front
+   2. Use consolidated picture from microstructure profiles; LES; and moored χpods to design a coordinate reference frame within which to analyze the deep cycle in extended χpod record
+
+2. Y2
+   1. Analyze variation of deep cycle turbulence over entire χpod record. Assess accuracies and biases in KPP representation in the 20 year MITgcm simulation.
+
+   2. Study links in turbulence variability with TIW KE; SST anomalies etc (?)
+
+3. Y3
+   1. hiatus stuff?
+
+4. Y4
+   1. ??????
+
+*** model analysis
+
+We will use NCAR's hierarchy of models to provide both larger-scale 3D context (through the POP and MITgcm output) and fine vertical-scale context (through the LES) to the moored observations at discrete points in the water column.
+The analysis of high resolution model output has yielded significant unanticipated process-level insights in the past: for e.g. the strong mixing associated with TIWs and the connection to SST \cite{Menkes2008}, the role of horizontal vortex stretching by TIWs in modulating $Sh^2$ in the deep cycle layer at the equator \citep{holmes2015} and the existence of an off-equatorial deep cycle of turbulence, intimately linked to /horizontal vortex tilting/ (Cherian et al, in prep).
+These insights have resulted from the ability to diagnose all terms in the heat budget equation and the shear evolution equation as is only possible using model output.
+
+Accordingly we propose two major avenues of joint model-data analysis:
+1. Event-scale analysis that rests on the ability to quantify advection terms and other quantities such as vortex stretching and tilting in the model.
+   1. What are the dynamics that lead the factor of two shallowing of the deep cycle layer under TIW modulation?
+   2. How well does KPP represent the TIW phase modulation of mixing as documented by \cpods~ and as simulated in fine vertical detail by the LES?
+   We will begin by generating phase averages of the hourly model output using the same procedure as observations and working from there. Additional context from the daily averaged 3D fields will be incorporated as needed. Particular focus will be placed on understanding the vertical structure of these terms (which we suspect is key to understanding the vertical variation of the turbulence); the vertically averaged budget has already been studied by \cite{holmes2015} and \cite{inoue2019}.
+
+2. An analysis of annual to decadal variability of the mixing term and its impact on the heat budget of the cold tongue:
+   1. How important was mixing to the heat budget of the cold tongue during the hiatus (2005-12), especially relative to the wind-forced meridional divergence discussed in \cite{england2014}?
+   2. How do we reconcile the intense mixing forced by TIWs with the mismatch between peak TIW KE in Sept-Dec and peak cooling by mixing in June-August?
+   3. How does the annual cycle of heat flux vary by ENSO phase? Are the patterns in Figure 5b representative?
+
+All aspects of the above joint model-data analysis will be moderated by an assessment of model biases relative to both the \cpod~observations and the TAO moored data.
+The equatorial Pacific's cold SST makes it a pacemaker of the global climate system (e.g. \cite{kosaka2013}), and subsurface mixing is a major contributor to keeping the cold tongue cold.
+It is thus /essential/ that ocean mixing schemes accurately represent the magnitude and phase of turbulence variability from daily to decadal timescales.
+So far, the long term performance of shear mixing parameterization schemes has only been judged /indirectly/ by comparing mean property fields even though biases in such fields may results from other model errors (for e.g. citealp:Large1994,Large1999).
+The \cpod~observations offer the possibility of \emph{directly} testing the performance of existing schemes (e.g. KPP; citealp:Large1994) by comparing heat flux and diffusivity estimates over a wide range of time scales.
+We expect the analysis to lend a more complete dynamical context to the observations, as well as a nuanced picture of model biases with respect to the turbulent mixing field.
+
+** Lit
+- cite:Kosaka2013
+  - specify relaxation towards HadCRUT SST as part of sensible heat flux forcing. Relaxation only in eastern tropical Pacific.
+  - this is enough to replicate the hiatus
+  - current hiatus is part of natural climate variablility (likely, not much evidence); linked to La Nina like eq pacific cooling.
+  - lots of regional impacts
+- cite:England2014
+  - increased eastward pacific trade winds during 1990s, 2000s
+  - hiatus correspond to -ve IPO (interdecadal Pacific Oscillation)
+  - El-Nino-like during +ve phase; and La Nina like during -ve phase
+  - increased /meridional/ convergence of heat in the pycnocline,
+  - EUC is apparently accelerating
+  - warmer SSTs in warm pool; cooler SSTs in cold pool
+  - no mention of mixing BUT cooling trends for depth < 125m and warming trends for depth > 125m in ocean reanalyses
+    - signal between 10°S and 10°N
+    - how does this line up with the Argo stuff
+- cite:Meehl2011:
+  - in projections hiatus decades have warming below 300m and less warming above 300m
+** tiumeline
+
+
+
+\begin{enumerate}
+\item Y1: focus on EQUIX and variation of turbulence with TIW phase
+\begin{enumerate}
+\item Consolidate EQUIX datasets (TAO mooring, UW APL mooring, microstructure profiles) into a clean gridded $T, S, u, v$ dataset that can be used as relaxation in LES simulations (led by Whitt, NCAR). Turbulence data will be analyzed together with LES output to build a picture of 1D dynamics at TIW front
+\item Use consolidated picture from microstructure profiles; LES; and moored \cpods to design a coordinate reference frame within which to analyze the deep cycle in extended \cpod record
+\end{enumerate}
+
+\item Y2
+\begin{enumerate}
+\item Analyze variation of deep cycle turbulence over entire χpod record. Assess accuracies and biases in KPP representation in the 20 year MITgcm simulation.
+
+\item Study links in turbulence variability with TIW KE; SST anomalies etc (?)
+\end{enumerate}
+
+\item Y3
+\begin{enumerate}
+\item hiatus stuff?
+\end{enumerate}
+
+\item Y4
+\begin{enumerate}
+\item ??????
+\end{enumerate}
+\end{enumerate}
+
+* KPP validation notes
+
+1. cite:Large1994 tweak the surface layer mixing parameters by comapring 1D model integrations (with observed forcing) to /mid-latitude/ observations over short periods.
+   - Convection using cite:Anis1994 : Set C_v=1.5 to get β_T = -0.2
+   - mixed layer deepening from Ocean Storms
+     "A more quantified determination of Ri_c is provided by comparisons with observed ocean responses during the Ocean Storms experiment"
+   THe scheme is then tested with longer integrations
+   - LOTUS : 1 week ?
+   - OWS Papa : annual cycle over 4 years; issues with advection in the fall
+
+2. cite:Large1999 use equatorial LES of deep cycle to set interior mixing parameters.
+   "Large et al. (1994) use midlatitude ocean observations and model simulations to determine standard values for the boundary layer parameters of KPP (e.g., Ric = 0.3). All 1D KPP model results presented here use the same values. However, midlatitude conditions are not suitable for exploring interior mixing. Therefore the LES results are now used to determine suitable values for the interior mixing parameters of section 2."
+
+3. cite:Large1999 run the Gent & Cane reduced gravity, no-salinity model for 4 years and don't conclude anything
+   "We conclude from Figs. 9 and 10 that the control and KPP runs have about equal skill in reproducing the TOGA-TAO annual means. However, this skill is not high for zonal velocity in the western Pacific and for temperature in the eastern Pacific. Thus, we conclude that trying to differentiate between vertical mixing schemes in the context of a GCM by comparing to observations is not straightforward. The reasons are that the wind stress and heat flux forcings of the equatorial Pacific are not known exactly, and the GCM has deficiencies not related to the vertical mixing scheme, such as no salinity variable."
+* abstracts
+*** AGU
+**** initial
+
+Title: Off-equatorial deep cycle turbulence forced by Tropical Instability Waves in the equatorial Pacific cold tongue
+DA Cherian, S. Bachman, R. Holmes, R-C Lien, W. Large, DB Whitt
+
+Being cold surface water in a region of large solar insolation, the equatorial Pacific cold tongue is a region of large heat uptake by the ocean (e.g. Holmes et al., 2019).
+Such heat uptake is only possible if the heat taken in by the ocean is quickly transported away from the sea surface.
+The surface then remains cool enabling further heat uptake.
+Microscale turbulence provides the necessary downward transport of heat and is thus essential to keeping the cold tongue cold (e.g. Moum et al., 2013; Wang and McPhaden, 1999).
+
+Observations at 0°N, 140°W repeatedly show the existence of a daily cycle of shear-driven turbulence — the “deep cycle of turbulence” — in the strongly sheared marginally stable flow (Richardson number Ri ≈ 0.25) above the core of the Equatorial Undercurrent (EUC) but beneath the base of the mixed layer.
+Observations also indicate that the deep cycle of turbulence is modulated by Tropical Instability Waves (TIWs; Moum et al, 2009).
+However these microstructure observations have only been recorded at the equator.
+
+We find that simulated TIWs in a 1/20° realistically-forced regional configuration of the MITgcm force an off-equatorial deep cycle of turbulence.
+The TIWs force intense vertical shear (∂v/∂z) and deep cycle turbulence in the eastward extension of a TIW’s cold cusp (usually between 3°N and 5°N).
+The enhanced ∂v/∂z is a result of the rotation (tilting) of ∂u/∂z (or horizontal vorticity) initially generated by vortex stretching near the equator.
+Indirect observational evidence for this TIW-forced off-equatorial deep cycle is seen in Richardson number profiles from historical cruise sections through TIWs at 110°W — these show Ri ≈ 0.25 at 4°N or 5°N during times of TIW influence.
+The off-equatorial deep cycle is visible throughout the simulated cold tongue, and expands the region of oceanic heat uptake to outside the zone of direct EUC influence (approximately 3°S - 3°N).
+These results emphasize the need to observe turbulence variability off the equator.
+**** final
+Title: Off-equatorial deep cycle turbulence forced by Tropical Instability Waves in the equatorial Pacific cold tongue
+DA Cherian, S. Bachman, R. Holmes, R-C Lien, W. Large, DB Whitt
+
+Being cold surface water in a region of large solar insolation, the equatorial Pacific cold tongue is a region of large heat uptake by the ocean (e.g. Holmes et al., 2019). Such heat uptake is only possible if the heat absorbed at the surface by the ocean is quickly exported away. Microscale turbulence contributes to this export by transporting heat downward and is thus essential for keeping the cold tongue (e.g. Moum et al., 2013; Wang and McPhaden, 1999).
+
+Observations at 0°N, 140°W repeatedly show the presence of a daily cycle of shear-driven turbulence — “deep-cycle turbulence” — in the strongly sheared marginally stable flow (gradient Richardson number Ri ≈ 0.25) above the core of the Equatorial Undercurrent (EUC) but beneath the base of the surface mixed layer. Deep-cycle turbulence was also found to be modulated by Tropical Instability Waves (TIWs; Moum et al, 2009).However these microstructure observations have only been recorded at a few specific locations on the equator.
+
+Here we report the presence of an off-equatorial deep-cycle turbulence forced by TIWs in a 1/20° realistically-forced regional MITgcm model. TIWs enhance the meridional component of vertical shear (∂v/∂z) resulting in deep cycle turbulence in the eastward extension of TIW cold cusps (usually between 3°N and 5°N). The enhanced ∂v/∂z is a result of the rotation (tilting) of ∂u/∂z (horizontal vorticity) initially generated by vortex stretching of SEC-EUC ∂u/∂z near the equator. Indirect observational evidence for this TIW-forced off-equatorial deep cycle is seen in Richardson number profiles from historical cruise sections crossing TIWs at 110°W which show Ri ≈ 0.25 at 4°N or 5°N. The off-equatorial marginal stable layer is visible throughout the longitudinal extent of the simulated cold tongue, and expands the region of oceanic heat uptake to outside the zone of direct EUC influence (approximately 3°S - 3°N).
+
+These results emphasize the need to observe turbulence variability off the equator.
+Ongoing efforts are targeted at studying the off-equatorial deep cycle using large eddy simulations; and constraining its importance to the cold tongue's heat budget.
+
+*** UBC
+
+Title: Off-equatorial deep cycle turbulence forced by Tropical Instability Waves in the equatorial Pacific cold tongue
+
+Being cold water in a region of large solar insolation, the equatorial Pacific cold tongue is a region of large heat uptake by the ocean (e.g. Holmes et al., 2019).
+Such heat uptake is only possible if the heat taken in by the ocean is quickly transported away from the sea surface.
+The surface then remains cool enabling further heat uptake.
+Microscale turbulence provides the necessary downward transport of heat and is thus essential to keeping the cold tongue cold (e.g. Moum et al., 2013; Wang and McPhaden, 1999).
+
+Observations at 0°N, 140°W repeatedly show the existence of a deep-reaching daily cycle of shear-driven turbulence — the “deep cycle of turbulence” — in the strongly sheared marginally stable flow (Richardson number Ri ≈ 0.25) above the core of the Equatorial Undercurrent but beneath the base of the mixed layer (e.g. Gregg et al., 1985).
+Observations also indicate that the deep cycle of turbulence is modulated by Tropical Instability Waves (TIWs; Moum et al, 2009).
+However these microstructure observations have only been recorded at the equator.
+
+We find that simulated TIWs in a 1/20° realistically-forced regional configuration of the MITgcm force an _off-equatorial_ deep cycle of turbulence.
+The TIWs force intense vertical shear (∂v/∂z) and deep cycle turbulence in the eastward extension of a TIW’s cold cusp (usually between 3°N and 5°N).
+The enhanced shear results from the rotation or tilting of horizontal vorticity initially generated by horizontal vortex stretching at the equator.
+Indirect observational evidence for this TIW-forced off-equatorial deep cycle is seen in Richardson number profiles from three historical cruise sections through TIWs at 110°W — these show Ri ≈ 0.25 at 4°N or 5°N during times of TIW influence.
+The off-equatorial deep cycle is visible throughout the simulated cold tongue, and expands the region of oceanic heat uptake to outside the zone of EUC influence (approximately 3°S - 3°N).
+These results emphasize the need to observe turbulence variability off the equator.
+* proposal
