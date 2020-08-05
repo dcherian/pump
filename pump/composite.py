@@ -55,6 +55,9 @@ class Composite:
     def __init__(self, comp_dict):
         self.data = comp_dict
 
+    def __repr__(self):
+        return f"Composite of {self.data.keys()!r}"
+
     def __getattr__(self, key):
         return self.data[key]
 
@@ -109,6 +112,19 @@ class Composite:
             tasks.append(self.data[key])
 
         results = dask.compute(*tasks)
+        self.data.update(dict(zip(keys, results)))
+
+    def persist(self, keys=None):
+        if keys is None:
+            keys = self.data.keys()
+        if isinstance(keys, str):
+            keys = [keys]
+
+        tasks = []
+        for key in keys:
+            tasks.append(self.data[key])
+
+        results = dask.persist(*tasks)
         self.data.update(dict(zip(keys, results)))
 
 
@@ -615,8 +631,10 @@ def make_composite(data, interped=None, mean_yref=None, mean_lat=None):
     #    dims=["yref"],
     # )
 
-    attr_to_name = {"mean": "avg_full", "std": "dev"}
-    for attr in ["mean", "std"]:
+    # mapping from operation to field name
+    # this is to avoid clashes with built-in function names
+    attr_to_name = {"mean": "avg_full", "std": "dev", "median": "med"}
+    for attr in attr_to_name:
         computed = vectorized_groupby(
             interped,
             dim="longitude",

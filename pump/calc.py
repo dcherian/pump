@@ -14,6 +14,16 @@ import xfilter
 
 from numba import int64, float32, guvectorize
 
+from . import KPP
+
+
+def ddx(a):
+    return a.differentiate("longitude") / 110e3
+
+
+def ddy(a):
+    return a.differentiate("latitude") / 110e3
+
 
 def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug=False):
     """
@@ -221,24 +231,41 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None):
 
     if "mld" in data and mld is None:
         mld = data.mld
+    elif mld is None:
+        raise ValueError("Please provide mld in dataset or as kwarg")
 
-    dcl_max = data.depth.where(
-        data.Ri.where((data.depth <= mld) & (data.depth > -150)) > 0.5
+    Ric = 0.54
+
+    dcl_max_1 = data.depth.where(
+        data.Ri.where((data.depth <= mld) & (data.depth > -150)) > Ric
     ).max("depth")
 
-    mask_2 = (data.depth <= (mld - 7.5)) & (np.abs(data.Ri - 0.5) < 0.1)
+    mask_2 = (data.depth <= (mld - 25)) & (np.abs(data.Ri - Ric) < 0.1)
     if eucmax is not None:
         mask_2 = mask_2 & (data.depth > eucmax)
     dcl_max_2 = data.Ri.depth.where(mask_2)
     counts = dcl_max_2.count("depth")
     dcl_max_2 = dcl_max_2.fillna(-12345).max("depth")
 
-    maybe_too_shallow = np.abs(dcl_max - mld) < 7.5
-    dcl_max = xr.where(maybe_too_shallow & (counts > 0), dcl_max_2, dcl_max)
+    # cum_Ri = data.Ri.where(mask_2).cumsum("depth") / data.Ri.depth.copy(
+    #    data=np.arange(1, data.sizes["depth"] + 1)
+    # )
+    # dcl_max = data.Ri.depth.where(cum_Ri < Ric).min("depth")
+
+    maybe_too_shallow = np.abs(dcl_max_1 - mld) < 25
+    dcl_max = xr.where(maybe_too_shallow & (counts > 0), dcl_max_2, dcl_max_1)
+
+    mask_3 = (data.depth <= mld) & (data.depth >= dcl_max)
+    if eucmax is not None:
+        mask_3 = mask_3 & (data.depth > eucmax)
+    median_dcl_Ri = data.Ri.where(mask_3).median("depth")
+    median_Ri_too_high = median_dcl_Ri > (Ric + 0.05)
+    dcl_max = dcl_max.where(np.logical_not(median_Ri_too_high), mld)
+    # dcl_max = dcl_max.ffill("time")
 
     dcl_max.attrs["long_name"] = "DCL Base (Ri)"
     dcl_max.attrs["units"] = "m"
-    dcl_max.attrs["description"] = "Deepest depth above EUC where Ri=0.25"
+    dcl_max.attrs["description"] = f"Deepest depth above EUC where Ri={Ric}"
 
     return dcl_max
 
@@ -532,7 +559,6 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
     #     phase_180[1] = phase_180[1] + 70
     #     print(phase_180[1])
 
-
     if longitude == -110:
         print("fixing -110")
         phase_90[1] = phase_90[1] + 18
@@ -585,8 +611,10 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
 
     if len(bad_periods) > 0:
         # print(phase.sel(time=imax))
-        warnings.warn(f"Found periods where SST front is before phase=90: {bad_periods.values}",
-                      UserWarning)
+        warnings.warn(
+            f"Found periods where SST front is before phase=90: {bad_periods.values}",
+            UserWarning,
+        )
         #  IPython; IPython.core.debugger.set_trace()
 
         if debug:
@@ -594,13 +622,13 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
             mean_grad.plot(x="time")
             dcpy.plots.linex(imax)
             axphase = plt.gca().twinx()
-            phase.plot(ax=axphase, color='k')
+            phase.plot(ax=axphase, color="k")
 
         gr = mean_grad.where(period.isin(bad_periods), drop=True)
         fixed = gr.groupby("period").map(fix_phase_using_sst_front, debug=debug)
         phase.loc[fixed.time] = fixed.values
         if debug:
-            phase.plot(ax=axphase, color='r')
+            phase.plot(ax=axphase, color="r")
 
     return xr.merge([phase, period, tiw_ptp]).expand_dims("longitude")
 
@@ -919,3 +947,143 @@ def calc_ptp(sst, period=None, debug=False):
     tiw_ptp.attrs["description"] = "Peak to peak amplitude"
 
     return tiw_ptp
+
+
+def estimate_shear_evolution_terms(ds):
+    f = dcpy.oceans.coriolis(ds.latitude)
+    uz = ds.u.differentiate("depth")
+    vz = ds.v.differentiate("depth")
+
+    #### zonal shear
+    duzdt = xr.Dataset()
+    # duzdt["shear"] = uz
+    duzdt["xadv"] = -ds.u * ddx(uz)
+    duzdt["yadv"] = -ds.v * ddy(uz)
+    duzdt["str"] = uz * ddy(ds.v)
+    duzdt["tilt"] = (f - ddy(ds.u)) * vz
+    duzdt["vtilt"] = (f + ddx(ds.v) - ddy(ds.u)) * vz
+    duzdt["htilt"] = -ddx(ds.v) * vz
+    duzdt = duzdt.isel(longitude=1)
+    duzdt.attrs["description"] = "Zonal shear evolution terms"
+
+    duzdt["xadv"].attrs["term"] = "$-u ∂_xu_z$"
+    duzdt["yadv"].attrs["term"] = "$-v ∂_yu_z$"
+    duzdt["str"].attrs["term"] = "$u_z v_y$"
+    duzdt["tilt"].attrs["term"] = "$(f-u_y) v_z$"
+    duzdt["vtilt"].attrs["term"] = "$ζ v_z$"
+    duzdt["htilt"].attrs["term"] = "$-v_x v_z$"
+
+    #### meridional shear
+    dvzdt = xr.Dataset()
+    # dvzdt["shear"] = vz
+    dvzdt["xadv"] = -ds.u * ddx(vz)
+    dvzdt["yadv"] = -ds.v * ddy(vz)
+    dvzdt["str"] = vz * ddx(ds.u)
+    dvzdt["tilt"] = -(f + ddx(ds.v)) * uz
+    dvzdt["vtilt"] = -(f + ddx(ds.v) - ddy(ds.u)) * uz
+    dvzdt["htilt"] = - ddy(ds.u) * uz
+    dvzdt = dvzdt.isel(longitude=1)
+    dvzdt.attrs["description"] = "Meridional shear evolution terms"
+
+    dvzdt["xadv"].attrs["term"] = "$-u ∂_xv_z$"
+    dvzdt["yadv"].attrs["term"] = "$-v ∂_yv_z$"
+    dvzdt["str"].attrs["term"] = "$v_z u_x$"
+    dvzdt["tilt"].attrs["term"] = "$-(f+v_x) u_z$"
+    dvzdt["vtilt"].attrs["term"] = "$-ζ u_z$"
+    dvzdt["htilt"].attrs["term"] = "$-u_y u_z$"
+
+    for dset in [duzdt, dvzdt]:
+        dset["xadv"].attrs["long_name"] = "zonal adv."
+        dset["yadv"].attrs["long_name"] = "meridional adv."
+        dset["str"].attrs["long_name"] = "stretching"
+        dset["tilt"].attrs["long_name"] = "tilting"
+        dset["vtilt"].attrs["long_name"] = "vvort tilting"
+        dset["htilt"].attrs["long_name"] = "hvort tilting"
+
+    return duzdt, dvzdt
+
+
+def coare_fluxes_jra(ocean, forcing):
+    """
+    Calculates COARE3.5 bulk fluxes using MITgcm output and JRA forcing files.
+    1. ignores rain for now.
+    2. Remember to do forcing['time'] = forcing.time.dt.floor("h") to work around some
+       weird bug.
+    """
+
+    import xcoare
+
+    ocean = ocean.sel(depth=0, method="nearest", drop=True)
+
+    sst = ocean.theta
+
+    # mitgcm values
+    ε = 0.97
+    stefan = 5.67e-8
+    albedo = 0.1
+
+    coare = xcoare.xcoare35(
+        u=np.hypot(forcing.uas, forcing.vas),
+        zu=10,
+        t=forcing.tas - 273.15,  # K to C
+        zt=10,
+        rh=None,
+        zq=10,
+        P=forcing.psl / 100,  # Pa to mbar
+        ts=sst,
+        Rs=forcing.rsds,
+        Rl=forcing.rlds,
+        lat=ocean.latitude,
+        rain=forcing.prra / 1000 * 1000 / 3600,  # kg/m²/s to mm/hour
+        jcool=False,
+        qspec=forcing.huss,
+        albedo=albedo,
+        emissivity=ε,
+    )
+
+    flux = xr.Dataset()
+
+    flux["long"] = -ε * ((stefan * (sst + 273.16) ** 4) - forcing.rlds)
+    flux["short"] = (1 - albedo) * forcing.rsds  # using mitgcm albedo
+    flux["sens"] = -coare.hsb
+    flux["lat"] = -coare.hlb
+    flux["netflux"] = flux.to_array().sum("variable")
+    flux["stress"] = coare["tau"]
+
+    wind_angle = np.arctan2(forcing.vas, forcing.uas)
+    flux["taux"] = coare.tau * np.cos(wind_angle)
+    flux["tauy"] = coare.tau * np.sin(wind_angle)
+    return flux, coare
+
+
+def calc_kpp_hbl(station, debug=False):
+
+    station = station.sel(depth=slice(-500))
+    h = xr.apply_ufunc(
+        KPP.kpp,
+        station.u,
+        station.v,
+        station.theta,
+        station.salt,
+        station.depth,
+        np.arange(0, station.depth[-1] - 2.5, -2.5),
+        station.taux / 1035,
+        station.tauy / 1035,
+        -(station.netflux - station.short) / 1035 / 3999,
+        xr.zeros_like(station.netflux),
+        -station.short / 1035 / 3999,
+        kwargs=dict(
+            COR=0, hbl=12, debug=False, r1=0.62, amu1=0.6, r2=1 - 0.62, amu2=20
+        ),
+        vectorize=True,
+        # dask="allowed",  # too many assert statements to do this!
+        input_core_dims=[["depth"]] * 5 + [["depth2"]] + [[],] * 5,
+        # output_core_dims=[["time"]]
+    )
+
+    if debug:
+        h.plot()
+        # kpp.KPPhbl.plot()
+        station.KPPhbl.plot()
+
+    return h

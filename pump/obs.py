@@ -1,3 +1,4 @@
+import dask
 import dcpy
 
 import numpy as np
@@ -9,7 +10,7 @@ from . import mdjwf
 
 from .constants import *
 
-root = "/glade/p/nsc/ncgd0043/"
+root = "/glade/work/dcherian/pump/"
 
 
 def read_all(domain=None):
@@ -36,8 +37,8 @@ def read_johnson(filename=root + "/obs/johnson-eq-pac-adcp.cdf"):
     )
 
     ds["dens"] += 1000
-    ds["longitude"] -= 360
-    ds["depth"] *= -1
+    ds["longitude"] = ds.longitude - 360
+    ds["depth"] = ds.depth * -1
     ds["depth"].attrs["units"] = "m"
     ds["u"].attrs["units"] = "m/s"
 
@@ -329,7 +330,8 @@ def process_nino34():
 
 def process_oni():
     oni = process_esrl_index("oni.data", skipfooter=8)
-    oni.to_netcdf(root + "/obs/oni.nc")
+    return oni
+    # oni.to_netcdf(root + "/obs/oni.nc")
 
 
 def process_esrl_index(file, skipfooter=3):
@@ -369,21 +371,82 @@ def process_esrl_index(file, skipfooter=3):
     return da.where(da > -90)["index"]
 
 
-def read_jra():
-    files = f"{root}/make_TPOS_MITgcm/JRA_FORCING/combined/JRA55DO_*_*wind.nc"
+def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
+    if files is None:
+        files = f"{root}/make_TPOS_MITgcm/JRA_FORCING/combined/JRA55DO_*[a-z].nc"
 
-    jra = xr.open_mfdataset(files, combine="by_coords", decode_times=False).rename(
-        {"lat": "latitude", "lon": "longitude"}
-    )
+    jra = xr.open_mfdataset(
+        files, combine="by_coords", decode_times=False, chunks=chunks, parallel=True
+    ).rename({"lat": "latitude", "lon": "longitude"})
 
-    jra["time"] = jra.time - jra.time[0]
-    jra.time.attrs["units"] = "days since 1995-09-01"
+    if correct_time:
+        jra["time"] = jra.time - jra.time[0]
+        jra.time.attrs["units"] = "days since 1995-09-01"
 
-    jra["longitude"] -= 360
+    else:
+        jra.time.attrs["units"] = "days since 1900-01-01"
 
-    jra = jra.sel(longitude=slice(-170, -95))
+    jra["longitude"] = jra.longitude - 360
+
+    jra = jra.sel(longitude=slice(-170, -95), latitude=slice(-12, 12))
 
     return xr.decode_cf(jra)
+
+
+def read_jra_20():
+
+    jradir = "/glade/campaign/cgd/oce/people/bachman/make_TPOS_MITgcm/1_20_1999-2018/JRA_FORCING"
+
+    jrafull = xr.concat(
+        [
+            read_jra(
+                [
+                    f"{jradir}/1999/JRA55DO_1.3_Tair_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Uwind_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Qair_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Vwind_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_Pair_1999.nc",
+                ],
+                chunks={"time": 1200},
+            ),
+            # pump.obs.read_jra(f"{jradir}/200[0-1]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
+        ],
+        dim="time",
+    )
+
+    jrafull2 = xr.concat(
+        [
+            read_jra(
+                [
+                    f"{jradir}/1999/JRA55DO_1.3_rain_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_lwrad_down_1999.nc",
+                    f"{jradir}/1999/JRA55DO_1.3_swrad_1999.nc",
+                ],
+                chunks={"time": 1200},
+            ),
+            # pump.obs.read_jra(f"{jradir}/200[0-1]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
+        ],
+        dim="time",
+    )
+    jrafull2["time"] = jrafull2.time - pd.Timedelta("1.5h")
+
+    jrafull = jrafull.merge(jrafull2)
+    jrafull["time"] = jrafull.time - pd.Timedelta("7h")
+
+    return jrafull
+
+
+def interp_jra_to_station(jrafull, station):
+    jra = jrafull.interp(
+        longitude=station.longitude.values, latitude=station.latitude.values
+    ).sel(time=slice(station.time[0].values, station.time[-1].values))
+
+    for var in jra.variables:
+        if isinstance(jra[var].data, dask.array.Array):
+            jra[var] = jra[var].copy(data=jra[var].data.map_blocks(np.copy))
+
+    jrai = jra.compute().interpolate_na("time").interp(time=station.time)
+    return jrai
 
 
 def read_drifters(kind="annual"):
