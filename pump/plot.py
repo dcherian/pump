@@ -8,6 +8,35 @@ import pandas as pd
 import xarray as xr
 
 from .calc import get_dcl_base_Ri, get_mld
+import xarray
+
+
+@xarray.plot.dataset_plot._dsplot
+def quiver(ds, x, y, ax, u, v, **kwargs):
+    from xarray import broadcast
+
+    if x is None or y is None or u is None or v is None:
+        raise ValueError("Must specify x, y, u, v for quiver plots.")
+
+    # matplotlib autoscaling algorithm
+    scale = kwargs.pop("scale", None)
+    if scale is None:
+        npts = ds.dims[x] * ds.dims[y]
+        # crude auto-scaling
+        # scale is typical arrow length as a multiple of the arrow width
+        scale = (
+            1.8 * ds.to_array().median().values * np.maximum(10, np.sqrt(npts))
+        )  # / span
+
+    ds = ds.squeeze()
+    x, y, u, v = broadcast(ds[x], ds[y], ds[u], ds[v])
+
+    kwargs.pop("cmap_params")
+    kwargs.pop("hue")
+    kwargs.pop("hue_style")
+    hdl = ax.quiver(x.values, y.values, u.values, v.values, scale=scale, **kwargs)
+
+    return hdl
 
 
 def plot_depths(ds, ax=None, **kwargs):
