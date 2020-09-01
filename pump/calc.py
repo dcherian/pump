@@ -1093,7 +1093,9 @@ def coare_fluxes_jra(ocean, forcing):
     return flux, coare
 
 
-def calc_kpp_hbl(station, debug=False):
+def calc_kpp_terms(station, debug=False):
+
+    from . import KPP
 
     station = station.sel(depth=slice(-500))
     h = xr.apply_ufunc(
@@ -1108,19 +1110,103 @@ def calc_kpp_hbl(station, debug=False):
         station.tauy / 1035,
         -(station.netflux - station.short) / 1035 / 3999,
         xr.zeros_like(station.netflux),
-        -station.short / 1035 / 3999,
+        -np.abs(station.short.fillna(0)) / 1035 / 3999,
         kwargs=dict(
-            COR=0, hbl=12, debug=False, r1=0.62, amu1=0.6, r2=1 - 0.62, amu2=20
+            COR=0,
+            hbl=12,
+            debug=debug,
+            r1=0.62,
+            amu1=0.6,
+            r2=1 - 0.62,
+            amu2=20,
+            rho0=1035,
         ),
         vectorize=True,
-        # dask="allowed",  # too many assert statements to do this!
+        dask="parallelized",  # too many assert statements to do this!
         input_core_dims=[["depth"]] * 5 + [["depth2"]] + [[],] * 5,
-        # output_core_dims=[["time"]]
+        output_core_dims=[["variable", "depth"]],
+        output_dtypes=[np.float32],
+        output_sizes={"variable": 10},
     )
 
+    h = h.assign_coords(
+        variable=[
+            "hbl",
+            "hekman",
+            "hmonob",
+            "hunlimit",
+            "Rib",
+            "db",
+            "dV2",
+            "dVt2",
+            "KT",
+            "KM",
+        ]
+    ).to_dataset(dim="variable")
+    for var in ["hbl", "hmonob", "hekman", "hunlimit"]:
+        h[var] = h[var].isel(depth=0, drop=True)
+        h[var].attrs["units"] = "m"
+
+    h.hbl.attrs["long_name"] = "KPP boundary layer depth"
+    h.hmonob.attrs["long_name"] = "Monin Obukhov length scale"
+    h.hekman.attrs["long_name"] = "Ekman depth"
+    h.hunlimit.attrs[
+        "long_name"
+    ] = "KPP boundary layer depth before limiting to min(hekman, hmonob) under stable forcing"
+
+    h.Rib.attrs["long_name"] = "KPP bulk Ri"
+    h.db.attrs["long_name"] = "KPP bulk Ri Δb"
+    h.dV2.attrs["long_name"] = "KPP bulk Ri ΔV^2 (resolved)"
+    h.dVt2.attrs["long_name"] = "KPP bulk Ri ΔV_t^2 (unresolved)"
     if debug:
-        h.plot()
+        h.hbl.plot()
         # kpp.KPPhbl.plot()
         station.KPPhbl.plot()
 
     return h
+
+
+def vorticity(period4):
+
+    assert period4.sizes["longitude"] == 3
+
+    vort = xr.Dataset()
+    vort["x"] = ddy(period4.w) - period4.v.differentiate("depth")
+    vort["y"] = period4.u.differentiate("depth") - ddx(period4.w)
+    vort["z"] = ddx(period4.v) - ddy(period4.u)
+    vort["vx"] = ddx(period4.v)
+    vort["uy"] = ddy(period4.u)
+    vort = vort.isel(longitude=1).load()
+    vort["f"] = dcpy.oceans.coriolis(period4.latitude)
+
+    return vort
+
+
+def get_euc_bounds(usub, debug=False):
+    ucore = usub.sel(latitude=slice(-2, 2))
+    idx = usub.where(ucore > 0).reindex_like(usub).argmax(["depth", "latitude"])
+
+    idx = dict(zip([k for k in idx.keys()], *dask.compute(v for v in idx.values())))
+    dsub = idx["depth"].reindex_like(usub)
+    lsub = idx["latitude"].reindex_like(usub)
+
+    y0 = usub.latitude[lsub]
+
+    up = usub.isel(depth=dsub).where(usub.latitude > usub.latitude[lsub])
+    yp = (
+        up.sel(latitude=slice(-4, 4)) < usub.isel(depth=dsub, latitude=lsub) / 3
+    ).idxmax("latitude")
+    um = usub.isel(depth=dsub).where(usub.latitude < usub.latitude[lsub])
+    ym = (
+        um.sel(latitude=slice(-4, 4)).isel(latitude=slice(None, None, -1))
+        < usub.isel(depth=dsub, latitude=lsub) / 3
+    ).idxmax("latitude")
+
+    if debug:
+        up.squeeze().plot()
+        dcpy.plots.linex(yp.squeeze().compute())
+
+        um.squeeze().plot()
+        dcpy.plots.linex(ym.squeeze().compute())
+
+    return xr.Dataset({"yp": yp, "y0": y0, "ym": ym})

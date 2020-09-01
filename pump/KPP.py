@@ -9,9 +9,31 @@ def xkpp(*args):
     return xr.apply_ufunc(kpp, *args)
 
 
-def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10, r1=0.67, amu1=1.0, r2=0.33, amu2=17.0, imod=0, sigma=None, rho0=1030, debug=False):
+def kpp(
+    U,
+    V,
+    T,
+    S,
+    ZZ,
+    ZP,
+    WUSURF,
+    WVSURF,
+    WTSURF,
+    WSSURF,
+    SWRD,
+    COR=0,
+    hbl=10,
+    r1=0.67,
+    amu1=1.0,
+    r2=0.33,
+    amu2=17.0,
+    imod=0,
+    sigma=None,
+    rho0=1030,
+    debug=False,
+):
 
-    #USAGE:  [KM KT KS ghatu ghatv ghatt ghats hbl D] = kpp(U,V,T,S,ZZ,ZP,WUSURF,WVSURF,WTSURF,WSSURF,SWRD,COR,hbl,r1,amu1,r2,amu2,imod)
+    # USAGE:  [KM KT KS ghatu ghatv ghatt ghats hbl D] = kpp(U,V,T,S,ZZ,ZP,WUSURF,WVSURF,WTSURF,WSSURF,SWRD,COR,hbl,r1,amu1,r2,amu2,imod)
     #
     #   Subroutine to implement the KPP turbulence closure for use in 1d models
     #   of the upper ocean. The method is described in Smyth et al. (2002).
@@ -78,7 +100,7 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
     ##   ML depth
     # compute sigma-t from T and S
     if sigma is None:
-        sigma = sigmat(S, T)# MKS units
+        sigma = sigmat(S, T)  # MKS units
     else:
         print("using given sigma")
     # sig0 = (sigma[0] + sigma[1]) / 2 + .01
@@ -92,59 +114,54 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
 
     ## KPP model constants
     KB = len(U) - 1
-    KBM1 = KB - 1; # print KBM1
+    KBM1 = KB - 1
+    # print KBM1
 
     # Numerical constants used in similarity flux-profiles; LMD page 392
     # am,as,cm,cs are determined by continuity
-
     zetas = -1.0
     zetam = -0.2
-    cs = 24. * (1. - 16. * zetas) ** (.50)
-    cm = 12. * (1. - 16. * zetam) ** (-.25)
-    _as = cs * zetas + (1. - 16. * zetas) ** (1.50)
-    am = cm * zetam + (1. - 16. * zetam) ** (.75)
+    cs = 24.0 * (1.0 - 16.0 * zetas) ** (0.50)
+    cm = 12.0 * (1.0 - 16.0 * zetam) ** (-0.25)
+    _as = cs * zetas + (1.0 - 16.0 * zetas) ** (1.50)
+    am = cm * zetam + (1.0 - 16.0 * zetam) ** (0.75)
 
     # print(cs, cm, _as, am)
 
-    vonKar = 0.4# Von Karman constant
-    tiny = 1e-20# numerical constant to avoid devide by zero
-    gravity = 9.81# accleration due to gravity in m/s^2
+    vonKar = 0.4  # Von Karman constant
+    tiny = 1e-20  # numerical constant to avoid devide by zero
+    gravity = 9.81  # accleration due to gravity in m/s^2
 
     # Constants used in defining BL depth
-    Cv = 1.5# LMD
-    if imod == 2:# SSCW
+    Cv = 1.5  # LMD
+    if imod == 2:  # SSCW
         Cv = 1.0
 
-
-    Ric = 0.30#LMD p. 377
+    Ric = 0.30  # LMD p. 377
     # D.Cv = Cv
     # D.Ric = Ric; # print # D.Ric
-
 
     betaT = -0.20
     epsilon = 0.1
     hbl_max = 200
 
-
     # Constants used in Ri parameterization of deep turbulence (LMD 28, 29, p. 373)
     Ri0 = 0.7
-    anu0 = 50.e-4
+    anu0 = 50.0e-4
     anum = 1.0e-4  # background viscosity
     anut = 1e-6  # background diffusivity
-
-
 
     # Constants used in nonlocal fluxes (LMD p. 371).
     # In LMD, Cg_m=0. Cg_s=10 (Just someone else's guess.)
 
-    C_s = 10.# LMD
-    C_m = 0.0# LMD
-    if imod == 2:# SSCW
+    C_s = 10.0  # LMD
+    C_m = 0.0  # LMD
+    if imod == 2:  # SSCW
         C_s = 5.0
         C_m = 3.0
 
-    Cg_s = C_s * vonKar * (cs * vonKar * epsilon) ** (1 / 3.)
-    Cg_m = C_m * vonKar * (cm * vonKar * epsilon) ** (1 / 3.)
+    Cg_s = C_s * vonKar * (cs * vonKar * epsilon) ** (1 / 3.0)
+    Cg_m = C_m * vonKar * (cm * vonKar * epsilon) ** (1 / 3.0)
 
     if imod == 0:
         Cg_s = 10
@@ -160,42 +177,39 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
 
     Cg_Stokes = 0
     if imod == 1:
-        Cg_Stokes = 11.5 * .4
+        Cg_Stokes = 11.5 * 0.4
 
     if imod == 2:
-        Cg_Stokes = 11.5 * .4 * .7
+        Cg_Stokes = 11.5 * 0.4 * 0.7
 
-    Lam_Stokes = 30.
-    m_Stokes = 4. * pi / Lam_Stokes
+    Lam_Stokes = 30.0
+    m_Stokes = 4.0 * pi / Lam_Stokes
     # D.Cg_Stokes = Cg_Stokes
     # D.Lam_Stokes = Lam_Stokes; # print # D.Lam_Stokes
     # D.m_Stokes = m_Stokes
 
-
     # Constants for Langmuir cell parameterization.
     # In MS00, Cw_m=Cw_s=0.08. In LMD, Cw_m=Cw_s=0.
-    La = .3
+    La = 0.3
     nms = 2
     xce = 2
     # D.La = La
     # D.nms = nms; # print # D.nms
     # D.xce = xce
 
-
-    Cw_m = 0# LMD
-    if imod == 1:# MS
+    Cw_m = 0  # LMD
+    if imod == 1:  # MS
         Cw_m = 0.08
 
-    if imod == 2:# SSCW
-        Cw_m = .15
+    if imod == 2:  # SSCW
+        Cw_m = 0.15
 
     Cw_s = Cw_m
     # D.Cw_m = Cw_m
     # D.Cw_s = Cw_s; # print # D.Cw_s
 
-
-    #...Roughness len z0<=0
-    z0 = -2. * .5 * 0
+    # ...Roughness len z0<=0
+    z0 = -2.0 * 0.5 * 0
     # D.z0 = z0
 
     ## initial constants
@@ -222,18 +236,21 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
     beta = eos.beta(S[0], T[0], 0)
     BoNet = gravity * (alpha * WTSURF - beta * WSSURF)
     BoSol = gravity * alpha * SWRD
-    assert BoSol <= 0
-    if debug:
-        print(f"Net sfc buoyancy flux (without shortwave) : {BoNet:.2e} m²/s³, Shortwave buoyancy flux: {BoSol:.2e} m²/s³")
 
+    assert BoSol <= 0
+
+    if debug:
+        print(
+            f"Net sfc buoyancy flux (without shortwave) : {BoNet:.2e} m²/s³, Shortwave buoyancy flux: {BoSol:.2e} m²/s³"
+        )
 
     ## Ri, Interior KM, KS
 
-    #...
-    #.....Compute diffusivities based on local gradient Ri:
-    #.....First Compute Ri and bvf2
-    #.....Compute gradient Richardson number Rig (uniform grid is assumed)
-    #.....If a staggered grid is used, bvf2,dudz,dvdz and Rig are computed on ZP.
+    # ...
+    # .....Compute diffusivities based on local gradient Ri:
+    # .....First Compute Ri and bvf2
+    # .....Compute gradient Richardson number Rig (uniform grid is assumed)
+    # .....If a staggered grid is used, bvf2,dudz,dvdz and Rig are computed on ZP.
     bvf2 = 0 * T
     dudz = 0 * U
     dvdz = 0 * V
@@ -244,7 +261,8 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
         dvdz[1:] = np.diff(V) / np.diff(ZZ)
         bvf2[0] = bvf2[1]
         dudz[0] = dudz[1]
-        dvdz[0] = dvdz[1]; # print dvdz
+        dvdz[0] = dvdz[1]
+        # print dvdz
 
     else:
 
@@ -292,83 +310,110 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
     # This iteration scheme doesn't work well
     sl_depth0 = epsilon * hbl
     niter = 0
-    kbl = find(-ZP > hbl, 1, 'first')
+    kbl = find(-ZP > hbl, 1, "first")
 
     maxiter = 10
     Rib = np.zeros_like(U)
+    dVt2 = np.zeros_like(U)
+    dV2 = np.zeros_like(U)
+    bvtop = np.zeros_like(U)
     while niter < maxiter:
         niter = niter + 1
 
-        sl_depth = .5 * (epsilon * hbl + sl_depth0)#update sl_depth based on input value of hbl
+        sl_depth = 0.5 * (
+            epsilon * hbl + sl_depth0
+        )  # update sl_depth based on input value of hbl
 
         # mean values in surface layer ZZ<-sl_depth
         ksl = find(-ZZ > sl_depth, 1)
         if debug:
             print(f"kbl={kbl}, ksl={ksl}")
-        Z_top = mean(ZZ[0:ksl+1])
-        U_top = mean(U[0:ksl+1])
-        V_top = mean(V[0:ksl+1])
-        T_top = mean(T[0:ksl+1])
-        S_top = mean(S[0:ksl+1])
-        SIG_top = mean(sigma[0:ksl+1])# MKS
+        Z_top = mean(ZZ[0 : ksl + 1])
+        U_top = mean(U[0 : ksl + 1])
+        V_top = mean(V[0 : ksl + 1])
+        T_top = mean(T[0 : ksl + 1])
+        S_top = mean(S[0 : ksl + 1])
+        SIG_top = mean(sigma[0 : ksl + 1])  # MKS
 
         if debug:
-            print(f"\n\n surface layer: T={T_top:.3f}, S={S_top:.3f}, σ={SIG_top:.3f}, Z={Z_top:.3f}, U={U_top:.3f}, V={V_top:.3f}")
+            print(
+                f"\n\n surface layer: T={T_top:.3f}, S={S_top:.3f}, σ={SIG_top:.3f}, Z={Z_top:.3f}, U={U_top:.3f}, V={V_top:.3f}"
+            )
 
         for k in range(ksl, KBM1 + 1):
-            #.....Compute Solar flux Penetration
+            # .....Compute Solar flux Penetration
             swrdzz = r1 * exp(ZZ[k] / amu1) + r2 * exp(ZZ[k] / amu2)
-            #.....Compute buoyancy flux at a "k" depth level
-            #.....Bfsfc = surface buoyancy flux m^2/s^3
-            #.....Bfsfc<0: stable forcing;
-            #.....Bfsfc>0: unstable forcing.
+            # .....Compute buoyancy flux at a "k" depth level
+            # .....Bfsfc = surface buoyancy flux m^2/s^3
+            # .....Bfsfc<0: stable forcing;
+            # .....Bfsfc>0: unstable forcing.
             Bfsfc = BoNet + BoSol * (1.0 - swrdzz)
             #
             #    Convective velocity scale
             #
-            wstar = 0.
-            if Bfsfc > 0.:
-                wstar = (Bfsfc * hbl) ** (1. / 3.)
+            wstar = 0.0
+            if Bfsfc > 0.0:
+                wstar = (Bfsfc * hbl) ** (1.0 / 3.0)
 
             # langmuir cells as function of stability (eqn 13, C_w)
-            stab_lc = (ustar3 / (ustar3 + 0.6 * wstar ** 3)) ** xce
-            #......
-            #.....Define the (non-)dimensional vertical co-ordinate, ---zlmd
-            #.................................identical to gamma (sigma?) in LMD
-            #.................................but not normalized
-            #......Note: sl_depth is positive and ZZ[k] is negative;
-            #.....
-            #.....Compute scales of turbulent velocity based on similarity theory.
-            #.....w_m for momentum, and w_s for scalars
+            stab_lc = (ustar3 / (ustar3 + 0.6 * wstar ** 3 + tiny)) ** xce
+            # ......
+            # .....Define the (non-)dimensional vertical co-ordinate, ---zlmd
+            # .................................identical to gamma (sigma?) in LMD
+            # .................................but not normalized
+            # ......Note: sl_depth is positive and ZZ[k] is negative;
+            # .....
+            # .....Compute scales of turbulent velocity based on similarity theory.
+            # .....w_m for momentum, and w_s for scalars
             assert sl_depth > 0
             assert ZZ[k] < 0
 
             # depth scaled by monin obukhov scale?
             zeta = vonKar * np.maximum(ZZ[k], -sl_depth) * Bfsfc / (ustar3 + tiny)
             phis = phi_s(zeta, zetas, _as, cs)
-            w_s = vonKar * ustar / phis * (1. + stab_lc * Cw_s / La ** (2 * nms)) ** (1. / nms)
+            w_s = (
+                vonKar
+                * ustar
+                / phis
+                * (1.0 + stab_lc * Cw_s / La ** (2 * nms)) ** (1.0 / nms)
+            )
 
-            #.....
-            #.....Compute the Bulk Ri: Rib.....................................
-            #.....Also compute boundary layer depth, hbl, at which Rib=Ric
+            # .....
+            # .....Compute the Bulk Ri: Rib.....................................
+            # .....Also compute boundary layer depth, hbl, at which Rib=Ric
             delU = U_top - U[k]
             delV = V_top - V[k]
-            bvtop = -(gravity / rho0) * (SIG_top - sigma[k]) * (Z_top - ZZ[k])
-            dV2 = delU * delU + delV * delV
-            bvf2_1 = -(gravity / rho0) * (sigma[k-1] - sigma[k + 1]) / (ZZ[k-1] - ZZ[k + 1])    # STAGGERED? BS
-            dVt2 = Vtc * (-ZZ[k]) * w_s * sqrt(abs(bvf2_1))
-            Rib[k] = bvtop / (dV2 + dVt2 + tiny)
+            bvtop[k] = -(gravity / rho0) * (SIG_top - sigma[k]) * (Z_top - ZZ[k])
+            dV2[k] = delU * delU + delV * delV
+            bvf2_1 = (
+                -(gravity / rho0)
+                * (sigma[k - 1] - sigma[k + 1])
+                / (ZZ[k - 1] - ZZ[k + 1])
+            )  # STAGGERED? BS
+            dVt2[k] = Vtc * (-ZZ[k]) * w_s * sqrt(abs(bvf2_1))
+
+        Rib = bvtop / (dV2 + dVt2 + tiny)
 
         if debug:
             print(f"dV2 = {dV2}, dVt2 = {dVt2}")
         Rib[KB] = Rib[KBM1]
         # Rib = Rib.cT; # print Rib
 
+        idxt = find(Rib >= Ric, 1, "first")
+        # idxb = find(Rib < Ric, 1, "last")
+        idxb = idxt-1
+        hblt = -ZZ[idxt]
+        hblb = -ZZ[idxb]
 
-        hblt = -ZZ[find(Rib >= Ric, 1, 'first')]
-        hblb = -ZZ[find(Rib < Ric, 1, 'last')]
+        newh = -ZZ[idxt] - np.abs(hblt - hblb) / np.abs(Rib[idxt] - Rib[idxb]) * np.abs(
+            Ric - Rib[idxt]
+        )
+
         if debug:
-            print(f"hbl_top = {hblt}, hbl_bottom = {hblb}")
+            print(
+                f"{Rib[idxt]:.2f} at hbl_top = {hblt}, {Rib[idxb]:.2f} at hbl_bottom = {hblb}, 0.3 at {newh:.2f}"
+            )
+
         if hblb > 0 and hblt > 0:
             hbl = (hblb + hblt) / 2
         elif hblt:
@@ -376,62 +421,63 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
         elif hblb:
             hbl = hblb
 
+        hbl = newh
+        # ....Compute other surface layer depths; Ekman and M-O, and
+        # ....compare with hbl, and get a reasonable mixed layer depth.
+        # ....During stable conditions, Bfsfc<0, hbl<hmonob
 
-        #....Compute other surface layer depths; Ekman and M-O, and
-        #....compare with hbl, and get a reasonable mixed layer depth.
-        #....During stable conditions, Bfsfc<0, hbl<hmonob
-
-        #.....Compute Bfsfc at hbl
-        assert hbl > 0
+        # .....Compute Bfsfc at hbl
+        assert hbl >= 0
         swrdhbl = r1 * exp(-hbl / amu1) + r2 * exp(-hbl / amu2)
         Bfsfc = BoNet + BoSol * (1.0 - swrdhbl)
 
-        #.....Compare with other len scales
+        hunlimit = hbl
+        # .....Compare with other len scales
         cekman = 0.7
         cmonob = 1.0
-        if Bfsfc < 0: # and False:
+        if Bfsfc < 0:  # and False:
             if debug:
                 print(f"ustar = {ustar:1.3e} m/s")
             hekman = cekman * ustar / np.maximum(abs(COR), tiny)
-            hmonob = cmonob * ustar3 / (vonKar * (-Bfsfc - tiny))    #!!!
+            hmonob = cmonob * ustar3 / (vonKar * (-Bfsfc - tiny))  #!!!
             hlimit = np.minimum(hekman, hmonob)
             if debug:
                 print(f"--- hekman: {hekman:.2f}, monin-obukhov: {hmonob:.2f}")
                 print(f"--- hbl before limiting: {hbl:.2f}")
             hbl = np.minimum(hbl, hlimit)
-            hbl = np.maximum(hbl, abs(ZZ[0]))    #minimum bl depth
+            hbl = np.maximum(hbl, abs(ZZ[0]))  # minimum bl depth
             hbl = np.minimum(hbl, abs(ZZ[KB]))
 
             if debug:
                 print(f"--- hbl after limiting: {hbl:.2f}")
+        else:
+            hekman = np.nan
+            hmonob = np.nan
 
-
-        #.....Set new boundary layer index kbl just below the hbl
+        # .....Set new boundary layer index kbl just below the hbl
         if not hbl:
             hbl = 1
 
-        kbl = find(-ZP > hbl, 1, 'first')
+        kbl = find(-ZP > hbl, 1, "first")
         sl_depth0 = sl_depth
 
-        if abs(sl_depth - epsilon * hbl) < .25:
+        if abs(sl_depth - epsilon * hbl) < 0.25:
             break
 
-    
     # Evaluate various quantities at the "final" boundary layer base.
-
     swrdhbl = r1 * exp(-abs(hbl) / amu1) + r2 * exp(-abs(hbl) / amu2)
-    Bfsfc = BoNet + BoSol * (1.0 - swrdhbl)# Net heat flux into the boundary layer
+    Bfsfc = BoNet + BoSol * (1.0 - swrdhbl)  # Net heat flux into the boundary layer
 
     # Convective velocity scale
-    wstar = 0.
+    wstar = 0.0
     if Bfsfc > 0:
         wstar = (Bfsfc * hbl) ** (1 / 3)
 
     stab_lc = (ustar3 / (ustar3 + 0.6 * wstar ** 3)) ** xce
 
     # Compute turbulent velocity scales (w_m,w_s) at hbl
-    #hw:  for stable heat flux; zlmd=hbl;
-    #hw:  for unstable heat flux: zlmd=epsilon*hbl
+    # hw:  for stable heat flux; zlmd=hbl;
+    # hw:  for unstable heat flux: zlmd=epsilon*hbl
 
     if Bfsfc >= 0:
         zlmd = hbl * epsilon
@@ -440,73 +486,81 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
 
     zetapar = -vonKar * zlmd * Bfsfc / (ustar3 + tiny)
     phim = phi_m(zetapar, zetam, am, cm)
-    w_m = vonKar * ustar / phim * (1. + stab_lc * Cw_m / La ** (2 * nms)) ** (1. / nms)
+    w_m = (
+        vonKar * ustar / phim * (1.0 + stab_lc * Cw_m / La ** (2 * nms)) ** (1.0 / nms)
+    )
     phis = phi_s(zetapar, zetas, _as, cs)
-    w_s = vonKar * ustar / phis * (1. + stab_lc * Cw_s / La ** (2 * nms)) ** (1. / nms)
+    w_s = (
+        vonKar * ustar / phis * (1.0 + stab_lc * Cw_s / La ** (2 * nms)) ** (1.0 / nms)
+    )
 
     ### if hbl is too deep, output diagnostics and quit
     if hbl > hbl_max or debug:
         import matplotlib.pyplot as plt
+
         f, ax = plt.subplots(1, 4, sharey=True, constrained_layout=True)
-        ax=ax.flat
+        ax = ax.flat
 
         ax[0].plot(U, ZZ, V, ZZ)
         ax[0].set_ylim([-120, 0])
-        ax[0].legend(('U', 'V'))
-        ax[0].set_ylabel('Z')
+        ax[0].legend(("U", "V"))
+        ax[0].set_ylabel("Z")
 
         ax[1].plot(bvf2, ZZ, shear2, ZZ)
         ax[1].set_ylim([-120, 0])
-        ax[1].legend(('bvf2', 'shear2'))
-        ax[1].set_ylabel('Z')
+        ax[1].legend(("bvf2", "shear2"))
+        ax[1].set_ylabel("Z")
 
         ax[2].semilogx(Rig, ZZ)
         ax[2].semilogx(Rib, ZZ)
-        ax[2].legend(('Ri_g', "Ri_b"))
+        ax[2].legend(("Ri_g", "Ri_b"))
         ax[2].axvline(Ri0, color="k", lw=0.5, ls="--")
         ax[2].axvline(Ric, color="k", lw=0.5, ls="--")
         ax[2].set_xlim((0.1, None))
 
-        ax[3].semilogx(KM, ZZ, 'b', lw=2)
-        ax[3].semilogx(KH, ZZ, 'r', lw=2)
+        ax[3].semilogx(KM, ZZ, "b", lw=2)
+        ax[3].semilogx(KH, ZZ, "r", lw=2)
         ax[3].set_xlim([1e-6, 1e-1])
-        ax[3].legend(('KM', 'KH'))
-
+        ax[3].legend(("KM", "KH"))
 
         KM0 = KM
         KH0 = KH
         if hbl > hbl_max:
-            raise ValueError(f"hbl = {hbl} > hbl_max = {hbl_max}. Try limiting vertical extent of profile")
-
+            raise ValueError(
+                f"hbl = {hbl} > hbl_max = {hbl_max}. Try limiting vertical extent of profile"
+            )
 
     ## Shape functions and derivatives at hbl
     # Compute diffusivities and derivatives for later use in the nondimensional
     #  shape function. See LMD equation (18) and accompanying text.
     if Bfsfc >= 0:
-        f1 = 0.
+        f1 = 0.0
     else:
         f1 = -5.0 * Bfsfc * vonKar / (ustar4 + tiny)
-
 
     # Interpolate Km, Ks among grid points surrounding hbl, compute G and derivative
     # See LMD equations (D5a,b) and accompanying text.
     if hbl < abs(ZZ[KBM1]):
         k = kbl
-        cff_up = (-hbl - ZP[k]) / ((ZP[k-1] - ZP[k]) * (ZP[k-1] - ZP[k]))
-        cff_dn = (hbl + ZP[k-1]) / ((ZP[k-1] - ZP[k]) * (ZP[k] - ZP[k + 1]))
-        #.......
-        #......Momentum
-        KMp = cff_up * np.maximum(0.0, KM[k-1] - KM[k]) + cff_dn * np.maximum(0.0, KM[k] - KM[k + 1])
+        cff_up = (-hbl - ZP[k]) / ((ZP[k - 1] - ZP[k]) * (ZP[k - 1] - ZP[k]))
+        cff_dn = (hbl + ZP[k - 1]) / ((ZP[k - 1] - ZP[k]) * (ZP[k] - ZP[k + 1]))
+        # .......
+        # ......Momentum
+        KMp = cff_up * np.maximum(0.0, KM[k - 1] - KM[k]) + cff_dn * np.maximum(
+            0.0, KM[k] - KM[k + 1]
+        )
         KMh = KM[k] + KMp * (-ZP[k] - hbl)
         Gm1 = KMh / (hbl * w_m + tiny)
         dGm1ds = np.minimum(0.0, KMh * f1 - KMp / (w_m + tiny))
         # Scalar fields (assume same shape function for salinity and temperature)
-        KHp = cff_up * np.maximum(0.0, KH[k-1] - KH[k]) + cff_dn * np.maximum(0.0, KH[k] - KH[k + 1])
+        KHp = cff_up * np.maximum(0.0, KH[k - 1] - KH[k]) + cff_dn * np.maximum(
+            0.0, KH[k] - KH[k + 1]
+        )
         KHh = KH[k] + KHp * (-ZP[k] - hbl)
         Gt1 = KHh / (hbl * w_s + tiny)
         dGt1ds = np.minimum(0.0, KHh * f1 - KHp / (w_s + tiny))
     else:
-        raise ValueError('KPP failed to find hbl')
+        raise ValueError("KPP failed to find hbl")
 
     # Note: The modified diffusivity (LMD's equation D6) is not applied in this
     # version.
@@ -514,7 +568,7 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
     ## mixing coefficients and nonlocal fluxes within the boundary layer.
 
     #   Bulk differentials
-    kbl = np.minimum(kbl, len(U)) #KLUGE
+    kbl = np.minimum(kbl, len(U))  # KLUGE
     delU = U_top - U[kbl]
     delV = V_top - V[kbl]
     delT = T_top - T[kbl]
@@ -530,7 +584,7 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
     #   momentum flux. Frech & Mahrt (1995) say stab_nlm=1.0+wstar/ustar;
     #   Brown & Grant (1998) say stab_nlm=2.7*wstar**3/(ustar3+0.6*wstar**3).
     #       stab_nlm=1.0+wstar/ustar
-    stab_nlm = 2.7 * wstar ** 3 / (ustar3 + 0.6 * wstar ** 3)
+    stab_nlm = 2.7 * wstar ** 3 / (ustar3 + 0.6 * wstar ** 3 + tiny)
 
     # Compute mixing coefficients and nonlocal fluxes within the boundary layer.
     ghatu = 0 * U
@@ -557,15 +611,15 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
             zeta0 = -vonKar * abs(z0) * Bfsfc / (ustar3 + tiny)
             phim = phi_m(zeta0, zetam, am, cm)
             phim = phi_s(zeta, zetas, _as, cs)
-            phim = phim * abs(ZP[k] / z0) / 100.
-            phis = phis * abs(ZP[k] / z0) / 100.
+            phim = phim * abs(ZP[k] / z0) / 100.0
+            phis = phis * abs(ZP[k] / z0) / 100.0
 
         w_m = vonKar * ustar / phim
         w_s = vonKar * ustar / phis
 
         #  Add McWilliams&Sullivan LC parameterization only in stable conditions.
-        w_m = w_m * (1. + stab_lc * Cw_m / La ** (2 * nms)) ** (1. / nms)
-        w_s = w_s * (1. + stab_lc * Cw_s / La ** (2 * nms)) ** (1. / nms)
+        w_m = w_m * (1.0 + stab_lc * Cw_m / La ** (2 * nms)) ** (1.0 / nms)
+        w_s = w_s * (1.0 + stab_lc * Cw_s / La ** (2 * nms)) ** (1.0 / nms)
 
         # Shape functions LMD (11) with a0=0, a1=1 as per discussion on p. 370,371
         sigx = -ZP[k] / (hbl + tiny)
@@ -589,23 +643,41 @@ def kpp(U, V, T, S, ZZ, ZP, WUSURF, WVSURF, WTSURF, WSSURF, SWRD, COR=0, hbl=10,
             ghatt[k] = WTSURF * Cg_s / (w_s * hbl + tiny)
             ghats[k] = WSSURF * Cg_s / (w_s * hbl + tiny)
         else:
-            ghatt[k] = 0.
-            ghats[k] = 0.
+            ghatt[k] = 0.0
+            ghats[k] = 0.0
 
         ghatu[k] = -Cg_m * ustar2 * stab_nlm * dvec_x / (w_m * hbl + tiny)
         ghatv[k] = -Cg_m * ustar2 * stab_nlm * dvec_y / (w_m * hbl + tiny)
 
         #  Add the shear of the Stokes drift to the nonlocal term
-        ghatu[k] = ghatu[k] - (-WUSURF / (ustar2 + tiny)) * Cg_Stokes * ustar * m_Stokes * exp(m_Stokes * ZP[k])
-        ghatv[k] = ghatv[k] - (-WVSURF / (ustar2 + tiny)) * Cg_Stokes * ustar * m_Stokes * exp(m_Stokes * ZP[k])
-
-
+        ghatu[k] = ghatu[k] - (
+            -WUSURF / (ustar2 + tiny)
+        ) * Cg_Stokes * ustar * m_Stokes * exp(m_Stokes * ZP[k])
+        ghatv[k] = ghatv[k] - (
+            -WVSURF / (ustar2 + tiny)
+        ) * Cg_Stokes * ustar * m_Stokes * exp(m_Stokes * ZP[k])
 
     # KT and KS both equal KH
     KT = KH
     KS = KH
+    result = np.stack(
+        [
+            hbl * np.ones_like(Rib),
+            hekman * np.ones_like(Rib),
+            hmonob * np.ones_like(Rib),
+            hunlimit * np.ones_like(Rib),
+            Rib,
+            bvtop,
+            dV2,
+            dVt2,
+            KT,
+            KM,
+        ],
+        axis=0,
+    )
 
-    return hbl
+    return result
+
 
 ## subroutine sigmat
 def sigmat(SI=None, TI=None):
@@ -624,12 +696,31 @@ def sigmat(SI=None, TI=None):
     # hw      P=-9.81*1.025*ZZ[k]*0.01
     P = 0.0
     #
-    RHOR = 999.842594 + 6.793952E-2 * TR - 9.095290E-3 * TR2 + 1.001685E-4 * TR3 - 1.120083E-6 * TR4 + 6.536332E-9 * TR4
+    RHOR = (
+        999.842594
+        + 6.793952e-2 * TR
+        - 9.095290e-3 * TR2
+        + 1.001685e-4 * TR3
+        - 1.120083e-6 * TR4
+        + 6.536332e-9 * TR4
+    )
 
-    RHOR = RHOR + (0.824493 - 4.0899E-3 * TR + 7.6438E-5 * TR2 - 8.2467E-7 * TR3 + 5.3875E-9 * TR4) * SR + (-5.72466E-3 + 1.0227E-4 * TR - 1.6546E-6 * TR2) * abs(SR) ** 1.5 + 4.8314E-4 * SR * SR
+    RHOR = (
+        RHOR
+        + (
+            0.824493
+            - 4.0899e-3 * TR
+            + 7.6438e-5 * TR2
+            - 8.2467e-7 * TR3
+            + 5.3875e-9 * TR4
+        )
+        * SR
+        + (-5.72466e-3 + 1.0227e-4 * TR - 1.6546e-6 * TR2) * abs(SR) ** 1.5
+        + 4.8314e-4 * SR * SR
+    )
 
-    CR = 1449.1 + .0821 * P + 4.55 * TR - .045 * TR2 + 1.34 * (SR - 35.)
-    RHOR = RHOR + 1.E5 * P / (CR * CR) * (1. - 2. * P / (CR * CR))
+    CR = 1449.1 + 0.0821 * P + 4.55 * TR - 0.045 * TR2 + 1.34 * (SR - 35.0)
+    RHOR = RHOR + 1.0e5 * P / (CR * CR) * (1.0 - 2.0 * P / (CR * CR))
     RHOO = RHOR - 1000
 
     return RHOO
@@ -640,36 +731,37 @@ def sigmat(SI=None, TI=None):
 def phi_m(zeta=None, zetam=None, a=None, c=None):
     #
     #   Calculate vertical structure function for momentum as in LMD Appix B.
-    #....stable boundary layer
+    # ....stable boundary layer
     if zeta >= 0:
-        phi = 1.0 + 5. * zeta
-        #......
-        #.....Unstable region
+        phi = 1.0 + 5.0 * zeta
+        # ......
+        # .....Unstable region
     else:
         if zeta > zetam:
-            phi = (1.0 - 16. * zeta) ** (-1. / 4.)
+            phi = (1.0 - 16.0 * zeta) ** (-1.0 / 4.0)
         else:
-            phi = (a - c * zeta) ** (-1. / 3.)
-    
+            phi = (a - c * zeta) ** (-1.0 / 3.0)
+
     return phi
+
 
 ## subroutine phi_s
 def phi_s(zeta=None, zetas=None, a=None, c=None):
     #
     #   Calculate vertical structure function for scalar as in LMD Appix B.
-    #.....stable boundary layer
+    # .....stable boundary layer
     if zeta >= 0.0:
-        phi = 1.0 + 5. * zeta
-        #......
-        #.....Unstable region
+        phi = 1.0 + 5.0 * zeta
+        # ......
+        # .....Unstable region
     else:
         if zeta > zetas:
-            phi = (1.0 - 16. * zeta) ** (-1. / 2.)
+            phi = (1.0 - 16.0 * zeta) ** (-1.0 / 2.0)
         else:
-            phi = (a - c * zeta) ** (-1. / 3.)
+            phi = (a - c * zeta) ** (-1.0 / 3.0)
 
-    
     return phi
+
 
 ## subroutine smooth
 # def smooth(x=None, f=None):
@@ -717,10 +809,10 @@ def phi_s(zeta=None, zetas=None, a=None, c=None):
 #             x = xs
 
 
-
 #     # s=size(x);
 #     # if s[0]>s[1];xs=xs';
 #     return xs
+
 
 def find(arr, idx, kind="first"):
     indexes = np.nonzero(arr)[0]
