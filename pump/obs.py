@@ -373,13 +373,14 @@ def process_esrl_index(file, skipfooter=3):
 
 def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
     if files is None:
-        files = f"{root}/make_TPOS_MITgcm/JRA_FORCING/combined/JRA55DO_*[a-z].nc"
+        raise ValueError("files cannot be none. this is now a helper function.")
 
     jra = xr.open_mfdataset(
         files, combine="by_coords", decode_times=False, chunks=chunks, parallel=True
     ).rename({"lat": "latitude", "lon": "longitude"})
 
     if correct_time:
+        raise ValueError("This is definitely junk")
         jra["time"] = jra.time - jra.time[0]
         jra.time.attrs["units"] = "days since 1995-09-01"
 
@@ -390,7 +391,58 @@ def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
 
     jra = jra.sel(longitude=slice(-170, -95), latitude=slice(-12, 12))
 
+    renamer = {
+        "Uwind": "uas",
+        "Vwind": "vas",
+        "Tair": "tas",
+        "Pair": "psl",
+        "Qair": "huss",
+        "lwrad_down": "rlds",
+        "swrad": "rsds",
+        "rain": "prra",
+    }
+
+    if any([key in jra for key in renamer.keys()]):
+        jra = jra.rename({k: v for k, v in renamer.items() if k in jra})
+
     return xr.decode_cf(jra)
+
+
+def read_jra_95():
+
+    jradir = (
+        "/glade/campaign/cgd/oce/people/bachman/make_TPOS_MITgcm/JRA_FORCING/combined/"
+    )
+
+    jrafull = read_jra(
+        [
+            f"{jradir}/JRA55DO_1.3_Tair.nc",
+            f"{jradir}/JRA55DO_1.3_Uwind.nc",
+            f"{jradir}/JRA55DO_1.3_Qair.nc",
+            f"{jradir}/JRA55DO_1.3_Vwind.nc",
+            f"{jradir}/JRA55DO_1.3_Pair.nc",
+        ],
+        chunks={"time": 120},
+        correct_time=False,
+    )
+
+    jrafull2 = read_jra(
+        [
+            f"{jradir}/JRA55DO_1.3_rain.nc",
+            f"{jradir}/JRA55DO_1.3_lwrad_down.nc",
+            f"{jradir}/JRA55DO_1.3_swrad.nc",
+        ],
+        chunks={"time": 120},
+        correct_time=False,
+    )
+    jrafull2["time"] = jrafull2.time - pd.Timedelta("1.5h")
+    assert jrafull.indexes["time"].equals(jrafull2.indexes["time"])
+
+    jrafull = jrafull.merge(jrafull2)
+    # should be 7h BUT there is a three hour offset
+    jrafull["time"] = jrafull.time - pd.Timedelta("4h")
+
+    return jrafull
 
 
 def read_jra_20():
@@ -437,15 +489,13 @@ def read_jra_20():
 
 
 def interp_jra_to_station(jrafull, station):
-    jra = jrafull.interp(
-        longitude=station.longitude.values, latitude=station.latitude.values
-    ).sel(time=slice(station.time[0].values, station.time[-1].values))
+    jra = jrafull.sel(
+        time=slice(station.time[0].values, station.time[-1].values)
+    ).interp(longitude=station.longitude.values, latitude=station.latitude.values)
 
-    for var in jra.variables:
-        if isinstance(jra[var].data, dask.array.Array):
-            jra[var] = jra[var].copy(data=jra[var].data.map_blocks(np.copy))
+    jra = dcpy.dask.map_copy(jra)
 
-    jrai = jra.compute().interpolate_na("time").interp(time=station.time)
+    jrai = jra.compute().interp(time=station.time)
     return jrai
 
 
