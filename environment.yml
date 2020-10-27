@@ -1,0 +1,38 @@
+name: dcpy
+channels:
+  - conda-forge
+  - pyviz
+dependencies:
+  - bottleneck
+  - cachey
+  - cf_xarray
+  - cftime
+  - dask
+  - dask_labextension
+  - distributed
+  - h5py
+  - hdf5
+  - ipympl
+  - ipython
+  - ipywidgets
+  - jupyter
+  - jupyterlab
+  - jupyter-server-proxy
+  - matplotlib
+  - nc-time-axis
+  - nodejs
+  - notebook
+  - numba
+  - pandas=1.1.0
+  - pep8
+  - pip
+  - seawater
+  - xarray
+  - xgcm
+  - xmitgcm
+  - zarr
+  - pip:
+    - dask_jobqueue
+    - ncar_jobqueue
+    - https://github.com/dcherian/pump.git
+    - https://github.com/hetland/xroms.git
