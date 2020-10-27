@@ -20,6 +20,10 @@ cmaps = {
     "Jq": dict(cmap=mpl.cm.Blues_r, vmax=0, vmin=-400,),
     "Ri": dict(cmap=mpl.cm.RdGy_r, center=0.5, norm=mpl.colors.Normalize(0, 1)),
     "N2": dict(cmap=mpl.cm.GnBu, norm=mpl.colors.LogNorm(1e-5, 5e-4)),
+    "shred2": dict(
+        norm=mpl.colors.TwoSlopeNorm(vcenter=-5e-7, vmin=-5e-4, vmax=1e-4),
+        cmap=mpl.cm.RdBu_r,
+    ),
 }
 
 
@@ -43,10 +47,22 @@ def quiver(ds, x, y, ax, u, v, **kwargs):
     ds = ds.squeeze()
     x, y, u, v = broadcast(ds[x], ds[y], ds[u], ds[v])
 
+    add_guide = kwargs.pop("add_guide", None)
     kwargs.pop("cmap_params")
     kwargs.pop("hue")
     kwargs.pop("hue_style")
     hdl = ax.quiver(x.values, y.values, u.values, v.values, scale=scale, **kwargs)
+
+    # units = u.attrs.get("units", "")
+    # ax.quiverkey(
+    #     hdl,
+    #     X=0.1,
+    #     Y=0.95,
+    #     U=median,
+    #     label=f"{median}\n{units}",
+    #     labelpos="E",
+    #     coordinates="figure",
+    # )
 
     return hdl
 
@@ -260,7 +276,7 @@ def plot_jq_sst(
     f, ax = plt.subplots(
         2 + len(lat),
         2,
-        # sharex="col",
+        sharex="col",
         sharey="row",
         constrained_layout=True,
         # gridspec_kw={"height_ratios": [2] * (lenlat1;5)},
@@ -268,7 +284,7 @@ def plot_jq_sst(
     )
     width = dcpy.plots.pub_fig_width("jpo", "two column")
     f.set_size_inches((width, 8))
-    f.set_constrained_layout_pads(wspace=0, w_pad=0)
+    f.set_constrained_layout_pads(wspace=0, w_pad=0, h_pad=0, hspace=0)
 
     ax[0, 1].remove()
     ax[1, 1].remove()
@@ -292,8 +308,9 @@ def plot_jq_sst(
     # Jq
     jq_kwargs = dict(
         x="time",
-        levels=np.sort([-600, -450, -300, -200, -150, -100, -75, -50, -25, 0]),
-        cmap=mpl.cm.Blues_r,
+        **cmaps["Jq"],
+        levels=np.arange(-400, 0, 50),
+    #    cmap=mpl.cm.Blues_r,
     )
     # cax = dcpy.plots.cbar_inset_axes(ax[1, 0])
 
@@ -308,11 +325,11 @@ def plot_jq_sst(
             **jq_kwargs,
             add_colorbar=True,
             cbar_kwargs={
-                # "orientation": "horizontal",
-                #    "shrink": 0.8,
-                #    "aspect": 40,
-                "label": "",
-                "ticks": [-600, -400, -200, -100, -50, 0],
+                "orientation": "horizontal",
+                "shrink": 0.8,
+                "aspect": 40,
+                "label": "", # "$J_q^t$ [W/m²]",
+                # "ticks": [-600, -400, -200, -100, -50, 0],
                 # "cax": cax,
             },
         )
@@ -408,9 +425,12 @@ def plot_jq_sst(
     # model.full.tiw_phase.sel(longitude=lon, method="nearest").plot(_labels=False)
     # [aa.set_xlabel("") for aa in ax[:-1]]
 
-    for aa in [ax[0, 0], ax[2, 0], ax[2, 1]]:
-        [tt.set_visible(False) for tt in aa.get_xticklabels()]
-    dcpy.plots.concise_date_formatter(ax[-1, 0], show_offset=False)
+    # for aa in [ax[0, 0], ax[2, 1]]:
+   #     [tt.set_visible(False) for tt in aa.get_xticklabels()]
+    # [tt.set_visible(True) for tt in ax[0, 0].get_xticklabels()]
+    ax[1, 0].tick_params(labelbottom=True)
+    dcpy.plots.concise_date_formatter(ax[-1, 0], show_offset=False, minticks=9)
+    # dcpy.plots.concise_date_formatter(ax[1, 0], show_offset=True, minticks=9)
     return f, ax
 
 
@@ -507,10 +527,12 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     kwargs = dict(
         # vmin=-0.02,
         # vmax=0.02,
-        norm=mpl.colors.TwoSlopeNorm(vcenter=-5e-7, vmin=-5e-4, vmax=1e-4),
-        cmap=mpl.cm.RdBu_r,
+        **cmaps["shred2"],
         add_colorbar=False,
     )
+
+    fmt = mpl.ticker.ScalarFormatter()
+    fmt.set_powerlimits((-1, 1))
 
     Ric = 0.4
     (tsub.uz ** 2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["u"], **kwargs)
@@ -527,6 +549,8 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
             shrink=0.8,
             aspect=37,
             extend="both",
+            label="$Sh_{red}²$ [s$^{-2}$]",
+            format=fmt,
         )
 
     # tsub.u.plot.contour(ax=ax["Ri"], colors="k", linewidths=2, levels=5)
@@ -548,7 +572,11 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
         vmin=-250,
         vmax=0,
         add_colorbar=add_colorbar,
-        cbar_kwargs={"orientation": "horizontal", "ax": [ax["Jq"]]}
+        cbar_kwargs={
+            "orientation": "horizontal",
+            "ax": [ax["Jq"]],
+            "label": "$J_q^t$ [W/m²]",
+        }
         if add_colorbar
         else None,
     )
@@ -583,50 +611,45 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     [annotate(tsub, aa) for aa in axx]
 
 
-def plot_tiw_period_snapshots(full_subset, lon, period, times):
-    subset = full_subset.sel(longitude=lon, method="nearest")
-    subset.depth.attrs["units"] = "m"
-
-    if period is not None:
-        subset = subset.where(subset.period == period, drop=True)
-
-    # times = subset.time.where(subset.tiw_phase.isin(np.arange(45, 290, 45)), drop=True)
-
-    nextra = 2
-
-    plt.rcParams["font.size"] = 9
+def plot_tiw_lat_lon_summary(subset, times):
 
     f = plt.figure(constrained_layout=True)
     width = dcpy.plots.pub_fig_width("jpo", "two column")
-    f.set_size_inches((width, 8.5))
-    gsparent = f.add_gridspec(2, 1, height_ratios=[1, 1.5])
-    left = gsparent[0].subgridspec(2, 2)
-    ax = dict()
-    ax["sst"] = f.add_subplot(left[0, 0])
-    ax["dcl"] = f.add_subplot(left[0, 1], sharex=ax["sst"], sharey=ax["sst"])
-    ax["uz"] = f.add_subplot(left[1, 0], sharex=ax["sst"], sharey=ax["sst"])
-    ax["vz"] = f.add_subplot(left[1, 1], sharex=ax["sst"], sharey=ax["sst"])
+    f.set_size_inches((width, 5))
 
-    axtop = np.array(list(ax.values())).reshape((2, 2))
+    # gsparent = f.add_gridspec(2, 1, height_ratios=[1, 1.5])
+    # left = gsparent[0].subgridspec(2, 3)
+    # ax = dict()
+    # ax["sst"] = f.add_subplot(left[0, 0])
+    # ax["dcl"] = f.add_subplot(left[0, 1], sharex=ax["sst"], sharey=ax["sst"])
+    # ax["shred2"] = f.add_subplot(left[0, 2], sharex=ax["sst"], sharey=ax["sst"])
+    # ax["uz"] = f.add_subplot(left[1, 0], sharex=ax["sst"], sharey=ax["sst"])
+    # ax["vz"] = f.add_subplot(left[1, 1], sharex=ax["sst"], sharey=ax["sst"])
+    # ax["N2"] = f.add_subplot(left[1, 2], sharex=ax["sst"], sharey=ax["sst"])
 
+    # axtop = np.array(list(ax.values())).reshape((2, 3))
+
+    f, axtop = plt.subplots(2, 3, sharex=True, sharey=True, constrained_layout=True)
+
+    ax = dict(zip(("sst", "dcl", "shred2", "uz", "vz", "N2"), axtop.flat))
     # cax_sst = inset_axes(ax["sst"], **inset_kwargs, bbox_transform=ax["sst"].transAxes)
     # cax_dcl = inset_axes(ax["dcl"], **inset_kwargs, bbox_transform=ax["dcl"].transAxes)
 
-    right = gsparent[1].subgridspec(len(times), 4)
-    axx = np.empty((len(times), 4), dtype=np.object)
-    for icol in range(4):
-        for irow in range(len(times)):
-            axx[irow, icol] = f.add_subplot(right[irow, icol])
-
     # Surface fields
     cbar_kwargs = dict(aspect=40, label="", orientation="horizontal", extend="both")
-    surf_kwargs = dict(add_colorbar=True, x="time", robust=True, ylim=[-5, 5],)
+    surf_kwargs = dict(
+        add_colorbar=True,
+        x="time",
+        robust=True,
+        # ylim=[-5, 5],
+        cbar_kwargs={"orientation": "horizontal", "label": "",},
+    )
 
     hdl = subset.sst.plot(
         ax=ax["sst"],
         **surf_kwargs,
         cmap=mpl.cm.RdYlBu_r,
-        cbar_kwargs={"extend": "both", "label": ""},
+        # cbar_kwargs={"extend": "both", "label": ""},
     )
     #    f.colorbar(hdl, cax=cax_sst, **cbar_kwargs)
 
@@ -639,10 +662,14 @@ def plot_tiw_period_snapshots(full_subset, lon, period, times):
             **surf_kwargs,
             cmap=mpl.cm.GnBu,
             vmin=5,
-            cbar_kwargs={"extend": "both", "label": ""},
+            #  cbar_kwargs={"extend": "both", "label": ""},
         )
     )
     #   f.colorbar(hdl, cax=cax_dcl, **cbar_kwargs)
+
+    subset.N2.where(subset.dcl_mask).mean("depth").plot(
+        ax=ax["N2"], **cmaps["N2"], **surf_kwargs
+    )
 
     shear_kwargs = dict(vmin=-0.02, vmax=0.02, x="time", cmap=mpl.cm.RdBu_r)
 
@@ -656,21 +683,17 @@ def plot_tiw_period_snapshots(full_subset, lon, period, times):
             ax=ax["vz"],
             **shear_kwargs,
             add_colorbar=True,
-            cbar_kwargs={"extend": "both", "label": ""},
+            cbar_kwargs={"orientation": "horizontal", "label": "", "extend": "both"},
         )
     )
-    # f.colorbar(hdl, ax=axtop.flat[-1:], extend="both")
 
-    dcpy.plots.linex(times, color="k", zorder=2, ax=list(axtop.flat), lw=0.5)
-    dcpy.plots.clean_axes(axtop)
-    [aa.set_xlabel("") for aa in axtop[1, :]]
-    [aa.set_title("") for aa in axtop.flat]
-    for aa in axtop.flat:
-        dcpy.plots.concise_date_formatter(aa, minticks=6, show_offset=False)
-
-    dcpy.plots.label_subplots(
-        axtop.flat, labels=["SST", "$z_{MLD} - z_{Ri}$", "$u_z$", "$v_z$"]
+    fmt = mpl.ticker.ScalarFormatter()
+    fmt.set_powerlimits((-1, 1))
+    surf_kwargs["cbar_kwargs"]["format"] = fmt
+    shred2 = (
+        ((subset.S2 - subset.N2 / 0.4)).where(subset.dcl_mask).median("depth").compute()
     )
+    shred2.plot(ax=ax["shred2"], **cmaps["shred2"], **surf_kwargs)
 
     sstmean = subset.sst.sel(latitude=slice(-3, None)).resample(time="D").mean()
     kwargs = dict(levels=[22.4, 23.75], x="time", add_labels=False,)
@@ -678,6 +701,50 @@ def plot_tiw_period_snapshots(full_subset, lon, period, times):
         kwargs["ax"] = aa
         sstmean.plot.contour(colors="w", linewidths=1.5, **kwargs)
         sstmean.plot.contour(**kwargs, colors="k", linewidths=0.75)
+
+    dcpy.plots.linex(times, color="k", zorder=2, ax=list(axtop.flat), lw=0.5)
+    dcpy.plots.clean_axes(axtop)
+    [aa.set_xlabel("") for aa in axtop[1, :]]
+    [aa.set_title("") for aa in axtop.flat]
+    for aa in axtop.flat:
+        dcpy.plots.concise_date_formatter(aa, minticks=6, show_offset=False)
+        [tt.set_rotation(0) for tt in aa.get_xticklabels()]
+
+    dcpy.plots.label_subplots(
+        axtop.flat,
+        labels=[
+            "SST",
+            "$z_{MLD} - z_{Ri}$",
+            "$u_z^2+v_z^2-N^2/Ri_c$",
+            "$u_z$",
+            "$v_z$",
+            "$N^2$",
+        ],
+    )
+
+    f.set_size_inches((dcpy.plots.pub_fig_width("jpo", "two column"), 6))
+
+
+def plot_tiw_period_snapshots(full_subset, lon, period, times):
+    subset = full_subset.sel(longitude=lon, method="nearest")
+    subset.depth.attrs["units"] = "m"
+
+    if period is not None:
+        subset = subset.where(subset.period == period, drop=True)
+
+    # times = subset.time.where(subset.tiw_phase.isin(np.arange(45, 290, 45)), drop=True)
+
+    nextra = 2
+
+    plt.rcParams["font.size"] = 9
+
+    # right = gsparent[1].subgridspec(len(times), 4)
+    # axx = np.empty((len(times), 4), dtype=np.object)
+    # for icol in range(4):
+    #     for irow in range(len(times)):
+    #         axx[irow, icol] = f.add_subplot(right[irow, icol])
+
+    f, axx = plt.subplots(3, 4, sharex=True, sharey=True, constrained_layout=True)
 
     ####### row snapshots
     sub = (
@@ -694,47 +761,41 @@ def plot_tiw_period_snapshots(full_subset, lon, period, times):
         plot_shred2_time_instant(
             tsub, ax=dict(zip(["Jq", "Ri", "u", "v"], axrow)), add_colorbar=add_colorbar
         )
-        axrow[0].text(
-            x=0.05,
-            y=0.05,
-            s=tsub.time.dt.strftime("%Y-%m-%d %H:%M").values,
-            va="center",
-            ha="left",
-            transform=axrow[0].transAxes,
-        )
+        # axrow[0].text(
+        #     x=0.05,
+        #     y=0.09,
+        #     s=tsub.time.dt.strftime("%Y-%m-%d %H:%M").values,
+        #     va="center",
+        #     ha="left",
+        #     transform=axrow[0].transAxes,
+        # )
         if idx == len(times) - 1:
             [aa.tick_params(labelbottom=True) for aa in axrow]
-        # axrow[-1].text(
-        #    x=1.05,
-        #    y=0.5,
-        #    s=tsub.time.dt.strftime("%Y-%m-%d %H").values,
-        #    va="center",
-        #    rotation=90,
-        #    transform=axrow[-1].transAxes,
-        # )
+        axrow[-1].text(
+            x=1.03,
+            y=0.5,
+            s=tsub.time.dt.strftime("%d/%m %H:%M").values,
+            va="center",
+            rotation=270,
+            transform=axrow[-1].transAxes,
+        )
         if idx != (len(times) - 1):
             [aa.set_xlabel("") for aa in axrow]
         if idx != 0:
             [aa.set_title("") for aa in axrow]
 
-    # ax["sst"].set_xticklabels([])
-    # ax["sst"].set_xlabel("")
-    # ax["sst"].set_title("SST [°C]")
-    # ax["dcl"].set_title("Low Ri layer width [m]")
-    # ax["dcl"].set_xlabel("")
-    # dcpy.plots.concise_date_formatter(ax["sst"], minticks=6)
-
     [aa.set_yticks([-100, -60, -30, 0]) for aa in axx.flat]
-    [aa.set_yticklabels([str(num) for num in [-100, -60, -30, 0]]) for aa in axx[:, 0]]
-    [aa.set_yticklabels([]) for aa in axx[:, 1:].flat]
-    # [tt.set_visible(True) for tt in aa.get_yticklabels() for aa in axx[:, 0]]
+    [
+        aa.set_yticklabels([str(num) for num in [-100, -60, -30, 0]])
+        for aa in axx[:, 0].flat
+    ]
 
     [
         aa.set_xticklabels(["", "4°S", "", "2°S", "", "0", "", "2°N", "", "4°N", ""])
         for aa in axx[-1, :]
     ]
     [aa.set_xlabel("") for aa in axx[-1, :]]
-    dcpy.plots.label_subplots(axx.flat, start="e")
+    dcpy.plots.label_subplots(axx.flat, y=0.85)
 
     return axx
 
@@ -1079,7 +1140,7 @@ def plot_shear_terms(ds, duzdt, dvzdt, mask_dcl=True):
             y=0.85,
             ax=axx.flat,
             labels=np.array(labels).flat,
-            bbox=dict(color="white", alpha=0.8, pad=0.1),
+            bbox=dict(color="white", alpha=0.9, pad=0.1),
         )
         dcpy.plots.clean_axes(axx)
         [aa.set_title("") for aa in axx[0, :]]
@@ -1100,8 +1161,8 @@ def plot_shear_terms(ds, duzdt, dvzdt, mask_dcl=True):
                 "X ADV",
                 "Y ADV",
                 "STRETCH",
-                "TILT V. VORT",
-                "TILT H. VORT",
+                "TILT1",
+                "TILT2",
                 "BUOY",
                 "FRIC",
             ],
@@ -1139,7 +1200,7 @@ def vor_streamplot(
     colorbar=True,
 ):
 
-    subset = vort.sel(latitude=slice(-2, 6), depth=slice(0, -60)).mean("depth")
+    subset = vort.sel(latitude=slice(-2, 5), depth=slice(0, -60)).mean("depth")
     f0 = vort.f.reindex_like(subset.z)
 
     subset.z.attrs["long_name"] = "vert vorticity"
@@ -1153,7 +1214,11 @@ def vor_streamplot(
     )
     if uy:
         ((-1 * subset.uy)).plot(
-            x="time", vmax=2e-5, add_colorbar=colorbar, cbar_kwargs=cbar_kwargs,
+            x="time",
+            vmax=2e-5,
+            add_colorbar=colorbar,
+            cbar_kwargs=cbar_kwargs,
+            cmap=mpl.cm.PuOr_r,
         )
 
     if vy:
@@ -1165,6 +1230,12 @@ def vor_streamplot(
             cmap=mpl.cm.PuOr_r,
         )
 
+    (
+        ds.isel(longitude=1)
+        .dcl.resample(time="D", loffset="12H")
+        .mean()
+        .plot.contour(x="time", colors="w", levels=[30], linewidths=4, zorder=2, add_labels=False)
+    )
     (
         ds.isel(longitude=1)
         .dcl.resample(time="D", loffset="12H")
@@ -1235,8 +1306,17 @@ def vor_streamplot(
             subset.latitude.values,
             (subset.u.transpose().values + refspeed),
             subset.v.transpose().values,
+            color="w",
+            linewidth=3,
+            arrowstyle="-",
+        )
+        sax.streamplot(
+            dt / 120e3,
+            subset.latitude.values,
+            (subset.u.transpose().values + refspeed),
+            subset.v.transpose().values,
             color="seagreen",
-            linewidth=1,
+            linewidth=1.4,
         )
         sax.set_xticks([])
         sax.set_xticklabels([])
@@ -1246,15 +1326,15 @@ def vor_streamplot(
     #    y=1.05,
     # )
     ax.set_title("")
-    ax.set_ylim([-1, 5])
+    # ax.set_ylim([-1, 5])
     ax.set_xlabel("")
     ax.set_ylabel("Latitude [°N]")
-    dcpy.plots.concise_date_formatter(ax)
+    dcpy.plots.concise_date_formatter(ax, show_offset=False)
 
     # TODO: dcpy.plots.contour_label_spines(cs, "SST=")
 
     if colorbar:
-        f.set_size_inches((5.3, 5))
+        f.set_size_inches((dcpy.plots.pub_fig_width("jpo", "medium 1"), 5))
     else:
         f.set_size_inches((5.3, 4.3))
 
