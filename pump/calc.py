@@ -1049,8 +1049,9 @@ def coare_fluxes_jra(ocean, forcing):
     """
 
     import xcoare
+    import cf_xarray
 
-    ocean = ocean.sel(depth=0, method="nearest", drop=True)
+    ocean = ocean.cf.sel(Z=0, method="nearest", drop=True)
 
     sst = ocean.theta
 
@@ -1070,7 +1071,7 @@ def coare_fluxes_jra(ocean, forcing):
         ts=sst,
         Rs=forcing.rsds,
         Rl=forcing.rlds,
-        lat=ocean.latitude,
+        lat=ocean.cf["Y"],
         rain=forcing.prra / 1000 * 1000 / 3600,  # kg/m²/s to mm/hour
         jcool=False,
         qspec=forcing.huss,
