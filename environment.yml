@@ -8,6 +8,7 @@ dependencies:
   - cartopy
   - cf_xarray
   - cftime
+  - colorcet
   - dask
   - dask_labextension
   - distributed
