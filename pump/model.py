@@ -9,7 +9,7 @@ import time
 import xarray as xr
 import xmitgcm
 
-from ..calc import (
+from .calc import (
     calc_reduced_shear,
     get_euc_max,
     get_dcl_base_Ri,
@@ -19,10 +19,10 @@ from ..calc import (
     get_tiw_phase_sst,
     tiw_avg_filter_sst,
 )
-from ..constants import *
-from ..obs import *
-from ..plot import plot_depths
-from ..mdjwf import dens
+from .constants import *
+from .obs import *
+from .plot import plot_depths
+from .mdjwf import dens
 
 
 def read_mitgcm_coords(dirname):
