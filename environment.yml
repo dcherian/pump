@@ -5,6 +5,7 @@ channels:
 dependencies:
   - bottleneck
   - cachey
+  - cartopy
   - cf_xarray
   - cftime
   - dask
@@ -19,6 +20,7 @@ dependencies:
   - jupyterlab
   - jupyter-server-proxy
   - matplotlib
+  - netcdf4
   - nc-time-axis
   - nodejs
   - notebook
@@ -26,7 +28,10 @@ dependencies:
   - pandas=1.1.0
   - pep8
   - pip
+  - seaborn
   - seawater
+  - scipy
+  - tqdm
   - xarray
   - xgcm
   - xmitgcm
@@ -35,5 +40,7 @@ dependencies:
     - dask_jobqueue
     - ncar_jobqueue
     - git+https://github.com/dcherian/pump.git
+    - git+https://github.com/dcherian/dcpy.git
     - git+https://github.com/hetland/xroms.git
+    - git+https://github.com/dcherian/xfilter.git
     - git+https://github.com/dcherian/xcoare.git
