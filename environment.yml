@@ -34,5 +34,6 @@ dependencies:
   - pip:
     - dask_jobqueue
     - ncar_jobqueue
-    - https://github.com/dcherian/pump.git
-    - https://github.com/hetland/xroms.git
+    - git+https://github.com/dcherian/pump.git
+    - git+https://github.com/hetland/xroms.git
+    - git+https://github.com/dcherian/xcoare.git
