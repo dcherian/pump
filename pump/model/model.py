@@ -25,6 +25,210 @@ from ..plot import plot_depths
 from ..mdjwf import dens
 
 
+def read_mitgcm_coords(dirname):
+    import xmitgcm
+
+    h = dict()
+    for ff in ["XG", "XC", "YG", "YC", "RC", "RF"]:
+        try:
+            data = (
+                xmitgcm.utils.read_mds(dirname + ff)[ff]
+                .copy()
+                .squeeze()
+                .astype("float")
+                .compute()
+            )
+            attrs = {}
+            if "X" in ff:
+                h[ff] = (ff, data[0, 40:-40] - 170 - 0.025)
+                attrs["axis"] = "X"
+            elif "Y" in ff:
+                h[ff] = (ff, data[40:-40, 0])
+                attrs["axis"] = "Y"
+            elif "R" in ff:
+                h[ff] = (ff, data[:136])
+                attrs["axis"] = "Z"
+
+            if "G" in ff or "F" in ff:
+                attrs.update({"c_grid_axis_shift": -0.5})
+
+            h[ff] += (attrs,)
+
+        except (FileNotFoundError):
+            print(f"metrics files not available. {dirname + ff}")
+
+    return xr.Dataset(h)
+
+
+def rename_mitgcm_budget_terms(hb, coords):
+
+    hb_ren = xr.Dataset()
+    for var in hb:
+        if "x_TH" in var:
+            hb_ren[var] = (
+                hb[var]
+                .drop(hb[var].dims)
+                .rename({"longitude": "XG", "latitude": "YC", "depth": "RC"})
+            )
+        elif "y_TH" in var:
+            hb_ren[var] = (
+                hb[var]
+                .drop(hb[var].dims)
+                .rename({"longitude": "XC", "latitude": "YG", "depth": "RC"})
+            )
+        elif "r_TH" in var:
+            hb_ren[var] = (
+                hb[var]
+                .drop(hb[var].dims)
+                .rename({"longitude": "XC", "latitude": "YC", "depth": "RF"})
+            )
+        elif var in ["DFrI_TH", "KPPg_TH"]:
+            hb_ren[var] = (
+                hb[var]
+                .drop(hb[var].dims)
+                .rename({"longitude": "XC", "latitude": "YC", "depth": "RF"})
+            )
+        elif "TOTTTEND" in var:
+            hb_ren[var] = (
+                hb[var]
+                .drop(hb[var].dims)
+                .rename({"longitude": "XC", "latitude": "YC", "depth": "RC"})
+            )
+
+        elif "UTEND" in var or "Um" in var or "AB_gU" in var:
+            hb_ren[var] = (
+                hb[var]
+                .drop(hb[var].dims)
+                .rename({"longitude": "XG", "latitude": "YC", "depth": "RC"})
+            )
+
+        elif "VTEND" in var or "Vm" in var or "AB_gV" in var:
+            hb_ren[var] = (
+                hb[var]
+                .drop(hb[var].dims)
+                .rename({"longitude": "XC", "latitude": "YG", "depth": "RC"})
+            )
+
+        if "VIS" in var:
+            hb_ren[var] = hb_ren[var].rename({"RC": "RF"})
+
+    if "WTHMASS" in hb:
+        hb_ren["WTHMASS"] = (
+            hb.WTHMASS.drop(["latitude", "longitude"])
+            .isel(depth=0)
+            .rename({"longitude": "XC", "latitude": "YC", "depth": "RC"})
+            .expand_dims("RC")
+            .reindex(RC=coords.coords["RC"], fill_value=0)
+        )
+
+    hb_ren["time"] = hb.time
+
+    return hb_ren.update(coords.coords)
+
+
+def mitgcm_sw_prof(depth):
+    """ MITgcm Shortwave radiation penetration profile. """
+    return 0.62 * np.exp(depth / 0.6) + (1 - 0.62) * np.exp(depth / 20)
+
+
+def make_cartesian(ds):
+
+    renamer = {
+        dim: dim.replace("xi", "lon").replace("eta", "lat")
+        for dim in ds.dims
+        if "xi" in dim or "eta" in dim
+    }
+
+    if not renamer:
+        return ds
+
+    ds = ds.copy(deep=True)
+
+    # deal with xroms renaming
+    synonym = {"xi_v": "xi_rho", "eta_u": "eta_rho"}
+
+    for dim in ds.dims:
+        if "xi" not in dim and "eta" not in dim:
+            continue
+
+        newdim = renamer[dim]
+        if "xi" in dim:
+            other = "eta_" + dim.split("_")[1]
+        else:
+            other = "xi_" + dim.split("_")[1]
+
+        if other not in ds.dims:
+            other = synonym[other]
+
+        ds[newdim] = ds[newdim].isel({other: 0}).compute()
+    ds = ds.swap_dims(renamer)
+
+    todrop = [var for var in ds.coords if "eta" in var or "xi" in var]
+    ds = ds.drop_vars(todrop)
+
+    for dim in ds.dims:
+        if "lat" in dim:
+            ds[dim].attrs["axis"] = "Y"
+        elif "lon" in dim:
+            ds[dim].attrs["axis"] = "X"
+
+    return ds
+
+
+def read_roms_dataset(fnames, **chunk_kwargs):
+    chunks = {}
+
+    for sub in ["rho", "u", "v", "psi"]:
+        for k, v in chunk_kwargs.items():
+            if k == "s" or k == "ocean_time":
+                continue
+            chunks[f"{k}_{sub}"] = v
+
+    for sub in ["rho", "w"]:
+        for k, v in chunk_kwargs.items():
+            if k != "s":
+                continue
+            chunks[f"{k}_{sub}"] = v
+
+    chunks["ocean_time"] = chunk_kwargs["ocean_time"]
+
+    ds = xr.open_mfdataset(
+        fnames,
+        chunks=chunks,
+        parallel=True,
+        compat="override",
+        data_vars="minimal",
+        coords="minimal",
+        decode_times=False,
+    )
+
+    ds = ds.set_coords(
+        [
+            var
+            for var in ds
+            if (
+                not ds[var].shape
+                or "obc_" in var
+                or "mask_" in var
+                or "Cs_" in var
+                or "Ltracer" in var
+                or var in ["pm", "pn", "h", "f", "angle"]
+                or (ds[var].ndim == 1 and ds[var].dims[0] == "tracer")
+            )
+        ]
+    )
+
+    # fix time
+    ds.ocean_time.attrs["units"] = "seconds since 1957-01-01 00:00"
+    ds = xr.decode_cf(ds)
+    ds["ocean_time"] = ds.indexes["ocean_time"].to_datetimeindex()
+
+    # make cartesian for easy indexing
+    # ds = make_cartesian(ds).cf.guess_coord_axis()
+    # ds.cf.decode_vertical_coords()
+
+    return ds
+
 
 def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr="0*"):
     metrics = read_metrics(dirname)
@@ -48,8 +252,12 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     deduped = station.time.copy(data=~station.indexes["time"].duplicated())
     station = station.where(deduped, drop=True)
     station.time.attrs["long_name"] = ""
-    
-    metrics = metrics.sel(longitude=station.longitude.values, latitude=station.latitude.values,method="nearest")
+
+    metrics = metrics.sel(
+        longitude=station.longitude.values,
+        latitude=station.latitude.values,
+        method="nearest",
+    )
     station.time.attrs["units"] = "seconds since 1999-01-01 00:00"
     station = xr.decode_cf(station)
     station["time"] = station.time - pd.Timedelta("7h")
@@ -69,7 +277,7 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     station.zeuc.attrs["units"] = "m"
 
     station["dJdz"] = station.Jq.differentiate("depth")
-    station["dTdt"] = -station.dJdz/1035/3995 * 86400 * 30
+    station["dTdt"] = -station.dJdz / 1035 / 3995 * 86400 * 30
     station.dTdt.attrs["long_name"] = "$∂T/∂t = -1/(ρ_0c_p) ∂J_q/∂z$"
     station.dTdt.attrs["units"] = "°C/month"
 
@@ -165,7 +373,11 @@ def read_metrics(dirname):
     hFacC = xr.DataArray(
         hFacC[:, lats, lons],
         dims=["depth", "latitude", "longitude"],
-        coords={"depth": depth, "latitude": latitude, "longitude": longitude,},
+        coords={
+            "depth": depth,
+            "latitude": latitude,
+            "longitude": longitude,
+        },
         name="hFacC",
     )
 
@@ -189,9 +401,35 @@ def read_metrics(dirname):
     )
     metrics["hFacW"] = metrics.hFacW.where(metrics.hFacW > 0)
 
+    metrics["hFacS"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/hFacS")["hFacS"][:, lats, lons].astype(
+            "float32"
+        ),
+        dims=["depth", "latitude", "longitude"],
+    )
+
     metrics["drF"] = xr.DataArray(
         xmitgcm.utils.read_mds(dirname + "/DRF")["DRF"].squeeze().astype("float32"),
         dims=["depth"],
+    )
+
+    metrics["rAs"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/RAS")["RAS"].squeeze().astype("float32"),
+        dims=["latitude", "longitude"],
+    )
+
+    metrics["DXG"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/DXG")["DXG"]
+        .squeeze()
+        .astype("float32"),
+        dims=["latitude","longitude"],
+    )
+
+    metrics["DYG"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/DYG")["DYG"]
+        .squeeze()
+        .astype("float32"),
+        dims=["latitude", "longitude"],
     )
 
     # metrics = metrics.isel(depth=slice(budget.sizes["depth"]), depth_left=slice(budget.sizes["depth"]+1))
