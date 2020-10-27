@@ -1,3 +1,4 @@
+import dask
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,6 +24,10 @@ def ddx(a):
 
 def ddy(a):
     return a.differentiate("latitude") / 110e3
+
+
+def ddz(a):
+    return a.differentiate("depth")
 
 
 def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug=False):
@@ -104,7 +109,14 @@ def calc_reduced_shear(data):
     'u', 'v', 'depth', 'dens'.
     """
 
-    data["S2"] = data.u.differentiate("depth") ** 2 + data.v.differentiate("depth") ** 2
+    print("calc uz")
+    data["uz"] = data.u.differentiate("depth")
+
+    print("calc vz")
+    data["vz"] = data.v.differentiate("depth")
+
+    print("calc S2")
+    data["S2"] = data.uz ** 2 + data.vz ** 2
     data["S2"].attrs["long_name"] = "$S^2$"
     data["S2"].attrs["units"] = "s$^{-2}$"
 
@@ -115,14 +127,17 @@ def calc_reduced_shear(data):
     # data['N2'] = (9.81 * 1.7e-4 * data.theta.differentiate('depth')
     #              - 9.81 * 7.6e-4 * data.salt.differentiate('depth'))
 
+    print("calc N2")
     data["N2"] = -9.81 / 1025 * data.dens.differentiate("depth")
     data["N2"].attrs["long_name"] = "$N^2$"
     data["N2"].attrs["units"] = "s$^{-2}$"
 
+    print("calc shred2")
     data["shred2"] = data.S2 - 4 * data.N2
     data.shred2.attrs["long_name"] = "Reduced shear$^2$"
     data.shred2.attrs["units"] = "$s^{-2}$"
 
+    print("Calc Ri")
     data["Ri"] = data.N2 / data.S2
     data.Ri.attrs["long_name"] = "Ri"
     data.Ri.attrs["units"] = ""
@@ -954,6 +969,7 @@ def estimate_shear_evolution_terms(ds):
     uz = ds.u.differentiate("depth")
     vz = ds.v.differentiate("depth")
 
+    b = -9.81 / 1035 * ds.dens
     #### zonal shear
     duzdt = xr.Dataset()
     # duzdt["shear"] = uz
@@ -963,6 +979,13 @@ def estimate_shear_evolution_terms(ds):
     duzdt["tilt"] = (f - ddy(ds.u)) * vz
     duzdt["vtilt"] = (f + ddx(ds.v) - ddy(ds.u)) * vz
     duzdt["htilt"] = -ddx(ds.v) * vz
+    duzdt["buoy"] = -ddx(b)
+    if "Um_Diss" in ds and "Um_Impl" in ds:
+        duzdt["fric"] = (ds.Um_Diss + ds.Um_Impl).differentiate("depth")
+    else:
+        print("Skipping frictional term")
+        duzdt["fric"] = xr.full_like(duzdt["vtilt"], np.nan)
+
     duzdt = duzdt.isel(longitude=1)
     duzdt.attrs["description"] = "Zonal shear evolution terms"
 
@@ -972,6 +995,8 @@ def estimate_shear_evolution_terms(ds):
     duzdt["tilt"].attrs["term"] = "$(f-u_y) v_z$"
     duzdt["vtilt"].attrs["term"] = "$ζ v_z$"
     duzdt["htilt"].attrs["term"] = "$-v_x v_z$"
+    duzdt["buoy"].attrs["term"] = "$-b_x$"
+    duzdt["fric"].attrs["term"] = "$F^x_z$"
 
     #### meridional shear
     dvzdt = xr.Dataset()
@@ -981,7 +1006,15 @@ def estimate_shear_evolution_terms(ds):
     dvzdt["str"] = vz * ddx(ds.u)
     dvzdt["tilt"] = -(f + ddx(ds.v)) * uz
     dvzdt["vtilt"] = -(f + ddx(ds.v) - ddy(ds.u)) * uz
-    dvzdt["htilt"] = - ddy(ds.u) * uz
+    dvzdt["htilt"] = -ddy(ds.u) * uz
+    dvzdt["buoy"] = -ddy(b)
+
+    if "Vm_Diss" in ds and "Vm_Impl" in ds:
+        dvzdt["fric"] = (ds.Vm_Diss + ds.Vm_Impl).differentiate("depth")
+    else:
+        print("Skipping frictional term")
+        dvzdt["fric"] = xr.full_like(duzdt["vtilt"], np.nan)
+
     dvzdt = dvzdt.isel(longitude=1)
     dvzdt.attrs["description"] = "Meridional shear evolution terms"
 
@@ -991,6 +1024,8 @@ def estimate_shear_evolution_terms(ds):
     dvzdt["tilt"].attrs["term"] = "$-(f+v_x) u_z$"
     dvzdt["vtilt"].attrs["term"] = "$-ζ u_z$"
     dvzdt["htilt"].attrs["term"] = "$-u_y u_z$"
+    dvzdt["buoy"].attrs["term"] = "$-b_y$"
+    dvzdt["fric"].attrs["term"] = "$F^y_z$"
 
     for dset in [duzdt, dvzdt]:
         dset["xadv"].attrs["long_name"] = "zonal adv."
@@ -999,6 +1034,8 @@ def estimate_shear_evolution_terms(ds):
         dset["tilt"].attrs["long_name"] = "tilting"
         dset["vtilt"].attrs["long_name"] = "vvort tilting"
         dset["htilt"].attrs["long_name"] = "hvort tilting"
+        dset["buoy"].attrs["long_name"] = "buoyancy"
+        dset["fric"].attrs["long_name"] = "friction"
 
     return duzdt, dvzdt
 
@@ -1056,7 +1093,9 @@ def coare_fluxes_jra(ocean, forcing):
     return flux, coare
 
 
-def calc_kpp_hbl(station, debug=False):
+def calc_kpp_terms(station, debug=False):
+
+    from . import KPP
 
     station = station.sel(depth=slice(-500))
     h = xr.apply_ufunc(
@@ -1071,19 +1110,103 @@ def calc_kpp_hbl(station, debug=False):
         station.tauy / 1035,
         -(station.netflux - station.short) / 1035 / 3999,
         xr.zeros_like(station.netflux),
-        -station.short / 1035 / 3999,
+        -np.abs(station.short.fillna(0)) / 1035 / 3999,
         kwargs=dict(
-            COR=0, hbl=12, debug=False, r1=0.62, amu1=0.6, r2=1 - 0.62, amu2=20
+            COR=0,
+            hbl=12,
+            debug=debug,
+            r1=0.62,
+            amu1=0.6,
+            r2=1 - 0.62,
+            amu2=20,
+            rho0=1035,
         ),
         vectorize=True,
-        # dask="allowed",  # too many assert statements to do this!
+        dask="parallelized",  # too many assert statements to do this!
         input_core_dims=[["depth"]] * 5 + [["depth2"]] + [[],] * 5,
-        # output_core_dims=[["time"]]
+        output_core_dims=[["variable", "depth"]],
+        output_dtypes=[np.float32],
+        output_sizes={"variable": 10},
     )
 
+    h = h.assign_coords(
+        variable=[
+            "hbl",
+            "hekman",
+            "hmonob",
+            "hunlimit",
+            "Rib",
+            "db",
+            "dV2",
+            "dVt2",
+            "KT",
+            "KM",
+        ]
+    ).to_dataset(dim="variable")
+    for var in ["hbl", "hmonob", "hekman", "hunlimit"]:
+        h[var] = h[var].isel(depth=0, drop=True)
+        h[var].attrs["units"] = "m"
+
+    h.hbl.attrs["long_name"] = "KPP boundary layer depth"
+    h.hmonob.attrs["long_name"] = "Monin Obukhov length scale"
+    h.hekman.attrs["long_name"] = "Ekman depth"
+    h.hunlimit.attrs[
+        "long_name"
+    ] = "KPP boundary layer depth before limiting to min(hekman, hmonob) under stable forcing"
+
+    h.Rib.attrs["long_name"] = "KPP bulk Ri"
+    h.db.attrs["long_name"] = "KPP bulk Ri Δb"
+    h.dV2.attrs["long_name"] = "KPP bulk Ri ΔV^2 (resolved)"
+    h.dVt2.attrs["long_name"] = "KPP bulk Ri ΔV_t^2 (unresolved)"
     if debug:
-        h.plot()
+        h.hbl.plot()
         # kpp.KPPhbl.plot()
         station.KPPhbl.plot()
 
     return h
+
+
+def vorticity(period4):
+
+    assert period4.sizes["longitude"] == 3
+
+    vort = xr.Dataset()
+    vort["x"] = ddy(period4.w) - period4.v.differentiate("depth")
+    vort["y"] = period4.u.differentiate("depth") - ddx(period4.w)
+    vort["z"] = ddx(period4.v) - ddy(period4.u)
+    vort["vx"] = ddx(period4.v)
+    vort["uy"] = ddy(period4.u)
+    vort = vort.isel(longitude=1).load()
+    vort["f"] = dcpy.oceans.coriolis(period4.latitude)
+
+    return vort
+
+
+def get_euc_bounds(usub, debug=False):
+    ucore = usub.sel(latitude=slice(-2, 2))
+    idx = usub.where(ucore > 0).reindex_like(usub).argmax(["depth", "latitude"])
+
+    idx = dict(zip([k for k in idx.keys()], *dask.compute(v for v in idx.values())))
+    dsub = idx["depth"].reindex_like(usub)
+    lsub = idx["latitude"].reindex_like(usub)
+
+    y0 = usub.latitude[lsub]
+
+    up = usub.isel(depth=dsub).where(usub.latitude > usub.latitude[lsub])
+    yp = (
+        up.sel(latitude=slice(-4, 4)) < usub.isel(depth=dsub, latitude=lsub) / 3
+    ).idxmax("latitude")
+    um = usub.isel(depth=dsub).where(usub.latitude < usub.latitude[lsub])
+    ym = (
+        um.sel(latitude=slice(-4, 4)).isel(latitude=slice(None, None, -1))
+        < usub.isel(depth=dsub, latitude=lsub) / 3
+    ).idxmax("latitude")
+
+    if debug:
+        up.squeeze().plot()
+        dcpy.plots.linex(yp.squeeze().compute())
+
+        um.squeeze().plot()
+        dcpy.plots.linex(ym.squeeze().compute())
+
+    return xr.Dataset({"yp": yp, "y0": y0, "ym": ym})

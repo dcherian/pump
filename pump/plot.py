@@ -1,13 +1,57 @@
 import colorcet
 import dask
 import dcpy.plots
+import itertools
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import xarray as xr
 
-from .calc import get_dcl_base_Ri, get_mld
+from .calc import get_dcl_base_Ri, get_mld, calc_reduced_shear, calc_kpp_terms
+from .mdjwf import dens
+
+
+import xarray
+
+
+cmaps = {
+    "S2": dict(cmap=mpl.cm.GnBu, norm=mpl.colors.LogNorm(1e-5, 5e-4)),
+    "Jq": dict(cmap=mpl.cm.Blues_r, vmax=0, vmin=-400,),
+    "Ri": dict(cmap=mpl.cm.RdGy_r, center=0.5, norm=mpl.colors.Normalize(0, 1)),
+    "N2": dict(cmap=mpl.cm.GnBu, norm=mpl.colors.LogNorm(1e-5, 5e-4)),
+}
+
+
+@xarray.plot.dataset_plot._dsplot
+def quiver(ds, x, y, ax, u, v, **kwargs):
+    from xarray import broadcast
+
+    if x is None or y is None or u is None or v is None:
+        raise ValueError("Must specify x, y, u, v for quiver plots.")
+
+    # matplotlib autoscaling algorithm
+    scale = kwargs.pop("scale", None)
+    if scale is None:
+        npts = ds.dims[x] * ds.dims[y]
+        # crude auto-scaling
+        # scale is typical arrow length as a multiple of the arrow width
+        scale = (
+            1.8 * ds.to_array().median().values * np.maximum(10, np.sqrt(npts))
+        )  # / span
+
+    ds = ds.squeeze()
+    x, y, u, v = broadcast(ds[x], ds[y], ds[u], ds[v])
+
+    kwargs.pop("cmap_params")
+    kwargs.pop("hue")
+    kwargs.pop("hue_style")
+    hdl = ax.quiver(x.values, y.values, u.values, v.values, scale=scale, **kwargs)
+
+    return hdl
+
+
+xarray.plot.dataset_plot.quiver = quiver
 
 
 def plot_depths(ds, ax=None, **kwargs):
@@ -166,6 +210,7 @@ def plot_jq_sst(
     else:
         sst = model.sst
         tao = model
+        full = model
 
     if isinstance(periods, slice):
         tperiod = periods
@@ -194,14 +239,20 @@ def plot_jq_sst(
     if eucmax is None:
         eucmax = tao.eucmax
     else:
-        eucmax = eucmax.sel(longitude=lon, method="nearest").sel(time=tperiod)
+        eucmax = eucmax.sel(longitude=lon, method="nearest")
 
+    eucmax = eucmax.sel(time=tperiod)
+
+    full = full.sel(time=tperiod)
+    tao = tao.sel(time=tperiod)
     lat = np.atleast_1d(lat)
 
     region = dict(latitude=lat, method="nearest")
 
-    mld = get_mld(tao.dens.sel(**region))
-    dcl_base = get_dcl_base_Ri(tao.sel(**region), mld, eucmax)
+    mld = tao.mld
+    dcl_base = tao.dcl_base
+    # mld = get_mld(tao.dens.sel(**region))
+    # dcl_base = get_dcl_base_Ri(tao.sel(**region), mld, eucmax)
 
     mld, dcl_base = dask.compute(mld, dcl_base)
     # tao = model.full.sel(longitude=lon, time=tperiod, depth=slice(0, -500))
@@ -209,7 +260,7 @@ def plot_jq_sst(
     f, ax = plt.subplots(
         2 + len(lat),
         2,
-        sharex="col",
+        # sharex="col",
         sharey="row",
         constrained_layout=True,
         # gridspec_kw={"height_ratios": [2] * (lenlat1;5)},
@@ -266,73 +317,100 @@ def plot_jq_sst(
             },
         )
     )
-    dcpy.plots.liney(
-        tao.sel(**region).latitude, ax=ax[0, 0], ls="--", color="k", lw=1, zorder=10
-    )
-    ax[1, 0].set_xlabel("")
+    ax[1, 0].set_xlabel("time")
     ax[1, 0].set_title("")
 
     dcpy.plots.liney(
         tao.sel(**region).latitude, ax=ax[:2, 0], ls="--", color="k", lw=1, zorder=10
     )
 
+    dcpy.plots.concise_date_formatter(ax[1, 0], show_offset=False)
+    [tt.set_visible(True) for tt in ax[1, 0].get_xticklabels()]
+
     # Jq with eucmax, MLD, DCL
-    for index, (la, axis, axRi) in enumerate(zip(lat[::-1], ax[2:, 0], ax[2:, 1])):
-        tRi = time_Ri[la]
-        region = {"latitude": la, "method": "nearest"}
-        plt.sca(axis)
-        jq = tao.sel(**region).Jq.rolling(depth=2, min_periods=1, center=True).mean()
-        jq.plot.contourf(**jq_kwargs, add_colorbar=False)
+    doRi = True
+    if doRi:
+        for index, (la, axis, axRi) in enumerate(zip(lat[::-1], ax[2:, 0], ax[2:, 1])):
+            tRi = time_Ri[la]
+            region = {"latitude": la, "method": "nearest"}
+            plt.sca(axis)
+            jq = (
+                tao.sel(**region).Jq.rolling(depth=2, min_periods=1, center=True).mean()
+            )
+            jq.plot.contourf(**jq_kwargs, add_colorbar=False)
 
-        rii = (
-            tao.Ri.sel(time=tRi)
-            .where((tao.depth < mld) & (tao.depth > dcl_base))
-            .sel(**region)
-            .chunk({"time": -1})
-        )
-        rii = rii.where(rii.count("time") > 15)
-        ri_q = (rii.chunk({"time": -1}).quantile(dim="time", q=[0.25, 0.5, 0.75])).compute()
+            rii = (
+                tao.Ri.sel(time=tRi)
+                .where((tao.depth < mld) & (tao.depth > dcl_base))
+                .sel(**region)
+                .chunk({"time": -1})
+            )
+            rii = rii.where(rii.count("time") > 15)
+            ri_q = (
+                rii.chunk({"time": -1}).quantile(dim="time", q=[0.25, 0.5, 0.75])
+            ).compute()
 
-        # .plot.line(ax=axRi, xscale="log", hue="quantile", y="depth", xlim=(0.1, 2))
+            # .plot.line(ax=axRi, xscale="log", hue="quantile", y="depth", xlim=(0.1, 2))
 
-        # mark Ri distribution time
-        t = pd.date_range(tRi.start, tRi.stop)
-        axis.plot(t, -90 * np.ones(t.shape), color="r", lw=4)
+            # mark Ri distribution time
+            t = pd.date_range(tRi.start, tRi.stop)
+            axis.plot(t, -90 * np.ones(t.shape), color="r", lw=4)
 
-        dcpy.plots.fill_between(
-            ri_q.sel(quantile=[0.25, 0.75]),
-            axis="x",
-            x="quantile",
-            y="depth",
-            ax=axRi,
-            color="r",
-            alpha=0.2,
-        )
-        ri_q.sel(quantile=0.5).plot.line(ax=axRi, xscale="log", y="depth", color="r")
-        axRi.set_xlim((0.1, 2))
-        dcpy.plots.linex([0.25, 0.4], ax=axRi)
-        axRi.set_title("")
-        axRi.set_ylabel("")
+            dcpy.plots.fill_between(
+                ri_q.sel(quantile=[0.25, 0.75]),
+                axis="x",
+                x="quantile",
+                y="depth",
+                ax=axRi,
+                color="r",
+                alpha=0.2,
+            )
+            ri_q.sel(quantile=0.5).plot.line(
+                ax=axRi, xscale="linear", y="depth", color="r"
+            )
+            axRi.set_xlim((0.1, 1))
+            dcpy.plots.linex([0.25, 0.4], ax=axRi, lw=1)
+            axRi.set_title("")
+            axRi.set_ylabel("")
+            axRi.set_xlabel("")
 
-        hdl = dcl_base.sel(**region).plot(x="time", color="k", _labels=False)
-        dcpy.plots.annotate_end(hdl[0], "$z_{Ri}$", va="top")
-        hdl = mld.sel(**region).plot(x="time", color="C1", _labels=False)
-        dcpy.plots.annotate_end(hdl[0], "$z_{MLD}$", va="bottom")
-        if eucmax is not None and np.abs(la) < 2:
-            hdl = eucmax.plot(x="time", color="k", linestyle="--", _labels=False)
-            dcpy.plots.annotate_end(hdl[0], "$z_{EUC}$")
+            hdl = dcl_base.sel(**region).plot(x="time", color="k", _labels=False)
+            dcpy.plots.annotate_end(hdl[0], "$z_{Ri}$", va="top")
+            hdl = mld.sel(**region).plot(x="time", color="C1", _labels=False)
+            dcpy.plots.annotate_end(hdl[0], "$z_{MLD}$", va="bottom")
+            if eucmax is not None and np.abs(la) < 2:
+                hdl = eucmax.plot(x="time", color="k", linestyle="--", _labels=False)
+                dcpy.plots.annotate_end(hdl[0], "$z_{EUC}$")
 
-        axis.set_ylim([-100, 0])
-        axis.set_title(f"latitude={la}°N")
-        axis.set_xlabel("")
-        # axis.text(0.03, 0.05, f"latitude={la}°N", color="k", transform=axis.transAxes)
+            axis.set_ylim([-120, 0])
+            axis.set_title(f"latitude={la}°N")
+            axis.set_xlabel("")
+
+            if index == 0:
+                ax2 = axRi.secondary_xaxis("top")
+                ax2.set_xticks([0.25, 0.4])
+                ax2.set_xticklabels([0.25, 0.4])
+                ax2.tick_params(labeltop=True)
+                ax2.tick_params(axis="x", rotation=40)
+                [tt.set_horizontalalignment("left") for tt in ax2.get_xticklabels()]
+
+            else:
+                axRi.set_xticks([0.25, 0.5, 0.75, 1])
+                axRi.tick_params(axis="x", rotation=40)
+                [tt.set_horizontalalignment("right") for tt in axRi.get_xticklabels()]
+
+            # axis.text(0.03, 0.05, f"latitude={la}°N", color="k", transform=axis.transAxes)
 
     ax[1, 1].set_xlabel("")
+
     # Just tiw phase
     # plt.sca(ax[-1])
     # model.full.tiw_phase.sel(longitude=lon, method="nearest").plot(_labels=False)
     # [aa.set_xlabel("") for aa in ax[:-1]]
 
+    for aa in [ax[0, 0], ax[2, 0], ax[2, 1]]:
+        [tt.set_visible(False) for tt in aa.get_xticklabels()]
+    dcpy.plots.concise_date_formatter(ax[-1, 0], show_offset=False)
     return f, ax
 
 
@@ -393,35 +471,35 @@ def plot_debug_sst_front(model, lon, periods):
     f.set_size_inches((8, 8))
 
 
-def plot_shear_terms(shear, dcl=None):
-    kwargs = dict(
-        col="term",
-        x="time",
-        robust=True,
-        cbar_kwargs={
-            "orientation": "horizontal",
-            "shrink": 0.6,
-            "aspect": 40,
-            "pad": 0.15,
-        },
-        vmin=-5e-8,
-        vmax=5e-8,
-        cmap=mpl.cm.RdBu_r,
-    )
-    if "depth" in shear.dims:
-        kwargs["row"] = "depth"
+# def plot_shear_terms(shear, dcl=None):
+#     kwargs = dict(
+#         col="term",
+#         x="time",
+#         robust=True,
+#         cbar_kwargs={
+#             "orientation": "horizontal",
+#             "shrink": 0.6,
+#             "aspect": 40,
+#             "pad": 0.15,
+#         },
+#         vmin=-5e-8,
+#         vmax=5e-8,
+#         cmap=mpl.cm.RdBu_r,
+#     )
+#     if "depth" in shear.dims:
+#         kwargs["row"] = "depth"
 
-    fg = shear.sel(latitude=slice(-3, 5)).to_array("term").plot(size=5, **kwargs)
-    if "name" in shear.attrs:
-        fg.fig.suptitle(shear.attrs["name"], y=1.01)
+#     fg = shear.sel(latitude=slice(-3, 5)).to_array("term").plot(size=5, **kwargs)
+#     if "name" in shear.attrs:
+#         fg.fig.suptitle(shear.attrs["name"], y=1.01)
 
-    def plot():
-        dcl.plot.contour(
-            levels=7, colors="k", robust=True, x="time", add_labels=False, linewidths=1
-        )
+#     def plot():
+#         dcl.plot.contour(
+#             levels=7, colors="k", robust=True, x="time", add_labels=False, linewidths=1
+#         )
 
-    if dcl is not None:
-        fg.map(plot)
+#     if dcl is not None:
+#         fg.map(plot)
 
 
 def plot_shred2_time_instant(tsub, ax, add_colorbar):
@@ -476,15 +554,15 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     )
 
     def annotate(tsub, ax):
-        tsub.dcl_base.plot(ax=ax, color="w", lw=2, _labels=False)
+        tsub.dcl_base.plot(ax=ax, color="w", lw=3, _labels=False)
         tsub.dcl_base.plot(ax=ax, color="k", lw=1, _labels=False)
-        tsub.mld.plot(ax=ax, color="w", lw=2, _labels=False)
+        tsub.mld.plot(ax=ax, color="w", lw=3, _labels=False)
         tsub.mld.plot(ax=ax, color="orange", lw=1, _labels=False)
         # dcpy.plots.liney(tsub.eucmax, ax=ax, zorder=10, color="k")
 
     axx = list(ax.values())
-    mask = xr.where((tsub.depth > tsub.mld) | (tsub.depth < tsub.dcl_base), 1, np.nan)
-    [dcpy.plots.plot_mask(aa, mask) for aa in axx]
+    # mask = xr.where((tsub.depth > tsub.mld) | (tsub.depth < tsub.dcl_base), 1, np.nan)
+    # [dcpy.plots.plot_mask(aa, mask) for aa in axx]
 
     [
         aa.set_title(tt)
@@ -659,3 +737,580 @@ def plot_tiw_period_snapshots(full_subset, lon, period, times):
     dcpy.plots.label_subplots(axx.flat, start="e")
 
     return axx
+
+
+def plot_dcl(subset, shear_max=False, zeros_flux=True, lw=2, kpp_terms=True):
+    if "dens" not in subset:
+        subset["dens"] = dens(subset.salt, subset.theta, np.array([0.0]))
+        subset.dens.attrs["description"] = "Potential density, referenced to surface"
+    if "S2" not in subset:
+        subset = calc_reduced_shear(subset)
+    if "mld" not in subset:
+        subset["mld"] = get_mld(subset.dens)
+    if "dcl_base" not in subset:
+        subset["dcl_base"] = get_dcl_base_Ri(subset)
+
+    varnames = [
+        "KPPhbl",
+        "nonlocal_flux",
+        "mld",
+        "dcl_base",
+        "N2",
+        "S2",
+        "u",
+        "Jq",
+        "netflux",
+        "stress",
+        "Ri",
+        # "KPPdiffKzT",
+    ]
+    if "KPPRi" in subset:
+        varnames.append("KPPRi")
+
+    if kpp_terms:
+        varnames += [
+            "taux",
+            "tauy",
+            "v",
+            "theta",
+            "salt",
+            "short",
+        ]
+    subset = subset[varnames].compute()
+    zeros = dcpy.util.interp_zero_crossing(subset.netflux)
+
+    if kpp_terms:
+        kpp = calc_kpp_terms(subset)
+        # Rib = kpp.Rib
+
+    if "KPPRi" in subset:
+        Rib = subset["KPPRi"]
+    else:
+        if kpp_terms:
+            Rib = kpp.Rib
+        else:
+            Rib = None
+
+    stress = "stress" in subset
+    if stress:
+        subset.stress.attrs["long_name"] = "$τ$"
+        subset.stress.attrs["units"] = "$N/m^2$"
+
+    f, axx = plt.subplots(
+        5,
+        1,
+        sharex=True,
+        squeeze=False,
+        constrained_layout=True,
+        gridspec_kw=dict(height_ratios=[0.5, 1, 1, 1, 1]),
+    )
+    ax = axx.squeeze()
+    ax[0].fill_between(x=subset.time.values, y1=subset.netflux, y2=0)
+    ax[0].set_ylabel("$Q_{net}$ [$W/m²$]")
+
+    if stress:
+        axstress = ax[0].twinx()
+        subset.stress.plot(ax=axstress, color="C1", ylim=(0, 0.1), x="time")
+        axstress.set_title("")
+        dcpy.plots.set_axes_color(axstress, "C1", spine="right")
+
+        # (subset.Ri).plot(
+        #     x="time",
+        #     ax=ax[1],
+        #     vmin=0.1,
+        #     vmax=0.5,
+        #     levels=np.arange(0.15, 0.85, 0.1),
+        #     cmap=mpl.cm.RdGy_r,
+        #     cbar_kwargs={"label": "$Ri$"},
+        # )
+
+        (subset.Ri).plot(x="time", ax=ax[1], **cmaps["Ri"])
+
+    subset.S2.plot(x="time", ax=ax[2], **cmaps["S2"])
+    subset.N2.plot(x="time", ax=ax[3], **cmaps["N2"])
+
+    Jq = (
+        (subset.Jq + subset.nonlocal_flux.fillna(0))
+        .rolling(depth=2, center=True)
+        .mean()
+    )
+    h = Jq.plot(
+        x="time", ax=ax[4], **cmaps["Jq"], cbar_kwargs={"label": "$J_q^t$ [$W/m²$]"},
+    )
+
+    # subset.KPPdiffKzT.where(subset.KPPdiffKzT > 0).plot(
+    #    ax=ax[4], norm=mpl.colors.LogNorm(), vmin=5e-4, vmax=5e-2, cmap=mpl.cm.YlGnBu_r,
+    # )
+
+    if shear_max:
+        masked_S2 = subset.S2.where(
+            (subset.depth > (subset.dcl_base.interpolate_na("time", "nearest") + 5))
+            & (subset.u < 0.2)
+        )
+        masked_S2 = masked_S2.fillna(-1000)
+        S2max = subset.depth[masked_S2.argmax("depth").compute()]
+
+    locator = mpl.dates.AutoDateLocator()
+    locator.intervald[mpl.dates.HOURLY] = [12]  # only show every 3 hours
+
+    def plot(ax):
+
+        if Rib is not None:
+            hrib = (
+                dcpy.interpolate.pchip_roots(Rib.sortby("depth"), "depth", target=0.3,)
+                .squeeze()
+                .plot(ax=ax, _labels=False, lw=lw * 2.5, color="r")
+            )
+
+            dcpy.plots.annotate_end(hrib[0], "$Ri_b = 0.3$", va="top")
+            # cs = Rib.plot.contour(
+            #    ax=ax, levels=[0.3], linewidths=lw*2.5, colors="r", x="time"
+            # )
+        else:
+            print("no Rib")
+            cs = None
+
+        hmld = subset.mld.plot(
+            x="time",
+            color="C1",
+            ls="--",
+            lw=lw + 1,
+            ax=ax,
+            label="$z_{MLD}$",
+            _labels=False,
+        )
+        dcpy.plots.annotate_end(hmld[0], "$z_{MLD}$")
+
+        (-1 * subset.KPPhbl).plot(x="time", color="w", lw=lw * 2, ax=ax, _labels=False)
+        hkpp = (-1 * subset.KPPhbl).plot(
+            x="time", color="k", lw=lw, ax=ax, label="$H_{KPP}$", _labels=False
+        )
+        dcpy.plots.annotate_end(hkpp[0], "$H_{KPP}$", va="bottom")
+
+        subset.dcl_base.plot(color="k", lw=lw, ax=ax, _labels=False)
+        (-1 * Jq).plot.contour(
+            levels=17, colors="k", linewidths=0.5, x="time", robust=True, ax=ax
+        )
+        if zeros_flux:
+            dcpy.plots.linex(zeros, ax=ax, zorder=3, color="w", lw=lw)
+
+        if shear_max:
+            S2max.plot(ax=ax)
+
+        ax.xaxis.set_minor_locator(locator)
+
+        if kpp_terms:
+            (-1 * kpp.hmonob).plot(
+                color="r",
+                ls="none",
+                ms=lw * 5,
+                marker=".",
+                label="$L_{MO}$",
+                ax=ax,
+                _labels=False,
+            )
+
+    [plot(axx) for axx in ax[1:]]
+    # cs = plot(axx.flat[-1])
+    # if cs:
+    #    dcpy.plots.add_contour_legend(cs, "Ri_b", loc="lower right")
+    dcpy.plots.clean_axes(axx)
+    dcpy.plots.concise_date_formatter(axx.flat[-1], show_offset=False, minticks=5)
+    # ax.flat[-1].legend(ncol=4)
+    ax.flat[-1].set_xlabel("")
+    f.set_size_inches((8, 10))
+
+    return f, axx
+
+
+def debug_kpp_plot(sub):
+    """ Plot showing KPP terms estimated using a port of Bill Smyth's code. """
+
+    h = calc_kpp_terms(sub)
+
+    f, ax = plt.subplots(
+        2,
+        1,
+        sharex=True,
+        constrained_layout=True,
+        gridspec_kw={"height_ratios": [1, 2]},
+        squeeze=False,
+    )
+    f.set_size_inches((8, 8))
+    sub.netflux.plot(ax=ax[0, 0])
+
+    plt.sca(ax[1, 0])
+    cs = np.log10(sub.KPPdiffKzT.sel(depth=slice(-40))).plot.contour(
+        levels=np.arange(-3, -1.5, 0.25),
+        colors="k",
+        robust=True,
+        x="time",
+        label="MIT $K_T$",
+    )
+    ax[1, 0].add_artist(
+        ax[1, 0].legend(*cs.legend_elements("log_{10} K_T"), loc="lower right")
+    )
+
+    (sub.Jq.sel(depth=slice(-40))).plot(
+        levels=21, robust=True, x="time",
+    )
+
+    def annotate(ax):
+        cs = h.Rib.plot.contour(levels=[0.3], linewidths=3, colors="r", x="time")
+        ax.add_artist(ax.legend(*cs.legend_elements("Ri_b")))
+        # (-1 * h.hunlimit).plot(marker="o", markersize=8, label="unlimited hbl", ax=ax)
+        (-1 * sub.KPPhbl).plot(lw=4, label="MIT hbl", ax=ax, color="k")
+        (-1 * h.hmonob).plot(
+            color="r", ls="--", marker="x", label="monin-obukhov", ax=ax
+        )
+
+    ax[-1, 0].legend()
+
+    dcpy.plots.clean_axes(ax)
+
+
+def plot_shear_terms(ds, duzdt, dvzdt, mask_dcl=True):
+    def plot_dcl(dcl, ax):
+        kwargs = dict(levels=[30], robust=True, x="time", add_labels=False, ax=ax,)
+
+        dcl.isel(longitude=1).plot.contour(**kwargs, linewidths=3, colors="w")
+        dcl.isel(longitude=1).plot.contour(**kwargs, linewidths=1.1, colors="k")
+
+    def plot_shear_and_evol(shear, dcl, evol, fig, axes, colorbar=True, mask_dcl=True):
+        hshear = shear.isel(longitude=1).plot(
+            ax=axes["shear"],
+            vmin=-0.02,
+            vmax=0.02,
+            x="time",
+            add_colorbar=False,
+            cmap=mpl.cm.RdBu_r,
+        )
+
+        mpl.rcParams["hatch.color"] = "lightgray"
+        dclmask = xr.ones_like(dcl).where((dcl < 30))
+        dclmask = xr.where(
+            (dcl.latitude <= -5) & (dcl.latitude >= 4.8), 1.0, dclmask
+        ).isel(longitude=1)
+
+        for var in axes:
+            if var not in evol:
+                continue
+            hevol = evol[var].plot(
+                ax=axes[var],
+                vmin=-5e-8,
+                vmax=5e-8,
+                cmap=mpl.cm.PuOr_r,
+                x="time",
+                add_colorbar=False,
+            )
+
+            if mask_dcl:
+                dcpy.plots.plot_mask(axes[var], dclmask)
+            else:
+                plot_dcl(dcl, ax=axes[var])
+
+        plot_dcl(dcl, ax=axes["shear"])
+        return hshear, hevol
+
+    def avg(ds):
+        return ds.sel(depth=slice(-60), latitude=slice(-2, 6.5)).mean("depth")
+
+    terms = ["shear",] + [
+        term
+        for term in ["xadv", "yadv", "str", "vtilt", "htilt", "buoy", "fric"]
+        if term in duzdt
+    ]
+    with plt.rc_context({"font.size": 9}):
+
+        f, axx = plt.subplots(
+            len(terms), 2, sharex=True, sharey=True, constrained_layout=True
+        )
+        f.set_constrained_layout_pads(h_pad=0, w_pad=0)
+        ax = dict()
+        ax["u"] = dict(zip(terms, axx[:, 0]))
+        ax["v"] = dict(zip(terms, axx[:, 1]))
+
+        dcl = ds.dcl.resample(time="D").mean().rolling(latitude=3).mean().compute()
+
+        hshear, hevol = plot_shear_and_evol(
+            shear=avg(ds.uz),
+            dcl=dcl,
+            evol=avg(duzdt),
+            fig=f,
+            axes=ax["u"],
+            colorbar=True,
+            mask_dcl=mask_dcl,
+        )
+
+        plot_shear_and_evol(
+            shear=avg(ds.vz),
+            dcl=dcl,
+            evol=avg(dvzdt),
+            fig=f,
+            axes=ax["v"],
+            colorbar=False,
+            mask_dcl=mask_dcl,
+        )
+
+        f.colorbar(
+            hshear,
+            ax=axx[0, :],
+            # orientation="horizontal",
+            extend="both",
+            aspect=10,
+            label="shear [$s^{-1}$]",
+        )
+        f.colorbar(
+            hevol,
+            ax=axx[1:, :],
+            # orientation="horizontal",
+            extend="both",
+            aspect=5,
+            shrink=0.3,
+            label="shear tendency [$s^{-2}$]",
+        )
+
+        labelu = ["$u_z$",] + [duzdt[var].term for var in terms[1:]]
+        labelv = ["$v_z$",] + [dvzdt[var].term for var in terms[1:]]
+        labels = list(itertools.chain(*[(a, b) for a, b in zip(labelu, labelv)]))
+
+        dcpy.plots.label_subplots(
+            x=0.05,
+            y=0.85,
+            ax=axx.flat,
+            labels=np.array(labels).flat,
+            bbox=dict(color="white", alpha=0.8, pad=0.1),
+        )
+        dcpy.plots.clean_axes(axx)
+        [aa.set_title("") for aa in axx[0, :]]
+        [aa.set_xlabel("") for aa in axx[-1, :]]
+        [aa.set_ylabel("") for aa in axx[:, 0]]
+        [
+            dcpy.plots.concise_date_formatter(aa, maxticks=6, show_offset=False)
+            for aa in axx[-1, :]
+        ]
+
+        width = dcpy.plots.pub_fig_width("jpo", "medium 2")
+        f.set_size_inches((width, width * 1.6))
+
+    alltitles = dict(
+        zip(
+            ["xadv", "yadv", "str", "vtilt", "htilt", "buoy", "fric"],
+            [
+                "X ADV",
+                "Y ADV",
+                "STRETCH",
+                "TILT V. VORT",
+                "TILT H. VORT",
+                "BUOY",
+                "FRIC",
+            ],
+        )
+    )
+    titles = [alltitles[term] for term in terms[1:]]
+
+    fontdict = {"fontsize": "small", "fontstyle": "oblique"}
+
+    def right_label(ax, title, **kwargs):
+        ax.annotate(
+            title,
+            xy=(1.02, 0.5),
+            xycoords="axes fraction",
+            rotation=270,
+            ha="left",
+            va="center",
+            **kwargs,
+        )
+
+    [right_label(aa, tt, **fontdict) for aa, tt in zip(axx[1:, 1], titles)]
+
+    return f, ax
+
+
+def vor_streamplot(
+    ds,
+    vort,
+    stride=8,
+    refspeed=0.5,
+    uy=True,
+    vy=False,
+    vec=True,
+    stream=True,
+    colorbar=True,
+):
+
+    subset = vort.sel(latitude=slice(-2, 6), depth=slice(0, -60)).mean("depth")
+    f0 = vort.f.reindex_like(subset.z)
+
+    subset.z.attrs["long_name"] = "vert vorticity"
+
+    f, ax = plt.subplots(1, 1, constrained_layout=True)
+
+    cbar_kwargs = (
+        {"label": "- $u_y$ [s$^{-1}$]", "orientation": "horizontal"}
+        if colorbar
+        else None
+    )
+    if uy:
+        ((-1 * subset.uy)).plot(
+            x="time", vmax=2e-5, add_colorbar=colorbar, cbar_kwargs=cbar_kwargs,
+        )
+
+    if vy:
+        ((subset.vy)).plot(
+            x="time",
+            vmax=1e-5,
+            add_colorbar=colorbar,
+            cbar_kwargs=cbar_kwargs,
+            cmap=mpl.cm.PuOr_r,
+        )
+
+    (
+        ds.isel(longitude=1)
+        .dcl.resample(time="D", loffset="12H")
+        .mean()
+        .plot.contour(x="time", colors="k", levels=[30], zorder=2, add_labels=False)
+    )
+    # cs = (
+    #    ds.theta.isel(depth=0, longitude=1)
+    #    .resample(time="D", loffset="12H")
+    #    .mean()
+    #    .plot.contour(x="time", colors="k", levels=[23], zorder=2, add_labels=False)
+    # )
+    # dcpy.plots.contour_label_spines(cs)
+
+    if vec:
+        quiver(
+            subset.isel(time=slice(None, None, 6)).isel(
+                latitude=slice(None, None, stride), time=slice(None, None, stride)
+            ),
+            u="x",
+            v="y",
+            x="time",
+            y="latitude",
+            scale=0.6,
+        )
+
+    # quiver(
+    #    period4[["u", "v"]].sel(depth=slice(-60)).mean("depth")
+    #    .assign(u=lambda x: x["u"] + 0.5)
+    #    .isel(longitude=1, latitude=slice(None, None, 6), time=slice(None, None, 6)),
+    ##    u="u",
+    ##    v="v",
+    #    x="time",
+    #    y="latitude",
+    #    color='darkgreen',
+    #    scale=10,
+    # )
+
+    subset = (
+        ds.isel(longitude=1)
+        .sel(latitude=slice(-1, 5), depth=slice(-40, -70))
+        .isel(latitude=slice(0, -1, 1))
+        .mean("depth")
+    )
+
+    dt = (
+        (subset.time.dt.round("H") - subset.time[0])
+        .values.astype("timedelta64[s]")
+        .astype("int")
+    )
+
+    euc = (
+        ds.u.isel(longitude=1)
+        .sel(latitude=slice(-2, 4))
+        .sel(depth=slice(-30, -120))
+        .mean("depth")
+    )
+    euclat = euc.latitude[euc.argmax("latitude")]
+
+    euclat.plot(ax=ax, lw=6, color="white")
+    heuc = euclat.plot(ax=ax, lw=3, color="dimgray")
+    dcpy.plots.annotate_end(heuc[0], "EUC core")
+
+    if stream:
+        sax = ax.twiny()
+        sax.streamplot(
+            dt / 120e3,
+            subset.latitude.values,
+            (subset.u.transpose().values + refspeed),
+            subset.v.transpose().values,
+            color="seagreen",
+            linewidth=1,
+        )
+        sax.set_xticks([])
+        sax.set_xticklabels([])
+
+    # f.suptitle(
+    #    "Horizontal vorticity vectors [black]; relative velocity streamlines [green].\n Depth average to 60m",
+    #    y=1.05,
+    # )
+    ax.set_title("")
+    ax.set_ylim([-1, 5])
+    ax.set_xlabel("")
+    ax.set_ylabel("Latitude [°N]")
+    dcpy.plots.concise_date_formatter(ax)
+
+    # TODO: dcpy.plots.contour_label_spines(cs, "SST=")
+
+    if colorbar:
+        f.set_size_inches((5.3, 5))
+    else:
+        f.set_size_inches((5.3, 4.3))
+
+
+def plot_reference_speed(ax):
+
+    ax.axvline(-110)
+
+    speeds = [
+        -0.3,
+        -0.4,
+        -0.5,
+        -0.6,
+    ]  # m/s
+
+    tlim = pd.to_datetime(mpl.dates.num2date(ax.get_ylim()))
+    x0 = -110
+    t0 = tlim[0] + pd.Timedelta("5D")
+    for spd in speeds:
+        x1 = x0 + spd / 1000 / 110 * 15 * 86400
+        ax.plot([x0, x1], [t0, t0 + pd.Timedelta("15D")], zorder=10, color="w", lw=4)
+        ax.plot([x0, x1], [t0, t0 + pd.Timedelta("15D")], zorder=10, color="k", lw=2)
+
+
+plot_reference = plot_reference_speed
+
+
+def plot_daily_cycles(ds):
+
+    f, axx = plt.subplots(4, 1, sharex=True, sharey=True, constrained_layout=True)
+    ax = dict(zip(["Ri", "S2", "N2", "Jq"], axx))
+
+    assert all([key in ds for key in ax.keys()])
+
+    for var in ax.keys():
+        ds[var].plot(ax=ax[var], x="time", y="depth", **cmaps[var])
+
+    def plot(ax):
+        ds.mld.plot(ax=ax, color="w", x="time", _labels=False, lw=2)
+        hmld = ds.mld.plot(ax=ax, color="darkorange", x="time", _labels=False, lw=1)
+        ds.dcl_base.plot(ax=ax, color="w", x="time", _labels=False, lw=2)
+        hdcl = ds.dcl_base.plot(ax=ax, color="k", x="time", _labels=False, lw=1)
+        # (-1 * ds.KPPhbl).plot(ax=ax, color='r', x="time", _labels=False)
+        dcpy.plots.annotate_end(hmld[0], "$z_{MLD}$", va="bottom")
+        dcpy.plots.annotate_end(hdcl[0], "$z_{Ri}$", va="top")
+        return hmld, hdcl
+
+    [plot(aa) for aa in axx]
+    # hmld, hdcl = plot(axx[-1])
+
+    [aa.set_xlabel("") for aa in axx]
+    [aa.set_title("") for aa in axx[1:]]
+    [tt.set_rotation(0) for tt in axx[-1].get_xticklabels()]
+    dcpy.plots.concise_date_formatter(axx[-1], minticks=9, show_offset=False)
+    axx[0].set_title("3.5°N, 110°W")
+    dcpy.plots.label_subplots(axx, y=0.05, bbox=dict(color="white", alpha=0.8, pad=0.1))
+
+    f.set_size_inches((dcpy.plots.pub_fig_width("jpo", "medium 2"), 6))
+    return f, ax

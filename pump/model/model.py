@@ -26,11 +26,13 @@ from ..mdjwf import dens
 
 
 
-def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*"):
+def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr="0*"):
     metrics = read_metrics(dirname)
     metrics["longitude"] = metrics.longitude - 170
 
-    stationdirname = f"{dirname}/STATION_DATA/Day_0*"
+    stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
+
+    # print(glob.glob(f"{stationdirname}/{globstr}"))
     station = (
         xr.open_mfdataset(
             f"{stationdirname}/{globstr}",
@@ -38,18 +40,39 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*"):
             combine="by_coords",
             decode_times=False,
         )
-        .squeeze()
         .sortby("latitude")
+        .squeeze()
     )
 
-    metrics = metrics.sel(longitude=station.longitude.values, method="nearest")
+    # TODO: for some reason there are duplicated timestamps near the end
+    deduped = station.time.copy(data=~station.indexes["time"].duplicated())
+    station = station.where(deduped, drop=True)
+    station.time.attrs["long_name"] = ""
+    
+    metrics = metrics.sel(longitude=station.longitude.values, latitude=station.latitude.values,method="nearest")
     station.time.attrs["units"] = "seconds since 1999-01-01 00:00"
     station = xr.decode_cf(station)
     station["time"] = station.time - pd.Timedelta("7h")
 
+    station["KPPg_TH"] = station.KPPg_TH.fillna(0)
+
     station["Jq"] = 1035 * 3994 * (station.DFrI_TH + station.KPPg_TH) / metrics.RAC
     station["nonlocal_flux"] = 1035 * 3994 * (station.KPPg_TH) / metrics.RAC
     station["dens"] = dens(station.salt, station.theta, np.array([0.0]))
+
+    station["mld"] = get_mld(station.dens)
+    station["eucmax"] = get_euc_max(station.u)
+    station["Jq"] += station.nonlocal_flux.fillna(0)  # add the non-local term too
+
+    station.coords["zeuc"] = station.depth - station.eucmax
+    station.zeuc.attrs["long_name"] = "$z - z_{EUC}$"
+    station.zeuc.attrs["units"] = "m"
+
+    station["dJdz"] = station.Jq.differentiate("depth")
+    station["dTdt"] = -station.dJdz/1035/3995 * 86400 * 30
+    station.dTdt.attrs["long_name"] = "$∂T/∂t = -1/(ρ_0c_p) ∂J_q/∂z$"
+    station.dTdt.attrs["units"] = "°C/month"
+
     return station
 
 
