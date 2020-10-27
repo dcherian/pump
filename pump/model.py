@@ -24,6 +24,7 @@ from .obs import *
 from .plot import plot_depths
 from .mdjwf import dens
 
+from . import validate
 
 def read_mitgcm_coords(dirname):
     import xmitgcm
@@ -438,8 +439,6 @@ def read_metrics(dirname):
 
 
 class Model:
-
-    from . import validate
 
     def __init__(self, dirname, name, kind="mitgcm", full=False, budget=False):
         """
