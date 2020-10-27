@@ -1,4 +1,4 @@
-name: dcpy
+name: pump
 channels:
   - conda-forge
   - pyviz
