@@ -1,3 +1,4 @@
+import cf_xarray
 import colorcet
 import dask
 import dcpy.plots
@@ -85,7 +86,7 @@ def plot_depths(ds, ax=None, **kwargs):
         hmld = (ds.mld).plot.line(ax=ax, color="k", lw=0.5, _labels=False, **kwargs)
 
 
-def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
+def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
     """
     Estimates fractional contributions of various terms to bulk Richardson
     number.
@@ -95,28 +96,45 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
         # Better to call differentiate on log-transformed variable
         # This is a nicer estimate of the gradient and is analytically equal
         per = factor * np.log(np.abs(v)).compute().differentiate("longitude")
-        hdl = per.plot(
-            ax=ax2,
-            x="longitude",
+        #hdl = per.plot(
+        #    ax=ax2,
+        #    x="longitude",
+        #    label=f"{factor}/{v.name} $∂_x${v.name}",
+        #    add_legend=False,
+        #    **kwargs,
+        #)
+
+        basefmt="gray"
+        markerfmt = f"{kwargs['color']}{kwargs['marker']}"
+        hdl = ax2.stem(
+            per.longitude,
+            per,
             label=f"{factor}/{v.name} $∂_x${v.name}",
-            add_legend=False,
-            **kwargs,
+            basefmt=basefmt,
+            markerfmt=markerfmt,
+            # **kwargs,
         )
+
         v.plot(ax=ax1, x="longitude", **kwargs)
         ax1.set_xlabel("")
         ax1.set_title("")
 
         return per, hdl
 
+    naxes = 7 if buoy else 5
     if f is None and ax is None:
         f, axx = plt.subplots(
-            7,
+            naxes,
             1,
             constrained_layout=True,
             sharex=True,
-            gridspec_kw={"height_ratios": [1, 1, 1, 1, 1, 1, 2]},
+            gridspec_kw={"height_ratios": [1]*(naxes-1) + [2]},
         )
-        ax = dict(zip(["Rib", "h", "du", "db", "u", "b", "contrib"], axx))
+        if buoy:
+            names = ["Rib", "h", "du", "db", "u", "b", "contrib"]
+        else:
+            names = ["Rib", "h", "du", "u", "contrib"]
+        ax = dict(zip(names, axx))
         add_legend = True
     else:
         add_legend = False
@@ -127,7 +145,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
             "ueuc": "C1",
             "bs": "C0",
             "beuc": "C1",
-            "Rib": "C0",
+            "Rib": "k",
             "h": "C1",
             "du": "C2",
             "db": "C3",
@@ -154,7 +172,8 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
                 if "marker" not in kwargs:
                     hdl[0].set_marker("o")
 
-    for vv in ["u", "b"]:
+    fields = ["u", "b"] if buoy else ["u"]
+    for vv in fields:
         for vvar in ["s", "euc"]:
             var = vv + vvar
             if vvar == "euc":
@@ -178,24 +197,28 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
             ax[vv].set_ylabel("")
 
     ax["u"].set_ylim([-0.04, 0.04])
-    ax["b"].set_ylim([-0.0007, 0.0007])
-
     ax["du"].set_ylim([-1.3, -0.3])
-    ax["db"].set_ylim([0.005, 0.05])
+    ax["u"].set_ylabel("$∂_x u$ [1/s]")
+
+    if buoy:
+        ax["b"].set_ylim([-0.0007, 0.0007])
+        ax["db"].set_ylim([0.005, 0.05])
 
     ax["Rib"].set_ylabel("Ri$_b =  Δbh/Δu²$")
     ax["Rib"].set_yscale("log")
     ax["Rib"].set_yticks([0.25, 0.5, 1, 5, 10])
     ax["Rib"].grid(True)
 
-    rhs.plot(
-        ax=ax["contrib"],
-        x="longitude",
-        color="k",
-        label="RHS",
-        **kwargs,
-        add_legend=False,
-    )
+    if buoy:
+        # this check makes no sense if buoyancy terms are ignored
+        rhs.plot(
+           ax=ax["contrib"],
+            x="longitude",
+            color="C0",
+            label="RHS",
+            **kwargs,
+            add_legend=False,
+        )
     if add_legend:
         ax["contrib"].legend(ncol=5)
         dcpy.plots.liney(0, ax=ax["contrib"])
@@ -212,7 +235,6 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, **kwargs):
     f.set_size_inches(8, 10)
 
     # xr.testing.assert_allclose(ri, rhs)
-
     return f, ax
 
 
@@ -294,7 +316,7 @@ def plot_jq_sst(
     # cax = dcpy.plots.cbar_inset_axes(ax[0, 0])
     sst.name = "SST"
     sst.attrs["units"] = "°C"
-    sst.sel(time=tperiod, latitude=slice(-2, 5)).plot(
+    sst.cf.sel(time=tperiod, latitude=slice(-2, 5)).plot(
         x="time",
         cmap=mpl.cm.RdYlBu_r,
         robust=True,
@@ -370,7 +392,7 @@ def plot_jq_sst(
             # .plot.line(ax=axRi, xscale="log", hue="quantile", y="depth", xlim=(0.1, 2))
 
             # mark Ri distribution time
-            t = pd.date_range(tRi.start, tRi.stop)
+            t = pd.date_range(tRi.start, tRi.stop, freq="D")
             axis.plot(t, -90 * np.ones(t.shape), color="r", lw=4)
 
             dcpy.plots.fill_between(
@@ -429,8 +451,8 @@ def plot_jq_sst(
    #     [tt.set_visible(False) for tt in aa.get_xticklabels()]
     # [tt.set_visible(True) for tt in ax[0, 0].get_xticklabels()]
     ax[1, 0].tick_params(labelbottom=True)
-    dcpy.plots.concise_date_formatter(ax[-1, 0], show_offset=False, minticks=9)
-    # dcpy.plots.concise_date_formatter(ax[1, 0], show_offset=True, minticks=9)
+    # dcpy.plots.concise_date_formatter(ax[-1, 0], show_offset=False, minticks=9)
+    dcpy.plots.concise_date_formatter(ax[1, 0], show_offset=True, minticks=9)
     return f, ax
 
 
