@@ -485,97 +485,6 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;/glade/scratch/gmarques/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001/run/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001.mom6.Drake_Passage_0058.nc.*&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;/glade/scratch/gmarques/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001/run/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001.mom6.Drake_Passage_0058.nc.0115&#39;,
- &#39;/glade/scratch/gmarques/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001/run/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001.mom6.Drake_Passage_0058.nc.0211&#39;,
- &#39;/glade/scratch/gmarques/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001/run/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001.mom6.Drake_Passage_0058.nc.0179&#39;,
- &#39;/glade/scratch/gmarques/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001/run/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001.mom6.Drake_Passage_0058.nc.0147&#39;]
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;/glade/scratch/gmarques/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001/run/gmom.e22.GJRAv3.TL319_t061_zstar_N63.mct.baseline.001.mom6.Drake_Passage_0058.nc.0115&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">preprocess_mom6_sections</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">IndexError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">277</span><span class="o">-</span><span class="n">d7c6b96f10f6</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">preprocess_mom6_sections</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-
-<span class="nn">&lt;ipython-input-270-09b31f6da277&gt;</span> in <span class="ni">preprocess_mom6_sections</span><span class="nt">(ds)</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span>             <span class="p">]</span>
-<span class="g g-Whitespace">     </span><span class="mi">23</span> 
-<span class="ne">---&gt; </span><span class="mi">24</span>         <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">dim</span><span class="p">})</span>
-<span class="g g-Whitespace">     </span><span class="mi">25</span>         <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-<span class="g g-Whitespace">     </span><span class="mi">26</span>             <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">(</span><span class="n">match</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="n">match</span><span class="p">:</span> <span class="n">dim</span><span class="p">})</span>
-
-<span class="ne">IndexError</span>: list index out of range
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">dims</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Frozen(SortedKeysDict({&#39;xh_sub01&#39;: 1, &#39;yh_sub01&#39;: 10, &#39;zl&#39;: 65, &#39;time&#39;: 1, &#39;nv&#39;: 2, &#39;xq_sub01&#39;: 1, &#39;yh_sub02&#39;: 10}))
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">debug</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&gt; <span class=" -Color -Color-Green">&lt;ipython-input-270-09b31f6da277&gt;</span>(24)<span class=" -Color -Color-Cyan">preprocess_mom6_sections</span><span class=" -Color -Color-Blue">()</span>
-<span class=" -Color -Color-Green">     22 </span><span class=" -Color -Color-Red">            ]</span>
-<span class=" -Color -Color-Green">     23 </span>
-<span class=" -Color -Color-Green">---&gt; 24 </span><span class=" -Color -Color-Red">        </span>ds <span class=" -Color -Color-Blue">=</span> ds<span class=" -Color -Color-Blue">.</span>rename<span class=" -Color -Color-Blue">({</span>matches<span class=" -Color -Color-Blue">[</span><span class=" -Color -Color-Cyan">0</span><span class=" -Color -Color-Blue">]:</span> dim<span class=" -Color -Color-Blue">})</span>
-<span class=" -Color -Color-Green">     25 </span><span class=" -Color -Color-Red">        </span><span class=" -Color -Color-Green">for</span> match <span class=" -Color -Color-Green">in</span> matches<span class=" -Color -Color-Blue">[</span><span class=" -Color -Color-Cyan">1</span><span class=" -Color -Color-Blue">:]:</span>
-<span class=" -Color -Color-Green">     26 </span><span class=" -Color -Color-Red">            </span>ds <span class=" -Color -Color-Blue">=</span> ds<span class=" -Color -Color-Blue">.</span>drop_vars<span class=" -Color -Color-Blue">(</span>match<span class=" -Color -Color-Blue">).</span>rename<span class=" -Color -Color-Blue">({</span>match<span class=" -Color -Color-Blue">:</span> dim<span class=" -Color -Color-Blue">})</span>
-
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ipdb&gt;  matches
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ipdb&gt;  dim
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;yq&#39;
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ipdb&gt;  q
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sst</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">),</span> <span class="n">axx</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
     <span class="p">(</span>
@@ -599,14 +508,14 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_11_0.png" src="_images/les-tendencies_11_0.png" />
+<img alt="_images/les-tendencies_6_0.png" src="_images/les-tendencies_6_0.png" />
 </div>
 </div>
 <div class="section" id="choose-time-period-plot-ocean-state-to-see-what-we-get">
 <h2>Choose time period + plot ocean state to see what we get<a class="headerlink" href="#choose-time-period-plot-ocean-state-to-see-what-we-get" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_MITgcm_fix3/&quot;</span>  <span class="c1"># MITgcm output directory</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year_output/&quot;</span>  <span class="c1"># MITgcm output directory</span>
 <span class="n">outdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/work/dcherian/pump/les_forcing/mitgcm_test/&quot;</span>  <span class="c1"># output directory for txt files</span>
 
 <span class="n">whichz</span> <span class="o">=</span> <span class="s2">&quot;216&quot;</span>  <span class="c1"># or &quot;288&quot;  # which z grid h5 file to use</span>
@@ -708,7 +617,7 @@ Calc Ri
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-150.0, 0.0)
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_13_2.png" src="_images/les-tendencies_13_2.png" />
+<img alt="_images/les-tendencies_8_2.png" src="_images/les-tendencies_8_2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -735,8 +644,8 @@ Calc Ri
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_14_0.png" src="_images/les-tendencies_14_0.png" />
-<img alt="_images/les-tendencies_14_1.png" src="_images/les-tendencies_14_1.png" />
+<img alt="_images/les-tendencies_9_0.png" src="_images/les-tendencies_9_0.png" />
+<img alt="_images/les-tendencies_9_1.png" src="_images/les-tendencies_9_1.png" />
 </div>
 </div>
 </div>
@@ -1864,7 +1773,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_28_0.png" src="_images/les-tendencies_28_0.png" />
+<img alt="_images/les-tendencies_23_0.png" src="_images/les-tendencies_23_0.png" />
 </div>
 </div>
 </div>
@@ -1893,7 +1802,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_31_0.png" src="_images/les-tendencies_31_0.png" />
+<img alt="_images/les-tendencies_26_0.png" src="_images/les-tendencies_26_0.png" />
 </div>
 </div>
 </div>
@@ -1906,7 +1815,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_33_0.png" src="_images/les-tendencies_33_0.png" />
+<img alt="_images/les-tendencies_28_0.png" src="_images/les-tendencies_28_0.png" />
 </div>
 </div>
 </div>
@@ -1973,7 +1882,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_38_0.png" src="_images/les-tendencies_38_0.png" />
+<img alt="_images/les-tendencies_33_0.png" src="_images/les-tendencies_33_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1998,7 +1907,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_39_0.png" src="_images/les-tendencies_39_0.png" />
+<img alt="_images/les-tendencies_34_0.png" src="_images/les-tendencies_34_0.png" />
 </div>
 </div>
 </div>
@@ -2018,7 +1927,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(14176.5, 14206.0)
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_41_1.png" src="_images/les-tendencies_41_1.png" />
+<img alt="_images/les-tendencies_36_1.png" src="_images/les-tendencies_36_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2035,7 +1944,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(14176.5, 14206.0)
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_42_1.png" src="_images/les-tendencies_42_1.png" />
+<img alt="_images/les-tendencies_37_1.png" src="_images/les-tendencies_37_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2051,7 +1960,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2b56747a20a0&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_43_1.png" src="_images/les-tendencies_43_1.png" />
+<img alt="_images/les-tendencies_38_1.png" src="_images/les-tendencies_38_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2067,7 +1976,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2b5674a304f0&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_44_1.png" src="_images/les-tendencies_44_1.png" />
+<img alt="_images/les-tendencies_39_1.png" src="_images/les-tendencies_39_1.png" />
 </div>
 </div>
 <p>Raise error here so you don’t go past if running every cell :)</p>
@@ -2119,7 +2028,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2abcfc9f3610&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_48_2.png" src="_images/les-tendencies_48_2.png" />
+<img alt="_images/les-tendencies_43_2.png" src="_images/les-tendencies_43_2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2157,7 +2066,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_52_0.png" src="_images/les-tendencies_52_0.png" />
+<img alt="_images/les-tendencies_47_0.png" src="_images/les-tendencies_47_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2170,7 +2079,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b41fcb93970&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_53_1.png" src="_images/les-tendencies_53_1.png" />
+<img alt="_images/les-tendencies_48_1.png" src="_images/les-tendencies_48_1.png" />
 </div>
 </div>
 </div>
@@ -2198,7 +2107,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b4291fe68b0&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_55_1.png" src="_images/les-tendencies_55_1.png" />
+<img alt="_images/les-tendencies_50_1.png" src="_images/les-tendencies_50_1.png" />
 </div>
 </div>
 </div>
@@ -2226,7 +2135,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b429365b220&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_57_1.png" src="_images/les-tendencies_57_1.png" />
+<img alt="_images/les-tendencies_52_1.png" src="_images/les-tendencies_52_1.png" />
 </div>
 </div>
 </div>
@@ -37790,7 +37699,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b245c327940&gt;]
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_71_1.png" src="_images/les-tendencies_71_1.png" />
+<img alt="_images/les-tendencies_66_1.png" src="_images/les-tendencies_66_1.png" />
 </div>
 </div>
 </div>
