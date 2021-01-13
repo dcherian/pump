@@ -1,0 +1,25 @@
+# Book settings
+title: PUMP
+author: Deepak Cherian
+logo: logo.png
+
+repository:
+  url                       : https://github.com/dcherian/pump  # The URL to your book's repository
+  path_to_book              : "notebooks/"  # A path to your book's folder, relative to the repository root.
+  branch                    : master  # Which branch of the repository should be used when creating links
+
+html:
+  use_repository_button: true
+  home_page_in_navbar       : false  # Whether to include your home page in the left Navigation Bar
+  extra_footer: |
+      <div>
+      <script data-goatcounter="https://count.cherian.net/count"
+              async src="count.js"></script>
+      </div>
+
+latex:
+  latex_documents:
+    targetname: book.tex
+
+execute:
+  execute_notebooks: 'off'

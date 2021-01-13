@@ -1,0 +1,7 @@
+- file: intro  # must have one
+
+- part: notebooks
+  chapters:
+    # - file: markdown
+    # - file: notebooks
+    - file: vertical-velocity
