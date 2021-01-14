@@ -16,3 +16,4 @@
 - part: Other
     - file: vertical-velocity
     - file: les-tendencies
+    - file: heat-momentum-budget-checks
