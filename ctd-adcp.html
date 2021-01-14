@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TODO &#8212; PUMP</title>
+    <title>TIW Cruise Sections &#8212; PUMP</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -47,8 +47,6 @@
     <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -58,7 +56,7 @@
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bulk Ri analysis" href="bulk-Ri.html" />
+    <link rel="next" title="load data" href="TIW-compositing.html" />
     <link rel="prev" title="Paper figures" href="dcl-paper.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -89,7 +87,7 @@
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <p class="caption collapsible-parent">
  <span class="caption-text">
-  notebooks
+  TIW Turbulence
  </span>
 </p>
 <ul class="current nav sidenav_l1">
@@ -110,59 +108,91 @@
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   TODO
+   TIW Cruise Sections
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#read-all-data">
-   Read all data
+  <a class="reference internal" href="TIW-compositing.html">
+   load data
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#ctd">
-   CTD
+  <a class="reference internal" href="TIW-compositing.html#remake-surface-file">
+   remake surface file
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#adcp">
-   ADCP
+  <a class="reference internal" href="TIW-compositing.html#groupby-plotting">
+   groupby plotting
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#summary-plot-for-section">
-   summary plot for section
+  <a class="reference internal" href="TIW-compositing.html#phase-average">
+   Phase average
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#ladcp-test">
-   LADCP test
+  <a class="reference internal" href="TIW-compositing.html#time-compositing">
+   time compositing
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#loop-through-adcps-and-save-section-images">
-   loop through ADCPs and save section images
+  <a class="reference internal" href="TIW-compositing.html#surface-compositing">
+   surface compositing
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#paper-figure">
-   Paper figure
+  <a class="reference internal" href="TIW-compositing.html#consolidate-compositing-steps">
+   consolidate compositing steps
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#osm20-figure">
-   OSM20 figure
+  <a class="reference internal" href="TIW-compositing.html#some-v-expts">
+   some v expts
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#debug-particular-sections">
-   debug particular sections
+  <a class="reference internal" href="TIW-compositing.html#single-tiw-period-analysis">
+   single TIW period analysis
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="#test-plots">
-   test plots
+  <a class="reference internal" href="TIW-compositing.html#aiyo-further-debugging">
+   aiyo further debugging
   </a>
  </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#mom6-weirdness">
+   MOM6 weirdness
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#osm2020-figures">
+   OSM2020 figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#stuff">
+   stuff
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#reference-by-sst-warm-anomaly">
+   reference by SST warm anomaly
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#erko">
+   erko
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Marginal Stability
+ </span>
+</p>
+<ul class="nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="bulk-Ri.html">
    Bulk Ri analysis
@@ -173,6 +203,13 @@
    Longitudinal extent of marginal stability: POP2
   </a>
  </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Other
+ </span>
+</p>
+<ul class="nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="vertical-velocity.html">
    Vertical velocity in MITgcm simulations
@@ -181,6 +218,21 @@
  <li class="toctree-l1">
   <a class="reference internal" href="les-tendencies.html">
    LES tendencies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="heat-momentum-budget-checks.html">
+   Heat and momentum budgets with MITgcm output
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="heat-momentum-budget-checks.html#heat-budget">
+   Heat budget
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="heat-momentum-budget-checks.html#momentum-budget">
+   Momentum budget
   </a>
  </li>
 </ul>
@@ -283,83 +335,83 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#todo">
    TODO
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#read-all-data">
    Read all data
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#ctd">
    CTD
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#mld-computation">
      MLD computation
     </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#adcp">
    ADCP
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#processing">
      processing
     </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#summary-plot-for-section">
    summary plot for section
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#ladcp-test">
    LADCP test
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#loop-through-adcps-and-save-section-images">
-   loop through ADCPs and save section images
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#save-section-images">
+   Save section images
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#paper-figure">
-   Paper figure
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tiw-dcl-paper-figure">
+   TIW DCL Paper figure
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#osm20-figure">
    OSM20 figure
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#debug-particular-sections">
    debug particular sections
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#clivar-p18-2007">
      CLIVAR P18 2007
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#discoverer-ep391">
      Discoverer EP391
     </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#test-plots">
    test plots
   </a>
@@ -375,9 +427,10 @@
         
               <div>
                 
-  <h1>Table of Contents<span class="tocSkip"></span></h1>
-<div class="toc"><ul class="toc-item"><li><span><a href="#TODO" data-toc-modified-id="TODO-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>TODO</a></span></li><li><span><a href="#Read-all-data" data-toc-modified-id="Read-all-data-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Read all data</a></span></li><li><span><a href="#CTD" data-toc-modified-id="CTD-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>CTD</a></span><ul class="toc-item"><li><span><a href="#MLD-computation" data-toc-modified-id="MLD-computation-3.1"><span class="toc-item-num">3.1&nbsp;&nbsp;</span>MLD computation</a></span></li></ul></li><li><span><a href="#ADCP" data-toc-modified-id="ADCP-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>ADCP</a></span><ul class="toc-item"><li><span><a href="#processing" data-toc-modified-id="processing-4.1"><span class="toc-item-num">4.1&nbsp;&nbsp;</span>processing</a></span></li></ul></li><li><span><a href="#summary-plot-for-section" data-toc-modified-id="summary-plot-for-section-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>summary plot for section</a></span></li><li><span><a href="#LADCP-test" data-toc-modified-id="LADCP-test-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>LADCP test</a></span></li><li><span><a href="#loop-through-ADCPs-and-save-section-images" data-toc-modified-id="loop-through-ADCPs-and-save-section-images-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>loop through ADCPs and save section images</a></span></li><li><span><a href="#Paper-figure" data-toc-modified-id="Paper-figure-8"><span class="toc-item-num">8&nbsp;&nbsp;</span>Paper figure</a></span></li><li><span><a href="#OSM20-figure" data-toc-modified-id="OSM20-figure-9"><span class="toc-item-num">9&nbsp;&nbsp;</span>OSM20 figure</a></span></li><li><span><a href="#debug-particular-sections" data-toc-modified-id="debug-particular-sections-10"><span class="toc-item-num">10&nbsp;&nbsp;</span>debug particular sections</a></span><ul class="toc-item"><li><span><a href="#CLIVAR-P18-2007" data-toc-modified-id="CLIVAR-P18-2007-10.1"><span class="toc-item-num">10.1&nbsp;&nbsp;</span>CLIVAR P18 2007</a></span></li><li><span><a href="#Discoverer-EP391" data-toc-modified-id="Discoverer-EP391-10.2"><span class="toc-item-num">10.2&nbsp;&nbsp;</span>Discoverer EP391</a></span></li></ul></li><li><span><a href="#test-plots" data-toc-modified-id="test-plots-11"><span class="toc-item-num">11&nbsp;&nbsp;</span>test plots</a></span></li></ul></div><div class="section" id="todo">
-<h1>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tiw-cruise-sections">
+<h1>TIW Cruise Sections<a class="headerlink" href="#tiw-cruise-sections" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="todo">
+<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
 <p>CTD at 1m resolution</p>
 <p>ADCP in 8m/10m bins</p>
 <ul class="simple">
@@ -433,7 +486,7 @@
 </div>
 </div>
 <div class="section" id="read-all-data">
-<h1>Read all data<a class="headerlink" href="#read-all-data" title="Permalink to this headline">¶</a></h1>
+<h2>Read all data<a class="headerlink" href="#read-all-data" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">ls</span> ../datasets/ctd
@@ -488,9 +541,9 @@
 </div>
 </div>
 <div class="section" id="ctd">
-<h1>CTD<a class="headerlink" href="#ctd" title="Permalink to this headline">¶</a></h1>
+<h2>CTD<a class="headerlink" href="#ctd" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="mld-computation">
-<h2>MLD computation<a class="headerlink" href="#mld-computation" title="Permalink to this headline">¶</a></h2>
+<h3>MLD computation<a class="headerlink" href="#mld-computation" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cruises</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
@@ -554,7 +607,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="adcp">
-<h1>ADCP<a class="headerlink" href="#adcp" title="Permalink to this headline">¶</a></h1>
+<h2>ADCP<a class="headerlink" href="#adcp" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ctd</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">find_cruise</span><span class="p">(</span><span class="n">cruises</span><span class="p">,</span> <span class="s2">&quot;31DSEP393&quot;</span><span class="p">)</span>
@@ -1537,7 +1590,7 @@ dl.xr-attrs {
 </table></pre></li></ul></div></li><li class='xr-section-item'><input id='section-8a9cd26f-11f9-485e-a9f3-b82ac82d9ba1' class='xr-section-summary-in' type='checkbox'  ><label for='section-8a9cd26f-11f9-485e-a9f3-b82ac82d9ba1' class='xr-section-summary' >Attributes: <span>(11)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>EXPOCODE :</span></dt><dd>31DSEP393_1</dd><dt><span>Conventions :</span></dt><dd>COARDS/WOCE</dd><dt><span>WOCE_VERSION :</span></dt><dd>3.0</dd><dt><span>WOCE_ID :</span></dt><dd>PR16</dd><dt><span>DATA_TYPE :</span></dt><dd>WOCE CTD</dd><dt><span>STATION_NUMBER :</span></dt><dd>20</dd><dt><span>CAST_NUMBER :</span></dt><dd>1</dd><dt><span>BOTTOM_DEPTH_METERS :</span></dt><dd>0</dd><dt><span>Creation_Time :</span></dt><dd>Diggs Code Version 1.2: Mon Aug 26 19:47:34 2002 GMT</dd><dt><span>ORIGINAL_HEADER :</span></dt><dd>:CTD,20020826WHPOSIOHLB:#Software Version: CTD_Exchange_Encode_v1.0g (Diggs):#SUMFILE_NAME:     pr16_hsu.txt:#SUMFILE_MOD_DATE: Mon Aug 26 12:45:46 2002:#CTDFILE_NAME:     EP393W20.WCT:#CTDFILE_MOD_DATE: Mon Aug 26 12:43:21 2002:#DEPTH_TYPE      : UNC:#EVENT_CODE      : BO:</dd><dt><span>WOCE_CTD_FLAG_DESCRIPTION :</span></dt><dd>::1=Not calibrated:2=Acceptable measurement:3=Questionable measurement:4=Bad measurement:5=Not reported:6=Interpolated over &gt;2 dbar interval:7=Despiked:8=Not assigned for CTD data:9=Not sampled::</dd></dl></div></li></ul></div></div></div></div>
 </div>
 <div class="section" id="processing">
-<h2>processing<a class="headerlink" href="#processing" title="Permalink to this headline">¶</a></h2>
+<h3>processing<a class="headerlink" href="#processing" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">read_adcp</span><span class="p">(</span><span class="s2">&quot;../datasets/adcp/31DSEP393_1_00210_short.nc&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1632,7 +1685,7 @@ dl.xr-attrs {
 </div>
 </div>
 <div class="section" id="summary-plot-for-section">
-<h1>summary plot for section<a class="headerlink" href="#summary-plot-for-section" title="Permalink to this headline">¶</a></h1>
+<h2>summary plot for section<a class="headerlink" href="#summary-plot-for-section" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
@@ -1694,7 +1747,7 @@ distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp:/
 </div>
 </div>
 <div class="section" id="ladcp-test">
-<h1>LADCP test<a class="headerlink" href="#ladcp-test" title="Permalink to this headline">¶</a></h1>
+<h2>LADCP test<a class="headerlink" href="#ladcp-test" title="Permalink to this headline">¶</a></h2>
 <p>Test out using SADCP instead of LADCP. Probably not a good diea since LADCP seems to be too smooth</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1821,8 +1874,8 @@ Invalid limit will be ignored.
 </div>
 <p>R.C. and Ryan think that LADCP is pretty smoothed because of CTD cage motion. R.C. would definitely pick SADCP shear over LADCP to capture finer scale</p>
 </div>
-<div class="section" id="loop-through-adcps-and-save-section-images">
-<h1>loop through ADCPs and save section images<a class="headerlink" href="#loop-through-adcps-and-save-section-images" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="save-section-images">
+<h2>Save section images<a class="headerlink" href="#save-section-images" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp_files</span>
@@ -2004,8 +2057,8 @@ Found 33RO20161119 at index 15.
 </div>
 </div>
 </div>
-<div class="section" id="paper-figure">
-<h1>Paper figure<a class="headerlink" href="#paper-figure" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="tiw-dcl-paper-figure">
+<h2>TIW DCL Paper figure<a class="headerlink" href="#tiw-dcl-paper-figure" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">display</span>
@@ -2682,7 +2735,7 @@ Found 33RO20071215 at index 29.
 </div>
 </div>
 <div class="section" id="osm20-figure">
-<h1>OSM20 figure<a class="headerlink" href="#osm20-figure" title="Permalink to this headline">¶</a></h1>
+<h2>OSM20 figure<a class="headerlink" href="#osm20-figure" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">expocode</span><span class="p">,</span> <span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span> <span class="o">=</span> <span class="n">process_file</span><span class="p">(</span><span class="n">adcp_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -2801,9 +2854,9 @@ Found 33RO20071215 at index 29.
 </div>
 </div>
 <div class="section" id="debug-particular-sections">
-<h1>debug particular sections<a class="headerlink" href="#debug-particular-sections" title="Permalink to this headline">¶</a></h1>
+<h2>debug particular sections<a class="headerlink" href="#debug-particular-sections" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="clivar-p18-2007">
-<h2>CLIVAR P18 2007<a class="headerlink" href="#clivar-p18-2007" title="Permalink to this headline">¶</a></h2>
+<h3>CLIVAR P18 2007<a class="headerlink" href="#clivar-p18-2007" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file</span> <span class="o">=</span> <span class="s1">&#39;../datasets/adcp/33RO20071215_rb0711_01079_short.nc&#39;</span>
@@ -2861,7 +2914,7 @@ Found 33RO20071215 at index 29.
 </div>
 </div>
 <div class="section" id="discoverer-ep391">
-<h2>Discoverer EP391<a class="headerlink" href="#discoverer-ep391" title="Permalink to this headline">¶</a></h2>
+<h3>Discoverer EP391<a class="headerlink" href="#discoverer-ep391" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># _, ctd, adcp, binned = process_file(adcp_files[0])</span>
@@ -2893,7 +2946,7 @@ Found 33RO20071215 at index 29.
 </div>
 </div>
 <div class="section" id="test-plots">
-<h1>test plots<a class="headerlink" href="#test-plots" title="Permalink to this headline">¶</a></h1>
+<h2>test plots<a class="headerlink" href="#test-plots" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binned</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
@@ -2953,12 +3006,7 @@ Found 33RO20071215 at index 29.
 </div>
 </div>
 </div>
-
-
-<script type="application/vnd.jupyter.widget-state+json">
-{"state": {"05d3e2ea8ba5407d92aa8690112877fa": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"layout": "IPY_MODEL_79a1328330b440f4b25409894742960e", "style": "IPY_MODEL_d38dcf54af5e4e47928af0dee97ed444", "value": "<p><b>Dashboard: </b><a href=\"https://jupyterhub.ucar.edu/ch/user/dcherian/proxy/8787/status\" target=\"_blank\">https://jupyterhub.ucar.edu/ch/user/dcherian/proxy/8787/status</a></p>\n"}}, "0da267886e514473abcbc8c47c7bf38a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"children": ["IPY_MODEL_2c32ae6f95ce47e6a55cbc2fde4e6ce8", "IPY_MODEL_b18ee2f2e2674ad597b1ae06015790ac"], "layout": "IPY_MODEL_b5d1b378628a4332b39e03c98af173f8"}}, "13fe83c4944e4e4b83726813f21adde6": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "2c32ae6f95ce47e6a55cbc2fde4e6ce8": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "IntTextModel", "state": {"description": "Workers", "layout": "IPY_MODEL_f605db1863f541ddbda412a62f59d90a", "step": 1, "style": "IPY_MODEL_7d98c50d6b3d4252b84f3df587817083"}}, "33e3f6b21c544eafb566d54a5dd9c102": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ButtonStyleModel", "state": {}}, "3cc69f67ad074574a4cf165236886715": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"layout": "IPY_MODEL_d120ccdfcd1e4589815e0d39014ce8a3", "style": "IPY_MODEL_f067b8f925a54b8dbd3e42607336d145", "value": "\n<div>\n  <style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n  </style>\n  <table style=\"text-align: right;\">\n    <tr> <th>Workers</th> <td>9</td></tr>\n    <tr> <th>Cores</th> <td>72</td></tr>\n    <tr> <th>Memory</th> <td>117.04 GB</td></tr>\n  </table>\n</div>\n"}}, "4ac448a5f07242d5a1c697fbe2fa5f32": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "AccordionModel", "state": {"_titles": {"0": "Manual Scaling", "1": "Adaptive Scaling"}, "children": ["IPY_MODEL_0da267886e514473abcbc8c47c7bf38a", "IPY_MODEL_7363c34f6c63481ead5bb7c01f9327e1"], "layout": "IPY_MODEL_6be2735710fe4d11855ddde4bd2fc2be", "selected_index": null}}, "6be2735710fe4d11855ddde4bd2fc2be": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"min_width": "500px"}}, "7363c34f6c63481ead5bb7c01f9327e1": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"children": ["IPY_MODEL_cc3b9640550b439184c6ac78a67a198a", "IPY_MODEL_f988a77599f8404699c97ec95a828a22", "IPY_MODEL_763b695a0deb46a4863e44a1126ac0c3"], "layout": "IPY_MODEL_75a0fa76426d4c56ad78bc2660bb3ce3"}}, "75a0fa76426d4c56ad78bc2660bb3ce3": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "763b695a0deb46a4863e44a1126ac0c3": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ButtonModel", "state": {"description": "Adapt", "layout": "IPY_MODEL_f605db1863f541ddbda412a62f59d90a", "style": "IPY_MODEL_33e3f6b21c544eafb566d54a5dd9c102"}}, "76e022d129fc473ab62ddf4f890385f2": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"children": ["IPY_MODEL_3cc69f67ad074574a4cf165236886715", "IPY_MODEL_4ac448a5f07242d5a1c697fbe2fa5f32"], "layout": "IPY_MODEL_13fe83c4944e4e4b83726813f21adde6"}}, "77017294266b47f08da294b26f4178de": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "77dc1f02d61d492381baaaafa65fb654": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "79a1328330b440f4b25409894742960e": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "7d98c50d6b3d4252b84f3df587817083": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "82cfdcac53a24b439abfd83e51f68062": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "b16d65a5f1584ceabd4493cdb6d92837": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "b18ee2f2e2674ad597b1ae06015790ac": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ButtonModel", "state": {"description": "Scale", "layout": "IPY_MODEL_f605db1863f541ddbda412a62f59d90a", "style": "IPY_MODEL_d70bd85787cb44388846dc360584eeeb"}}, "b5d1b378628a4332b39e03c98af173f8": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {}}, "cc3b9640550b439184c6ac78a67a198a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "IntTextModel", "state": {"description": "Minimum", "layout": "IPY_MODEL_f605db1863f541ddbda412a62f59d90a", "step": 1, "style": "IPY_MODEL_82cfdcac53a24b439abfd83e51f68062"}}, "d120ccdfcd1e4589815e0d39014ce8a3": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"min_width": "150px"}}, "d38dcf54af5e4e47928af0dee97ed444": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "d70bd85787cb44388846dc360584eeeb": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ButtonStyleModel", "state": {}}, "f067b8f925a54b8dbd3e42607336d145": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "f47f8c9e91624c48a42d2081480d0a6d": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"layout": "IPY_MODEL_77dc1f02d61d492381baaaafa65fb654", "style": "IPY_MODEL_f7636fbdf3434a7da8f5de49edea0f65", "value": "<h2>LocalCluster</h2>"}}, "f605db1863f541ddbda412a62f59d90a": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"width": "150px"}}, "f7636fbdf3434a7da8f5de49edea0f65": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"description_width": ""}}, "f988a77599f8404699c97ec95a828a22": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "IntTextModel", "state": {"description": "Maximum", "layout": "IPY_MODEL_f605db1863f541ddbda412a62f59d90a", "step": 1, "style": "IPY_MODEL_b16d65a5f1584ceabd4493cdb6d92837"}}, "fab27cd7a26d463184ab27ad383740a1": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "VBoxModel", "state": {"children": ["IPY_MODEL_f47f8c9e91624c48a42d2081480d0a6d", "IPY_MODEL_76e022d129fc473ab62ddf4f890385f2", "IPY_MODEL_05d3e2ea8ba5407d92aa8690112877fa"], "layout": "IPY_MODEL_77017294266b47f08da294b26f4178de"}}}, "version_major": 2, "version_minor": 0}
-</script>
-
+</div>
 
     <script type="text/x-thebe-config">
     {
@@ -2989,7 +3037,7 @@ Found 33RO20071215 at index 29.
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="dcl-paper.html" title="previous page">Paper figures</a>
-    <a class='right-next' id="next-link" href="bulk-Ri.html" title="next page">Bulk Ri analysis</a>
+    <a class='right-next' id="next-link" href="TIW-compositing.html" title="next page">load data</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

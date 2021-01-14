@@ -1,0 +1,1172 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heat and momentum budgets with MITgcm output &#8212; PUMP</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="LES tendencies" href="les-tendencies.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">PUMP</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <p class="caption collapsible-parent">
+ <span class="caption-text">
+  TIW Turbulence
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-DCL.html">
+   TIW DCL
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dcl-paper.html">
+   Paper figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dcl-paper.html#supplementary-figures">
+   Supplementary Figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ctd-adcp.html">
+   TIW Cruise Sections
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html">
+   load data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#remake-surface-file">
+   remake surface file
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#groupby-plotting">
+   groupby plotting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#phase-average">
+   Phase average
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#time-compositing">
+   time compositing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#surface-compositing">
+   surface compositing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#consolidate-compositing-steps">
+   consolidate compositing steps
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#some-v-expts">
+   some v expts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#single-tiw-period-analysis">
+   single TIW period analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#aiyo-further-debugging">
+   aiyo further debugging
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#mom6-weirdness">
+   MOM6 weirdness
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#osm2020-figures">
+   OSM2020 figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#stuff">
+   stuff
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#reference-by-sst-warm-anomaly">
+   reference by SST warm anomaly
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html#erko">
+   erko
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Marginal Stability
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="bulk-Ri.html">
+   Bulk Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MI-extent.html">
+   Longitudinal extent of marginal stability: POP2
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Other
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="vertical-velocity.html">
+   Vertical velocity in MITgcm simulations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="les-tendencies.html">
+   LES tendencies
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Heat and momentum budgets with MITgcm output
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#heat-budget">
+   Heat budget
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#momentum-budget">
+   Momentum budget
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/heat-momentum-budget-checks.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/dcherian/pump"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/heat-momentum-budget-checks.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Heat and momentum budgets with MITgcm output
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#imports-and-cluster-setup">
+     imports and cluster setup
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#utility-functions">
+     Utility functions
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#heat-budget">
+   Heat budget
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#read-in-data">
+     Read in data
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#test-balances">
+     test balances
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#momentum-budget">
+   Momentum budget
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     read in data
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#u-momentum">
+     U momentum
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#all-time-steps">
+       all time steps
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#after-shifting-ssh-one-iteration-back-in-time">
+       after shifting SSH one iteration back in time
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#before-shifting-ssh-one-iteration-back-in-time">
+       before shifting SSH one iteration back in time
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#v-momentum">
+     V momentum
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id2">
+       all time steps
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="heat-and-momentum-budgets-with-mitgcm-output">
+<h1>Heat and momentum budgets with MITgcm output<a class="headerlink" href="#heat-and-momentum-budgets-with-mitgcm-output" title="Permalink to this headline">¶</a></h1>
+<p>Long names for all variables are in <code class="docutils literal notranslate"><span class="pre">available_diagnostics.log</span></code></p>
+<div class="section" id="imports-and-cluster-setup">
+<h2>imports and cluster setup<a class="headerlink" href="#imports-and-cluster-setup" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+
+<span class="c1"># import hvplot.xarray</span>
+
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">pump</span>
+
+<span class="c1"># import facetgrid</span>
+
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">120</span>
+
+<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">dask_jobqueue</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+       <span class="s2">&quot;NUMBA_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">}</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span>
+    <span class="n">n_workers</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> 
+    <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="n">env</span><span class="o">=</span><span class="n">env</span>
+                  
+<span class="p">)</span>
+<span class="c1">#cluster = dask_jobqueue.SLURMCluster(</span>
+<span class="c1">#    cores=1, processes=1, memory=&quot;25GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0011&quot;</span>
+<span class="c1">#)</span>
+<span class="c1">#cluster = dask_jobqueue.PBSCluster(</span>
+<span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
+<span class="c1">#    env_extra=env,</span>
+<span class="c1">#)</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<span class="n">cluster</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "8637adb80cc44164bb3a050ab2d8e886", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+</div>
+<div class="section" id="utility-functions">
+<h2>Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">read_metrics</span></code> will sometimes fail because the files don’t exist. This happens when Scott restarts a run :)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">read_metrics</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    </span>
+<span class="sd">    This function needs longitude, latitude, depth to assign the right metadata.</span>
+<span class="sd">    If size of the metrics variables are not the same as (longitude, latitude),</span>
+<span class="sd">    the code assumes that a boundary region has been cut out at the low-end and</span>
+<span class="sd">    high-end of the appropriate axis.</span>
+<span class="sd">    </span>
+<span class="sd">    If the size in depth-axis is different, then it assumes that the provided depth</span>
+<span class="sd">    is a slice from surface to the Nth-point where N=len(depth).</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">xmitgcm</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;hFacC&quot;</span><span class="p">,</span> <span class="s2">&quot;RAC&quot;</span><span class="p">,</span> <span class="s2">&quot;RF&quot;</span><span class="p">,</span> <span class="s2">&quot;DXC&quot;</span><span class="p">,</span> <span class="s2">&quot;DYC&quot;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">h</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">=</span> <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="n">ff</span><span class="p">)[</span><span class="n">ff</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;metrics files not available. </span><span class="si">{</span><span class="n">dirname</span> <span class="o">+</span> <span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
+
+    <span class="n">hFacC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;hFacC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">RAC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;RAC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">RF</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;RF&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">DXC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;DXC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">DYC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;DYC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+
+    <span class="k">del</span> <span class="n">h</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span> <span class="o">!=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">dlon</span> <span class="o">=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlon</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlon</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="n">lons</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span> <span class="o">!=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">dlat</span> <span class="o">=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlat</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlat</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">RAC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">RAC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RAC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">DXC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">DXC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DXC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">DYC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">DYC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DYC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">RF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">RF</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="n">dRF</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">RF</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="n">depth</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dRF&quot;</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;cell_height&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="n">RF</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">RF</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth_left&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;depth_left&quot;</span><span class="p">)</span>
+
+    <span class="n">hFacC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">hFacC</span><span class="p">[:,</span> <span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="n">depth</span><span class="p">,</span>
+            <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">,</span>
+            <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hFacC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dRF</span><span class="p">,</span> <span class="n">hFacC</span><span class="p">,</span> <span class="n">RAC</span><span class="p">,</span> <span class="n">DXC</span><span class="p">,</span> <span class="n">DYC</span><span class="p">])</span>
+
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;cellvol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RAC</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacC</span><span class="p">)</span>
+
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;cellvol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;RF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF</span>
+    
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;rAw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/RAW&quot;</span><span class="p">)[</span><span class="s2">&quot;RAW&quot;</span><span class="p">][</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/hFacW&quot;</span><span class="p">)[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">][:,</span> <span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">])</span>
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;drF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/DRF&quot;</span><span class="p">)[</span><span class="s2">&quot;DRF&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">])</span>
+    
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]),</span> <span class="n">depth_left</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    
+
+    <span class="k">return</span> <span class="n">metrics</span>
+
+
+<span class="k">def</span> <span class="nf">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">):</span>
+    
+    <span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
+    
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+    <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">RHS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s1">&#39;LHS&#39;</span><span class="p">,</span> <span class="s1">&#39;RHS&#39;</span><span class="p">,</span> <span class="s1">&#39;LHS-RHS&#39;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;LHS - RHS&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="heat-budget">
+<h1>Heat budget<a class="headerlink" href="#heat-budget" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_MITgcm_fix2/&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="read-in-data">
+<h2>Read in data<a class="headerlink" href="#read-in-data" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_0003_hb.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="n">sf_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_0003_surf.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">hb_files</span><span class="p">,</span> <span class="n">sf_files</span><span class="p">])</span>
+          <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">))</span>
+
+<span class="n">budget</span><span class="p">[</span><span class="s1">&#39;oceQsw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">oceQsw</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># budget = budget.drop([&quot;DFxE_TH&quot;, &quot;DFyE_TH&quot;, &quot;DFrE_TH&quot;])</span>
+
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">read_metrics</span><span class="p">(</span>
+        <span class="n">dirname</span><span class="p">,</span> 
+        <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> 
+        <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+        <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">sw_prof</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>    
+    <span class="sd">&quot;&quot;&quot; MITgcm Shortwave radiation penetration profile. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">0.62</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">depth</span> <span class="o">/</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.62</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">depth</span> <span class="o">/</span> <span class="mi">20</span><span class="p">)</span>
+
+<span class="c1"># penetrative shortwave radiation</span>
+<span class="n">budget</span><span class="p">[</span><span class="s1">&#39;swprofile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+    <span class="n">sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="n">sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+    <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">],</span>
+    <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;SW radiation deposited in cell&#39;</span><span class="p">})</span>
+
+<span class="n">budget</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre>&lt;xarray.Dataset&gt;
+Dimensions:    (depth: 136, latitude: 400, longitude: 1420, time: 1)
+Coordinates:
+  * depth      (depth) float64 -1.25 -3.75 -6.25 -8.75 ... -824.4 -881.7 -944.4
+  * latitude   (latitude) float32 -10.0 -9.949875 -9.89975 ... 9.949875 10.0
+  * longitude  (longitude) float32 -168.0 -167.94997 ... -97.05003 -97.0
+  * time       (time) datetime64[ns] 1999-01-03
+Data variables:
+    TOTTTEND   (longitude, latitude, depth, time) float32 dask.array&lt;chunksize=(500, 120, 136, 1), meta=np.ndarray&gt;
+    ADVx_TH    (longitude, latitude, depth, time) float32 dask.array&lt;chunksize=(500, 120, 136, 1), meta=np.ndarray&gt;
+    ADVy_TH    (longitude, latitude, depth, time) float32 dask.array&lt;chunksize=(500, 120, 136, 1), meta=np.ndarray&gt;
+    ADVr_TH    (longitude, latitude, depth, time) float32 dask.array&lt;chunksize=(500, 120, 136, 1), meta=np.ndarray&gt;
+    DFrI_TH    (longitude, latitude, depth, time) float32 dask.array&lt;chunksize=(500, 120, 136, 1), meta=np.ndarray&gt;
+    KPPg_TH    (longitude, latitude, depth, time) float32 dask.array&lt;chunksize=(500, 120, 136, 1), meta=np.ndarray&gt;
+    WTHMASS    (longitude, latitude, depth, time) float32 dask.array&lt;chunksize=(500, 120, 136, 1), meta=np.ndarray&gt;
+    oceQsw     (longitude, latitude, time) float32 dask.array&lt;chunksize=(500, 120, 1), meta=np.ndarray&gt;
+    TFLUX      (longitude, latitude, time) float32 dask.array&lt;chunksize=(500, 120, 1), meta=np.ndarray&gt;
+    swprofile  (depth) float32 0.65503883 0.04886788 ... 5.854533e-21</pre></div></div>
+</div>
+</div>
+<div class="section" id="test-balances">
+<h2>test balances<a class="headerlink" href="#test-balances" title="Permalink to this headline">¶</a></h2>
+<p>The heat budget code is dirtier than the momentum budget and could be cleanedup a bit</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="n">levelp</span> <span class="o">=</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">terms</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+<span class="n">metrics_sub</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">cellvol</span> <span class="o">=</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">cellvol</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;ADVr_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;ADVr_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;DFrI_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;DFrI_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;KPPg_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;KPPg_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+<span class="n">surf_mass</span> <span class="o">=</span> <span class="n">terms</span><span class="o">.</span><span class="n">WTHMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">RAC</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># constants taken from diagnostics.log (I think)</span>
+<span class="n">global_area</span> <span class="o">=</span> <span class="mf">2.196468634481708E+13</span>
+<span class="n">rhoConst</span> <span class="o">=</span> <span class="mi">1035</span>
+<span class="n">Cp</span> <span class="o">=</span> <span class="mi">3994</span>
+<span class="n">TsurfCor</span> <span class="o">=</span> <span class="n">surf_mass</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">global_area</span>
+
+<span class="n">LHS</span> <span class="o">=</span> <span class="n">terms</span><span class="o">.</span><span class="n">TOTTTEND</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">86400</span>
+
+<span class="n">ADVx</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">ADVy</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">ADVr</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVr_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">ADVr_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+
+<span class="c1"># no explicit diffusion</span>
+<span class="c1"># DFxE = (terms.DFxE_TH.values[2:, 1:-1] - terms.DFxE_TH.values[1:-1, 1:-1]) / cellvol</span>
+<span class="c1"># DFyE = (terms.DFyE_TH.values[1:-1, 2:] - terms.DFyE_TH.values[1:-1, 1:-1]) / cellvol</span>
+<span class="c1"># DFrE = (terms.DFrE_TH.values[1:-1, 1:-1] - terms.DFrE_THp.values[1:-1, 1:-1]) / cellvol</span>
+<span class="n">DFrI</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">DFrI_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">DFrI_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+
+<span class="c1"># non-local stuff only in mixing layer</span>
+<span class="n">KPPg</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">KPPg_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">KPPg_THp</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+
+<span class="n">ADV</span> <span class="o">=</span> <span class="n">LHS</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">ADVx</span> <span class="o">+</span> <span class="n">ADVy</span> <span class="o">+</span> <span class="n">ADVr</span><span class="p">)</span>
+<span class="n">DIFF</span> <span class="o">=</span> <span class="n">LHS</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">DFrI</span> <span class="o">+</span> <span class="n">KPPg</span><span class="p">)</span>  <span class="c1"># no explicit horizontal diffusion</span>
+<span class="n">ADV</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ADV&#39;</span>
+<span class="n">DIFF</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;DIFF&#39;</span>
+
+<span class="n">SW</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span><span class="p">)</span> <span class="o">/</span>
+      <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">)</span> <span class="o">*</span> <span class="n">terms</span><span class="o">.</span><span class="n">swprofile</span><span class="p">)</span>
+
+<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span><span class="n">ADV</span> <span class="o">+</span> <span class="n">DIFF</span> <span class="o">+</span> <span class="n">SW</span><span class="p">)</span>
+
+<span class="c1"># surface level stuff</span>
+<span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># surface tendency due to SW flux</span>
+    <span class="n">tflx_tend</span> <span class="o">=</span> <span class="p">((</span><span class="n">terms</span><span class="o">.</span><span class="n">TFLUX</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span>
+                 <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">))</span>
+
+    <span class="c1"># tendency due to mass correction</span>
+    <span class="n">surf_corr_tend</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">WTHMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TsurfCor</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">))</span>
+
+    <span class="n">RHS</span> <span class="o">+=</span> <span class="n">tflx_tend</span> <span class="o">+</span> <span class="n">surf_corr_tend</span>
+
+<span class="n">RHS</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+    
+<span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/heat-momentum-budget-checks_11_0.png" src="_images/heat-momentum-budget-checks_11_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="momentum-budget">
+<h1>Momentum budget<a class="headerlink" href="#momentum-budget" title="Permalink to this headline">¶</a></h1>
+<p>Momentum budget emails:</p>
+<ul class="simple">
+<li><p>http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</p></li>
+<li><p>http://mailman.mitgcm.org/pipermail/mitgcm-support/2013-December/008702.html</p></li>
+<li><p>http://mailman.mitgcm.org/pipermail/mitgcm-support/2017-July/011196.html</p></li>
+<li><p>http://mailman.mitgcm.org/pipermail/mitgcm-devel/2019-June/007077.html</p></li>
+</ul>
+<div class="section" id="id1">
+<h2>read in data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Need to append zeros to the viscosity terms because the bottom level is not stored :/</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ssh_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_etan.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ub_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_ub.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">vb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_vb.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># sf_files = xr.open_mfdataset(dirname + &#39;File_*_surf.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500}, combine=&quot;by_coords&quot;, parallel=True)[[&quot;ETAN&quot;]]</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">ub_files</span><span class="p">,</span> <span class="n">vb_files</span><span class="p">,</span> <span class="n">ssh_files</span><span class="p">])</span>
+          <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+<span class="c1"># From http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006920.html</span>
+<span class="c1"># And to get a tendency from this vertical flux:</span>
+<span class="c1"># Um_Impl(:,:,k) =[ VISrI_Um(:,:,k+1) - VISrI_Um(:,:,k) ]</span>
+<span class="c1">#                /[ rAw(:,:)*drF(k)*hFacW(:,:,k) ]</span>
+<span class="c1"># (hope I got the sign right)</span>
+<span class="c1"># VISrI_Um(k=1) should be zero, and the bottom one (k=Nr+1)</span>
+<span class="c1"># is not shored in the output file but it&#39;s also zero.</span>
+
+<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;VISrI_Um&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># fills surface values with 0 </span>
+<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;VISrI_Vm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># NOTE: This is totally wrong now since TPOS_MITgcm_20 is only a top 1000m subset.</span>
+<span class="n">VISrI_Um</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="p">,</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">])</span>        
+    <span class="p">],</span>
+    <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">VISrI_Vm</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="p">,</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">])</span>        
+    <span class="p">],</span>
+    <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">read_metrics</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> 
+                 <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> 
+                 <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                 <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="p">)</span>
+<span class="n">metrics</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre>&lt;xarray.Dataset&gt;
+Dimensions:    (depth: 136, depth_left: 137, latitude: 400, longitude: 1420)
+Coordinates:
+  * depth      (depth) float64 -1.25 -3.75 -6.25 -8.75 ... -824.4 -881.7 -944.4
+  * latitude   (latitude) float64 -10.0 -9.95 -9.9 -9.85 ... 9.85 9.9 9.95 10.0
+  * longitude  (longitude) float64 -168.0 -167.9 -167.9 ... -97.1 -97.05 -97.0
+Dimensions without coordinates: depth_left
+Data variables:
+    dRF        (depth) float32 dask.array&lt;chunksize=(136,), meta=np.ndarray&gt;
+    hFacC      (depth, latitude, longitude) float32 dask.array&lt;chunksize=(136, 120, 500), meta=np.ndarray&gt;
+    RAC        (latitude, longitude) float32 dask.array&lt;chunksize=(120, 500), meta=np.ndarray&gt;
+    DXC        (latitude, longitude) float32 dask.array&lt;chunksize=(120, 500), meta=np.ndarray&gt;
+    DYC        (latitude, longitude) float32 dask.array&lt;chunksize=(120, 500), meta=np.ndarray&gt;
+    cellvol    (latitude, longitude, depth) float32 dask.array&lt;chunksize=(120, 500, 136), meta=np.ndarray&gt;
+    RF         (depth_left) float32 dask.array&lt;chunksize=(137,), meta=np.ndarray&gt;
+    rAw        (latitude, longitude) float32 dask.array&lt;chunksize=(120, 500), meta=np.ndarray&gt;
+    hFacW      (depth, latitude, longitude) float32 dask.array&lt;chunksize=(136, 120, 500), meta=np.ndarray&gt;
+    drF        (depth) float32 dask.array&lt;chunksize=(136,), meta=np.ndarray&gt;</pre></div></div>
+</div>
+</div>
+<div class="section" id="u-momentum">
+<h2>U momentum<a class="headerlink" href="#u-momentum" title="Permalink to this headline">¶</a></h2>
+<p>We are using <code class="docutils literal notranslate"><span class="pre">implicSurfPres=1</span></code> and Scott is saving SSH at the appropriate timestep.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span> <span class="c1"># depth level # budget.sizes[&quot;depth&quot;]</span>
+
+<span class="c1">#SSHx = - 9.81 * budget.ETAN.copy(</span>
+<span class="c1">#    data=np.gradient(budget.ETAN, axis=budget.ETAN.get_axis_num(&quot;longitude&quot;))</span>
+<span class="c1">#) / metrics.DXC</span>
+
+
+<span class="c1"># when trying to do a budget over just 1 time-step, one needs to be aware </span>
+<span class="c1">#  of the precise time-discretisation of the the first term which is evaluated </span>
+<span class="c1">#  in the model as </span>
+<span class="c1">#   - gravity * {  implicSurfPress * (d.EtaN/dx)^n+1 </span>
+<span class="c1">#                +(1-implicSurfPress)*(d.EtaN/dx)^n }</span>
+<span class="c1">#  (using the default implicSurfPress=1 , it might be be easier to use </span>
+<span class="c1">#   snap-shot output Eta.[iter+1] to get EtaN^n+1 )</span>
+
+<span class="c1"># this works because Scott has saved SSH one timestep prior to the saved timestep for the other fields</span>
+<span class="n">SSHx</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span> 
+        <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXC</span><span class="p">)</span>
+
+<span class="c1"># from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</span>
+<span class="n">Um_Impl</span> <span class="o">=</span><span class="p">(</span> <span class="n">VISrI_Um</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+          <span class="o">/</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)))</span>
+
+
+<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SSHx</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_dPHdx</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Advec</span>
+    <span class="c1">#+ budget.Um_Cori  # is in Um_Advec</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Diss</span>
+    <span class="o">+</span> <span class="n">Um_Impl</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">AB_gU</span>
+<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+
+<span class="n">LHS</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">TOTUTEND</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">86400</span>
+
+<span class="c1">#da = xr.Dataset({&quot;LHS&quot;: LHS, &quot;RHS&quot;: RHS}).to_array(&quot;variable&quot;)</span>
+<span class="c1">#da.compute().plot(row=&quot;variable&quot;, robust=True, x=&quot;longitude&quot;, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3908: PerformanceWarning: Increasing number of chunks by factor of 20
+  **blockwise_kwargs,
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Task was destroyed but it is pending!
+task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/nanny.py:406&gt; wait_for=&lt;Future pending cb=[&lt;TaskWakeupMethWrapper object at 0x2b8d2c255918&gt;()]&gt; cb=[IOLoop.add_future.&lt;locals&gt;.&lt;lambda&gt;() at /glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/tornado/ioloop.py:690]&gt;
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b8db53452e8&gt;
+</pre></div>
+</div>
+<img alt="_images/heat-momentum-budget-checks_23_2.png" src="_images/heat-momentum-budget-checks_23_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="n">RHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/heat-momentum-budget-checks_26_0.png" src="_images/heat-momentum-budget-checks_26_0.png" />
+</div>
+</div>
+<div class="section" id="all-time-steps">
+<h3>all time steps<a class="headerlink" href="#all-time-steps" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/heat-momentum-budget-checks_28_0.png" src="_images/heat-momentum-budget-checks_28_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="after-shifting-ssh-one-iteration-back-in-time">
+<h3>after shifting SSH one iteration back in time<a class="headerlink" href="#after-shifting-ssh-one-iteration-back-in-time" title="Permalink to this headline">¶</a></h3>
+<p>residual ~ 1e-11</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b7671fde6a0&gt;
+</pre></div>
+</div>
+<img alt="_images/heat-momentum-budget-checks_30_1.png" src="_images/heat-momentum-budget-checks_30_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="before-shifting-ssh-one-iteration-back-in-time">
+<h3>before shifting SSH one iteration back in time<a class="headerlink" href="#before-shifting-ssh-one-iteration-back-in-time" title="Permalink to this headline">¶</a></h3>
+<p>residual ~ 1e-7</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b7674a99978&gt;
+</pre></div>
+</div>
+<img alt="_images/heat-momentum-budget-checks_32_1.png" src="_images/heat-momentum-budget-checks_32_1.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="v-momentum">
+<h2>V momentum<a class="headerlink" href="#v-momentum" title="Permalink to this headline">¶</a></h2>
+<p>This seems to have some systematic error but it is small</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">SSHy</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span>
+        <span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
+        <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYC</span><span class="p">)</span>
+
+<span class="c1"># from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</span>
+<span class="n">Vm_Impl</span> <span class="o">=</span><span class="p">(</span> <span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+          <span class="o">/</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)))</span>
+<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SSHy</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_dPHdy</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Advec</span>
+    <span class="c1">#+ budget.Vm_Cori  # in Vm_Advec</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Diss</span>
+    <span class="o">+</span> <span class="n">Vm_Impl</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">AB_gV</span>
+<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> 
+
+<span class="n">LHS</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">TOTVTEND</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">86400</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3908: PerformanceWarning: Increasing number of chunks by factor of 21
+  **blockwise_kwargs,
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> 
+    <span class="n">col_wrap</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> 
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span> 
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b8db41ff9b0&gt;
+</pre></div>
+</div>
+<img alt="_images/heat-momentum-budget-checks_35_1.png" src="_images/heat-momentum-budget-checks_35_1.png" />
+</div>
+</div>
+<div class="section" id="id2">
+<h3>all time steps<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/heat-momentum-budget-checks_37_0.png" src="_images/heat-momentum-budget-checks_37_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span> <span class="n">RHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/heat-momentum-budget-checks_38_0.png" src="_images/heat-momentum-budget-checks_38_0.png" />
+</div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="les-tendencies.html" title="previous page">LES tendencies</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Deepak Cherian<br/>
+        
+            &copy; Copyright 2020.<br/>
+          <div class="extra_footer">
+            <div>
+<script data-goatcounter="https://count.cherian.net/count"
+        async src="count.js"></script>
+</div>
+
+          </div>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
