@@ -835,13 +835,42 @@ def get_tiw_phase_v(v, debug=False):
 
 
 def estimate_euc_depth_terms(ds, inplace=True):
+    import warnings
+
+    warnings.warn("Use estimate_bulk_Ri_terms instead", DeprecationWarning)
+    return estimate_bulk_Ri_terms(ds, inplace)
+
+
+def estimate_bulk_Ri_terms(ds, inplace=True, use_mld=True):
 
     # ds.load()
 
     if not inplace:
         ds = ds.copy()
 
-    surface = {"depth": -25, "method": "nearest"}
+    mld = xr.DataArray(
+        [-30.0, -45.0, -70.0, -60.0, -40.0, -40.0, -35.0, -25.0, -20.0, -20.0],
+        dims="longitude",
+        coords={
+            "longitude": [
+                -217.0,
+                -204.0,
+                -195.0,
+                -180.0,
+                -170.0,
+                -155.0,
+                -140.0,
+                -125.0,
+                -110.0,
+                -95.0,
+            ]
+        },
+    )
+
+    if use_mld:
+        surface = {"depth": mld.sel(longitude=ds.longitude), "method": "nearest"}
+    else:
+        surface = {"depth": -25, "method": "nearest"}
 
     ds["h"] = ds.eucmax - surface["depth"]
     ds["h"].attrs["long_name"] = "$h$"
@@ -1049,8 +1078,9 @@ def coare_fluxes_jra(ocean, forcing):
     """
 
     import xcoare
+    import cf_xarray
 
-    ocean = ocean.sel(depth=0, method="nearest", drop=True)
+    ocean = ocean.cf.sel(Z=0, method="nearest", drop=True)
 
     sst = ocean.theta
 
@@ -1070,7 +1100,7 @@ def coare_fluxes_jra(ocean, forcing):
         ts=sst,
         Rs=forcing.rsds,
         Rl=forcing.rlds,
-        lat=ocean.latitude,
+        lat=ocean.cf["Y"],
         rain=forcing.prra / 1000 * 1000 / 3600,  # kg/m²/s to mm/hour
         jcool=False,
         qspec=forcing.huss,

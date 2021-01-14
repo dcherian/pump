@@ -1,0 +1,10 @@
+- file: intro  # must have one
+
+- part: notebooks
+  chapters:
+    # - file: markdown
+    # - file: notebooks
+    - file: TIW-DCL
+    - file: bulk-Ri
+    - file: vertical-velocity
+    - file: les-tendencies

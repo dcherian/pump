@@ -449,39 +449,45 @@ def read_jra_20():
 
     jradir = "/glade/campaign/cgd/oce/people/bachman/make_TPOS_MITgcm/1_20_1999-2018/JRA_FORCING"
 
+    # the time offset for 1999 is different from the rest!
     jrafull = xr.concat(
         [
-            read_jra(
-                [
-                    f"{jradir}/1999/JRA55DO_1.3_Tair_1999.nc",
-                    f"{jradir}/1999/JRA55DO_1.3_Uwind_1999.nc",
-                    f"{jradir}/1999/JRA55DO_1.3_Qair_1999.nc",
-                    f"{jradir}/1999/JRA55DO_1.3_Vwind_1999.nc",
-                    f"{jradir}/1999/JRA55DO_1.3_Pair_1999.nc",
-                ],
-                chunks={"time": 1200},
-            ),
-            # pump.obs.read_jra(f"{jradir}/200[0-1]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
+            #read_jra(
+            #    [
+            #        f"{jradir}/1999/JRA55DO_1.3_Tair_1999.nc",
+            #        f"{jradir}/1999/JRA55DO_1.3_Uwind_1999.nc",
+            #        f"{jradir}/1999/JRA55DO_1.3_Qair_1999.nc",
+            #        f"{jradir}/1999/JRA55DO_1.3_Vwind_1999.nc",
+            #        f"{jradir}/1999/JRA55DO_1.3_Pair_1999.nc",
+            #    ],
+            #    chunks={"time": 1200},
+            #),
+            read_jra(f"{jradir}/20[0-9][0-9]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
         ],
         dim="time",
     )
+    #print(jrafull.time)
 
     jrafull2 = xr.concat(
         [
-            read_jra(
-                [
-                    f"{jradir}/1999/JRA55DO_1.3_rain_1999.nc",
-                    f"{jradir}/1999/JRA55DO_1.3_lwrad_down_1999.nc",
-                    f"{jradir}/1999/JRA55DO_1.3_swrad_1999.nc",
-                ],
-                chunks={"time": 1200},
-            ),
-            # pump.obs.read_jra(f"{jradir}/200[0-1]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
+            #read_jra(
+            #    [
+            #        f"{jradir}/1999/JRA55DO_1.3_rain_1999.nc",
+            #        f"{jradir}/1999/JRA55DO_1.3_lwrad_down_1999.nc",
+            #        f"{jradir}/1999/JRA55DO_1.3_swrad_1999.nc",
+            #    ],
+            #    chunks={"time": 1200},
+            #),
+            read_jra(f"{jradir}/20[0-9][0-9]/JRA55DO*[0-9].nc", chunks={"time": 1200}),
         ],
         dim="time",
     )
-    jrafull2["time"] = jrafull2.time - pd.Timedelta("1.5h")
+    #jrafull2["time"] = jrafull2.time - pd.Timedelta("1.5h")
 
+    #print(jrafull2.time)
+    #xr.align(jrafull, jrafull2, join="exact")
+
+    #jrafull2["time"] = jrafull.time.data
     jrafull = jrafull.merge(jrafull2)
     jrafull["time"] = jrafull.time - pd.Timedelta("7h")
 
