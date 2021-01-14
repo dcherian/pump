@@ -6,6 +6,7 @@
     # - file: notebooks
     - file: TIW-DCL
     - file: dcl-paper
+    - file: ctd-adcp
     - file: bulk-Ri
     - file: MI-extent
     - file: vertical-velocity
