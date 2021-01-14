@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vertical velocity in MITgcm simulations &#8212; PUMP</title>
+    <title>TIW vertical velocity in MITgcm simulations &#8212; PUMP</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -137,7 +137,7 @@
 <ul class="current nav sidenav_l1">
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Vertical velocity in MITgcm simulations
+   TIW vertical velocity in MITgcm simulations
   </a>
  </li>
  <li class="toctree-l1">
@@ -251,23 +251,35 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#lat-lon-at-depth">
-   lat-lon at depth
+  <a class="reference internal nav-link" href="#maps">
+   Maps
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#lat-lon-at-depth">
+     lat-lon at depth
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#lat-lon-top-85m-mean">
+     lat-lon top 85m mean
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#depth-time-at-lats">
+     depth-time at lats
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#depth-lat-at-times">
+     depth-lat at times
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#lat-lon-top-85m-mean">
-   lat-lon top 85m mean
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#depth-time-at-lats">
-   depth-time at lats
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#depth-lat-at-times">
-   depth-lat at times
+  <a class="reference internal nav-link" href="#spectra">
+   Spectra
   </a>
  </li>
 </ul>
@@ -281,8 +293,8 @@
         
               <div>
                 
-  <div class="section" id="vertical-velocity-in-mitgcm-simulations">
-<h1>Vertical velocity in MITgcm simulations<a class="headerlink" href="#vertical-velocity-in-mitgcm-simulations" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tiw-vertical-velocity-in-mitgcm-simulations">
+<h1>TIW vertical velocity in MITgcm simulations<a class="headerlink" href="#tiw-vertical-velocity-in-mitgcm-simulations" title="Permalink to this headline">¶</a></h1>
 <p>Anna says POP <span class="math notranslate nohighlight">\(w\)</span> is white… let’s see what MITgcm shows</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -3578,32 +3590,33 @@ Dimensions without coordinates: dim_0</pre><div class='xr-wrap' hidden><div clas
     <span class="s2">&quot;/glade/work/dcherian/pump/zarrs/110w-period-4-3.zarr&quot;</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">del</span> <span class="n">period4</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span>
+<span class="n">central</span> <span class="o">=</span> <span class="n">period4</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">period4</span><span class="p">[</span><span class="s2">&quot;Jq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1035</span> <span class="o">*</span> <span class="mi">3994</span> <span class="o">*</span> <span class="p">(</span><span class="n">period4</span><span class="o">.</span><span class="n">DFrI_TH</span> <span class="o">+</span> <span class="n">period4</span><span class="o">.</span><span class="n">KPPg_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="n">RAC</span>
-<span class="n">period4</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">period4</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;7h&quot;</span><span class="p">)</span>
-<span class="n">period4</span><span class="p">[</span><span class="s2">&quot;dens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">period4</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">period4</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
-<span class="n">period4</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">calc_reduced_shear</span><span class="p">(</span><span class="n">period4</span><span class="p">)</span>
-<span class="n">period4</span><span class="p">[</span><span class="s2">&quot;mld&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_mld</span><span class="p">(</span><span class="n">period4</span><span class="o">.</span><span class="n">dens</span><span class="p">)</span>
-<span class="n">period4</span><span class="p">[</span><span class="s2">&quot;dcl_base&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_dcl_base_Ri</span><span class="p">(</span><span class="n">period4</span><span class="p">)</span>
-<span class="n">period4</span><span class="p">[</span><span class="s2">&quot;dcl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">period4</span><span class="p">[</span><span class="s2">&quot;mld&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">period4</span><span class="p">[</span><span class="s2">&quot;dcl_base&quot;</span><span class="p">]</span>
-<span class="n">period4</span><span class="p">[</span><span class="s2">&quot;sst&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">period4</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">period4</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span>
-    <span class="n">period4</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">central</span><span class="p">[</span><span class="s2">&quot;Jq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1035</span> <span class="o">*</span> <span class="mi">3994</span> <span class="o">*</span> <span class="p">(</span><span class="n">central</span><span class="o">.</span><span class="n">DFrI_TH</span> <span class="o">+</span> <span class="n">central</span><span class="o">.</span><span class="n">KPPg_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="n">RAC</span>
+<span class="n">central</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">central</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;7h&quot;</span><span class="p">)</span>
+<span class="n">central</span><span class="p">[</span><span class="s2">&quot;dens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">central</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">central</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
+<span class="n">central</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">calc_reduced_shear</span><span class="p">(</span><span class="n">central</span><span class="p">)</span>
+<span class="n">central</span><span class="p">[</span><span class="s2">&quot;mld&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_mld</span><span class="p">(</span><span class="n">central</span><span class="o">.</span><span class="n">dens</span><span class="p">)</span>
+<span class="n">central</span><span class="p">[</span><span class="s2">&quot;dcl_base&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_dcl_base_Ri</span><span class="p">(</span><span class="n">central</span><span class="p">)</span>
+<span class="n">central</span><span class="p">[</span><span class="s2">&quot;dcl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">central</span><span class="p">[</span><span class="s2">&quot;mld&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">central</span><span class="p">[</span><span class="s2">&quot;dcl_base&quot;</span><span class="p">]</span>
+<span class="n">central</span><span class="p">[</span><span class="s2">&quot;sst&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">central</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">central</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span>
+    <span class="n">central</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="p">)</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">depth</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$J^t_q$&quot;</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;W/m²&quot;</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$S²$&quot;</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$s^{-2}$&quot;</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ri$&quot;</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$N²$&quot;</span>
-<span class="n">period4</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$s^{-2}$&quot;</span>
-<span class="n">period4</span>
+<span class="n">central</span><span class="o">.</span><span class="n">depth</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
+<span class="n">central</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$J^t_q$&quot;</span>
+<span class="n">central</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;W/m²&quot;</span>
+<span class="n">central</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$S²$&quot;</span>
+<span class="n">central</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$s^{-2}$&quot;</span>
+<span class="n">central</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ri$&quot;</span>
+<span class="n">central</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$N²$&quot;</span>
+<span class="n">central</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$s^{-2}$&quot;</span>
+<span class="n">central</span>
 </pre></div>
 </div>
 </div>
@@ -3631,7 +3644,7 @@ Dimensions without coordinates: dim_0</pre><div class='xr-wrap' hidden><div clas
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">period4</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">central</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -4101,12 +4114,14 @@ Coordinates:
        &#x27;1995-12-17T09:00:00.000000000&#x27;, &#x27;1995-12-17T10:00:00.000000000&#x27;],
       dtype=&#x27;datetime64[ns]&#x27;)</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-2487e0a1-e73f-4fc8-90bb-b4f0eaadfe61' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-2487e0a1-e73f-4fc8-90bb-b4f0eaadfe61' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
 </div>
+<div class="section" id="maps">
+<h2>Maps<a class="headerlink" href="#maps" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="lat-lon-at-depth">
-<h2>lat-lon at depth<a class="headerlink" href="#lat-lon-at-depth" title="Permalink to this headline">¶</a></h2>
+<h3>lat-lon at depth<a class="headerlink" href="#lat-lon-at-depth" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
-    <span class="n">period4</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">central</span><span class="o">.</span><span class="n">w</span>
     <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
     <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="p">)</span>
@@ -4117,16 +4132,16 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b12cc356310&gt;
 </pre></div>
 </div>
-<img alt="_images/vertical-velocity_8_1.png" src="_images/vertical-velocity_8_1.png" />
+<img alt="_images/vertical-velocity_9_1.png" src="_images/vertical-velocity_9_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="lat-lon-top-85m-mean">
-<h2>lat-lon top 85m mean<a class="headerlink" href="#lat-lon-top-85m-mean" title="Permalink to this headline">¶</a></h2>
+<h3>lat-lon top 85m mean<a class="headerlink" href="#lat-lon-top-85m-mean" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
-    <span class="n">period4</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">central</span><span class="o">.</span><span class="n">w</span>
     <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mf">84.5</span><span class="p">))</span>
     <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
     <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -4138,24 +4153,23 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b12cc585730&gt;
 </pre></div>
 </div>
-<img alt="_images/vertical-velocity_10_1.png" src="_images/vertical-velocity_10_1.png" />
+<img alt="_images/vertical-velocity_11_1.png" src="_images/vertical-velocity_11_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="depth-time-at-lats">
-<h2>depth-time at lats<a class="headerlink" href="#depth-time-at-lats" title="Permalink to this headline">¶</a></h2>
+<h3>depth-time at lats<a class="headerlink" href="#depth-time-at-lats" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lats</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="n">period4</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+<span class="n">central</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span>
 <span class="p">)</span>
 <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="k">for</span> <span class="n">lat</span> <span class="ow">in</span> <span class="n">lats</span><span class="p">]</span>
 
 <span class="p">(</span>
-    <span class="n">period4</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">central</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
     <span class="o">.</span><span class="n">plot</span><span class="p">(</span>
         <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">}</span>
     <span class="p">)</span>
@@ -4163,28 +4177,100 @@ Coordinates:
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b12cea61610&gt;
+</pre></div>
+</div>
+<img alt="_images/vertical-velocity_13_1.png" src="_images/vertical-velocity_13_1.png" />
+<img alt="_images/vertical-velocity_13_2.png" src="_images/vertical-velocity_13_2.png" />
+</div>
 </div>
 </div>
 <div class="section" id="depth-lat-at-times">
-<h2>depth-lat at times<a class="headerlink" href="#depth-lat-at-times" title="Permalink to this headline">¶</a></h2>
+<h3>depth-lat at times<a class="headerlink" href="#depth-lat-at-times" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">period4</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-        <span class="n">time</span><span class="o">=</span><span class="p">[</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;1995-11-17&quot;</span><span class="p">,</span> <span class="s2">&quot;1995-11-25&quot;</span><span class="p">,</span> <span class="s2">&quot;1995-11-26&quot;</span><span class="p">,</span> <span class="s2">&quot;1995-11-27&quot;</span><span class="p">,</span> <span class="s2">&quot;1995-12-05&quot;</span><span class="p">]</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">times</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;1995-11-17&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;1995-11-25&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;1995-11-26&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;1995-11-27&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;1995-12-01&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;1995-12-10&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">central</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">)</span>
+<span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">times</span><span class="p">]</span>
+
+<span class="n">fg</span> <span class="o">=</span> <span class="n">central</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span> <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="n">times</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+    <span class="n">row</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">fg</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/vertical-velocity_14_0.png" src="_images/vertical-velocity_14_0.png" />
+<img alt="_images/vertical-velocity_15_0.png" src="_images/vertical-velocity_15_0.png" />
+<img alt="_images/vertical-velocity_15_1.png" src="_images/vertical-velocity_15_1.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="spectra">
+<h2>Spectra<a class="headerlink" href="#spectra" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dcpy</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Why is the spectrum white for freq &lt; 2 days?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">50</span>
+<span class="n">lats</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="n">subset</span> <span class="o">=</span> <span class="n">central</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>  <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">lat</span> <span class="ow">in</span> <span class="n">lats</span><span class="p">:</span>
+    <span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">lat</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
+    
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Lat (°N)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;depth = </span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;depth = -50m&#39;)
+</pre></div>
+</div>
+<img alt="_images/vertical-velocity_19_1.png" src="_images/vertical-velocity_19_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mi">150</span>
+
+<span class="n">subset</span> <span class="o">=</span> <span class="n">central</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>  <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">lat</span> <span class="ow">in</span> <span class="n">lats</span><span class="p">:</span>
+    <span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">lat</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
+    
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Lat (°N)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;depth = </span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;depth = -150m&#39;)
+</pre></div>
+</div>
+<img alt="_images/vertical-velocity_20_1.png" src="_images/vertical-velocity_20_1.png" />
 </div>
 </div>
 </div>
