@@ -2,6 +2,7 @@
 title: PUMP
 author: Deepak Cherian
 logo: logo.png
+only_build_toc_files: true
 
 repository:
   url                       : https://github.com/dcherian/pump  # The URL to your book's repository

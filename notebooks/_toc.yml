@@ -1,10 +1,21 @@
 - file: intro  # must have one
 
-- part: notebooks
+- part: TIW Turbulence
   chapters:
     # - file: markdown
     # - file: notebooks
     - file: TIW-DCL
+    - file: dcl-paper
+    - file: ctd-adcp
+    - file: TIW-compositing
+
+- part: Marginal Stability
+  chapters:
     - file: bulk-Ri
+    - file: MI-extent
+
+- part: Other
+  chapters:
     - file: vertical-velocity
     - file: les-tendencies
+    - file: heat-momentum-budget-checks
