@@ -401,7 +401,7 @@ def kpp(
 
         idxt = find(Rib >= Ric, 1, "first")
         # idxb = find(Rib < Ric, 1, "last")
-        idxb = idxt-1
+        idxb = idxt - 1
         hblt = -ZZ[idxt]
         hblb = -ZZ[idxb]
 

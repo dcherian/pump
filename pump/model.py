@@ -26,6 +26,7 @@ from .mdjwf import dens
 
 from . import validate
 
+
 def read_mitgcm_coords(dirname):
     import xmitgcm
 
@@ -420,16 +421,12 @@ def read_metrics(dirname):
     )
 
     metrics["DXG"] = xr.DataArray(
-        xmitgcm.utils.read_mds(dirname + "/DXG")["DXG"]
-        .squeeze()
-        .astype("float32"),
-        dims=["latitude","longitude"],
+        xmitgcm.utils.read_mds(dirname + "/DXG")["DXG"].squeeze().astype("float32"),
+        dims=["latitude", "longitude"],
     )
 
     metrics["DYG"] = xr.DataArray(
-        xmitgcm.utils.read_mds(dirname + "/DYG")["DYG"]
-        .squeeze()
-        .astype("float32"),
+        xmitgcm.utils.read_mds(dirname + "/DYG")["DYG"].squeeze().astype("float32"),
         dims=["latitude", "longitude"],
     )
 
@@ -439,7 +436,6 @@ def read_metrics(dirname):
 
 
 class Model:
-
     def __init__(self, dirname, name, kind="mitgcm", full=False, budget=False):
         """
         Create an object that represents one model run.

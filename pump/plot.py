@@ -18,7 +18,11 @@ import xarray
 
 cmaps = {
     "S2": dict(cmap=mpl.cm.GnBu, norm=mpl.colors.LogNorm(1e-5, 5e-4)),
-    "Jq": dict(cmap=mpl.cm.Blues_r, vmax=0, vmin=-400,),
+    "Jq": dict(
+        cmap=mpl.cm.Blues_r,
+        vmax=0,
+        vmin=-400,
+    ),
     "Ri": dict(cmap=mpl.cm.RdGy_r, center=0.5, norm=mpl.colors.Normalize(0, 1)),
     "N2": dict(cmap=mpl.cm.GnBu, norm=mpl.colors.LogNorm(1e-5, 5e-4)),
     "shred2": dict(
@@ -96,15 +100,15 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
         # Better to call differentiate on log-transformed variable
         # This is a nicer estimate of the gradient and is analytically equal
         per = factor * np.log(np.abs(v)).compute().differentiate("longitude")
-        #hdl = per.plot(
+        # hdl = per.plot(
         #    ax=ax2,
         #    x="longitude",
         #    label=f"{factor}/{v.name} $∂_x${v.name}",
         #    add_legend=False,
         #    **kwargs,
-        #)
+        # )
 
-        basefmt="gray"
+        basefmt = "gray"
         markerfmt = f"{kwargs['color']}{kwargs['marker']}"
         hdl = ax2.stem(
             per.longitude,
@@ -128,7 +132,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
             1,
             constrained_layout=True,
             sharex=True,
-            gridspec_kw={"height_ratios": [1]*(naxes-1) + [2]},
+            gridspec_kw={"height_ratios": [1] * (naxes - 1) + [2]},
         )
         if buoy:
             names = ["Rib", "h", "du", "db", "u", "b", "contrib"]
@@ -212,7 +216,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
     if buoy:
         # this check makes no sense if buoyancy terms are ignored
         rhs.plot(
-           ax=ax["contrib"],
+            ax=ax["contrib"],
             x="longitude",
             color="C0",
             label="RHS",
@@ -332,7 +336,7 @@ def plot_jq_sst(
         x="time",
         **cmaps["Jq"],
         levels=np.arange(-400, 0, 50),
-    #    cmap=mpl.cm.Blues_r,
+        #    cmap=mpl.cm.Blues_r,
     )
     # cax = dcpy.plots.cbar_inset_axes(ax[1, 0])
 
@@ -350,7 +354,7 @@ def plot_jq_sst(
                 "orientation": "horizontal",
                 "shrink": 0.8,
                 "aspect": 40,
-                "label": "", # "$J_q^t$ [W/m²]",
+                "label": "",  # "$J_q^t$ [W/m²]",
                 # "ticks": [-600, -400, -200, -100, -50, 0],
                 # "cax": cax,
             },
@@ -448,7 +452,7 @@ def plot_jq_sst(
     # [aa.set_xlabel("") for aa in ax[:-1]]
 
     # for aa in [ax[0, 0], ax[2, 1]]:
-   #     [tt.set_visible(False) for tt in aa.get_xticklabels()]
+    #     [tt.set_visible(False) for tt in aa.get_xticklabels()]
     # [tt.set_visible(True) for tt in ax[0, 0].get_xticklabels()]
     ax[1, 0].tick_params(labelbottom=True)
     # dcpy.plots.concise_date_formatter(ax[-1, 0], show_offset=False, minticks=9)
@@ -628,7 +632,12 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     ]
     [aa.set_ylabel("") for aa in axx[1:]]
     [aa.set_xticks(np.arange(-5, 6, 1)) for aa in axx]
-    [aa.tick_params(top=False,) for aa in axx]
+    [
+        aa.tick_params(
+            top=False,
+        )
+        for aa in axx
+    ]
     [aa.tick_params(labelbottom=False) for aa in axx]
     [annotate(tsub, aa) for aa in axx]
 
@@ -664,7 +673,10 @@ def plot_tiw_lat_lon_summary(subset, times):
         x="time",
         robust=True,
         # ylim=[-5, 5],
-        cbar_kwargs={"orientation": "horizontal", "label": "",},
+        cbar_kwargs={
+            "orientation": "horizontal",
+            "label": "",
+        },
     )
 
     hdl = subset.sst.plot(
@@ -696,7 +708,9 @@ def plot_tiw_lat_lon_summary(subset, times):
     shear_kwargs = dict(vmin=-0.02, vmax=0.02, x="time", cmap=mpl.cm.RdBu_r)
 
     subset.uz.sel(depth=slice(-60)).mean("depth").plot(
-        ax=ax["uz"], **shear_kwargs, add_colorbar=False,
+        ax=ax["uz"],
+        **shear_kwargs,
+        add_colorbar=False,
     )
     hdl = (
         subset.vz.sel(depth=slice(-60))
@@ -718,7 +732,11 @@ def plot_tiw_lat_lon_summary(subset, times):
     shred2.plot(ax=ax["shred2"], **cmaps["shred2"], **surf_kwargs)
 
     sstmean = subset.sst.sel(latitude=slice(-3, None)).resample(time="D").mean()
-    kwargs = dict(levels=[22.4, 23.75], x="time", add_labels=False,)
+    kwargs = dict(
+        levels=[22.4, 23.75],
+        x="time",
+        add_labels=False,
+    )
     for aa in axtop.flat:
         kwargs["ax"] = aa
         sstmean.plot.contour(colors="w", linewidths=1.5, **kwargs)
@@ -918,7 +936,10 @@ def plot_dcl(subset, shear_max=False, zeros_flux=True, lw=2, kpp_terms=True):
         .mean()
     )
     h = Jq.plot(
-        x="time", ax=ax[4], **cmaps["Jq"], cbar_kwargs={"label": "$J_q^t$ [$W/m²$]"},
+        x="time",
+        ax=ax[4],
+        **cmaps["Jq"],
+        cbar_kwargs={"label": "$J_q^t$ [$W/m²$]"},
     )
 
     # subset.KPPdiffKzT.where(subset.KPPdiffKzT > 0).plot(
@@ -940,7 +961,11 @@ def plot_dcl(subset, shear_max=False, zeros_flux=True, lw=2, kpp_terms=True):
 
         if Rib is not None:
             hrib = (
-                dcpy.interpolate.pchip_roots(Rib.sortby("depth"), "depth", target=0.3,)
+                dcpy.interpolate.pchip_roots(
+                    Rib.sortby("depth"),
+                    "depth",
+                    target=0.3,
+                )
                 .squeeze()
                 .plot(ax=ax, _labels=False, lw=lw * 2.5, color="r")
             )
@@ -1035,7 +1060,9 @@ def debug_kpp_plot(sub):
     )
 
     (sub.Jq.sel(depth=slice(-40))).plot(
-        levels=21, robust=True, x="time",
+        levels=21,
+        robust=True,
+        x="time",
     )
 
     def annotate(ax):
@@ -1054,7 +1081,13 @@ def debug_kpp_plot(sub):
 
 def plot_shear_terms(ds, duzdt, dvzdt, mask_dcl=True):
     def plot_dcl(dcl, ax):
-        kwargs = dict(levels=[30], robust=True, x="time", add_labels=False, ax=ax,)
+        kwargs = dict(
+            levels=[30],
+            robust=True,
+            x="time",
+            add_labels=False,
+            ax=ax,
+        )
 
         dcl.isel(longitude=1).plot.contour(**kwargs, linewidths=3, colors="w")
         dcl.isel(longitude=1).plot.contour(**kwargs, linewidths=1.1, colors="k")
@@ -1153,8 +1186,12 @@ def plot_shear_terms(ds, duzdt, dvzdt, mask_dcl=True):
             label="shear tendency [$s^{-2}$]",
         )
 
-        labelu = ["$u_z$",] + [duzdt[var].term for var in terms[1:]]
-        labelv = ["$v_z$",] + [dvzdt[var].term for var in terms[1:]]
+        labelu = [
+            "$u_z$",
+        ] + [duzdt[var].term for var in terms[1:]]
+        labelv = [
+            "$v_z$",
+        ] + [dvzdt[var].term for var in terms[1:]]
         labels = list(itertools.chain(*[(a, b) for a, b in zip(labelu, labelv)]))
 
         dcpy.plots.label_subplots(
@@ -1220,6 +1257,10 @@ def vor_streamplot(
     vec=True,
     stream=True,
     colorbar=True,
+    x="time",
+    longitude=-110,
+    scale=0.6,
+    ax=None,
 ):
 
     subset = vort.sel(latitude=slice(-2, 5), depth=slice(0, -60)).mean("depth")
@@ -1227,43 +1268,53 @@ def vor_streamplot(
 
     subset.z.attrs["long_name"] = "vert vorticity"
 
-    f, ax = plt.subplots(1, 1, constrained_layout=True)
+    if ax is None:
+        f, ax = plt.subplots(1, 1, constrained_layout=True)
+    else:
+        f = ax.get_figure()
 
     cbar_kwargs = (
-        {"label": "- $u_y$ [s$^{-1}$]", "orientation": "horizontal"}
+        {"label": "- $u_y$ [s$^{-1}$]", "orientation": "horizontal", "aspect": 25}
         if colorbar
         else None
     )
     if uy:
         ((-1 * subset.uy)).plot(
-            x="time",
+            y="latitude",
             vmax=2e-5,
             add_colorbar=colorbar,
             cbar_kwargs=cbar_kwargs,
             cmap=mpl.cm.PuOr_r,
+            ax=ax,
         )
 
     if vy:
         ((subset.vy)).plot(
-            x="time",
+            y="latitude",
             vmax=1e-5,
             add_colorbar=colorbar,
             cbar_kwargs=cbar_kwargs,
             cmap=mpl.cm.PuOr_r,
+            ax=ax,
         )
 
-    (
-        ds.isel(longitude=1)
-        .dcl.resample(time="D", loffset="12H")
-        .mean()
-        .plot.contour(x="time", colors="w", levels=[30], linewidths=4, zorder=2, add_labels=False)
-    )
-    (
-        ds.isel(longitude=1)
-        .dcl.resample(time="D", loffset="12H")
-        .mean()
-        .plot.contour(x="time", colors="k", levels=[30], zorder=2, add_labels=False)
-    )
+    # dataset at central longitude
+    if x == "time":
+        center = ds.sel(longitude=longitude, method="nearest")
+    else:
+        center = ds
+
+    if "dcl" in center:
+        dcl = center.dcl
+        if x == "time":
+            dcl = dcl.resample(time="D", loffset="12H").mean()
+        elif x == "longitude":
+            dcl = dcl.rolling(longitude=6, center=True).mean()
+
+        kwargs = dict(ax=ax, y="latitude", zorder=2, add_labels=False, levels=[30])
+        dcl.plot.contour(**kwargs, colors="w", linewidths=4)
+        dcl.plot.contour(**kwargs, colors="k")
+
     # cs = (
     #    ds.theta.isel(depth=0, longitude=1)
     #    .resample(time="D", loffset="12H")
@@ -1274,14 +1325,15 @@ def vor_streamplot(
 
     if vec:
         quiver(
-            subset.isel(time=slice(None, None, 6)).isel(
-                latitude=slice(None, None, stride), time=slice(None, None, stride)
+            subset.isel({x: slice(None, None, 6)}).isel(
+                {"latitude": slice(None, None, stride), x: slice(None, None, stride)}
             ),
-            u="x",
-            v="y",
-            x="time",
+            u="x",  # vorticity x-component
+            v="y",  # vorticity y-component
+            x=x,
             y="latitude",
-            scale=0.6,
+            scale=scale,
+            ax=ax,
         )
 
     # quiver(
@@ -1297,51 +1349,65 @@ def vor_streamplot(
     # )
 
     subset = (
-        ds.isel(longitude=1)
-        .sel(latitude=slice(-1, 5), depth=slice(-40, -70))
+        center.sel(latitude=slice(-1, 5), depth=slice(-60))
         .isel(latitude=slice(0, -1, 1))
         .mean("depth")
     )
 
-    dt = (
-        (subset.time.dt.round("H") - subset.time[0])
-        .values.astype("timedelta64[s]")
-        .astype("int")
-    )
+    if x == "time":
+        dx = (
+            (subset.time.dt.round("H") - subset.time[0])
+            .values.astype("timedelta64[s]")
+            .astype("int")
+        ) / 120e3
+    elif x == "longitude":
+        dx = np.arange(0, 0.05 * subset.sizes["longitude"], 0.05)
+        # dx = (subset[x] - subset[x][0]).round(2).values
+        # tiny error accumulating resulting in uneven grid spacing
+        # streamplot throws error if we don't make this correction
+        # dx[dx > 7.05] -= 0.01
 
-    euc = (
-        ds.u.isel(longitude=1)
-        .sel(latitude=slice(-2, 4))
-        .sel(depth=slice(-30, -120))
-        .mean("depth")
-    )
-    euclat = euc.latitude[euc.argmax("latitude")]
-
-    euclat.plot(ax=ax, lw=6, color="white")
-    heuc = euclat.plot(ax=ax, lw=3, color="dimgray")
-    dcpy.plots.annotate_end(heuc[0], "EUC core")
+        # dx *= 110e3
+        # dx += subset[x][0].values
 
     if stream:
         sax = ax.twiny()
+
+        dx, y, u, v = dask.compute(
+            dx,
+            subset.latitude,
+            subset.u.transpose("latitude", x) + refspeed,
+            subset.v.transpose("latitude", x),
+        )
+
         sax.streamplot(
-            dt / 120e3,
-            subset.latitude.values,
-            (subset.u.transpose().values + refspeed),
-            subset.v.transpose().values,
+            dx,
+            y.values,
+            u.values,
+            v.values,
             color="w",
             linewidth=3,
             arrowstyle="-",
+            density=0.8,
         )
         sax.streamplot(
-            dt / 120e3,
-            subset.latitude.values,
-            (subset.u.transpose().values + refspeed),
-            subset.v.transpose().values,
+            dx,
+            y.values,
+            u.values,
+            v.values,
             color="seagreen",
             linewidth=1.4,
+            density=0.8,
         )
         sax.set_xticks([])
         sax.set_xticklabels([])
+
+    euc = center.u.sel(latitude=slice(-2, 4)).sel(depth=slice(-30, -120)).mean("depth")
+    euclat = euc.latitude[euc.argmax("latitude")]
+
+    euclat.plot(ax=ax, lw=6, color="white", zorder=10)
+    heuc = euclat.plot(ax=ax, lw=3, color="dimgray", zorder=11)
+    dcpy.plots.annotate_end(heuc[0], "EUC core")
 
     # f.suptitle(
     #    "Horizontal vorticity vectors [black]; relative velocity streamlines [green].\n Depth average to 60m",
@@ -1349,9 +1415,12 @@ def vor_streamplot(
     # )
     ax.set_title("")
     # ax.set_ylim([-1, 5])
-    ax.set_xlabel("")
     ax.set_ylabel("Latitude [°N]")
-    dcpy.plots.concise_date_formatter(ax, show_offset=False)
+    if x == "time":
+        ax.set_xlabel("")
+        dcpy.plots.concise_date_formatter(ax, show_offset=False)
+    elif x == "longitude":
+        ax.set_xlabel("Longitude [°E]")
 
     # TODO: dcpy.plots.contour_label_spines(cs, "SST=")
 

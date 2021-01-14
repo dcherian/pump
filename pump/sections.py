@@ -254,7 +254,11 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
     ushred = binned.uz ** 2 - 1 / Ric / 2 * binned.N2
     vshred = binned.vz ** 2 - 1 / Ric / 2 * binned.N2
     shred2_kwargs = dict(
-        y="depth", yincrease=False, cmap=mpl.cm.RdBu_r, add_colorbar=True, norm=norm,
+        y="depth",
+        yincrease=False,
+        cmap=mpl.cm.RdBu_r,
+        add_colorbar=True,
+        norm=norm,
     )
     hdl = shred2.plot(ax=ax["Ri"], **shred2_kwargs)
     ushred.plot(ax=ax["u"], **shred2_kwargs)
@@ -409,7 +413,7 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
             cmap=mpl.cm.RdYlBu_r,
             # add_colorbar=False,
             add_labels=False,
-            cbar_kwargs={"orientation": "horizontal", "cax": cax}
+            cbar_kwargs={"orientation": "horizontal", "cax": cax},
         )
     )
 
@@ -521,7 +525,6 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
                 adcp_str = match.string[9:]
                 break
 
-
     return axes_rho
 
 
@@ -532,7 +535,9 @@ def process_adcp_file(adcp_file: str, cruises):
     print(expocode)
     ctd = find_cruise(cruises, expocode)
     if ctd is None:
-        return [None,] * 4
+        return [
+            None,
+        ] * 4
     # ctd["density"] = dcpy.eos.pden(ctd.salinity, ctd.temperature, ctd.pressure)
     adcp = read_adcp(adcp_file, -110)
     ctd = ctd.sortby("time")

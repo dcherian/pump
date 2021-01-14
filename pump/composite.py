@@ -455,12 +455,19 @@ def _get_y_reference(theta, periods=None, kind="cold", debug=False, savefig=Fals
 
                 if "time" in sst_ref.coords:
                     dcpy.plots.linex(
-                        sst_ref.sel(loc).time.values, ax=ax, color="k", zorder=20, lw=2,
+                        sst_ref.sel(loc).time.values,
+                        ax=ax,
+                        color="k",
+                        zorder=20,
+                        lw=2,
                     )
         fg.fig.suptitle(f"longitude={anom.longitude.values}", y=1.08)
 
     reference = get_tiv_extent(
-        sst_ref.sel(latitude=slice(-8, 8)), kind=kind, debug=debug, savefig=savefig,
+        sst_ref.sel(latitude=slice(-8, 8)),
+        kind=kind,
+        debug=debug,
+        savefig=savefig,
     )
 
     yref = xr.full_like(sst_ref, fill_value=np.nan)

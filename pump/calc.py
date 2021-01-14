@@ -56,7 +56,11 @@ def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug
         if debug:
             sig[idx].plot(ax=ax[0], color=cc, ls="none", marker="o")
             ax[1].plot(
-                sig.time[idx], ph * np.ones_like(idx), color=cc, ls="none", marker="o",
+                sig.time[idx],
+                ph * np.ones_like(idx),
+                color=cc,
+                ls="none",
+                marker="o",
             )
 
         phase[idx] = ph
@@ -79,7 +83,9 @@ def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug
     dpdt = phase.differentiate("time")
 
     phase_new = xr.where(
-        (phase2 >= 270) & (phase2 < 360) & (phase < 270) & (dpdt <= 0), phase2, phase,
+        (phase2 >= 270) & (phase2 < 360) & (phase < 270) & (dpdt <= 0),
+        phase2,
+        phase,
     )
 
     if debug:
@@ -586,7 +592,12 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
         phase_180[3] = phase_180[3] - 6
 
     phase, period = merge_phase_label_period(
-        sig, phase_0, phase_90, phase_180, phase_270, debug=debug,
+        sig,
+        phase_0,
+        phase_90,
+        phase_180,
+        phase_270,
+        debug=debug,
     )
 
     if inserted_0:
@@ -661,7 +672,12 @@ def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
     elif filt == "bandpass":
         longitudes = sst.longitude.values
 
-        kwargs = dict(coord="time", cycles_per="D", num_discard=0, method="pad",)
+        kwargs = dict(
+            coord="time",
+            cycles_per="D",
+            num_discard=0,
+            method="pad",
+        )
 
         lon_params = {
             -110: dict(freq=[1 / 40, 1 / 20], lats=slice(-1, 2)),
@@ -1153,7 +1169,12 @@ def calc_kpp_terms(station, debug=False):
         ),
         vectorize=True,
         dask="parallelized",  # too many assert statements to do this!
-        input_core_dims=[["depth"]] * 5 + [["depth2"]] + [[],] * 5,
+        input_core_dims=[["depth"]] * 5
+        + [["depth2"]]
+        + [
+            [],
+        ]
+        * 5,
         output_core_dims=[["variable", "depth"]],
         output_dtypes=[np.float32],
         output_sizes={"variable": 10},
@@ -1198,7 +1219,7 @@ def calc_kpp_terms(station, debug=False):
 
 def vorticity(period4):
 
-    assert period4.sizes["longitude"] == 3
+    assert period4.sizes["longitude"] > 1
 
     vort = xr.Dataset()
     vort["x"] = ddy(period4.w) - period4.v.differentiate("depth")
@@ -1206,7 +1227,6 @@ def vorticity(period4):
     vort["z"] = ddx(period4.v) - ddy(period4.u)
     vort["vx"] = ddx(period4.v)
     vort["uy"] = ddy(period4.u)
-    vort = vort.isel(longitude=1).load()
     vort["f"] = dcpy.oceans.coriolis(period4.latitude)
 
     return vort

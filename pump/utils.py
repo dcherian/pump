@@ -1,5 +1,6 @@
 import dask
 import dask.distributed
+
 try:
     import ncar_jobqueue
 except (ImportError, TypeError, RuntimeError):
@@ -10,7 +11,7 @@ import xarray as xr
 
 
 def build_cluster():
-    """ Builds and returns cluster, client objects.
+    """Builds and returns cluster, client objects.
 
     Returns
     -------
@@ -92,9 +93,15 @@ def lowpass(obj, coord, freq, cycles_per="s", order=2, use_overlap=True, debug=F
 
 
 def read_gcm1_zarr_subset(gcm1):
-    full = xr.open_zarr("../TPOS_MITgcm_1_hb/sections/gcm1-sections-retry.zarr", consolidated=True)
-    jq = xr.open_zarr("../TPOS_MITgcm_1_hb/sections/gcm1-sections-retry-Jq-2.zarr", consolidated=True)
-    dens = xr.open_zarr("../TPOS_MITgcm_1_hb/sections/gcm1-sections-dens.zarr", consolidated=True)
+    full = xr.open_zarr(
+        "../TPOS_MITgcm_1_hb/sections/gcm1-sections-retry.zarr", consolidated=True
+    )
+    jq = xr.open_zarr(
+        "../TPOS_MITgcm_1_hb/sections/gcm1-sections-retry-Jq-2.zarr", consolidated=True
+    )
+    dens = xr.open_zarr(
+        "../TPOS_MITgcm_1_hb/sections/gcm1-sections-dens.zarr", consolidated=True
+    )
     full["time"] = gcm1.tao.time
     full["Jq"] = jq.Jq
     # assert(full.sizes["time"] == gcm1.full.sizes["time"])
