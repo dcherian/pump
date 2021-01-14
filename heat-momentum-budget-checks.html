@@ -97,12 +97,7 @@
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="dcl-paper.html">
-   Paper figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dcl-paper.html#supplementary-figures">
-   Supplementary Figures
+   TIW DCL Paper Figures
   </a>
  </li>
  <li class="toctree-l1">
@@ -112,77 +107,7 @@
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="TIW-compositing.html">
-   load data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#remake-surface-file">
-   remake surface file
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#groupby-plotting">
-   groupby plotting
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#phase-average">
-   Phase average
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#time-compositing">
-   time compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#surface-compositing">
-   surface compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#consolidate-compositing-steps">
-   consolidate compositing steps
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#some-v-expts">
-   some v expts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#single-tiw-period-analysis">
-   single TIW period analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#aiyo-further-debugging">
-   aiyo further debugging
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#mom6-weirdness">
-   MOM6 weirdness
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#osm2020-figures">
-   OSM2020 figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#stuff">
-   stuff
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#reference-by-sst-warm-anomaly">
-   reference by SST warm anomaly
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html#erko">
-   erko
+   TIW Compositing
   </a>
  </li>
 </ul>
@@ -222,16 +147,6 @@
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    Heat and momentum budgets with MITgcm output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#heat-budget">
-   Heat budget
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#momentum-budget">
-   Momentum budget
   </a>
  </li>
 </ul>
@@ -334,78 +249,71 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#">
-   Heat and momentum budgets with MITgcm output
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#imports-and-cluster-setup">
+   imports and cluster setup
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#imports-and-cluster-setup">
-     imports and cluster setup
-    </a>
-   </li>
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#utility-functions">
-     Utility functions
-    </a>
-   </li>
-  </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#utility-functions">
+   Utility functions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#heat-budget">
    Heat budget
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#read-in-data">
      Read in data
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#test-balances">
      test balances
     </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#momentum-budget">
    Momentum budget
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#id1">
      read in data
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#u-momentum">
      U momentum
     </a>
     <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#all-time-steps">
        all time steps
       </a>
      </li>
-     <li class="toc-h3 nav-item toc-entry">
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#after-shifting-ssh-one-iteration-back-in-time">
        after shifting SSH one iteration back in time
       </a>
      </li>
-     <li class="toc-h3 nav-item toc-entry">
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#before-shifting-ssh-one-iteration-back-in-time">
        before shifting SSH one iteration back in time
       </a>
      </li>
     </ul>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#v-momentum">
      V momentum
     </a>
     <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#id2">
        all time steps
       </a>
@@ -647,9 +555,8 @@
 </div>
 </div>
 </div>
-</div>
 <div class="section" id="heat-budget">
-<h1>Heat budget<a class="headerlink" href="#heat-budget" title="Permalink to this headline">¶</a></h1>
+<h2>Heat budget<a class="headerlink" href="#heat-budget" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_MITgcm_fix2/&quot;</span>
@@ -658,7 +565,7 @@
 </div>
 </div>
 <div class="section" id="read-in-data">
-<h2>Read in data<a class="headerlink" href="#read-in-data" title="Permalink to this headline">¶</a></h2>
+<h3>Read in data<a class="headerlink" href="#read-in-data" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_0003_hb.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
@@ -714,7 +621,7 @@ Data variables:
 </div>
 </div>
 <div class="section" id="test-balances">
-<h2>test balances<a class="headerlink" href="#test-balances" title="Permalink to this headline">¶</a></h2>
+<h3>test balances<a class="headerlink" href="#test-balances" title="Permalink to this headline">¶</a></h3>
 <p>The heat budget code is dirtier than the momentum budget and could be cleanedup a bit</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -793,7 +700,7 @@ Data variables:
 </div>
 </div>
 <div class="section" id="momentum-budget">
-<h1>Momentum budget<a class="headerlink" href="#momentum-budget" title="Permalink to this headline">¶</a></h1>
+<h2>Momentum budget<a class="headerlink" href="#momentum-budget" title="Permalink to this headline">¶</a></h2>
 <p>Momentum budget emails:</p>
 <ul class="simple">
 <li><p>http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</p></li>
@@ -802,7 +709,7 @@ Data variables:
 <li><p>http://mailman.mitgcm.org/pipermail/mitgcm-devel/2019-June/007077.html</p></li>
 </ul>
 <div class="section" id="id1">
-<h2>read in data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h3>read in data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>Need to append zeros to the viscosity terms because the bottom level is not stored :/</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -884,7 +791,7 @@ Data variables:
 </div>
 </div>
 <div class="section" id="u-momentum">
-<h2>U momentum<a class="headerlink" href="#u-momentum" title="Permalink to this headline">¶</a></h2>
+<h3>U momentum<a class="headerlink" href="#u-momentum" title="Permalink to this headline">¶</a></h3>
 <p>We are using <code class="docutils literal notranslate"><span class="pre">implicSurfPres=1</span></code> and Scott is saving SSH at the appropriate timestep.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -980,7 +887,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 </div>
 <div class="section" id="all-time-steps">
-<h3>all time steps<a class="headerlink" href="#all-time-steps" title="Permalink to this headline">¶</a></h3>
+<h4>all time steps<a class="headerlink" href="#all-time-steps" title="Permalink to this headline">¶</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
@@ -993,7 +900,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 </div>
 <div class="section" id="after-shifting-ssh-one-iteration-back-in-time">
-<h3>after shifting SSH one iteration back in time<a class="headerlink" href="#after-shifting-ssh-one-iteration-back-in-time" title="Permalink to this headline">¶</a></h3>
+<h4>after shifting SSH one iteration back in time<a class="headerlink" href="#after-shifting-ssh-one-iteration-back-in-time" title="Permalink to this headline">¶</a></h4>
 <p>residual ~ 1e-11</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1010,7 +917,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 </div>
 <div class="section" id="before-shifting-ssh-one-iteration-back-in-time">
-<h3>before shifting SSH one iteration back in time<a class="headerlink" href="#before-shifting-ssh-one-iteration-back-in-time" title="Permalink to this headline">¶</a></h3>
+<h4>before shifting SSH one iteration back in time<a class="headerlink" href="#before-shifting-ssh-one-iteration-back-in-time" title="Permalink to this headline">¶</a></h4>
 <p>residual ~ 1e-7</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1028,7 +935,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 </div>
 <div class="section" id="v-momentum">
-<h2>V momentum<a class="headerlink" href="#v-momentum" title="Permalink to this headline">¶</a></h2>
+<h3>V momentum<a class="headerlink" href="#v-momentum" title="Permalink to this headline">¶</a></h3>
 <p>This seems to have some systematic error but it is small</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1084,7 +991,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 </div>
 <div class="section" id="id2">
-<h3>all time steps<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<h4>all time steps<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
@@ -1103,6 +1010,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 <div class="cell_output docutils container">
 <img alt="_images/heat-momentum-budget-checks_38_0.png" src="_images/heat-momentum-budget-checks_38_0.png" />
+</div>
 </div>
 </div>
 </div>

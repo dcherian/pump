@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>load data &#8212; PUMP</title>
+    <title>TIW Compositing &#8212; PUMP</title>
     
   <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -98,12 +98,7 @@
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="dcl-paper.html">
-   Paper figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dcl-paper.html#supplementary-figures">
-   Supplementary Figures
+   TIW DCL Paper Figures
   </a>
  </li>
  <li class="toctree-l1">
@@ -113,77 +108,7 @@
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   load data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#remake-surface-file">
-   remake surface file
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#groupby-plotting">
-   groupby plotting
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#phase-average">
-   Phase average
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#time-compositing">
-   time compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#surface-compositing">
-   surface compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#consolidate-compositing-steps">
-   consolidate compositing steps
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#some-v-expts">
-   some v expts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#single-tiw-period-analysis">
-   single TIW period analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#aiyo-further-debugging">
-   aiyo further debugging
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#mom6-weirdness">
-   MOM6 weirdness
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#osm2020-figures">
-   OSM2020 figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#stuff">
-   stuff
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#reference-by-sst-warm-anomaly">
-   reference by SST warm anomaly
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="#erko">
-   erko
+   TIW Compositing
   </a>
  </li>
 </ul>
@@ -223,16 +148,6 @@
  <li class="toctree-l1">
   <a class="reference internal" href="heat-momentum-budget-checks.html">
    Heat and momentum budgets with MITgcm output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="heat-momentum-budget-checks.html#heat-budget">
-   Heat budget
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="heat-momentum-budget-checks.html#momentum-budget">
-   Momentum budget
   </a>
  </li>
 </ul>
@@ -335,290 +250,261 @@
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#load-data">
    load data
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#remake-surface-file">
    remake surface file
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#groupby-plotting">
    groupby plotting
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#phase-average">
    Phase average
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#time-compositing">
    time compositing
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#surface-compositing">
    surface compositing
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#surface-variables">
      surface variables
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#look-at-surface-anomalies">
      look at surface anomalies
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#kpp-mixing-layer-depth">
      KPP mixing layer depth
     </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#kpp-mixing-layer-depth-deep-cycle">
-       KPP mixing layer depth &amp; deep cycle
-      </a>
-     </li>
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#dk-dt-based-deep-cycle-depth">
-       dK/dt based deep cycle depth
-      </a>
-     </li>
-    </ul>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#compute-composite">
-     compute composite
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#kpp-mixing-layer-depth-deep-cycle">
+     KPP mixing layer depth &amp; deep cycle
     </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#explore-vertical-reference-frame">
-       explore vertical reference frame
-      </a>
-     </li>
-    </ul>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dk-dt-based-deep-cycle-depth">
+     dK/dt based deep cycle depth
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#explore-vertical-reference-frame">
+     explore vertical reference frame
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#further-compositing">
      further compositing
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#single-period-images">
      single period images
     </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#shears">
-       shears
-      </a>
-     </li>
-    </ul>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#shears">
+     shears
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#actually-composite">
      actually composite
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#write-longitude-subset-to-file">
      write longitude subset to file
     </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#consolidate-compositing-steps">
    consolidate compositing steps
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#some-v-expts">
    some v expts
   </a>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#single-tiw-period-analysis">
    single TIW period analysis
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#off-equatorial-deep-cycle-mixing">
      off equatorial deep cycle mixing
     </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#are-we-seeing-a-deep-cycle-off-the-equator-yes">
-       are we seeing a deep cycle off the equator? Yes!
-      </a>
-     </li>
-    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#are-we-seeing-a-deep-cycle-off-the-equator-yes">
+     are we seeing a deep cycle off the equator? Yes!
+    </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#aiyo-further-debugging">
    aiyo further debugging
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#test-diffusive-flux-reconstruction">
      test diffusive flux reconstruction
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#work-on-dcl-mld-detection">
      work on dcl, mld detection
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#test-out-new-phase-detection">
      Test out new phase detection
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#sst-gradient-front-detection">
      SST gradient front detection
     </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#skimage-feature-detection-experiments">
+     skimage feature detection experiments
+    </a>
     <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#skimage-feature-detection-experiments">
-       skimage feature detection experiments
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#medial-axis">
+       medial_axis
       </a>
-      <ul class="nav section-nav flex-column">
-       <li class="toc-h4 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#medial-axis">
-         medial_axis
-        </a>
-       </li>
-       <li class="toc-h4 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#skeleton">
-         skeleton
-        </a>
-       </li>
-      </ul>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#skeleton">
+       skeleton
+      </a>
      </li>
     </ul>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#am-i-filtering-in-the-right-band">
      Am I filtering in the right band?
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#lowpass-vs-bandpass-sst-for-phase-calculation">
      lowpass vs bandpass SST for phase calculation
     </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#id1">
-       Am I filtering in the right band?
-      </a>
-     </li>
-    </ul>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Am I filtering in the right band?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#actually-test">
      actually test
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#testing-peak-to-peak-filtering-of-tiw-periods">
      testing peak-to-peak filtering of TIW periods
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#debugging-y-reference">
      debugging y reference
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#save-y-reference-debugging-plots">
      save y reference debugging plots.
     </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#commit-1365139-date-30-jan-2020">
-       Commit: 1365139 Date: 30 Jan 2020
-      </a>
-     </li>
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#commit-8a3ec4e-date-27-jan-2019">
-       Commit: 8a3ec4e Date: 27 Jan 2019
-      </a>
-     </li>
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#commit-93f50d9-date-14-jan-2019">
-       Commit: 93f50d9 Date: 14 Jan 2019
-      </a>
-     </li>
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#commit-0251fb5-date-14-jan-2019">
-       Commit: 0251fb5 Date: 14 Jan 2019
-      </a>
-     </li>
-    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#commit-1365139-date-30-jan-2020">
+     Commit: 1365139 Date: 30 Jan 2020
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#commit-8a3ec4e-date-27-jan-2019">
+     Commit: 8a3ec4e Date: 27 Jan 2019
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#commit-93f50d9-date-14-jan-2019">
+     Commit: 93f50d9 Date: 14 Jan 2019
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#commit-0251fb5-date-14-jan-2019">
+     Commit: 0251fb5 Date: 14 Jan 2019
+    </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#mom6-weirdness">
-   MOM6 weirdness
-  </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#osm2020-figures">
    OSM2020 figures
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#dcl-snapshot">
      DCL snapshot
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#deep-cycle-in-time-at-3n-110w-period-4">
      deep cycle in time at 3°N, 110W, period 4
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#jq-sst-many-periods">
      jq, sst many periods
     </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#stuff">
    stuff
   </a>
   <ul class="nav section-nav flex-column">
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#saving-density-to-file">
      saving density to file
     </a>
    </li>
-   <li class="toc-h2 nav-item toc-entry">
+   <li class="toc-h3 nav-item toc-entry">
     <a class="reference internal nav-link" href="#other">
      other
     </a>
    </li>
   </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#reference-by-sst-warm-anomaly">
    reference by SST warm anomaly
-  </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#erko">
-   erko
   </a>
  </li>
 </ul>
@@ -632,8 +518,10 @@
         
               <div>
                 
-  <div class="section" id="load-data">
-<h1>load data<a class="headerlink" href="#load-data" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tiw-compositing">
+<h1>TIW Compositing<a class="headerlink" href="#tiw-compositing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="load-data">
+<h2>load data<a class="headerlink" href="#load-data" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
@@ -753,7 +641,7 @@
 </div>
 </div>
 <div class="section" id="remake-surface-file">
-<h1>remake surface file<a class="headerlink" href="#remake-surface-file" title="Permalink to this headline">¶</a></h1>
+<h2>remake surface file<a class="headerlink" href="#remake-surface-file" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
@@ -847,7 +735,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b5e3928d2e8&gt;]
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_13_1.png" src="_images/TIW-compositing_13_1.png" />
+<img alt="_images/TIW-compositing_14_1.png" src="_images/TIW-compositing_14_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -900,7 +788,7 @@ Data variables:
     period     (time) float32 nan nan nan nan nan ... 19.0 19.0 19.0 19.0 19.0
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_16_2.png" src="_images/TIW-compositing_16_2.png" />
+<img alt="_images/TIW-compositing_17_2.png" src="_images/TIW-compositing_17_2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -927,12 +815,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b21fa47a588&gt;]
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_17_1.png" src="_images/TIW-compositing_17_1.png" />
+<img alt="_images/TIW-compositing_18_1.png" src="_images/TIW-compositing_18_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="groupby-plotting">
-<h1>groupby plotting<a class="headerlink" href="#groupby-plotting" title="Permalink to this headline">¶</a></h1>
+<h2>groupby plotting<a class="headerlink" href="#groupby-plotting" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">obj</span> <span class="o">=</span> <span class="n">surf140</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">tao0140</span><span class="o">.</span><span class="n">period</span><span class="p">)</span>
@@ -996,12 +884,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b3f432eac50&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_19_1.png" src="_images/TIW-compositing_19_1.png" />
+<img alt="_images/TIW-compositing_20_1.png" src="_images/TIW-compositing_20_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="phase-average">
-<h1>Phase average<a class="headerlink" href="#phase-average" title="Permalink to this headline">¶</a></h1>
+<h2>Phase average<a class="headerlink" href="#phase-average" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">surf140</span> <span class="o">=</span> <span class="n">surf140</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
@@ -1027,12 +915,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b41d9e62550&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_23_1.png" src="_images/TIW-compositing_23_1.png" />
+<img alt="_images/TIW-compositing_24_1.png" src="_images/TIW-compositing_24_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="time-compositing">
-<h1>time compositing<a class="headerlink" href="#time-compositing" title="Permalink to this headline">¶</a></h1>
+<h2>time compositing<a class="headerlink" href="#time-compositing" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao110</span> <span class="o">=</span> <span class="n">gcm1</span><span class="o">.</span><span class="n">tao</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">110</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1073,7 +961,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ac1c406d278&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_27_1.png" src="_images/TIW-compositing_27_1.png" />
+<img alt="_images/TIW-compositing_28_1.png" src="_images/TIW-compositing_28_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1086,12 +974,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ac1bfeb10f0&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_28_1.png" src="_images/TIW-compositing_28_1.png" />
+<img alt="_images/TIW-compositing_29_1.png" src="_images/TIW-compositing_29_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="surface-compositing">
-<h1>surface compositing<a class="headerlink" href="#surface-compositing" title="Permalink to this headline">¶</a></h1>
+<h2>surface compositing<a class="headerlink" href="#surface-compositing" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sst</span> <span class="o">=</span> <span class="n">surf</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;period&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -1926,7 +1814,7 @@ if (IPython.notebook.kernel != null) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b3c81fe6c18&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_35_1.png" src="_images/TIW-compositing_35_1.png" />
+<img alt="_images/TIW-compositing_36_1.png" src="_images/TIW-compositing_36_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2042,7 +1930,7 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="section" id="surface-variables">
-<h2>surface variables<a class="headerlink" href="#surface-variables" title="Permalink to this headline">¶</a></h2>
+<h3>surface variables<a class="headerlink" href="#surface-variables" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sst</span> <span class="o">=</span> <span class="n">gcm1</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
@@ -2072,12 +1960,12 @@ if (IPython.notebook.kernel != null) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2ac4d316cb00&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_46_2.png" src="_images/TIW-compositing_46_2.png" />
+<img alt="_images/TIW-compositing_47_2.png" src="_images/TIW-compositing_47_2.png" />
 </div>
 </div>
 </div>
 <div class="section" id="look-at-surface-anomalies">
-<h2>look at surface anomalies<a class="headerlink" href="#look-at-surface-anomalies" title="Permalink to this headline">¶</a></h2>
+<h3>look at surface anomalies<a class="headerlink" href="#look-at-surface-anomalies" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
@@ -2120,12 +2008,12 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_48_0.png" src="_images/TIW-compositing_48_0.png" />
+<img alt="_images/TIW-compositing_49_0.png" src="_images/TIW-compositing_49_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="kpp-mixing-layer-depth">
-<h2>KPP mixing layer depth<a class="headerlink" href="#kpp-mixing-layer-depth" title="Permalink to this headline">¶</a></h2>
+<h3>KPP mixing layer depth<a class="headerlink" href="#kpp-mixing-layer-depth" title="Permalink to this headline">¶</a></h3>
 <p>Looks like the best way to detect it from the diffusivity. I pick the K value at one grid point below the surface <span class="math notranslate nohighlight">\(K_{-1}\)</span>. and find the shallowest depth where <span class="math notranslate nohighlight">\(K ≤ K_{-1} / 3\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -2166,7 +2054,7 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_53_0.png" src="_images/TIW-compositing_53_0.png" />
+<img alt="_images/TIW-compositing_54_0.png" src="_images/TIW-compositing_54_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2183,7 +2071,8 @@ if (IPython.notebook.kernel != null) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2ac37b9a27b8&gt;]
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_54_1.png" src="_images/TIW-compositing_54_1.png" />
+<img alt="_images/TIW-compositing_55_1.png" src="_images/TIW-compositing_55_1.png" />
+</div>
 </div>
 </div>
 <div class="section" id="kpp-mixing-layer-depth-deep-cycle">
@@ -2223,7 +2112,7 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_56_0.png" src="_images/TIW-compositing_56_0.png" />
+<img alt="_images/TIW-compositing_57_0.png" src="_images/TIW-compositing_57_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2283,7 +2172,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b5f2af50518&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_59_1.png" src="_images/TIW-compositing_59_1.png" />
+<img alt="_images/TIW-compositing_60_1.png" src="_images/TIW-compositing_60_1.png" />
 </div>
 </div>
 </div>
@@ -2303,7 +2192,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.contour.QuadContourSet at 0x2b5f80ebf160&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_62_1.png" src="_images/TIW-compositing_62_1.png" />
+<img alt="_images/TIW-compositing_63_1.png" src="_images/TIW-compositing_63_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2324,7 +2213,7 @@ Coordinates:
   mask |= resdat &lt;= 0
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_63_2.png" src="_images/TIW-compositing_63_2.png" />
+<img alt="_images/TIW-compositing_64_2.png" src="_images/TIW-compositing_64_2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2339,13 +2228,9 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b5eb168c0f0&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_64_1.png" src="_images/TIW-compositing_64_1.png" />
+<img alt="_images/TIW-compositing_65_1.png" src="_images/TIW-compositing_65_1.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="compute-composite">
-<h2>compute composite<a class="headerlink" href="#compute-composite" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">gcm1</span>
@@ -2553,6 +2438,7 @@ Coordinates:
 </div>
 </div>
 </div>
+</div>
 <div class="section" id="explore-vertical-reference-frame">
 <h3>explore vertical reference frame<a class="headerlink" href="#explore-vertical-reference-frame" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
@@ -2686,9 +2572,8 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
 <div class="section" id="further-compositing">
-<h2>further compositing<a class="headerlink" href="#further-compositing" title="Permalink to this headline">¶</a></h2>
+<h3>further compositing<a class="headerlink" href="#further-compositing" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">250</span><span class="p">))</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">48</span><span class="p">})</span>
@@ -2767,7 +2652,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="single-period-images">
-<h2>single period images<a class="headerlink" href="#single-period-images" title="Permalink to this headline">¶</a></h2>
+<h3>single period images<a class="headerlink" href="#single-period-images" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">period</span> <span class="o">==</span> <span class="mi">5</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -3137,6 +3022,7 @@ JobQueueCluster.scale_down was called with a number of worker greater than what 
 <img alt="_images/TIW-compositing_106_1.png" src="_images/TIW-compositing_106_1.png" />
 </div>
 </div>
+</div>
 <div class="section" id="shears">
 <h3>shears<a class="headerlink" href="#shears" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
@@ -3222,9 +3108,8 @@ concurrent.futures._base.CancelledError
 </div>
 </div>
 </div>
-</div>
 <div class="section" id="actually-composite">
-<h2>actually composite<a class="headerlink" href="#actually-composite" title="Permalink to this headline">¶</a></h2>
+<h3>actually composite<a class="headerlink" href="#actually-composite" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">masked</span><span class="o">.</span><span class="n">yref</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
@@ -4723,7 +4608,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="write-longitude-subset-to-file">
-<h2>write longitude subset to file<a class="headerlink" href="#write-longitude-subset-to-file" title="Permalink to this headline">¶</a></h2>
+<h3>write longitude subset to file<a class="headerlink" href="#write-longitude-subset-to-file" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">encoding</span>
@@ -4925,7 +4810,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="consolidate-compositing-steps">
-<h1>consolidate compositing steps<a class="headerlink" href="#consolidate-compositing-steps" title="Permalink to this headline">¶</a></h1>
+<h2>consolidate compositing steps<a class="headerlink" href="#consolidate-compositing-steps" title="Permalink to this headline">¶</a></h2>
 <p>TODO:</p>
 <ol class="simple">
 <li><p>Get rid of subset_fields?</p></li>
@@ -5565,7 +5450,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="some-v-expts">
-<h1>some v expts<a class="headerlink" href="#some-v-expts" title="Permalink to this headline">¶</a></h1>
+<h2>some v expts<a class="headerlink" href="#some-v-expts" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vfilt</span> <span class="o">=</span> <span class="n">xfilter</span><span class="o">.</span><span class="n">bandpass</span><span class="p">(</span><span class="n">surf</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
@@ -5606,7 +5491,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="single-tiw-period-analysis">
-<h1>single TIW period analysis<a class="headerlink" href="#single-tiw-period-analysis" title="Permalink to this headline">¶</a></h1>
+<h2>single TIW period analysis<a class="headerlink" href="#single-tiw-period-analysis" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">euc_max</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">euc_max</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -5625,7 +5510,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="off-equatorial-deep-cycle-mixing">
-<h2>off equatorial deep cycle mixing<a class="headerlink" href="#off-equatorial-deep-cycle-mixing" title="Permalink to this headline">¶</a></h2>
+<h3>off equatorial deep cycle mixing<a class="headerlink" href="#off-equatorial-deep-cycle-mixing" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline 
@@ -5927,6 +5812,7 @@ Coordinates:
 </div>
 </div>
 </div>
+</div>
 <div class="section" id="are-we-seeing-a-deep-cycle-off-the-equator-yes">
 <h3>are we seeing a deep cycle off the equator? Yes!<a class="headerlink" href="#are-we-seeing-a-deep-cycle-off-the-equator-yes" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
@@ -5952,9 +5838,8 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
 <div class="section" id="aiyo-further-debugging">
-<h1>aiyo further debugging<a class="headerlink" href="#aiyo-further-debugging" title="Permalink to this headline">¶</a></h1>
+<h2>aiyo further debugging<a class="headerlink" href="#aiyo-further-debugging" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">gcm1</span>
@@ -6001,7 +5886,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="test-diffusive-flux-reconstruction">
-<h2>test diffusive flux reconstruction<a class="headerlink" href="#test-diffusive-flux-reconstruction" title="Permalink to this headline">¶</a></h2>
+<h3>test diffusive flux reconstruction<a class="headerlink" href="#test-diffusive-flux-reconstruction" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#CV = gcm1.metrics.cellvol</span>
@@ -6370,7 +6255,7 @@ Data variables:
 </div>
 </div>
 <div class="section" id="work-on-dcl-mld-detection">
-<h2>work on dcl, mld detection<a class="headerlink" href="#work-on-dcl-mld-detection" title="Permalink to this headline">¶</a></h2>
+<h3>work on dcl, mld detection<a class="headerlink" href="#work-on-dcl-mld-detection" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mld</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_mld</span><span class="p">(</span><span class="n">full_subset</span><span class="o">.</span><span class="n">dens</span><span class="p">)</span>
@@ -6535,7 +6420,7 @@ distributed.utils_perf - WARNING - full garbage collections took 14% CPU time re
 </div>
 </div>
 <div class="section" id="test-out-new-phase-detection">
-<h2>Test out new phase detection<a class="headerlink" href="#test-out-new-phase-detection" title="Permalink to this headline">¶</a></h2>
+<h3>Test out new phase detection<a class="headerlink" href="#test-out-new-phase-detection" title="Permalink to this headline">¶</a></h3>
 <p>With -110 as a special case for bandpass window and prominence</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -6649,7 +6534,7 @@ Attributes:
 </div>
 </div>
 <div class="section" id="sst-gradient-front-detection">
-<h2>SST gradient front detection<a class="headerlink" href="#sst-gradient-front-detection" title="Permalink to this headline">¶</a></h2>
+<h3>SST gradient front detection<a class="headerlink" href="#sst-gradient-front-detection" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grad</span> <span class="o">=</span> <span class="n">gradT_subset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
@@ -6813,6 +6698,7 @@ Coordinates:
 <img alt="_images/TIW-compositing_241_1.png" src="_images/TIW-compositing_241_1.png" />
 </div>
 </div>
+</div>
 <div class="section" id="skimage-feature-detection-experiments">
 <h3>skimage feature detection experiments<a class="headerlink" href="#skimage-feature-detection-experiments" title="Permalink to this headline">¶</a></h3>
 <p>Not really getting anywhere. The <code class="docutils literal notranslate"><span class="pre">medial_axis</span></code> stuff was most promising but still too complex.</p>
@@ -6900,9 +6786,8 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
 <div class="section" id="am-i-filtering-in-the-right-band">
-<h2>Am I filtering in the right band?<a class="headerlink" href="#am-i-filtering-in-the-right-band" title="Permalink to this headline">¶</a></h2>
+<h3>Am I filtering in the right band?<a class="headerlink" href="#am-i-filtering-in-the-right-band" title="Permalink to this headline">¶</a></h3>
 <p>On Jan 27, I switched to different bands for -110 and the rest</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -6925,7 +6810,8 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="lowpass-vs-bandpass-sst-for-phase-calculation">
-<h2>lowpass vs bandpass SST for phase calculation<a class="headerlink" href="#lowpass-vs-bandpass-sst-for-phase-calculation" title="Permalink to this headline">¶</a></h2>
+<h3>lowpass vs bandpass SST for phase calculation<a class="headerlink" href="#lowpass-vs-bandpass-sst-for-phase-calculation" title="Permalink to this headline">¶</a></h3>
+</div>
 <div class="section" id="id1">
 <h3>Am I filtering in the right band?<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
@@ -6992,9 +6878,8 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
 <div class="section" id="actually-test">
-<h2>actually test<a class="headerlink" href="#actually-test" title="Permalink to this headline">¶</a></h2>
+<h3>actually test<a class="headerlink" href="#actually-test" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xfilter</span>
@@ -7052,7 +6937,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="testing-peak-to-peak-filtering-of-tiw-periods">
-<h2>testing peak-to-peak filtering of TIW periods<a class="headerlink" href="#testing-peak-to-peak-filtering-of-tiw-periods" title="Permalink to this headline">¶</a></h2>
+<h3>testing peak-to-peak filtering of TIW periods<a class="headerlink" href="#testing-peak-to-peak-filtering-of-tiw-periods" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">detrend_period</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -7092,7 +6977,7 @@ Coordinates:
 </div>
 </div>
 <div class="section" id="debugging-y-reference">
-<h2>debugging y reference<a class="headerlink" href="#debugging-y-reference" title="Permalink to this headline">¶</a></h2>
+<h3>debugging y reference<a class="headerlink" href="#debugging-y-reference" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiw_phase</span><span class="p">,</span> <span class="n">period</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_tiw_phase_sst</span><span class="p">(</span><span class="n">sstfilt</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">140</span><span class="p">])</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span> 
@@ -7222,7 +7107,7 @@ iterating south
 </div>
 </div>
 <div class="section" id="save-y-reference-debugging-plots">
-<h2>save y reference debugging plots.<a class="headerlink" href="#save-y-reference-debugging-plots" title="Permalink to this headline">¶</a></h2>
+<h3>save y reference debugging plots.<a class="headerlink" href="#save-y-reference-debugging-plots" title="Permalink to this headline">¶</a></h3>
 <p>With some manual tweaking this looks OK.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -7234,6 +7119,7 @@ iterating south
     <span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -7566,40 +7452,10 @@ iterating south
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="mom6-weirdness">
-<h1>MOM6 weirdness<a class="headerlink" href="#mom6-weirdness" title="Permalink to this headline">¶</a></h1>
-<p>fails without combine=”nested”</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="s2">&quot;/glade/scratch/gmarques/g.c2b6.GJRA.TL319_t061.GME_no_MEKE.001/run/g.c2b6.GJRA.TL319_t061.GME_no_MEKE.001.mom6.hm_*.nc&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;nested&quot;</span><span class="p">,</span> <span class="c1"># concatenate in order of files</span>
-    <span class="n">concat_dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="c1"># concatenate along time</span>
-<span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">vmo</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">...</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2baa53e23a90&gt;]
-</pre></div>
-</div>
-<img alt="_images/TIW-compositing_279_1.png" src="_images/TIW-compositing_279_1.png" />
-</div>
-</div>
-</div>
 <div class="section" id="osm2020-figures">
-<h1>OSM2020 figures<a class="headerlink" href="#osm2020-figures" title="Permalink to this headline">¶</a></h1>
+<h2>OSM2020 figures<a class="headerlink" href="#osm2020-figures" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="dcl-snapshot">
-<h2>DCL snapshot<a class="headerlink" href="#dcl-snapshot" title="Permalink to this headline">¶</a></h2>
+<h3>DCL snapshot<a class="headerlink" href="#dcl-snapshot" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sst</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -7610,7 +7466,7 @@ iterating south
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ba20f9a3a10&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_282_1.png" src="_images/TIW-compositing_282_1.png" />
+<img alt="_images/TIW-compositing_279_1.png" src="_images/TIW-compositing_279_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -7710,15 +7566,15 @@ iterating south
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_286_0.png" src="_images/TIW-compositing_286_0.png" />
+<img alt="_images/TIW-compositing_283_0.png" src="_images/TIW-compositing_283_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="deep-cycle-in-time-at-3n-110w-period-4">
-<h2>deep cycle in time at 3°N, 110W, period 4<a class="headerlink" href="#deep-cycle-in-time-at-3n-110w-period-4" title="Permalink to this headline">¶</a></h2>
+<h3>deep cycle in time at 3°N, 110W, period 4<a class="headerlink" href="#deep-cycle-in-time-at-3n-110w-period-4" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="jq-sst-many-periods">
-<h2>jq, sst many periods<a class="headerlink" href="#jq-sst-many-periods" title="Permalink to this headline">¶</a></h2>
+<h3>jq, sst many periods<a class="headerlink" href="#jq-sst-many-periods" title="Permalink to this headline">¶</a></h3>
 <ol class="simple">
 <li><p>[ ] where is the EUC. use that to select latitudes</p></li>
 <li><p>[ ] jq contours?</p></li>
@@ -7753,7 +7609,7 @@ iterating south
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2baab64f0a10&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_291_1.png" src="_images/TIW-compositing_291_1.png" />
+<img alt="_images/TIW-compositing_288_1.png" src="_images/TIW-compositing_288_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -7770,7 +7626,7 @@ iterating south
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2baab376df10&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_292_1.png" src="_images/TIW-compositing_292_1.png" />
+<img alt="_images/TIW-compositing_289_1.png" src="_images/TIW-compositing_289_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -7787,7 +7643,7 @@ iterating south
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ba126454990&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_293_1.png" src="_images/TIW-compositing_293_1.png" />
+<img alt="_images/TIW-compositing_290_1.png" src="_images/TIW-compositing_290_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -7807,7 +7663,7 @@ iterating south
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.contour.QuadContourSet at 0x2b03e9dcf510&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_294_1.png" src="_images/TIW-compositing_294_1.png" />
+<img alt="_images/TIW-compositing_291_1.png" src="_images/TIW-compositing_291_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -7872,7 +7728,7 @@ Attributes:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_298_0.png" src="_images/TIW-compositing_298_0.png" />
+<img alt="_images/TIW-compositing_295_0.png" src="_images/TIW-compositing_295_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -7901,15 +7757,15 @@ Attributes:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_299_0.png" src="_images/TIW-compositing_299_0.png" />
+<img alt="_images/TIW-compositing_296_0.png" src="_images/TIW-compositing_296_0.png" />
 </div>
 </div>
 </div>
 </div>
 <div class="section" id="stuff">
-<h1>stuff<a class="headerlink" href="#stuff" title="Permalink to this headline">¶</a></h1>
+<h2>stuff<a class="headerlink" href="#stuff" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="saving-density-to-file">
-<h2>saving density to file<a class="headerlink" href="#saving-density-to-file" title="Permalink to this headline">¶</a></h2>
+<h3>saving density to file<a class="headerlink" href="#saving-density-to-file" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">pden</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">full</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">full</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;dens&quot;</span><span class="p">)</span>
@@ -7925,7 +7781,7 @@ Attributes:
 </div>
 </div>
 <div class="section" id="other">
-<h2>other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<h3>other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gcm1</span><span class="o">.</span><span class="n">budget</span> <span class="o">=</span> <span class="n">gcm1</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
@@ -7997,7 +7853,7 @@ open_mfdataset).
 </div>
 </div>
 <div class="section" id="reference-by-sst-warm-anomaly">
-<h1>reference by SST warm anomaly<a class="headerlink" href="#reference-by-sst-warm-anomaly" title="Permalink to this headline">¶</a></h1>
+<h2>reference by SST warm anomaly<a class="headerlink" href="#reference-by-sst-warm-anomaly" title="Permalink to this headline">¶</a></h2>
 <p>Define t=180 as time of warmest anomaly SST</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -8028,7 +7884,7 @@ open_mfdataset).
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_311_0.png" src="_images/TIW-compositing_311_0.png" />
+<img alt="_images/TIW-compositing_308_0.png" src="_images/TIW-compositing_308_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8055,7 +7911,7 @@ open_mfdataset).
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b8bcef8e0b8&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_312_1.png" src="_images/TIW-compositing_312_1.png" />
+<img alt="_images/TIW-compositing_309_1.png" src="_images/TIW-compositing_309_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8083,7 +7939,7 @@ open_mfdataset).
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_313_0.png" src="_images/TIW-compositing_313_0.png" />
+<img alt="_images/TIW-compositing_310_0.png" src="_images/TIW-compositing_310_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8167,7 +8023,7 @@ open_mfdataset).
 <span class="ne">ValueError</span>: The input coordinate is not sorted in increasing order along axis 0. This can lead to unexpected results. Consider calling the `sortby` method on the input DataArray. To plot data with categorical axes, consider using the `heatmap` function from the `seaborn` statistical plotting library.
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_314_2.png" src="_images/TIW-compositing_314_2.png" />
+<img alt="_images/TIW-compositing_311_2.png" src="_images/TIW-compositing_311_2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8180,7 +8036,7 @@ open_mfdataset).
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b30edc67748&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_315_1.png" src="_images/TIW-compositing_315_1.png" />
+<img alt="_images/TIW-compositing_312_1.png" src="_images/TIW-compositing_312_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8194,7 +8050,7 @@ open_mfdataset).
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ac52ee9ba90&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_316_1.png" src="_images/TIW-compositing_316_1.png" />
+<img alt="_images/TIW-compositing_313_1.png" src="_images/TIW-compositing_313_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8207,7 +8063,7 @@ open_mfdataset).
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ac5261f89b0&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_317_1.png" src="_images/TIW-compositing_317_1.png" />
+<img alt="_images/TIW-compositing_314_1.png" src="_images/TIW-compositing_314_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8225,7 +8081,7 @@ open_mfdataset).
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ac513917198&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_318_1.png" src="_images/TIW-compositing_318_1.png" />
+<img alt="_images/TIW-compositing_315_1.png" src="_images/TIW-compositing_315_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8337,7 +8193,7 @@ Coordinates:
 <span class="ne">ValueError</span>: operands could not be broadcast together with remapped shapes [original-&gt;remapped]: (142,) and requested shape (142,480)
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_320_2.png" src="_images/TIW-compositing_320_2.png" />
+<img alt="_images/TIW-compositing_317_2.png" src="_images/TIW-compositing_317_2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8348,7 +8204,7 @@ Coordinates:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/TIW-compositing_321_0.png" src="_images/TIW-compositing_321_0.png" />
+<img alt="_images/TIW-compositing_318_0.png" src="_images/TIW-compositing_318_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8367,7 +8223,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ac15b240860&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_322_1.png" src="_images/TIW-compositing_322_1.png" />
+<img alt="_images/TIW-compositing_319_1.png" src="_images/TIW-compositing_319_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8382,7 +8238,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b599fc7b860&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_323_1.png" src="_images/TIW-compositing_323_1.png" />
+<img alt="_images/TIW-compositing_320_1.png" src="_images/TIW-compositing_320_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8465,7 +8321,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b9a9f346b38&gt;]
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_327_1.png" src="_images/TIW-compositing_327_1.png" />
+<img alt="_images/TIW-compositing_324_1.png" src="_images/TIW-compositing_324_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8488,7 +8344,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b41d67fe940&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_329_1.png" src="_images/TIW-compositing_329_1.png" />
+<img alt="_images/TIW-compositing_326_1.png" src="_images/TIW-compositing_326_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8664,7 +8520,7 @@ distributed.comm.core.CommClosedError: in &lt;distributed.comm.tcp.TCPConnector 
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2ac5bf401048&gt;
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_331_1.png" src="_images/TIW-compositing_331_1.png" />
+<img alt="_images/TIW-compositing_328_1.png" src="_images/TIW-compositing_328_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8708,7 +8564,7 @@ distributed.comm.core.CommClosedError: in &lt;distributed.comm.tcp.TCPConnector 
  &lt;a list of 100 Patch objects&gt;)
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_332_1.png" src="_images/TIW-compositing_332_1.png" />
+<img alt="_images/TIW-compositing_329_1.png" src="_images/TIW-compositing_329_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -9047,7 +8903,7 @@ KeyboardInterrupt                         Traceback (most recent call last)
 KeyboardInterrupt: 
 </pre></div>
 </div>
-<img alt="_images/TIW-compositing_335_3.png" src="_images/TIW-compositing_335_3.png" />
+<img alt="_images/TIW-compositing_332_3.png" src="_images/TIW-compositing_332_3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -9094,229 +8950,6 @@ Attributes:
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="erko">
-<h1>erko<a class="headerlink" href="#erko" title="Permalink to this headline">¶</a></h1>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
-
-<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;/glade/collections/cdg/data/cesmLE/CESM-CAM5-BGC-LE/atm/proc/tseries/monthly/&quot;</span>
-<span class="n">filea001</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
-    <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;TS/b.e11.B20TRC5CNBDRD.f09_g16.001.cam.h0.TS.185001-200512.nc&quot;</span>
-<span class="p">)</span>
-<span class="n">filea</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-    <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;TS/b.e11.B20TRC5CNBDRD.f09_g16.*.cam.h0.TS.192001-200512.nc&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">fileb</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-    <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;TS/b.e11.BRCP85C5CNBDRD.f09_g16.*.cam.h0.TS.200601-208012.nc&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">filec</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-    <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;TS/b.e11.BRCP85C5CNBDRD.f09_g16.*.cam.h0.TS.208101-210012.nc&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">add_ensemble_number</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">os</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">encoding</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">])</span>
-    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">4</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="p">[</span><span class="n">num</span><span class="p">])</span>
-
-
-<span class="n">dsbc</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">fileb</span> <span class="o">+</span> <span class="n">filec</span><span class="p">,</span>
-    <span class="n">preprocess</span><span class="o">=</span><span class="n">add_ensemble_number</span><span class="p">,</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsa</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">filea</span><span class="p">,</span>
-    <span class="n">preprocess</span><span class="o">=</span><span class="n">add_ensemble_number</span><span class="p">,</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">coords</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
-    <span class="n">data_vars</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
-    <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">dsa</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><pre>&lt;xarray.Dataset&gt;
-Dimensions:              (M: 41, cosp_ht: 40, cosp_htmisr: 16, cosp_prs: 7, cosp_scol: 10, cosp_sr: 15, cosp_sza: 5, cosp_tau: 7, cosp_tau_modis: 6, ilev: 31, lat: 289, lev: 30, lon: 288, nbnd: 2, slat: 256, slon: 288, time: 1032)
-Coordinates:
-  * M                    (M) int64 2 3 4 5 6 7 8 ... 101 102 103 104 105 106 107
-  * lat                  (lat) float64 -90.0 -89.06 -88.12 ... 88.12 89.06 90.0
-  * slat                 (slat) float64 -89.53 -88.59 -87.64 ... 88.59 89.53
-  * cosp_tau             (cosp_tau) float64 0.15 0.8 2.45 6.5 16.2 41.5 219.5
-  * ilev                 (ilev) float64 2.255 5.032 10.16 ... 967.5 985.1 1e+03
-  * cosp_sza             (cosp_sza) float64 0.0 15.0 30.0 45.0 60.0
-  * cosp_ht              (cosp_ht) float64 240.0 720.0 ... 1.848e+04 1.896e+04
-  * time                 (time) object 1920-02-01 00:00:00 ... 2006-01-01 00:00:00
-  * cosp_scol            (cosp_scol) float64 1.0 2.0 3.0 4.0 ... 8.0 9.0 10.0
-  * cosp_htmisr          (cosp_htmisr) float64 -99.0 0.25 0.75 ... 16.0 58.0
-  * lev                  (lev) float64 3.643 7.595 14.36 ... 957.5 976.3 992.6
-  * cosp_prs             (cosp_prs) float64 900.0 740.0 620.0 ... 245.0 90.0
-  * cosp_sr              (cosp_sr) float64 0.605 2.1 4.0 ... 539.5 1.004e+03
-  * cosp_tau_modis       (cosp_tau_modis) float64 0.8 2.45 ... 41.5 5.003e+04
-  * slon                 (slon) float64 -0.625 0.625 1.875 ... 355.6 356.9 358.1
-  * lon                  (lon) float64 0.0 1.25 2.5 3.75 ... 356.2 357.5 358.8
-Dimensions without coordinates: nbnd
-Data variables:
-    hyam                 (M, lev) float64 dask.array&lt;chunksize=(33, 30), meta=np.ndarray&gt;
-    hybm                 (M, lev) float64 dask.array&lt;chunksize=(33, 30), meta=np.ndarray&gt;
-    hyai                 (M, ilev) float64 dask.array&lt;chunksize=(33, 31), meta=np.ndarray&gt;
-    hybi                 (M, ilev) float64 dask.array&lt;chunksize=(33, 31), meta=np.ndarray&gt;
-    cosp_prs_bnds        (M, cosp_prs, nbnd) float64 dask.array&lt;chunksize=(33, 7, 2), meta=np.ndarray&gt;
-    cosp_tau_bnds        (M, cosp_tau, nbnd) float64 dask.array&lt;chunksize=(33, 7, 2), meta=np.ndarray&gt;
-    cosp_ht_bnds         (M, cosp_ht, nbnd) float64 dask.array&lt;chunksize=(33, 40, 2), meta=np.ndarray&gt;
-    cosp_sr_bnds         (M, cosp_sr, nbnd) float64 dask.array&lt;chunksize=(33, 15, 2), meta=np.ndarray&gt;
-    cosp_htmisr_bnds     (M, cosp_htmisr, nbnd) float64 dask.array&lt;chunksize=(33, 16, 2), meta=np.ndarray&gt;
-    cosp_tau_modis_bnds  (M, cosp_tau_modis, nbnd) float64 dask.array&lt;chunksize=(33, 6, 2), meta=np.ndarray&gt;
-    P0                   (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    date                 (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    datesec              (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    w_stag               (M, slat) float64 dask.array&lt;chunksize=(33, 256), meta=np.ndarray&gt;
-    time_bnds            (M, time, nbnd) object dask.array&lt;chunksize=(33, 1032, 2), meta=np.ndarray&gt;
-    date_written         (M, time) object dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    time_written         (M, time) object dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    ntrm                 (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    ntrn                 (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    ntrk                 (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    ndbase               (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    nsbase               (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    nbdate               (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    nbsec                (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    mdt                  (M) float64 nan nan nan nan nan ... nan nan nan nan nan
-    nlon                 (M, lat) float64 dask.array&lt;chunksize=(33, 289), meta=np.ndarray&gt;
-    wnummax              (M, lat) float64 dask.array&lt;chunksize=(33, 289), meta=np.ndarray&gt;
-    gw                   (M, lat) float64 dask.array&lt;chunksize=(33, 289), meta=np.ndarray&gt;
-    ndcur                (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    nscur                (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    co2vmr               (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    ch4vmr               (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    n2ovmr               (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    f11vmr               (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    f12vmr               (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    sol_tsi              (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    nsteph               (M, time) float64 dask.array&lt;chunksize=(33, 1032), meta=np.ndarray&gt;
-    TS                   (M, time, lat, lon) float32 dask.array&lt;chunksize=(33, 1032, 289, 288), meta=np.ndarray&gt;
-Attributes:
-    Conventions:               CF-1.0
-    source:                    CAM
-    case:                      b.e11.B20TRC5CNBDRD.f09_g16.002
-    title:                     UNSET
-    logname:                   mai
-    host:                      ys1329
-    Version:                   $Name$
-    revision_Id:               $Id$
-    initial_file:              b.e11.B20TRC5CNBDRD.f09_g16.001.cam.i.1920-01-...
-    topography_file:           /glade/p/cesm/cseg//inputdata/atm/cam/topo/USG...
-    history:                   Tue Aug 13 11:27:07 2013: /glade/apps/opt/nco/...
-    NCO:                       4.3.4
-    nco_openmp_thread_number:  1</pre></div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.client - ERROR - Failed to reconnect to scheduler after 10.00 seconds, closing client
-distributed.utils - ERROR - 
-Traceback (most recent call last):
-  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/utils.py&quot;, line 662, in log_errors
-    yield
-  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/client.py&quot;, line 1290, in _close
-    await gen.with_timeout(timedelta(seconds=2), list(coroutines))
-concurrent.futures._base.CancelledError
-distributed.utils - ERROR - 
-Traceback (most recent call last):
-  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/utils.py&quot;, line 662, in log_errors
-    yield
-  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/client.py&quot;, line 1019, in _reconnect
-    await self._close()
-  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/distributed/client.py&quot;, line 1290, in _close
-    await gen.with_timeout(timedelta(seconds=2), list(coroutines))
-concurrent.futures._base.CancelledError
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dsbc</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><pre>&lt;xarray.Dataset&gt;
-Dimensions:       (M: 33, ilev: 31, lat: 192, lev: 30, lon: 288, nbnd: 2, slat: 191, slon: 288, time: 1140)
-Coordinates:
-  * ilev          (ilev) float64 2.255 5.032 10.16 18.56 ... 967.5 985.1 1e+03
-  * lat           (lat) float64 -90.0 -89.06 -88.12 -87.17 ... 88.12 89.06 90.0
-  * slon          (slon) float64 -0.625 0.625 1.875 3.125 ... 355.6 356.9 358.1
-  * M             (M) int64 1 2 3 4 5 6 7 8 9 10 ... 25 26 27 28 29 30 31 32 33
-  * slat          (slat) float64 -89.53 -88.59 -87.64 ... 87.64 88.59 89.53
-  * lev           (lev) float64 3.643 7.595 14.36 24.61 ... 957.5 976.3 992.6
-  * lon           (lon) float64 0.0 1.25 2.5 3.75 ... 355.0 356.2 357.5 358.8
-  * time          (time) object 2006-02-01 00:00:00 ... 2101-01-01 00:00:00
-Dimensions without coordinates: nbnd
-Data variables:
-    P0            (time, M) float64 1e+05 1e+05 1e+05 ... 1e+05 1e+05 1e+05
-    TS            (M, time, lat, lon) float32 dask.array&lt;chunksize=(1, 900, 192, 288), meta=np.ndarray&gt;
-    ch4vmr        (M, time) float64 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    co2vmr        (M, time) float64 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    date          (M, time) int32 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    date_written  (M, time) |S8 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    datesec       (M, time) int32 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    f11vmr        (M, time) float64 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    f12vmr        (M, time) float64 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    gw            (time, M, lat) float64 dask.array&lt;chunksize=(900, 1, 192), meta=np.ndarray&gt;
-    hyai          (time, M, ilev) float64 dask.array&lt;chunksize=(900, 1, 31), meta=np.ndarray&gt;
-    hyam          (time, M, lev) float64 dask.array&lt;chunksize=(900, 1, 30), meta=np.ndarray&gt;
-    hybi          (time, M, ilev) float64 dask.array&lt;chunksize=(900, 1, 31), meta=np.ndarray&gt;
-    hybm          (time, M, lev) float64 dask.array&lt;chunksize=(900, 1, 30), meta=np.ndarray&gt;
-    mdt           (time, M) int32 1800 1800 1800 1800 ... 1800 1800 1800 1800
-    n2ovmr        (M, time) float64 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    nbdate        (time, M) int32 20060101 20060101 ... 20060101 20060101
-    nbsec         (time, M) int32 0 0 0 0 0 0 0 0 0 0 0 ... 0 0 0 0 0 0 0 0 0 0
-    ndbase        (time, M) int32 0 0 0 0 0 0 0 0 0 0 0 ... 0 0 0 0 0 0 0 0 0 0
-    ndcur         (M, time) int32 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    nlon          (time, M, lat) int32 dask.array&lt;chunksize=(900, 1, 192), meta=np.ndarray&gt;
-    nsbase        (time, M) int32 0 0 0 0 0 0 0 0 0 0 0 ... 0 0 0 0 0 0 0 0 0 0
-    nscur         (M, time) int32 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    nsteph        (M, time) int32 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    ntrk          (time, M) int32 1 1 1 1 1 1 1 1 1 1 1 ... 1 1 1 1 1 1 1 1 1 1
-    ntrm          (time, M) int32 1 1 1 1 1 1 1 1 1 1 1 ... 1 1 1 1 1 1 1 1 1 1
-    ntrn          (time, M) int32 1 1 1 1 1 1 1 1 1 1 1 ... 1 1 1 1 1 1 1 1 1 1
-    sol_tsi       (M, time) float64 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    time_bnds     (M, time, nbnd) object dask.array&lt;chunksize=(1, 900, 2), meta=np.ndarray&gt;
-    time_written  (M, time) |S8 dask.array&lt;chunksize=(1, 900), meta=np.ndarray&gt;
-    w_stag        (time, M, slat) float64 dask.array&lt;chunksize=(900, 1, 191), meta=np.ndarray&gt;
-    wnummax       (time, M, lat) int32 dask.array&lt;chunksize=(900, 1, 192), meta=np.ndarray&gt;
-Attributes:
-    Conventions:               CF-1.0
-    source:                    CAM
-    case:                      b.e11.BRCP85C5CNBDRD.f09_g16.001
-    title:                     UNSET
-    logname:                   mai
-    host:                      ys5218
-    Version:                   $Name$
-    revision_Id:               $Id$
-    initial_file:              b.e11.B20TRC5CNBDRD.f09_g16.001.cam.i.2006-01-...
-    topography_file:           /glade/p/cesm/cseg//inputdata/atm/cam/topo/USG...
-    history:                   Tue Aug 13 15:52:54 2013: /glade/apps/opt/nco/...
-    NCO:                       4.3.4
-    nco_openmp_thread_number:  1</pre></div></div>
 </div>
 </div>
 
