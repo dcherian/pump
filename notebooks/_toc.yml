@@ -8,6 +8,7 @@
     - file: dcl-paper
     - file: ctd-adcp
     - file: TIW-compositing
+    - file: vertical-velocity
 
 - part: Marginal Stability
   chapters:
@@ -16,6 +17,5 @@
 
 - part: Other
   chapters:
-    - file: vertical-velocity
     - file: les-tendencies
     - file: heat-momentum-budget-checks
