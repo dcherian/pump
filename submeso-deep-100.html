@@ -1,0 +1,1310 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep submesoscales in 1/100°? &#8212; PUMP</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Heat and momentum budgets with MITgcm output" href="heat-momentum-budget-checks.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">PUMP</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <p class="caption collapsible-parent">
+ <span class="caption-text">
+  TIW Turbulence
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-DCL.html">
+   TIW DCL
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dcl-paper.html">
+   TIW DCL Paper Figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ctd-adcp.html">
+   TIW Cruise Sections
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html">
+   TIW Compositing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vertical-velocity.html">
+   TIW vertical velocity in MITgcm simulations
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Marginal Stability
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="bulk-Ri.html">
+   Bulk Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MI-extent.html">
+   Longitudinal extent of marginal stability: POP2
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Other
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="les-tendencies.html">
+   LES tendencies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="heat-momentum-budget-checks.html">
+   Heat and momentum budgets with MITgcm output
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Deep submesoscales in 1/100°?
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/submeso-deep-100.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/dcherian/pump"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/submeso-deep-100.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#setup">
+   Setup
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#read-data">
+   Read data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ro">
+   Ro
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#u-lat-depth-sections">
+   <span class="math notranslate nohighlight">
+    \(u\)
+   </span>
+   lat-depth sections
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#scott-ro-maps">
+   Scott
+   <span class="math notranslate nohighlight">
+    \(Ro\)
+   </span>
+   maps
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ro-maps-at-depth">
+   Ro maps at depth
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ro-lat-depth-plots">
+   Ro Lat-depth plots
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="deep-submesoscales-in-1-100">
+<h1>Deep submesoscales in 1/100°?<a class="headerlink" href="#deep-submesoscales-in-1-100" title="Permalink to this headline">¶</a></h1>
+<p>Are there submesoscale features in the deep eq ocean? Do we resolve them with coarser vertical spacing?</p>
+<p>May be some fronty things close to the equator, but our vertical resolution gets coarse (≈40m at 500m depth), so we may not be resolving things properly</p>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">config</span> InlineBackend.figure_format = &quot;retina&quot;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
+
+<span class="kn">import</span> <span class="nn">cf_xarray</span>
+
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">facetgrid</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+
+<span class="c1"># import xmitgcm</span>
+
+<span class="c1"># import pump</span>
+
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+
+<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.core.options.set_options at 0x7f43eb4a8550&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span>
+    <span class="n">n_workers</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+    <span class="n">processes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">local_directory</span><span class="o">=</span><span class="s2">&quot;/home/dcherian/.dask_worker/&quot;</span><span class="p">,</span>
+    <span class="n">dashboard_address</span><span class="o">=</span><span class="s2">&quot;:9999&quot;</span><span class="p">,</span>
+    <span class="n">memory_limit</span><span class="o">=</span><span class="s2">&quot;10GB&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cluster</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "6fda4fb829df468caf0da72663b041d9", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="read-data">
+<h2>Read data<a class="headerlink" href="#read-data" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s1">&#39;/home/dcherian/pump/TPOS_MITgcm_HR/&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/cmpr_*.nc&quot;</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">data_vars</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
+    <span class="n">coords</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
+    <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="ro">
+<h2>Ro<a class="headerlink" href="#ro" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">oceans</span><span class="o">.</span><span class="n">coriolis</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
+<span class="n">vor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">110e3</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">105e3</span>
+<span class="n">Ro</span> <span class="o">=</span> <span class="n">vor</span> <span class="o">/</span> <span class="n">f</span>
+<span class="n">Ro</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ro = ζ/f$&quot;</span>
+<span class="n">Ro</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
+
+:root {
+  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
+  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
+  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
+  --xr-border-color: var(--jp-border-color2, #e0e0e0);
+  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
+  --xr-background-color: var(--jp-layout-color0, white);
+  --xr-background-color-row-even: var(--jp-layout-color1, white);
+  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
+}
+
+html[theme=dark],
+body.vscode-dark {
+  --xr-font-color0: rgba(255, 255, 255, 1);
+  --xr-font-color2: rgba(255, 255, 255, 0.54);
+  --xr-font-color3: rgba(255, 255, 255, 0.38);
+  --xr-border-color: #1F1F1F;
+  --xr-disabled-color: #515151;
+  --xr-background-color: #111111;
+  --xr-background-color-row-even: #111111;
+  --xr-background-color-row-odd: #313131;
+}
+
+.xr-wrap {
+  display: block;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 20px 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: none;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: '►';
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: '▼';
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: '(';
+}
+
+.xr-dim-list:after {
+  content: ')';
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ',';
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  margin-bottom: 0;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data {
+  display: none;
+  background-color: var(--xr-background-color) !important;
+  padding-bottom: 5px !important;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2 {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.DataArray (time: 141, depth: 185, latitude: 2400, longitude: 7500)&gt;
+dask.array&lt;truediv, shape=(141, 185, 2400, 7500), dtype=float32, chunksize=(1, 185, 240, 1500), chunktype=numpy.ndarray&gt;
+Coordinates:
+  * latitude   (latitude) float32 -12.0 -11.99 -11.98 ... 11.98 11.99 12.0
+  * longitude  (longitude) float32 -170.0 -170.0 -170.0 ... -95.02 -95.01 -95.0
+  * depth      (depth) float32 -1.25 -3.75 -6.25 ... -5.658e+03 -5.758e+03
+  * time       (time) datetime64[ns] 1995-11-07T08:00:00 ... 1995-11-30T16:00:00
+Attributes:
+    long_name:  $Ro = ζ/f$</pre><div class='xr-wrap' hidden><div class='xr-header'><div class='xr-obj-type'>xarray.DataArray</div><div class='xr-array-name'></div><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 141</li><li><span class='xr-has-index'>depth</span>: 185</li><li><span class='xr-has-index'>latitude</span>: 2400</li><li><span class='xr-has-index'>longitude</span>: 7500</li></ul></div><ul class='xr-sections'><li class='xr-section-item'><div class='xr-array-wrap'><input id='section-d13a781f-e5b0-4329-a7cb-fa26f0e0c09d' class='xr-array-in' type='checkbox' checked><label for='section-d13a781f-e5b0-4329-a7cb-fa26f0e0c09d' title='Show/hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-array-preview xr-preview'><span>dask.array&lt;chunksize=(1, 185, 240, 1500), meta=np.ndarray&gt;</span></div><div class='xr-array-data'><table>
+<tr>
+<td>
+<table>
+  <thead>
+    <tr><td> </td><th> Array </th><th> Chunk </th></tr>
+  </thead>
+  <tbody>
+    <tr><th> Bytes </th><td> 1.88 TB </td> <td> 266.40 MB </td></tr>
+    <tr><th> Shape </th><td> (141, 185, 2400, 7500) </td> <td> (1, 185, 240, 1500) </td></tr>
+    <tr><th> Count </th><td> 165273 Tasks </td><td> 7050 Chunks </td></tr>
+    <tr><th> Type </th><td> float32 </td><td> numpy.ndarray </td></tr>
+  </tbody>
+</table>
+</td>
+<td>
+<svg width="383" height="111" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="28" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="25" x2="28" y2="25" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="25" style="stroke-width:2" />
+  <line x1="0" y1="0" x2="0" y2="25" />
+  <line x1="1" y1="0" x2="1" y2="25" />
+  <line x1="2" y1="0" x2="2" y2="25" />
+  <line x1="3" y1="0" x2="3" y2="25" />
+  <line x1="4" y1="0" x2="4" y2="25" />
+  <line x1="5" y1="0" x2="5" y2="25" />
+  <line x1="6" y1="0" x2="6" y2="25" />
+  <line x1="7" y1="0" x2="7" y2="25" />
+  <line x1="7" y1="0" x2="7" y2="25" />
+  <line x1="8" y1="0" x2="8" y2="25" />
+  <line x1="9" y1="0" x2="9" y2="25" />
+  <line x1="10" y1="0" x2="10" y2="25" />
+  <line x1="11" y1="0" x2="11" y2="25" />
+  <line x1="12" y1="0" x2="12" y2="25" />
+  <line x1="13" y1="0" x2="13" y2="25" />
+  <line x1="14" y1="0" x2="14" y2="25" />
+  <line x1="15" y1="0" x2="15" y2="25" />
+  <line x1="16" y1="0" x2="16" y2="25" />
+  <line x1="16" y1="0" x2="16" y2="25" />
+  <line x1="17" y1="0" x2="17" y2="25" />
+  <line x1="18" y1="0" x2="18" y2="25" />
+  <line x1="19" y1="0" x2="19" y2="25" />
+  <line x1="20" y1="0" x2="20" y2="25" />
+  <line x1="21" y1="0" x2="21" y2="25" />
+  <line x1="22" y1="0" x2="22" y2="25" />
+  <line x1="23" y1="0" x2="23" y2="25" />
+  <line x1="24" y1="0" x2="24" y2="25" />
+  <line x1="25" y1="0" x2="25" y2="25" />
+  <line x1="25" y1="0" x2="25" y2="25" />
+  <line x1="26" y1="0" x2="26" y2="25" />
+  <line x1="27" y1="0" x2="27" y2="25" />
+  <line x1="28" y1="0" x2="28" y2="25" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 28.684486753575136,0.0 28.684486753575136,25.412616514582485 0.0,25.412616514582485" style="fill:#8B4903A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="14.342243" y="45.412617" font-size="1.0rem" font-weight="100" text-anchor="middle" >141</text>
+  <text x="48.684487" y="12.706308" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,48.684487,12.706308)">1</text>
+
+
+  <!-- Horizontal lines -->
+  <line x1="98" y1="0" x2="115" y2="17" style="stroke-width:2" />
+  <line x1="98" y1="4" x2="115" y2="22" />
+  <line x1="98" y1="8" x2="115" y2="26" />
+  <line x1="98" y1="13" x2="115" y2="30" />
+  <line x1="98" y1="17" x2="115" y2="35" />
+  <line x1="98" y1="21" x2="115" y2="39" />
+  <line x1="98" y1="26" x2="115" y2="44" />
+  <line x1="98" y1="30" x2="115" y2="48" />
+  <line x1="98" y1="35" x2="115" y2="52" />
+  <line x1="98" y1="39" x2="115" y2="57" />
+  <line x1="98" y1="43" x2="115" y2="61" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="98" y1="0" x2="98" y2="43" style="stroke-width:2" />
+  <line x1="115" y1="17" x2="115" y2="61" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="98.0,0.0 115.78413266169933,17.784132661699335 115.78413266169933,61.54060179417739 98.0,43.75646913247805" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="98" y1="0" x2="218" y2="0" style="stroke-width:2" />
+  <line x1="115" y1="17" x2="235" y2="17" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="98" y1="0" x2="115" y2="17" style="stroke-width:2" />
+  <line x1="122" y1="0" x2="139" y2="17" />
+  <line x1="146" y1="0" x2="163" y2="17" />
+  <line x1="170" y1="0" x2="187" y2="17" />
+  <line x1="194" y1="0" x2="211" y2="17" />
+  <line x1="218" y1="0" x2="235" y2="17" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="98.0,0.0 218.0,0.0 235.78413266169935,17.784132661699335 115.78413266169933,17.784132661699335" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Horizontal lines -->
+  <line x1="115" y1="17" x2="235" y2="17" style="stroke-width:2" />
+  <line x1="115" y1="22" x2="235" y2="22" />
+  <line x1="115" y1="26" x2="235" y2="26" />
+  <line x1="115" y1="30" x2="235" y2="30" />
+  <line x1="115" y1="35" x2="235" y2="35" />
+  <line x1="115" y1="39" x2="235" y2="39" />
+  <line x1="115" y1="44" x2="235" y2="44" />
+  <line x1="115" y1="48" x2="235" y2="48" />
+  <line x1="115" y1="52" x2="235" y2="52" />
+  <line x1="115" y1="57" x2="235" y2="57" />
+  <line x1="115" y1="61" x2="235" y2="61" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="115" y1="17" x2="115" y2="61" style="stroke-width:2" />
+  <line x1="139" y1="17" x2="139" y2="61" />
+  <line x1="163" y1="17" x2="163" y2="61" />
+  <line x1="187" y1="17" x2="187" y2="61" />
+  <line x1="211" y1="17" x2="211" y2="61" />
+  <line x1="235" y1="17" x2="235" y2="61" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="115.78413266169933,17.784132661699335 235.78413266169935,17.784132661699335 235.78413266169935,61.54060179417739 115.78413266169933,61.54060179417739" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="175.784133" y="81.540602" font-size="1.0rem" font-weight="100" text-anchor="middle" >7500</text>
+  <text x="255.784133" y="39.662367" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(-90,255.784133,39.662367)">2400</text>
+  <text x="96.892066" y="72.648535" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(45,96.892066,72.648535)">185</text>
+</svg>
+</td>
+</tr>
+</table></div></div></li><li class='xr-section-item'><input id='section-ce9e793d-bf20-4219-8474-fef717f50943' class='xr-section-summary-in' type='checkbox'  checked><label for='section-ce9e793d-bf20-4219-8474-fef717f50943' class='xr-section-summary' >Coordinates: <span>(4)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>latitude</span></div><div class='xr-var-dims'>(latitude)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-12.0 -11.99 -11.98 ... 11.99 12.0</div><input id='attrs-816e5f83-598f-476d-90a9-4959cbae79fb' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-816e5f83-598f-476d-90a9-4959cbae79fb' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-7d0d4ccb-01d7-499c-b992-fad9bb7a5c13' class='xr-var-data-in' type='checkbox'><label for='data-7d0d4ccb-01d7-499c-b992-fad9bb7a5c13' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-12.      , -11.989996, -11.979992, ...,  11.979992,  11.989996,
+        12.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>longitude</span></div><div class='xr-var-dims'>(longitude)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-170.0 -170.0 ... -95.01 -95.0</div><input id='attrs-8392c9b6-9e8b-414e-893b-be1fa967db66' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-8392c9b6-9e8b-414e-893b-be1fa967db66' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-746f9aeb-7768-480b-b560-ecb803f733a8' class='xr-var-data-in' type='checkbox'><label for='data-746f9aeb-7768-480b-b560-ecb803f733a8' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-170.      , -169.99    , -169.98    , ...,  -95.020004,  -95.01    ,
+        -95.      ], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>depth</span></div><div class='xr-var-dims'>(depth)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>-1.25 -3.75 ... -5.758e+03</div><input id='attrs-7e56c079-0e12-4c44-a43d-d8e87bae1e50' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-7e56c079-0e12-4c44-a43d-d8e87bae1e50' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-32bc767e-e362-424d-a9dc-c34e0de0e4c1' class='xr-var-data-in' type='checkbox'><label for='data-32bc767e-e362-424d-a9dc-c34e0de0e4c1' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([-1.250000e+00, -3.750000e+00, -6.250000e+00, -8.750000e+00,
+       -1.125000e+01, -1.375000e+01, -1.625000e+01, -1.875000e+01,
+       -2.125000e+01, -2.375000e+01, -2.625000e+01, -2.875000e+01,
+       -3.125000e+01, -3.375000e+01, -3.625000e+01, -3.875000e+01,
+       -4.125000e+01, -4.375000e+01, -4.625000e+01, -4.875000e+01,
+       -5.125000e+01, -5.375000e+01, -5.625000e+01, -5.875000e+01,
+       -6.125000e+01, -6.375000e+01, -6.625000e+01, -6.875000e+01,
+       -7.125000e+01, -7.375000e+01, -7.625000e+01, -7.875000e+01,
+       -8.125000e+01, -8.375000e+01, -8.625000e+01, -8.875000e+01,
+       -9.125000e+01, -9.375000e+01, -9.625000e+01, -9.875000e+01,
+       -1.012500e+02, -1.037500e+02, -1.062500e+02, -1.087500e+02,
+       -1.112500e+02, -1.137500e+02, -1.162500e+02, -1.187500e+02,
+       -1.212500e+02, -1.237500e+02, -1.262500e+02, -1.287500e+02,
+       -1.312500e+02, -1.337500e+02, -1.362500e+02, -1.387500e+02,
+       -1.412500e+02, -1.437500e+02, -1.462500e+02, -1.487500e+02,
+       -1.512500e+02, -1.537500e+02, -1.562500e+02, -1.587500e+02,
+       -1.612500e+02, -1.637500e+02, -1.662500e+02, -1.687500e+02,
+       -1.712500e+02, -1.737500e+02, -1.762500e+02, -1.787500e+02,
+       -1.812500e+02, -1.837500e+02, -1.862500e+02, -1.887500e+02,
+       -1.912500e+02, -1.937500e+02, -1.962500e+02, -1.987500e+02,
+       -2.012500e+02, -2.037500e+02, -2.062500e+02, -2.087500e+02,
+       -2.112500e+02, -2.137500e+02, -2.162500e+02, -2.187500e+02,
+       -2.212500e+02, -2.237500e+02, -2.262500e+02, -2.287500e+02,
+       -2.312500e+02, -2.337500e+02, -2.362500e+02, -2.387500e+02,
+       -2.412500e+02, -2.437500e+02, -2.462500e+02, -2.487500e+02,
+       -2.513687e+02, -2.542363e+02, -2.573763e+02, -2.608145e+02,
+       -2.645794e+02, -2.687019e+02, -2.732162e+02, -2.781592e+02,
+       -2.835718e+02, -2.894987e+02, -2.959886e+02, -3.030949e+02,
+       -3.108764e+02, -3.193972e+02, -3.287274e+02, -3.389439e+02,
+       -3.501312e+02, -3.623811e+02, -3.757947e+02, -3.904827e+02,
+       -4.065660e+02, -4.241773e+02, -4.434617e+02, -4.645781e+02,
+       -4.877004e+02, -5.130195e+02, -5.407438e+02, -5.711019e+02,
+       -6.043441e+02, -6.407443e+02, -6.806025e+02, -7.242472e+02,
+       -7.720381e+02, -8.243693e+02, -8.816718e+02, -9.444181e+02,
+       -1.013125e+03, -1.088360e+03, -1.170741e+03, -1.260949e+03,
+       -1.358099e+03, -1.458099e+03, -1.558099e+03, -1.658099e+03,
+       -1.758099e+03, -1.858099e+03, -1.958099e+03, -2.058098e+03,
+       -2.158098e+03, -2.258098e+03, -2.358098e+03, -2.458098e+03,
+       -2.558098e+03, -2.658098e+03, -2.758098e+03, -2.858098e+03,
+       -2.958098e+03, -3.058098e+03, -3.158098e+03, -3.258098e+03,
+       -3.358098e+03, -3.458098e+03, -3.558098e+03, -3.658098e+03,
+       -3.758098e+03, -3.858098e+03, -3.958098e+03, -4.058098e+03,
+       -4.158099e+03, -4.258099e+03, -4.358099e+03, -4.458099e+03,
+       -4.558099e+03, -4.658099e+03, -4.758099e+03, -4.858099e+03,
+       -4.958099e+03, -5.058099e+03, -5.158099e+03, -5.258099e+03,
+       -5.358099e+03, -5.458099e+03, -5.558099e+03, -5.658099e+03,
+       -5.758099e+03], dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>datetime64[ns]</div><div class='xr-var-preview xr-preview'>1995-11-07T08:00:00 ... 1995-11-...</div><input id='attrs-30f1064e-2133-48c7-aaac-ac7d52376577' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-30f1064e-2133-48c7-aaac-ac7d52376577' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-824206c8-b707-4a99-92eb-b818cf1ee5e5' class='xr-var-data-in' type='checkbox'><label for='data-824206c8-b707-4a99-92eb-b818cf1ee5e5' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>long_name :</span></dt><dd>Time (hours since 1950-01-01)</dd><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>axis :</span></dt><dd>T</dd><dt><span>_CoordinateAxisType :</span></dt><dd>Time</dd></dl></div><div class='xr-var-data'><pre>array([&#x27;1995-11-07T08:00:00.000000000&#x27;, &#x27;1995-11-07T12:00:00.000000000&#x27;,
+       &#x27;1995-11-07T16:00:00.000000000&#x27;, &#x27;1995-11-07T20:00:00.000000000&#x27;,
+       &#x27;1995-11-08T00:00:00.000000000&#x27;, &#x27;1995-11-08T04:00:00.000000000&#x27;,
+       &#x27;1995-11-08T08:00:00.000000000&#x27;, &#x27;1995-11-08T12:00:00.000000000&#x27;,
+       &#x27;1995-11-08T16:00:00.000000000&#x27;, &#x27;1995-11-08T20:00:00.000000000&#x27;,
+       &#x27;1995-11-09T00:00:00.000000000&#x27;, &#x27;1995-11-09T04:00:00.000000000&#x27;,
+       &#x27;1995-11-09T08:00:00.000000000&#x27;, &#x27;1995-11-09T12:00:00.000000000&#x27;,
+       &#x27;1995-11-09T16:00:00.000000000&#x27;, &#x27;1995-11-09T20:00:00.000000000&#x27;,
+       &#x27;1995-11-10T00:00:00.000000000&#x27;, &#x27;1995-11-10T04:00:00.000000000&#x27;,
+       &#x27;1995-11-10T08:00:00.000000000&#x27;, &#x27;1995-11-10T12:00:00.000000000&#x27;,
+       &#x27;1995-11-10T16:00:00.000000000&#x27;, &#x27;1995-11-10T20:00:00.000000000&#x27;,
+       &#x27;1995-11-11T00:00:00.000000000&#x27;, &#x27;1995-11-11T04:00:00.000000000&#x27;,
+       &#x27;1995-11-11T08:00:00.000000000&#x27;, &#x27;1995-11-11T12:00:00.000000000&#x27;,
+       &#x27;1995-11-11T16:00:00.000000000&#x27;, &#x27;1995-11-11T20:00:00.000000000&#x27;,
+       &#x27;1995-11-12T00:00:00.000000000&#x27;, &#x27;1995-11-12T04:00:00.000000000&#x27;,
+       &#x27;1995-11-12T08:00:00.000000000&#x27;, &#x27;1995-11-12T12:00:00.000000000&#x27;,
+       &#x27;1995-11-12T16:00:00.000000000&#x27;, &#x27;1995-11-12T20:00:00.000000000&#x27;,
+       &#x27;1995-11-13T00:00:00.000000000&#x27;, &#x27;1995-11-13T04:00:00.000000000&#x27;,
+       &#x27;1995-11-13T08:00:00.000000000&#x27;, &#x27;1995-11-13T12:00:00.000000000&#x27;,
+       &#x27;1995-11-13T16:00:00.000000000&#x27;, &#x27;1995-11-13T20:00:00.000000000&#x27;,
+       &#x27;1995-11-14T00:00:00.000000000&#x27;, &#x27;1995-11-14T04:00:00.000000000&#x27;,
+       &#x27;1995-11-14T08:00:00.000000000&#x27;, &#x27;1995-11-14T12:00:00.000000000&#x27;,
+       &#x27;1995-11-14T16:00:00.000000000&#x27;, &#x27;1995-11-14T20:00:00.000000000&#x27;,
+       &#x27;1995-11-15T00:00:00.000000000&#x27;, &#x27;1995-11-15T04:00:00.000000000&#x27;,
+       &#x27;1995-11-15T08:00:00.000000000&#x27;, &#x27;1995-11-15T12:00:00.000000000&#x27;,
+       &#x27;1995-11-15T16:00:00.000000000&#x27;, &#x27;1995-11-15T20:00:00.000000000&#x27;,
+       &#x27;1995-11-16T00:00:00.000000000&#x27;, &#x27;1995-11-16T04:00:00.000000000&#x27;,
+       &#x27;1995-11-16T08:00:00.000000000&#x27;, &#x27;1995-11-16T12:00:00.000000000&#x27;,
+       &#x27;1995-11-16T16:00:00.000000000&#x27;, &#x27;1995-11-16T20:00:00.000000000&#x27;,
+       &#x27;1995-11-17T00:00:00.000000000&#x27;, &#x27;1995-11-17T04:00:00.000000000&#x27;,
+       &#x27;1995-11-17T08:00:00.000000000&#x27;, &#x27;1995-11-17T12:00:00.000000000&#x27;,
+       &#x27;1995-11-17T16:00:00.000000000&#x27;, &#x27;1995-11-17T20:00:00.000000000&#x27;,
+       &#x27;1995-11-18T00:00:00.000000000&#x27;, &#x27;1995-11-18T04:00:00.000000000&#x27;,
+       &#x27;1995-11-18T08:00:00.000000000&#x27;, &#x27;1995-11-18T12:00:00.000000000&#x27;,
+       &#x27;1995-11-18T16:00:00.000000000&#x27;, &#x27;1995-11-18T20:00:00.000000000&#x27;,
+       &#x27;1995-11-19T00:00:00.000000000&#x27;, &#x27;1995-11-19T04:00:00.000000000&#x27;,
+       &#x27;1995-11-19T08:00:00.000000000&#x27;, &#x27;1995-11-19T12:00:00.000000000&#x27;,
+       &#x27;1995-11-19T16:00:00.000000000&#x27;, &#x27;1995-11-19T20:00:00.000000000&#x27;,
+       &#x27;1995-11-20T00:00:00.000000000&#x27;, &#x27;1995-11-20T04:00:00.000000000&#x27;,
+       &#x27;1995-11-20T08:00:00.000000000&#x27;, &#x27;1995-11-20T12:00:00.000000000&#x27;,
+       &#x27;1995-11-20T16:00:00.000000000&#x27;, &#x27;1995-11-20T20:00:00.000000000&#x27;,
+       &#x27;1995-11-21T00:00:00.000000000&#x27;, &#x27;1995-11-21T04:00:00.000000000&#x27;,
+       &#x27;1995-11-21T08:00:00.000000000&#x27;, &#x27;1995-11-21T12:00:00.000000000&#x27;,
+       &#x27;1995-11-21T16:00:00.000000000&#x27;, &#x27;1995-11-21T20:00:00.000000000&#x27;,
+       &#x27;1995-11-22T00:00:00.000000000&#x27;, &#x27;1995-11-22T04:00:00.000000000&#x27;,
+       &#x27;1995-11-22T08:00:00.000000000&#x27;, &#x27;1995-11-22T12:00:00.000000000&#x27;,
+       &#x27;1995-11-22T16:00:00.000000000&#x27;, &#x27;1995-11-22T20:00:00.000000000&#x27;,
+       &#x27;1995-11-23T00:00:00.000000000&#x27;, &#x27;1995-11-23T04:00:00.000000000&#x27;,
+       &#x27;1995-11-23T08:00:00.000000000&#x27;, &#x27;1995-11-23T12:00:00.000000000&#x27;,
+       &#x27;1995-11-23T16:00:00.000000000&#x27;, &#x27;1995-11-23T20:00:00.000000000&#x27;,
+       &#x27;1995-11-24T00:00:00.000000000&#x27;, &#x27;1995-11-24T04:00:00.000000000&#x27;,
+       &#x27;1995-11-24T08:00:00.000000000&#x27;, &#x27;1995-11-24T12:00:00.000000000&#x27;,
+       &#x27;1995-11-24T16:00:00.000000000&#x27;, &#x27;1995-11-24T20:00:00.000000000&#x27;,
+       &#x27;1995-11-25T00:00:00.000000000&#x27;, &#x27;1995-11-25T04:00:00.000000000&#x27;,
+       &#x27;1995-11-25T08:00:00.000000000&#x27;, &#x27;1995-11-25T12:00:00.000000000&#x27;,
+       &#x27;1995-11-25T16:00:00.000000000&#x27;, &#x27;1995-11-25T20:00:00.000000000&#x27;,
+       &#x27;1995-11-26T00:00:00.000000000&#x27;, &#x27;1995-11-26T04:00:00.000000000&#x27;,
+       &#x27;1995-11-26T08:00:00.000000000&#x27;, &#x27;1995-11-26T12:00:00.000000000&#x27;,
+       &#x27;1995-11-26T16:00:00.000000000&#x27;, &#x27;1995-11-26T20:00:00.000000000&#x27;,
+       &#x27;1995-11-27T00:00:00.000000000&#x27;, &#x27;1995-11-27T04:00:00.000000000&#x27;,
+       &#x27;1995-11-27T08:00:00.000000000&#x27;, &#x27;1995-11-27T12:00:00.000000000&#x27;,
+       &#x27;1995-11-27T16:00:00.000000000&#x27;, &#x27;1995-11-27T20:00:00.000000000&#x27;,
+       &#x27;1995-11-28T00:00:00.000000000&#x27;, &#x27;1995-11-28T04:00:00.000000000&#x27;,
+       &#x27;1995-11-28T08:00:00.000000000&#x27;, &#x27;1995-11-28T12:00:00.000000000&#x27;,
+       &#x27;1995-11-28T16:00:00.000000000&#x27;, &#x27;1995-11-28T20:00:00.000000000&#x27;,
+       &#x27;1995-11-29T00:00:00.000000000&#x27;, &#x27;1995-11-29T04:00:00.000000000&#x27;,
+       &#x27;1995-11-29T08:00:00.000000000&#x27;, &#x27;1995-11-29T12:00:00.000000000&#x27;,
+       &#x27;1995-11-29T16:00:00.000000000&#x27;, &#x27;1995-11-29T20:00:00.000000000&#x27;,
+       &#x27;1995-11-30T00:00:00.000000000&#x27;, &#x27;1995-11-30T04:00:00.000000000&#x27;,
+       &#x27;1995-11-30T08:00:00.000000000&#x27;, &#x27;1995-11-30T12:00:00.000000000&#x27;,
+       &#x27;1995-11-30T16:00:00.000000000&#x27;], dtype=&#x27;datetime64[ns]&#x27;)</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-482a570f-25c2-4303-b890-c028a608a4ed' class='xr-section-summary-in' type='checkbox'  checked><label for='section-482a570f-25c2-4303-b890-c028a608a4ed' class='xr-section-summary' >Attributes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>long_name :</span></dt><dd>$Ro = ζ/f$</dd></dl></div></li></ul></div></div></div></div>
+</div>
+<p>Scott’s <span class="math notranslate nohighlight">\(Ro\)</span></p>
+<p>\begin{equation}
+Ro = \frac{|ζ|}{|ζ| + |f|}
+\end{equation}</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sRo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vor</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vor</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="n">sRo</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="u-lat-depth-sections">
+<h2><span class="math notranslate nohighlight">\(u\)</span> lat-depth sections<a class="headerlink" href="#u-lat-depth-sections" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">155</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
+    <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">2000</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span>
+    <span class="n">row</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x7f4552b2b7f0&gt;
+</pre></div>
+</div>
+<img alt="_images/submeso-deep-100_15_1.png" src="_images/submeso-deep-100_15_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="scott-ro-maps">
+<h2>Scott <span class="math notranslate nohighlight">\(Ro\)</span> maps<a class="headerlink" href="#scott-ro-maps" title="Permalink to this headline">¶</a></h2>
+<p>Looks more “fronty” at depth</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span> <span class="o">=</span> <span class="n">sRo</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f461efdd580&gt;
+</pre></div>
+</div>
+<img alt="_images/submeso-deep-100_18_1.png" src="_images/submeso-deep-100_18_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sRo</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f47b6c28f70&gt;
+</pre></div>
+</div>
+<img alt="_images/submeso-deep-100_19_1.png" src="_images/submeso-deep-100_19_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=-</span><span class="mi">200</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f4284573d60&gt;
+</pre></div>
+</div>
+<img alt="_images/submeso-deep-100_20_1.png" src="_images/submeso-deep-100_20_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span> <span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="o">-</span><span class="mi">700</span><span class="p">,</span> <span class="o">-</span><span class="mi">1000</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">subset</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/submeso-deep-100_21_0.png" src="_images/submeso-deep-100_21_0.png" />
+<img alt="_images/submeso-deep-100_21_1.png" src="_images/submeso-deep-100_21_1.png" />
+<img alt="_images/submeso-deep-100_21_2.png" src="_images/submeso-deep-100_21_2.png" />
+<img alt="_images/submeso-deep-100_21_3.png" src="_images/submeso-deep-100_21_3.png" />
+</div>
+</div>
+</div>
+<div class="section" id="ro-maps-at-depth">
+<h2>Ro maps at depth<a class="headerlink" href="#ro-maps-at-depth" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span> <span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="o">-</span><span class="mi">700</span><span class="p">,</span> <span class="o">-</span><span class="mi">1000</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">Ro</span><span class="o">.</span><span class="n">reindex_like</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu_r</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/xarray/core/indexing.py:1375: PerformanceWarning: Slicing is producing a large chunk. To accept the large
+chunk and silence this warning, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: False}):
+    ...     array[indexer]
+
+To avoid creating the large chunks, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: True}):
+    ...     array[indexer]
+  value = value[(slice(None),) * axis + (subkey,)]
+/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/xarray/core/indexing.py:1375: PerformanceWarning: Slicing is producing a large chunk. To accept the large
+chunk and silence this warning, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: False}):
+    ...     array[indexer]
+
+To avoid creating the large chunks, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: True}):
+    ...     array[indexer]
+  value = value[(slice(None),) * axis + (subkey,)]
+/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/xarray/core/indexing.py:1375: PerformanceWarning: Slicing is producing a large chunk. To accept the large
+chunk and silence this warning, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: False}):
+    ...     array[indexer]
+
+To avoid creating the large chunks, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: True}):
+    ...     array[indexer]
+  value = value[(slice(None),) * axis + (subkey,)]
+/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/xarray/core/indexing.py:1375: PerformanceWarning: Slicing is producing a large chunk. To accept the large
+chunk and silence this warning, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: False}):
+    ...     array[indexer]
+
+To avoid creating the large chunks, set the option
+    &gt;&gt;&gt; with dask.config.set(**{&#39;array.slicing.split_large_chunks&#39;: True}):
+    ...     array[indexer]
+  value = value[(slice(None),) * axis + (subkey,)]
+</pre></div>
+</div>
+<img alt="_images/submeso-deep-100_23_1.png" src="_images/submeso-deep-100_23_1.png" />
+<img alt="_images/submeso-deep-100_23_2.png" src="_images/submeso-deep-100_23_2.png" />
+<img alt="_images/submeso-deep-100_23_3.png" src="_images/submeso-deep-100_23_3.png" />
+<img alt="_images/submeso-deep-100_23_4.png" src="_images/submeso-deep-100_23_4.png" />
+</div>
+</div>
+</div>
+<div class="section" id="ro-lat-depth-plots">
+<h2>Ro Lat-depth plots<a class="headerlink" href="#ro-lat-depth-plots" title="Permalink to this headline">¶</a></h2>
+<p>There may be some interesting things in 1°S-1°N, but our vertical resolution is coarse below 250m</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">longitude</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">Ro</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu_r</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/submeso-deep-100_25_0.png" src="_images/submeso-deep-100_25_0.png" />
+<img alt="_images/submeso-deep-100_25_1.png" src="_images/submeso-deep-100_25_1.png" />
+<img alt="_images/submeso-deep-100_25_2.png" src="_images/submeso-deep-100_25_2.png" />
+<img alt="_images/submeso-deep-100_25_3.png" src="_images/submeso-deep-100_25_3.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">longitude</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">sRo</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu_r</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/submeso-deep-100_26_0.png" src="_images/submeso-deep-100_26_0.png" />
+<img alt="_images/submeso-deep-100_26_1.png" src="_images/submeso-deep-100_26_1.png" />
+<img alt="_images/submeso-deep-100_26_2.png" src="_images/submeso-deep-100_26_2.png" />
+<img alt="_images/submeso-deep-100_26_3.png" src="_images/submeso-deep-100_26_3.png" />
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="heat-momentum-budget-checks.html" title="previous page">Heat and momentum budgets with MITgcm output</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Deepak Cherian<br/>
+        
+            &copy; Copyright 2020.<br/>
+          <div class="extra_footer">
+            <div>
+<script data-goatcounter="https://count.cherian.net/count"
+        async src="count.js"></script>
+</div>
+
+          </div>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
