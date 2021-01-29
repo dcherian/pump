@@ -234,49 +234,56 @@ def read_roms_dataset(fnames, **chunk_kwargs):
 
 def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr="0*"):
     metrics = read_metrics(dirname)
-    metrics["longitude"] = metrics.longitude - 170
+    metrics["longitude"] = metrics.longitude - 169.025
 
     stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
 
-    # print(glob.glob(f"{stationdirname}/{globstr}"))
-    station = (
-        xr.open_mfdataset(
-            f"{stationdirname}/{globstr}",
-            parallel=True,
-            combine="by_coords",
-            decode_times=False,
-        )
-        .sortby("latitude")
-        .squeeze()
+    print(f"Reading {stationdirname}/{globstr}.nc ...")
+    # station = (
+    #    xr.open_mfdataset(
+    #        f"{stationdirname}/{globstr}.nc",
+    #        parallel=True,
+    #        combine="by_coords",
+    #        decode_times=False,
+    #    )
+    #    .sortby("latitude")
+    #    .squeeze()
+    # )
+
+    station = xr.open_mfdataset(
+        f"{dirname}/STATION_DATA/*.zarr", parallel=True, engine="zarr"
     )
 
     # TODO: for some reason there are duplicated timestamps near the end
-    deduped = station.time.copy(data=~station.indexes["time"].duplicated())
-    station = station.where(deduped, drop=True)
-    station.time.attrs["long_name"] = ""
+    # if ~station.indexes["time"].is_unique:
+    #    deduped = station.time.copy(data=~station.indexes["time"].duplicated())
+    #    station = station.where(deduped, drop=True)
+
+    # station.time.attrs["long_name"] = ""
+    # station.time.attrs["units"] = "seconds since 1999-01-01 00:00"
+    # station = xr.decode_cf(station)
+    # station["time"] = station.time - pd.Timedelta("7h")
 
     metrics = metrics.sel(
         longitude=station.longitude.values,
         latitude=station.latitude.values,
         method="nearest",
     )
-    station.time.attrs["units"] = "seconds since 1999-01-01 00:00"
-    station = xr.decode_cf(station)
-    station["time"] = station.time - pd.Timedelta("7h")
 
     station["KPPg_TH"] = station.KPPg_TH.fillna(0)
 
-    station["Jq"] = 1035 * 3994 * (station.DFrI_TH + station.KPPg_TH) / metrics.RAC
+    station["Jq_shear"] = 1035 * 3994 * (station.DFrI_TH.fillna(0)) / metrics.RAC
     station["nonlocal_flux"] = 1035 * 3994 * (station.KPPg_TH) / metrics.RAC
     station["dens"] = dens(station.salt, station.theta, np.array([0.0]))
 
     station["mld"] = get_mld(station.dens)
-    station["eucmax"] = get_euc_max(station.u)
-    station["Jq"] += station.nonlocal_flux.fillna(0)  # add the non-local term too
+    # station["Jq"] += station.nonlocal_flux.fillna(0)  # add the non-local term too
+    station["Jq"] = station.Jq_shear + station.nonlocal_flux
 
-    station.coords["zeuc"] = station.depth - station.eucmax
-    station.zeuc.attrs["long_name"] = "$z - z_{EUC}$"
-    station.zeuc.attrs["units"] = "m"
+    # station["eucmax"] = get_euc_max(station.u)
+    # station.coords["zeuc"] = station.depth - station.eucmax
+    # station.zeuc.attrs["long_name"] = "$z - z_{EUC}$"
+    # station.zeuc.attrs["units"] = "m"
 
     station["dJdz"] = station.Jq.differentiate("depth")
     station["dTdt"] = -station.dJdz / 1035 / 3995 * 86400 * 30
@@ -288,15 +295,12 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
 
 def read_metrics(dirname):
     """
-
-    This function needs longitude, latitude, depth to assign the right metadata.
     If size of the metrics variables are not the same as (longitude, latitude),
     the code assumes that a boundary region has been cut out at the low-end and
     high-end of the appropriate axis.
 
     If the size in depth-axis is different, then it assumes that the provided depth
     is a slice from surface to the Nth-point where N=len(depth).
-
     """
     import xmitgcm
 

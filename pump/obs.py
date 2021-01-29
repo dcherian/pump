@@ -411,7 +411,7 @@ def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
 def read_jra_95():
 
     jradir = (
-        "/glade/campaign/cgd/oce/people/bachman/make_TPOS_MITgcm/JRA_FORCING/combined/"
+        "/glade/work/dcherian/pump/combined_95_97_JRA/"
     )
 
     jrafull = read_jra(
