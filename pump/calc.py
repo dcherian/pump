@@ -1009,7 +1009,29 @@ def calc_ptp(sst, period=None, debug=False):
     return tiw_ptp
 
 
+def estimate_N2_evolution_terms(ds):
+    """ Estimate N² budget terms. """
+
+    ds["b"] = -9.81 / 1035 * ds.dens
+
+    dN2dt = xr.Dataset()
+    dN2dt["xadv"] = -ds.u * ddx(ds.N2)
+    dN2dt["yadv"] = -ds.v * ddy(ds.N2)
+    dN2dt["zadv"] = -ds.w * ddz(ds.N2)
+    dN2dt["uzbx"] = -ds.uz * ddx(ds.b)
+    dN2dt["vzby"] = -ds.vz * ddy(ds.b)
+    dN2dt["wzbz"] = -ddz(ds.w) * ddz(ds.b)
+    dN2dt["mix"] = -ddz(9.81 * 2e-4 * ddz(ds.Jq / 1035 / 3995))
+
+    dN2dt["adv"] = dN2dt.xadv + dN2dt.yadv + dN2dt.zadv
+    dN2dt["tilt"] = dN2dt.uzbx + dN2dt.vzby + dN2dt.wzbz
+    dN2dt["lag"] = dN2dt.tilt + dN2dt.mix
+
+    return dN2dt
+
+
 def estimate_shear_evolution_terms(ds):
+    """ Estimates shear budget terms. """
     f = dcpy.oceans.coriolis(ds.latitude)
     uz = ds.u.differentiate("depth")
     vz = ds.v.differentiate("depth")
@@ -1116,7 +1138,7 @@ def coare_fluxes_jra(ocean, forcing):
         ts=sst,
         Rs=forcing.rsds,
         Rl=forcing.rlds,
-        lat=ocean.cf["Y"],
+        lat=ocean.cf["latitude"],
         rain=forcing.prra / 1000 * 1000 / 3600,  # kg/m²/s to mm/hour
         jcool=False,
         qspec=forcing.huss,
@@ -1227,6 +1249,7 @@ def vorticity(period4):
     vort["z"] = ddx(period4.v) - ddy(period4.u)
     vort["vx"] = ddx(period4.v)
     vort["uy"] = ddy(period4.u)
+    vort["vy"] = ddy(period4.v)
     vort["f"] = dcpy.oceans.coriolis(period4.latitude)
 
     return vort

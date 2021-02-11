@@ -1311,6 +1311,7 @@ def vor_streamplot(
         elif x == "longitude":
             dcl = dcl.rolling(longitude=6, center=True).mean()
 
+        dcl.load()
         kwargs = dict(ax=ax, y="latitude", zorder=2, add_labels=False, levels=[30])
         dcl.plot.contour(**kwargs, colors="w", linewidths=4)
         dcl.plot.contour(**kwargs, colors="k")
@@ -1325,9 +1326,10 @@ def vor_streamplot(
 
     if vec:
         quiver(
-            subset.isel({x: slice(None, None, 6)}).isel(
-                {"latitude": slice(None, None, stride), x: slice(None, None, stride)}
-            ),
+            subset[["x", "y"]]
+            .isel({x: slice(None, None, 6)})
+            .isel({"latitude": slice(None, None, stride), x: slice(None, None, stride)})
+            .compute(),
             u="x",  # vorticity x-component
             v="y",  # vorticity y-component
             x=x,
@@ -1335,18 +1337,6 @@ def vor_streamplot(
             scale=scale,
             ax=ax,
         )
-
-    # quiver(
-    #    period4[["u", "v"]].sel(depth=slice(-60)).mean("depth")
-    #    .assign(u=lambda x: x["u"] + 0.5)
-    #    .isel(longitude=1, latitude=slice(None, None, 6), time=slice(None, None, 6)),
-    ##    u="u",
-    ##    v="v",
-    #    x="time",
-    #    y="latitude",
-    #    color='darkgreen',
-    #    scale=10,
-    # )
 
     subset = (
         center.sel(latitude=slice(-1, 5), depth=slice(-60))
@@ -1403,7 +1393,7 @@ def vor_streamplot(
         sax.set_xticklabels([])
 
     euc = center.u.sel(latitude=slice(-2, 4)).sel(depth=slice(-30, -120)).mean("depth")
-    euclat = euc.latitude[euc.argmax("latitude")]
+    euclat = euc.latitude[euc.argmax("latitude")].compute()
 
     euclat.plot(ax=ax, lw=6, color="white", zorder=10)
     heuc = euclat.plot(ax=ax, lw=3, color="dimgray", zorder=11)
