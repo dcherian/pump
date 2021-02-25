@@ -1,7 +1,7 @@
-import cf_xarray
-import numpy as np
-import xarray as xr
 import matplotlib.pyplot as plt
+import numpy as np
+
+import xarray as xr
 
 
 def write_to_txt(ds, outdir, prefix, interleave, t0=None):

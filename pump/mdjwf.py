@@ -1,8 +1,7 @@
 import numpy as np
-import xarray as xr
-
 from numba import njit
 
+import xarray as xr
 
 __doc__ = """
 Density of Sea Water using McDougall et al. 2003 (JAOT 20) polynomial

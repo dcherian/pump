@@ -1,13 +1,14 @@
 import glob
+import os
+
+import dcpy
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import pandas as pd
 import tqdm
-import xarray as xr
 
-import dcpy
+import xarray as xr
 
 
 def read_adcp(filename, longitude, debug=False):

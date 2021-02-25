@@ -1,19 +1,25 @@
-import cf_xarray
-import colorcet
+import itertools
+
 import dask
 import dcpy.plots
-import itertools
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+import xarray
 import xarray as xr
 
-from .calc import get_dcl_base_Ri, get_mld, calc_reduced_shear, calc_kpp_terms
+from .calc import calc_kpp_terms, calc_reduced_shear, get_dcl_base_Ri, get_mld
 from .mdjwf import dens
 
 
-import xarray
+def fix_gradient_edge_labels(obj, dim):
+    diff = obj[dim].diff(dim).data / 2
+    diff[1:-1] = 0
+    diff[-1] *= -1
+    diff = np.insert(diff, -2, 0)
+    return obj.assign_coords({dim: obj[dim].data + diff})
 
 
 cmaps = {
@@ -81,13 +87,13 @@ def plot_depths(ds, ax=None, **kwargs):
         ax = plt.gca()
 
     if "euc_max" in ds:
-        heuc = ds.euc_max.plot.line(ax=ax, color="k", lw=1, _labels=False, **kwargs)
+        ds.euc_max.plot.line(ax=ax, color="k", lw=1, _labels=False, **kwargs)
 
     if "dcl_base" in ds:
-        hdcl = ds.dcl_base.plot.line(ax=ax, color="gray", lw=1, _labels=False, **kwargs)
+        ds.dcl_base.plot.line(ax=ax, color="gray", lw=1, _labels=False, **kwargs)
 
     if "mld" in ds:
-        hmld = (ds.mld).plot.line(ax=ax, color="k", lw=0.5, _labels=False, **kwargs)
+        ds.mld.plot.line(ax=ax, color="k", lw=0.5, _labels=False, **kwargs)
 
 
 def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):

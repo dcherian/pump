@@ -1,21 +1,14 @@
-import dask
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import scipy as sp
-import seawater as sw
-import xarray as xr
 import warnings
 
+import dask
 import dcpy
 import dcpy.eos
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy as sp
 import xfilter
 
-
-from numba import int64, float32, guvectorize
-
-from . import KPP
+import xarray as xr
 
 
 def ddx(a):
@@ -1115,8 +1108,8 @@ def coare_fluxes_jra(ocean, forcing):
        weird bug.
     """
 
-    import xcoare
     import cf_xarray
+    import xcoare
 
     ocean = ocean.cf.sel(Z=0, method="nearest", drop=True)
 

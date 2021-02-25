@@ -1,5 +1,6 @@
-import xarray as xr
 import matplotlib.pyplot as plt
+
+import xarray as xr
 
 
 def validate_sst(self):

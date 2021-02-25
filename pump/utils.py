@@ -7,6 +7,7 @@ except (ImportError, TypeError, RuntimeError):
     ncar_jobqueue = False
 
 import numpy as np
+
 import xarray as xr
 
 
@@ -45,8 +46,8 @@ def lowpass(obj, coord, freq, cycles_per="s", order=2, use_overlap=True, debug=F
     Lowpass butterworth filter
 
     """
-    import scipy as sp
     import dcpy
+    import scipy as sp
 
     def _process_time(time, cycles_per="s"):
 

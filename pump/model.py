@@ -1,30 +1,31 @@
+import glob
+import time
+
 import dask
 import dask.delayed
 import dcpy.plots
-import glob
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import time
-import xarray as xr
 import xmitgcm
 
+import xarray as xr
+
+from . import validate
 from .calc import (
     calc_reduced_shear,
-    get_euc_max,
     get_dcl_base_Ri,
     get_dcl_base_shear,
+    get_euc_max,
     get_mld,
     get_tiw_phase,
     get_tiw_phase_sst,
     tiw_avg_filter_sst,
 )
 from .constants import *
+from .mdjwf import dens
 from .obs import *
 from .plot import plot_depths
-from .mdjwf import dens
-
-from . import validate
 
 
 def read_mitgcm_coords(dirname):
