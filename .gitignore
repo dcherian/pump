@@ -392,3 +392,9 @@ TSWLatexianTemp*
 
 # Emacs
 *~
+
+*.png
+*.nc
+*.zarr
+*.cdf
+*.mat
