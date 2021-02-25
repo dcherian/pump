@@ -10,8 +10,6 @@ import xarray as xr
 from . import mdjwf
 from .constants import *
 
-root = "/glade/work/dcherian/pump/"
-
 
 def read_all(domain=None):
     johnson = read_johnson()
@@ -22,7 +20,10 @@ def read_all(domain=None):
     return [johnson, tao, sst, oscar]
 
 
-def read_johnson(filename=root + "/obs/johnson-eq-pac-adcp.cdf"):
+def read_johnson(filename=None):
+    root = pump.OPTIONS["root"]
+    if filename is None:
+        filename = f"{root}/obs/johnson-eq-pac-adcp.cdf"
     ds = xr.open_dataset(filename).rename(
         {
             "XLON": "longitude",
@@ -45,15 +46,19 @@ def read_johnson(filename=root + "/obs/johnson-eq-pac-adcp.cdf"):
     return ds
 
 
-def read_tao_adcp(domain=None, freq="dy"):
+def read_tao_adcp(domain=None, freq="dy", dirname=None):
+    root = pump.OPTIONS["root"]
+
+    if dirname is None:
+        dirname = root + "/obs/tao/"
 
     if freq == "dy":
-        adcp = xr.open_dataset(root + "/obs/tao/adcp_xyzt_dy.cdf").rename(
+        adcp = xr.open_dataset(f"{dirname}/adcp_xyzt_dy.cdf").rename(
             {"lon": "longitude", "lat": "latitude", "U_1205": "u", "V_1206": "v"}
         )
     elif freq == "hr":
         afiles = [
-            root + "/obs/tao/adcp0n" + lon + "_hr.cdf"
+            f"{dirname}/adcp0n{lon}_hr.cdf"
             for lon in ["156e", "165e", "170w", "140w", "110w"]
         ]
 
@@ -81,8 +86,8 @@ def read_tao_adcp(domain=None, freq="dy"):
         adcp[vv].attrs["units"] = "m/s"
         adcp[vv] = adcp[vv].where(np.abs(adcp[vv]) < 1000)
 
-    adcp["longitude"] -= 360
-    adcp["depth"] *= -1
+    adcp["longitude"] = adcp.longitude + 360
+    adcp["depth"] = -1 * adcp.depth
     adcp["depth"].attrs["units"] = "m"
     adcp["u"].attrs["units"] = "m/s"
     adcp["v"].attrs["units"] = "m/s"
@@ -98,6 +103,7 @@ def read_tao_adcp(domain=None, freq="dy"):
 def tao_read_and_merge(suffix, kind):
     """ read non-ADCP files. """
 
+    root = pump.OPTIONS["root"]
     if kind == "temp":
         prefix = "t"
         renamer = {"T_20": "T"}
@@ -111,6 +117,7 @@ def tao_read_and_merge(suffix, kind):
         f"{root}/obs/tao/{prefix}0n{lon}_{suffix}.cdf"
         for lon in ["156e", "165e", "170w", "140w", "110w"]
     ]
+
     for file in tqdm.tqdm(tfiles):
         try:
             ds.append(xr.load_dataset(file)[list(renamer.keys())])
@@ -121,8 +128,8 @@ def tao_read_and_merge(suffix, kind):
         {"lon": "longitude", "lat": "latitude"}
     )
 
-    merged["longitude"] -= 360
-    merged["depth"] *= -1
+    merged["longitude"] = merged.longitude - 360
+    merged["depth"] = -1 * merged.depth
     return merged.rename_vars(renamer)
 
 
@@ -141,7 +148,7 @@ def tao_merge_10m_and_hourly(kind):
     m10 = m10.reindex(time=new_index)
     m10hr = (
         m10.chunk({"longitude": 1})
-        .rolling(time=6, min_periods=4)
+        .rolling(time=6)
         .construct("window_dim", stride=6)
         .mean("window_dim")
     )
@@ -182,6 +189,8 @@ def read_eq_tao_temp_hr():
 
 
 def read_tao(domain=None):
+    root = pump.OPTIONS["root"]
+
     tao = xr.open_mfdataset(
         [
             root + "/obs/tao/" + ff
@@ -236,6 +245,8 @@ def read_tao(domain=None):
 
 def read_sst(domain=None):
 
+    root = pump.OPTIONS["root"]
+
     if domain is not None:
         years = range(
             pd.Timestamp(domain["time"].start).year,
@@ -268,6 +279,7 @@ def read_sst(domain=None):
 
 
 def read_oscar(domain=None):
+    root = pump.OPTIONS["root"]
 
     oscar = dcpy.oceans.read_oscar(root + "/obs/oscar/").rename(
         {"lat": "latitude", "lon": "longitude"}
@@ -282,6 +294,7 @@ def read_oscar(domain=None):
 
 
 def read_argo():
+    root = pump.OPTIONS["root"]
 
     dirname = root + "/obs/argo/"
     chunks = {"LATITUDE": 1, "LONGITUDE": 1}
@@ -323,6 +336,8 @@ def read_argo():
 
 
 def process_nino34():
+    root = pump.OPTIONS["root"]
+
     nino34 = process_esrl_index("nina34.data")
 
     nino34.to_netcdf(root + "/obs/nino34.nc")
@@ -336,6 +351,7 @@ def process_oni():
 
 def process_esrl_index(file, skipfooter=3):
     """ Read and make xarray version of climate indices from ESRL."""
+    root = pump.OPTIONS["root"]
 
     month_names = (
         pd.date_range("01-Jan-2001", "31-Dec-2001", freq="MS")
@@ -410,9 +426,7 @@ def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
 
 def read_jra_95():
 
-    jradir = (
-        "/glade/work/dcherian/pump/combined_95_97_JRA/"
-    )
+    jradir = "/glade/work/dcherian/pump/combined_95_97_JRA/"
 
     jrafull = read_jra(
         [
