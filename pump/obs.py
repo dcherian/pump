@@ -86,7 +86,7 @@ def read_tao_adcp(domain=None, freq="dy", dirname=None):
         adcp[vv].attrs["units"] = "m/s"
         adcp[vv] = adcp[vv].where(np.abs(adcp[vv]) < 1000)
 
-    adcp["longitude"] = adcp.longitude + 360
+    adcp["longitude"] = adcp.longitude - 360
     adcp["depth"] = -1 * adcp.depth
     adcp["depth"].attrs["units"] = "m"
     adcp["u"].attrs["units"] = "m/s"

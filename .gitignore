@@ -398,3 +398,6 @@ TSWLatexianTemp*
 *.zarr
 *.cdf
 *.mat
+
+pump-backup/*
+dask-worker-space/*
