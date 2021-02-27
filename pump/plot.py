@@ -106,6 +106,10 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
         # Better to call differentiate on log-transformed variable
         # This is a nicer estimate of the gradient and is analytically equal
         per = factor * np.log(np.abs(v)).compute().differentiate("longitude")
+
+        # assign one-sided derivative to mid point
+        per = fix_gradient_edge_labels(per, "longitude")
+
         # hdl = per.plot(
         #    ax=ax2,
         #    x="longitude",
@@ -163,7 +167,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
     )
 
     factor = dict(zip(ax.keys(), [1, 1, -2, 1]))
-    rhs = xr.zeros_like(ds.bs)
+    rhs = fix_gradient_edge_labels(xr.zeros_like(ds.bs), "longitude")
     per = dict()
     for var in ax.keys():
         if var not in ["u", "b", "contrib"]:
