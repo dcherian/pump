@@ -107,6 +107,9 @@ def tao_read_and_merge(suffix, kind):
     if kind == "temp":
         prefix = "t"
         renamer = {"T_20": "T"}
+    elif kind == "salt":
+        prefix = "s"
+        renamer = {"S_41": "S"}
 
     elif kind == "cur":
         prefix = "cur"
@@ -124,6 +127,8 @@ def tao_read_and_merge(suffix, kind):
         except FileNotFoundError:
             pass
 
+    if not ds:
+        raise ValueError(f"0 files were found: {tfiles}")
     merged = xr.merge(xr.align(*ds, join="outer")).rename(
         {"lon": "longitude", "lat": "latitude"}
     )
@@ -175,6 +180,10 @@ def tao_merge_10m_and_hourly(kind):
 
 def read_eq_tao_cur_hr():
     return tao_merge_10m_and_hourly("cur") / 100
+
+
+def read_eq_tao_salt_hr():
+    return tao_read_and_merge("hr", "salt").S
 
 
 def read_eq_tao_temp_hr():
