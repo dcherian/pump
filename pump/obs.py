@@ -57,26 +57,7 @@ def read_tao_adcp(domain=None, freq="dy", dirname=None):
             {"lon": "longitude", "lat": "latitude", "U_1205": "u", "V_1206": "v"}
         )
     elif freq == "hr":
-        afiles = [
-            f"{dirname}/adcp0n{lon}_hr.cdf"
-            for lon in ["156e", "165e", "170w", "140w", "110w"]
-        ]
-
-        ds = []
-        for file in tqdm.tqdm(afiles):
-            ds.append(
-                xr.open_dataset(file)
-                .drop(["QU_5205", "QV_5206"])
-                .rename(
-                    {
-                        "lon": "longitude",
-                        "lat": "latitude",
-                        "u_1205": "u",
-                        "v_1206": "v",
-                    }
-                )
-            )
-        adcp = xr.merge(xr.align(*ds, join="outer"))
+        adcp = tao_read_and_merge("hr", "adcp")
 
     adcp = adcp.chunk({"latitude": 1, "longitude": 1})
 
@@ -86,9 +67,6 @@ def read_tao_adcp(domain=None, freq="dy", dirname=None):
         adcp[vv].attrs["units"] = "m/s"
         adcp[vv] = adcp[vv].where(np.abs(adcp[vv]) < 1000)
 
-    adcp["longitude"] = adcp.longitude - 360
-    adcp["depth"] = -1 * adcp.depth
-    adcp["depth"].attrs["units"] = "m"
     adcp["u"].attrs["units"] = "m/s"
     adcp["v"].attrs["units"] = "m/s"
 
@@ -97,7 +75,7 @@ def read_tao_adcp(domain=None, freq="dy", dirname=None):
     else:
         adcp = adcp.sel(latitude=0)
 
-    return adcp.dropna("longitude", how="all").dropna("depth", how="all")
+    return adcp  # .dropna("longitude", how="all").dropna("depth", how="all")
 
 
 def tao_read_and_merge(suffix, kind):
@@ -115,6 +93,10 @@ def tao_read_and_merge(suffix, kind):
         prefix = "cur"
         renamer = {"U_320": "u", "V_321": "v"}
 
+    elif kind == "adcp":
+        prefix = "adcp"
+        renamer = {"u_1205": "u", "v_1206": "v"}
+
     ds = []
     tfiles = [
         f"{root}/obs/tao/{prefix}0n{lon}_{suffix}.cdf"
@@ -123,18 +105,21 @@ def tao_read_and_merge(suffix, kind):
 
     for file in tqdm.tqdm(tfiles):
         try:
-            ds.append(xr.load_dataset(file)[list(renamer.keys())])
+            ds.append(
+                xr.open_dataset(file, chunks={"time": 100000})[list(renamer.keys())]
+            )
         except FileNotFoundError:
             pass
 
     if not ds:
         raise ValueError(f"0 files were found: {tfiles}")
-    merged = xr.merge(xr.align(*ds, join="outer")).rename(
+    merged = xr.concat(ds, join="outer", dim="lon").rename(
         {"lon": "longitude", "lat": "latitude"}
     )
 
     merged["longitude"] = merged.longitude - 360
     merged["depth"] = -1 * merged.depth
+    merged["depth"].attrs["units"] = "m"
     return merged.rename_vars(renamer)
 
 
@@ -144,19 +129,14 @@ def tao_merge_10m_and_hourly(kind):
     hr = tao_read_and_merge("hr", kind)
 
     # resample is really slow because it doesn't know about dask.
-    # instead reindex to a 10min freq and use rolling.
+    # instead reindex to a 10min freq and use coarsen.
     new_index = pd.date_range(
         start=m10.time[0].dt.round("H").values,
         end=m10.time[-1].dt.round("H").values,
         freq="10min",
     )
-    m10 = m10.reindex(time=new_index)
-    m10hr = (
-        m10.chunk({"longitude": 1})
-        .rolling(time=6)
-        .construct("window_dim", stride=6)
-        .mean("window_dim")
-    )
+    m10 = m10.reindex(time=new_index, method="nearest")
+    m10hr = m10.chunk({"longitude": 1}).coarsen(time=6, boundary="trim").mean()
 
     new_hourly_index = pd.date_range(
         start=np.min([m10.time[0].values, hr.time[0].values]),
@@ -165,7 +145,10 @@ def tao_merge_10m_and_hourly(kind):
     )
 
     concat = xr.concat(
-        [m10hr.reindex(time=new_hourly_index), hr.reindex(time=new_hourly_index)],
+        [
+            m10hr.reindex(time=new_hourly_index, method="nearest"),
+            hr.reindex(time=new_hourly_index, method="nearest"),
+        ],
         dim="concat",
     )
 
