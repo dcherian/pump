@@ -292,21 +292,18 @@ def get_euc_transport(u):
     return euc
 
 
-def calc_tao_ri(adcp, temp, dim="depth"):
+def calc_tao_ri(tao, dim="depth", fillna=False):
     """
     Calculate Ri for TAO dataset.
     Interpolates to 5m grid and then differentiates.
     Uses N^2 = g alpha dT/dz
 
 
-    Inputs
-    ------
+    Parameters
+    ----------
 
-    adcp: xarray.Dataset
-        Dataset with ['u', 'v']
-
-    temp: xarry.DataArray
-        Temperature DataArray
+    tao: xarray.Dataset
+        Dataset with ['u', 'v', 'densT', 'dens']
 
     References
     ----------
@@ -315,25 +312,37 @@ def calc_tao_ri(adcp, temp, dim="depth"):
     Pham et al. (2017)
     """
 
-    V = adcp[["u", "v"]].sortby(dim).interpolate_na(dim)
+    V = tao[["u", "v"]].sortby(dim).interpolate_na(dim)
     S2 = V["u"].differentiate(dim) ** 2 + V["v"].differentiate(dim) ** 2
+    S2.attrs["long_name"] = "$S²$"
 
-    T = temp.sortby(dim).interpolate_na(dim, "linear")
+    if fillna:
+        T = tao.T.sortby(dim).interpolate_na(dim, "linear")
+    else:
+        T = tao.T
 
     if "time" in T.dims and not T.time.equals(V.time):
-        T = temp.sel(time=V.time)
+        T = T.sel(time=V.time)
 
-    if not T[dim].equals(V[dim]):
+    if not T.indexes[dim].equals(V.indexes[dim]):
         T = T.interp({dim: V[dim]})
 
     # the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
-    N2 = 9.81 * dcpy.eos.alpha(35, T, T.depth) * T.differentiate(dim)
-    Ri = (N2 / S2).where((N2 > 1e-7) & (S2 > 1e-10))
+    N2T = -9.81 / 1025 * tao.densT.differentiate("depth")
+    N2 = -9.81 / 1025 * tao.dens.differentiate("depth")
+    N2.attrs["long_name"] = "$N²$"
+    N2T.attrs["long_name"] = "$N_T²$"
 
-    Ri.attrs["long_name"] = "Ri"
-    Ri.name = "Ri"
+    Rig_T = (N2T / S2).where((N2T > 1e-5) & (S2 > 1e-10))
+    Rig_T.attrs["long_name"] = "$Ri_g^T$"
+    Rig_T.attrs[
+        "description"
+    ] = "Ri_g calculated with N² assuming S=35, masked where N2T < 1e-5"
 
-    return Ri
+    Rig = (N2 / S2).where((N2 > 1e-6) & (S2 > 1e-10))
+    Rig.attrs["long_name"] = "$Ri_g$"
+    Rig.name = "Ri"
+    return tao.merge({"N2": N2, "N2T": N2T, "Rig_T": Rig_T, "Ri": Rig, "S2": S2})
 
 
 def kpp_diff_depth(obj, debug=False):
@@ -387,6 +396,35 @@ def get_kpp_mld(subset, debug=False):
         dcpy.plots.linex([0, 0.3])
 
     return kpp_mld
+
+
+def get_mld_tao(dens):
+    """
+    Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
+    # Interpolates density to 1m grid.
+    """
+    if not isinstance(dens, xr.DataArray):
+        raise ValueError(f"Expected DataArray, received {dens.__class__.__name__}")
+
+    # gcm1 is 1m
+    # densi = dcpy.interpolate.pchip(dens, "depth", np.arange(0, -200, -1))
+    densi = dens  # .interp(depth=np.arange(0, -200, -1))
+    drho = densi - densi.sel(depth=[0, -5], method="nearest").max("depth")
+    N2 = -9.81 / 1025 * densi.differentiate("depth")
+
+    thresh = xr.where((np.abs(drho) > 0.03) & (N2 > 1e-5), drho.depth, np.nan)
+    mld = thresh.max("depth")
+
+    mld.name = "mld"
+    mld.attrs["long_name"] = "MLD"
+    mld.attrs["units"] = "m"
+    mld.attrs["description"] = (
+        "Interpolate density to 1m grid. "
+        "Search for max depth where "
+        " |drho| > 0.01 and N2 > 1e-5"
+    )
+
+    return mld
 
 
 def get_mld(dens):
