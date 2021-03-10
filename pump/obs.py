@@ -158,7 +158,12 @@ def tao_merge_10m_and_hourly(kind):
 
     # adcp = read_tao_adcp(freq='hr')
     # return xr.merge(ds)
-    return concat.mean("concat").squeeze()
+    result = concat.mean("concat").squeeze()
+    result.attrs = hr.attrs
+    for variable in hr.variables:
+        result[variable].attrs = hr[variable].attrs
+
+    return result
 
 
 def read_eq_tao_cur_hr():
