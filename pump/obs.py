@@ -526,7 +526,7 @@ def read_drifters(kind="annual"):
     return drifter.sel(longitude=slice(-230, -90))
 
 
-def read_tao_zarr(kind="gridded"):
+def read_tao_zarr(kind="gridded", **kwargs):
 
     if kind not in ["gridded", "merged", "ancillary"]:
         raise ValueError(
@@ -534,12 +534,20 @@ def read_tao_zarr(kind="gridded"):
         )
 
     if kind == "merged":
-        tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True)
+        tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True, **kwargs)
     elif kind == "gridded":
-        tao = xr.open_zarr("tao_eq_hr_gridded.zarr")
+        tao = xr.open_zarr("tao_eq_hr_gridded.zarr", **kwargs)
     elif kind == "ancillary":
-        tao = xr.open_zarr("tao-gridded-ancillary.zarr")
+        tao = xr.open_zarr("tao-gridded-ancillary.zarr", **kwargs)
 
-    tao = tao.chunk({"depth": -1, "time": 10000})
-    tao["dens"] = dcpy.eos.dens(35, tao.T, tao.depth)
+    tao.depth.attrs.update({"axis": "Z", "positive": "up"})
+
+    # tao = tao.chunk({"depth": -1, "time": 10000})
+    #tao["densT"] = dcpy.eos.pden(35, tao.T, tao.depth)
+    #tao.densT.attrs["long_name"] = "$ρ_T$"
+    #tao.densT.attrs["description"] = "density from T only, assuming S=35"
+
+    #tao["dens"] = dcpy.eos.pden(tao.S, tao.T, tao.depth)
+    #tao.densT.attrs["description"] = "density using T, S"
+
     return tao

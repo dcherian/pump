@@ -6,6 +6,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from cycler import cycler
 
 import xarray
 import xarray as xr
@@ -35,6 +36,15 @@ cmaps = {
         norm=mpl.colors.TwoSlopeNorm(vcenter=-5e-7, vmin=-5e-4, vmax=1e-4),
         cmap=mpl.cm.RdBu_r,
     ),
+}
+
+# Smyth & Moum (2013) colors
+sm13_cycler = {
+    "axes.prop_cycle": cycler(
+        color=["#212121", "#FF5722", "#2196F3", "#4CAF50"],
+        linestyle=["-", "-", "-", "--"],
+        linewidth=[1] * 3 + [1.5],
+    )
 }
 
 
@@ -1485,3 +1495,25 @@ def plot_daily_cycles(ds):
 
     f.set_size_inches((dcpy.plots.pub_fig_width("jpo", "medium 2"), 6))
     return f, ax
+
+
+def plot_Rig_u(ds):
+
+    f, ax = plt.subplots(3, 1, sharex=True, sharey=True, squeeze=False)
+    ds.T.plot(robust=True, x="time", ax=ax[0, 0])
+    ds.Rig.plot(
+        robust=True,
+        x="time",
+        levels=[0.25, 0.5, 0.75, 1.0],
+        ax=ax[1, 0],
+        cmap=mpl.cm.Spectral_r,
+    )
+    ds.u.plot(robust=True, x="time", ax=ax[2, 0])
+
+    for axx in ax.flat:
+        if "mld" in ds.variables:
+            ds.mld.plot(ax=axx, color="k", lw=0.25, _labels=False)
+        if "eucmax" in ds.variables:
+            ds.eucmax.plot(ax=axx, color="w", lw=0.5, _labels=False)
+
+    dcpy.plots.clean_axes(ax)
