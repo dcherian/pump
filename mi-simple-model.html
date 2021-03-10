@@ -1,0 +1,1244 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple model analysis &#8212; PUMP</title>
+    
+  <link rel="stylesheet" href="_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.c441f2ba0852f4cabcb80105e3a46ae6.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.d3f166471bb80abb5163.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.7d483ff0a819d6edff12ce0b1ead3928.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="LES tendencies" href="les-tendencies.html" />
+    <link rel="prev" title="TAO Ri analysis" href="tao-ri-analysis.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">PUMP</h1>
+  
+</a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <p class="caption collapsible-parent">
+ <span class="caption-text">
+  TIW Turbulence
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-DCL.html">
+   TIW DCL
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dcl-paper.html">
+   TIW DCL Paper Figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ctd-adcp.html">
+   TIW Cruise Sections
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html">
+   TIW Compositing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vertical-velocity.html">
+   TIW vertical velocity in MITgcm simulations
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Marginal Stability
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="bulk-Ri.html">
+   Bulk Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MI-extent.html">
+   Longitudinal extent of marginal stability: POP2
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tao-ri-analysis.html">
+   TAO Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tao-ri-analysis.html#marginal-instability-in-hourly-tao-data">
+   Marginal instability in hourly TAO data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tao-ri-analysis.html#how-good-is-bulk-ri-vs-gradient-ri">
+   How good is bulk Ri vs gradient Ri
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tao-ri-analysis.html#merge-tao-adcp-with-current-meters">
+   Merge TAO ADCP with current meters
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tao-ri-analysis.html#next-steps">
+   Next steps
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Simple model analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#xarray-tests">
+   xarray tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="#read-data">
+   Read data
+  </a>
+ </li>
+</ul>
+<p class="caption collapsible-parent">
+ <span class="caption-text">
+  Other
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="les-tendencies.html">
+   LES tendencies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="heat-momentum-budget-checks.html">
+   Heat and momentum budgets with MITgcm output
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="submeso-deep-100.html">
+   Deep submesoscales in 1/100°?
+  </a>
+ </li>
+</ul>
+
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/mi-simple-model.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/dcherian/pump"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+            <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                    data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                    title="Fullscreen mode"><i
+                        class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/mi-simple-model.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i>
+            Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Simple model analysis
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#xarray-tests">
+   xarray tests
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#read-data">
+   Read data
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#heat-flux">
+     Heat flux
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ssh">
+     SSH
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tao-wind">
+     TAO wind
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#numerator-terms">
+     Numerator terms
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#denominator-terms">
+     Denominator terms
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#medians-as-approx">
+     Medians as approx.
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+        </nav>
+        
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="simple-model-analysis">
+<h1>Simple model analysis<a class="headerlink" href="#simple-model-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">pop_tools</span>
+<span class="c1"># %aimport xgcm</span>
+
+<span class="c1"># import hvplot.xarray</span>
+
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">pump</span>
+
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tight&#39;</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+
+<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">display_style</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">d0b326038a8b</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="ne">---&gt; </span><span class="mi">10</span> <span class="kn">import</span> <span class="nn">pop_tools</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="c1"># %aimport xgcm</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span> 
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;pop_tools&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
+
+<span class="k">if</span> <span class="s1">&#39;client&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">();</span> <span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">ncar_jobqueue</span><span class="o">.</span><span class="n">NCARCluster</span><span class="p">(</span>
+    <span class="n">cores</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;109GB&#39;</span><span class="p">,</span>
+    <span class="n">walltime</span><span class="o">=</span><span class="s1">&#39;02:00:00&#39;</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="s1">&#39;NCGD0043&#39;</span><span class="p">)</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+
+<span class="n">cluster</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">wait_count</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<span class="n">cluster</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "c99f72c622844e17ac2add337f2daa3d", "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+</div>
+<div class="section" id="xarray-tests">
+<h1>xarray tests<a class="headerlink" href="#xarray-tests" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="read-data">
+<h1>Read data<a class="headerlink" href="#read-data" title="Permalink to this headline">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
+
+    <span class="n">ds</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+    <span class="n">surface</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;depth&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;nearest&#39;</span><span class="p">}</span>
+
+    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span> <span class="o">-</span> <span class="n">surface</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">])</span>
+    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$h$&#39;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;u&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;us&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">surface</span><span class="p">)</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;ueuc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;du&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">us</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">ueuc</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">du</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$\Delta$u&#39;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;dens&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;dens_euc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dens</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span><span class="p">,</span>
+                                        <span class="n">longitude</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+                                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> <span class="o">-</span><span class="mf">9.81</span><span class="o">/</span><span class="n">ds</span><span class="o">.</span><span class="n">dens_euc</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;bs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">surface</span><span class="p">)</span>
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;beuc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">bs</span><span class="p">)</span>
+
+        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">bs</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">beuc</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$\Delta$b&#39;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;db&#39;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="ow">and</span> <span class="s1">&#39;du&#39;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="ow">and</span> <span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;Ri&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">db</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">du</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ds</span>
+
+<span class="k">if</span> <span class="s1">&#39;gcm1&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">airsea</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;skipping gcm1, jra, ssh&#39;</span><span class="p">)</span>
+    <span class="n">subset</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcm1</span><span class="o">.</span><span class="n">annual</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+              <span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+              <span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+              <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">250</span><span class="p">)))</span>
+    <span class="n">subset</span><span class="p">[</span><span class="s1">&#39;dens&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">subset</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">subset</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+    <span class="n">subset</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+
+    <span class="n">subset</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+    <span class="n">subset</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gcm 1m 1996 mean&#39;</span>
+
+    <span class="n">jra</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_jra</span><span class="p">()</span>
+           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s1">&#39;1996&#39;</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">load</span><span class="p">())</span>
+    <span class="n">jra</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jra</span><span class="o">.</span><span class="n">Uwind</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">airsea</span><span class="o">.</span><span class="n">windstress</span><span class="o">.</span><span class="n">stress</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">jra</span><span class="o">.</span><span class="n">Uwind</span><span class="p">,</span> <span class="n">jra</span><span class="o">.</span><span class="n">Vwind</span><span class="p">)))</span>
+
+    <span class="n">mean_jra</span> <span class="o">=</span> <span class="n">jra</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+    <span class="n">ssh</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">root</span> <span class="o">+</span> <span class="s1">&#39;make_TPOS_MITgcm/1996/SSH*.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">zos</span>
+
+<span class="n">johnson</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_johnson</span><span class="p">()</span>
+           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">johnson</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+<span class="n">johnson</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">johnson</span><span class="p">)</span>
+<span class="n">johnson</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Johnson&#39;</span>
+
+<span class="c1"># need to fill to the surface</span>
+<span class="n">tao_adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_adcp</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
+<span class="n">tao_adcp</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">tao_adcp</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+
+<span class="n">tao_ctd</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao</span><span class="p">()</span>
+           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">tao_adcp</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">])</span>
+           <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">compute</span><span class="p">())</span>
+<span class="n">tao_ctd</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tao_adcp</span><span class="o">.</span><span class="n">eucmax</span>
+<span class="n">tao_ctd</span><span class="p">[</span><span class="s1">&#39;dens&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">35.0</span><span class="p">),</span> <span class="n">tao_ctd</span><span class="o">.</span><span class="n">temp</span><span class="p">,</span> <span class="n">tao_ctd</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+<span class="n">tao_ctd_raw</span> <span class="o">=</span> <span class="n">tao_ctd</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tao_ctd</span> <span class="o">=</span> <span class="p">(</span><span class="n">tao_ctd</span>
+           <span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">interpolate_na</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">))</span>
+
+<span class="n">tao</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao_adcp</span><span class="p">)[[</span><span class="s1">&#39;us&#39;</span><span class="p">,</span> <span class="s1">&#39;ueuc&#39;</span><span class="p">,</span> <span class="s1">&#39;du&#39;</span><span class="p">,</span> <span class="s1">&#39;eucmax&#39;</span><span class="p">]],</span>
+                <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao_ctd</span><span class="p">)[[</span><span class="s1">&#39;bs&#39;</span><span class="p">,</span> <span class="s1">&#39;beuc&#39;</span><span class="p">,</span> <span class="s1">&#39;db&#39;</span><span class="p">]]])</span>
+<span class="n">tao</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao</span><span class="p">)</span>
+<span class="n">tao</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TAO&#39;</span>
+
+<span class="n">hires</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;~/pump/glade/small-eq-mean.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">221</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="n">hires</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">hires</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+                   <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                   <span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="n">hires</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">hires</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/pump/pump/obs.py:170: FutureWarning: In xarray version 0.15 the default behaviour of `open_mfdataset`
+will change. To retain the existing behavior, pass
+combine=&#39;nested&#39;. To use future default behavior, pass
+combine=&#39;by_coords&#39;. See
+http://xarray.pydata.org/en/stable/combining.html#combining-multi
+
+  chunks={&quot;lat&quot;: 1, &quot;lon&quot;: 1, &quot;depth&quot;: 5},
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:933: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine=&#39;by_coords&#39;` option to `open_mfdataset`) to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in future, please use the new
+`combine_nested` function (or the `combine=&#39;nested&#39;` option to
+open_mfdataset).The datasets supplied require both concatenation and merging. From
+xarray version 0.15 this will operation will require either using the
+new `combine_nested` function (or the `combine=&#39;nested&#39;` option to
+open_mfdataset), with a nested list structure such that you can combine
+along the dimensions None. Alternatively if your datasets have global
+dimension coordinates then you can use the new `combine_by_coords`
+function.
+  from_openmfds=True,
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 15
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 15
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 15
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 15
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 15
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 15
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 15
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 10
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 10
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 10
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/dask/array/core.py:3864: PerformanceWarning: Increasing number of chunks by factor of 11
+  **blockwise_kwargs
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="heat-flux">
+<h2>Heat flux<a class="headerlink" href="#heat-flux" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qnet</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;../glade/obs/tao/qnet_xyt_dy.cdf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span>
+    <span class="s1">&#39;QT_210&#39;</span><span class="p">:</span> <span class="s1">&#39;qnet&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span>
+<span class="p">})[</span><span class="s1">&#39;qnet&#39;</span><span class="p">])</span>
+<span class="n">qnet</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
+<span class="n">qnet</span> <span class="o">=</span> <span class="n">qnet</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qnet</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e5</span><span class="p">)</span>
+<span class="n">qnet</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.DataArray &#39;qnet&#39; (time: 6469, depth: 1, latitude: 11, longitude: 8)&gt;
+array([[[[      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         ...,
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+           92.55531]]],
+
+
+       [[[      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         ...,
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+          123.92926],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+          167.82068]]],
+
+
+       [[[      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         ...,
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+          144.79332],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+          143.83264]]],
+
+
+       ...,
+
+
+       [[[      nan, 127.62819,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         ...,
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan]]],
+
+
+       [[[      nan, 134.15   ,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         ...,
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan]]],
+
+
+       [[[      nan,  33.85962,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         ...,
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan],
+         [      nan,       nan,       nan, ...,       nan,       nan,
+                nan]]]], dtype=float32)
+Coordinates:
+  * time       (time) datetime64[ns] 2000-04-22T12:00:00 ... 2018-01-06T12:00:00
+  * depth      (depth) float32 0.0
+  * latitude   (latitude) float32 -8.0 -5.0 -2.0 0.0 2.0 ... 8.0 9.0 10.0 12.0
+  * longitude  (longitude) float32 -195.0 -180.0 -170.0 ... -125.0 -110.0 -95.0
+Attributes:
+    name:            QT
+    long_name:       TOTAL HEAT FLUX
+    generic_name:    qtot
+    FORTRAN_format:   
+    units:           W/M**2
+    epic_code:       210
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="ssh">
+<h2>SSH<a class="headerlink" href="#ssh" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">([</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">root</span> <span class="o">+</span> <span class="s1">&#39;obs/aviso/zos_AVISO_L4_199210-201012.nc&#39;</span><span class="p">])</span>
+      <span class="o">.</span><span class="n">zos</span>
+      <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">}))</span>
+<span class="n">ssh</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
+<span class="n">ssh</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="p">),</span> <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="n">ssh</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/ipykernel_launcher.py:1: FutureWarning: In xarray version 0.13 the default behaviour of `open_mfdataset`
+will change. To retain the existing behavior, pass
+combine=&#39;nested&#39;. To use future default behavior, pass
+combine=&#39;by_coords&#39;. See
+http://xarray.pydata.org/en/stable/combining.html#combining-multi
+
+  &quot;&quot;&quot;Entry point for launching an IPython kernel.
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:931: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine=&#39;by_coords&#39;` option to `open_mfdataset`) to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in future, please use the new
+`combine_nested` function (or the `combine=&#39;nested&#39;` option to
+open_mfdataset).
+  from_openmfds=True,
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.DataArray &#39;zos&#39; (latitude: 50, longitude: 120)&gt;
+array([[1.0146531 , 1.0037938 , 0.99376035, ..., 0.63221073, 0.61761034,
+        0.6016931 ],
+       [1.0273066 , 1.0175812 , 1.0088582 , ..., 0.62273055, 0.6081634 ,
+        0.5922261 ],
+       [1.046003  , 1.0380611 , 1.0309224 , ..., 0.61169213, 0.597813  ,
+        0.5830368 ],
+       ...,
+       [1.3097773 , 1.3013064 , 1.2935021 , ..., 0.6009446 , 0.6040544 ,
+        0.60238636],
+       [1.2980543 , 1.2906426 , 1.2837585 , ..., 0.5306964 , 0.53614575,
+        0.5542671 ],
+       [1.2794156 , 1.2714981 , 1.263941  , ..., 0.43182534, 0.45010972,
+        0.49250126]], dtype=float32)
+Coordinates:
+  * latitude   (latitude) float64 -24.5 -23.5 -22.5 -21.5 ... 22.5 23.5 24.5
+  * longitude  (longitude) float64 -199.5 -198.5 -197.5 ... -82.5 -81.5 -80.5
+Attributes:
+    standard_name:     sea_surface_height_above_geoid
+    long_name:         Sea Surface Height Above Geoid
+    units:             m
+    original_name:     maps_of_absolute_dynamic_topography
+    history:           2011-02-11, 12:02:38, AVISO, Aviso2Cmor 2009-01-01 200...
+    original_units:    cm
+    cell_methods:      time: mean
+    cell_measures:     area: areacello
+    associated_files:  baseURL: http://cmip-pcmdi.llnl.gov/CMIP5/dataLocation...
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SSH&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;SSH&#39;)
+</pre></div>
+</div>
+<img alt="_images/mi-simple-model_10_1.png" src="_images/mi-simple-model_10_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">ssh</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">110e3</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;$∂/∂_x$ SSH&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;$∂/∂_x$ SSH&#39;)
+</pre></div>
+</div>
+<img alt="_images/mi-simple-model_11_1.png" src="_images/mi-simple-model_11_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="tao-wind">
+<h2>TAO wind<a class="headerlink" href="#tao-wind" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tau</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="s1">&#39;../glade/obs/tao/tau[x-y]_*_dy.cdf&#39;</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;TX_442&#39;</span><span class="p">:</span> <span class="s1">&#39;taux&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;TY_443&#39;</span><span class="p">:</span> <span class="s1">&#39;tauy&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">}))</span>
+<span class="n">tau</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">tau</span><span class="o">.</span><span class="n">taux</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">tau</span><span class="o">.</span><span class="n">tauy</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">tao</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span>
+    <span class="n">tao</span><span class="p">,</span>
+    <span class="n">tau</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
+        <span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">tao</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()[[</span><span class="s1">&#39;taux&#39;</span><span class="p">,</span> <span class="s1">&#39;tauy&#39;</span><span class="p">]],</span>
+    <span class="n">qnet</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">tao</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="n">tao</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">tao</span><span class="o">.</span><span class="n">taux</span><span class="p">,</span> <span class="n">tao</span><span class="o">.</span><span class="n">tauy</span><span class="p">)</span>
+<span class="n">tao</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">tao</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/ipykernel_launcher.py:1: FutureWarning: In xarray version 0.13 the default behaviour of `open_mfdataset`
+will change. To retain the existing behavior, pass
+combine=&#39;nested&#39;. To use future default behavior, pass
+combine=&#39;by_coords&#39;. See
+http://xarray.pydata.org/en/stable/combining.html#combining-multi
+
+  &quot;&quot;&quot;Entry point for launching an IPython kernel.
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:931: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine=&#39;by_coords&#39;` option to `open_mfdataset`) to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in future, please use the new
+`combine_nested` function (or the `combine=&#39;nested&#39;` option to
+open_mfdataset).The datasets supplied require both concatenation and merging. From
+xarray version 0.13 this will operation will require either using the
+new `combine_nested` function (or the `combine=&#39;nested&#39;` option to
+open_mfdataset), with a nested list structure such that you can combine
+along the dimensions None. Alternatively if your datasets have global
+dimension coordinates then you can use the new `combine_by_coords`
+function.
+  from_openmfds=True,
+/gpfs/u/home/dcherian/python/xarray/xarray/core/nanops.py:157: RuntimeWarning: Mean of empty slice
+  return np.nanmean(a, axis=axis, dtype=dtype)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.Dataset&gt;
+Dimensions:    (longitude: 6)
+Coordinates:
+    latitude   float64 0.0
+  * longitude  (longitude) float64 -213.0 -204.0 -195.0 -170.0 -140.0 -110.0
+Data variables:
+    us         (longitude) float32 -0.06934669 0.08536129 ... 0.011650631
+    ueuc       (longitude) float64 0.3355 0.4491 0.4932 0.6898 1.049 0.965
+    du         (longitude) float64 -0.4049 -0.3638 -0.4965 ... -1.149 -0.9534
+    eucmax     (longitude) float32 -225.0 -200.0 -195.0 -155.0 -105.0 -75.0
+    bs         (longitude) float64 -9.783 -9.783 -9.785 -9.795 -9.799 -9.8
+    beuc       (longitude) float64 -9.81 -9.81 -9.81 -9.81 -9.81 -9.81
+    db         (longitude) float64 0.0273 0.02699 0.02499 ... 0.01052 0.009748
+    h          (longitude) float32 -205.0 -180.0 -175.0 -135.0 -85.0 -55.0
+    Ri         (longitude) float64 34.14 36.72 17.75 2.764 0.6773 0.5898
+    taux       (longitude) float32 -0.0027862845 -0.005322009 ... -0.028835593
+    tauy       (longitude) float32 -0.0014525932 0.0005883495 ... 0.021475606
+    qnet       (longitude) float32 nan nan 61.240654 ... 137.68852 163.67712
+    tau        (longitude) float32 0.003142198 0.005354431 ... 0.03595404
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tau</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">taux</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Time averaged TAO wind stress&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Time averaged TAO wind stress&#39;)
+</pre></div>
+</div>
+<img alt="_images/mi-simple-model_14_1.png" src="_images/mi-simple-model_14_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 37 seconds</span>
+
+<span class="o">%%time</span> 
+<span class="n">ds0</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="s2">&quot;/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly/*UVEL*.nc&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concat_dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s1">&#39;nested&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/ipykernel_launcher.py:1: FutureWarning: In xarray version 0.13 the default behaviour of `open_mfdataset`
+will change. To retain the existing behavior, pass
+combine=&#39;nested&#39;. To use future default behavior, pass
+combine=&#39;by_coords&#39;. See
+http://xarray.pydata.org/en/stable/combining.html#combining-multi
+
+  &quot;&quot;&quot;Entry point for launching an IPython kernel.
+/gpfs/u/home/dcherian/python/xarray/xarray/backends/api.py:931: FutureWarning: The datasets supplied have global dimension coordinates. You may want
+to use the new `combine_by_coords` function (or the
+`combine=&#39;by_coords&#39;` option to `open_mfdataset`) to order the datasets
+before concatenation. Alternatively, to continue concatenating based
+on the order the datasets are supplied in future, please use the new
+`combine_nested` function (or the `combine=&#39;nested&#39;` option to
+open_mfdataset).
+  from_openmfds=True,
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 23.5 s, sys: 5.44 s, total: 28.9 s
+Wall time: 34 s
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.Dataset&gt;
+Dimensions:             (d2: 2, nlat: 2400, nlon: 3600, time: 504, z_t: 62, z_t_150m: 15, z_w: 62, z_w_bot: 62, z_w_top: 62)
+Coordinates:
+  * z_t_150m            (z_t_150m) float32 500.0 1500.0 ... 13500.0 14500.0
+  * z_t                 (z_t) float32 500.0 1500.0 ... 562499.06 587499.06
+  * z_w                 (z_w) float32 0.0 1000.0 2000.0 ... 549999.06 574999.06
+  * z_w_bot             (z_w_bot) float32 1000.0 2000.0 ... 574999.06 599999.06
+  * z_w_top             (z_w_top) float32 0.0 1000.0 ... 549999.06 574999.06
+  * time                (time) object 0045-02-01 00:00:00 ... 0087-01-01 00:00:00
+    ULONG               (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    ULAT                (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    TLONG               (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    TLAT                (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+Dimensions without coordinates: d2, nlat, nlon
+Data variables:
+    time_bound          (time, d2) object dask.array&lt;chunksize=(12, 2), meta=np.ndarray&gt;
+    dz                  (time, z_t) float32 dask.array&lt;chunksize=(12, 62), meta=np.ndarray&gt;
+    dzw                 (time, z_w) float32 dask.array&lt;chunksize=(12, 62), meta=np.ndarray&gt;
+    KMT                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    KMU                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    REGION_MASK         (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    UAREA               (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    TAREA               (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    HU                  (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    HT                  (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    DXU                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    DYU                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    DXT                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    DYT                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    HTN                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    HTE                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    HUS                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    HUW                 (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    ANGLE               (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    ANGLET              (time, nlat, nlon) float64 dask.array&lt;chunksize=(12, 2400, 3600), meta=np.ndarray&gt;
+    days_in_norm_year   (time) timedelta64[ns] 00:00:00 00:00:00 ... 00:00:00
+    grav                (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    omega               (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    radius              (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    cp_sw               (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    sound               (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    vonkar              (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    cp_air              (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    rho_air             (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    rho_sw              (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    rho_fw              (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    stefan_boltzmann    (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    latent_heat_vapor   (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    latent_heat_fusion  (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    ocn_ref_salinity    (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    sea_ice_salinity    (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    T0_Kelvin           (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    salt_to_ppt         (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    ppt_to_salt         (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    mass_to_Sv          (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    heat_to_PW          (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    salt_to_Svppt       (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    salt_to_mmday       (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    momentum_factor     (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    hflux_factor        (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    fwflux_factor       (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    salinity_factor     (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    sflux_factor        (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    nsurface_t          (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    nsurface_u          (time) float64 0.0 0.0 0.0 0.0 0.0 ... 0.0 0.0 0.0 0.0
+    UVEL                (time, z_t, nlat, nlon) float32 dask.array&lt;chunksize=(12, 62, 2400, 3600), meta=np.ndarray&gt;
+Attributes:
+    title:         hybrid_v5_rel04_BC5_ne120_t12_pop62
+    history:       none
+    Conventions:   CF-1.0; http://www.cgd.ucar.edu/cms/eaton/netcdf/CF-curren...
+    contents:      Diagnostic and Prognostic Variables
+    source:        CCSM POP2, the CCSM Ocean Component
+    revision:      $Id: tavg.F90 41939 2012-11-14 16:37:23Z mlevy@ucar.edu $
+    calendar:      All years have exactly  365 days.
+    start_time:    This dataset was created on 2013-03-05 at 14:49:04.8
+    cell_methods:  cell_methods = time: mean ==&gt; the variable values are aver...
+    nsteps_total:  12821677
+    tavg_sum:      2678400.000001031
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span> 
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="s2">&quot;/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly/*.nc&quot;</span><span class="p">,</span> 
+                       <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concat_dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span> <span class="n">data_vars</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span> <span class="n">compat</span><span class="o">=</span><span class="s1">&#39;override&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.6/site-packages/ipykernel_launcher.py:2: FutureWarning: In xarray version 0.13 the default behaviour of `open_mfdataset`
+will change. To retain the existing behavior, pass
+combine=&#39;nested&#39;. To use future default behavior, pass
+combine=&#39;by_coords&#39;. See
+http://xarray.pydata.org/en/stable/combining.html#combining-multi
+
+  
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 19 s, sys: 504 ms, total: 19.5 s
+Wall time: 23 s
+</pre></div>
+</div>
+</div>
+</div>
+<p>\begin{align}
+Ri &amp;= \frac{2 \bar{w} h Q}{\left(b_{euc}hη_x + Δb/2 h h_x + τ_w \right)²} \
+\frac{Ri}{\bar{w}} &amp;= \frac{10^2 10^{-8}}{\left(10×10^2×10^{-8} + 10^{-2} × 10^2 × 10^{-5} + 10^{-5}\right)²} = \frac{10^{-6}}{10^{-10}} = 10^{-4}
+\end{align}</p>
+<p><em>Assumptions:</em></p>
+<ol class="simple">
+<li><p>Linear <span class="math notranslate nohighlight">\(w\)</span> which is 0 at EUCmax: <span class="math notranslate nohighlight">\(w = \bar{w} (1+z/h)\)</span> This is diathermal <span class="math notranslate nohighlight">\(w\)</span> since this form says that <span class="math notranslate nohighlight">\(w=0\)</span> at <span class="math notranslate nohighlight">\(z=-h\)</span> i.e. <span class="math notranslate nohighlight">\(\bar{w}\)</span> is diathermal velocity at the top of the layer</p></li>
+<li><p>Linear <span class="math notranslate nohighlight">\(u\)</span> between EUCmax and surface</p></li>
+</ol>
+<p><em>Choices:</em></p>
+<ol class="simple">
+<li><p>Fill TAO qnet using linear interpolation.</p></li>
+<li><p>Running mean SSH over 20 points (20°) in longitude, then calculate gradient <span class="math notranslate nohighlight">\(η_x\)</span></p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># interpolate to SSH longitudes</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+<span class="c1"># Fill qnet using linear interpolation</span>
+<span class="n">ds</span><span class="p">[</span><span class="s1">&#39;qnet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tao</span><span class="o">.</span><span class="n">qnet</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span>
+              <span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fill_value&#39;</span><span class="p">:</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">}))</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">db</span>
+<span class="n">beuc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.81</span>  <span class="c1"># b = -gρ/ρ_{euc}</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">qnet</span> <span class="o">*</span> <span class="mf">9.81</span> <span class="o">*</span> <span class="mf">2e-4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1025</span> <span class="o">*</span> <span class="mi">4200</span><span class="p">)</span>  <span class="c1"># g α Q / (ρ c_p): heat flux in W/m² → m²/s³</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span>  <span class="c1"># derivation integrates from z=-h to z=η, so h is positive</span>
+<span class="n">hx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">110e3</span>
+<span class="n">sshx</span> <span class="o">=</span> <span class="p">(</span><span class="n">ssh</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">))</span><span class="o">/</span><span class="mf">110e3</span>
+
+<span class="n">num</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span>  <span class="n">Q</span>
+<span class="n">den</span> <span class="o">=</span> <span class="p">(</span><span class="n">beuc</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">sshx</span> <span class="o">+</span> <span class="n">db</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">hx</span> <span class="o">+</span> <span class="n">ds</span><span class="o">.</span><span class="n">tau</span><span class="o">/</span><span class="mi">1025</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">Riow</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
+<span class="n">Riow</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$Ri/w$&#39;</span>
+<span class="n">Riow</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;s/m&#39;</span>
+
+<span class="n">num</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m³/s³&#39;</span>
+<span class="n">den</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m⁴/s⁴&#39;</span>
+
+
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">Riow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mf">1e2</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">],</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">225</span><span class="p">,</span> <span class="o">-</span><span class="mi">95</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simple model&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">tao</span><span class="o">.</span><span class="n">Ri</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$Ri_b^</span><span class="si">{tao}</span><span class="s1">/10^{-3}$&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">johnson</span><span class="o">.</span><span class="n">Ri</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$Ri_b^</span><span class="si">{johnson}</span><span class="s1">/10^{-3}$&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Ri/w [s/m]&#39;</span><span class="p">)</span>
+<span class="n">num</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">den</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mf">1e2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;numerator = $2 h Q$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;denominator = $(-ghη_x + Δb/2 h h_x + τ/ρ_0)²$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;denominator = $(-ghη_x + Δb/2 h h_x + τ/ρ_0)²$&#39;)
+</pre></div>
+</div>
+<img alt="_images/mi-simple-model_19_1.png" src="_images/mi-simple-model_19_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="numerator-terms">
+<h2>Numerator terms<a class="headerlink" href="#numerator-terms" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;eucmax&#39;</span><span class="p">)</span>
+<span class="n">ds</span><span class="o">.</span><span class="n">qnet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;qnet&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/mi-simple-model_22_0.png" src="_images/mi-simple-model_22_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="denominator-terms">
+<h2>Denominator terms<a class="headerlink" href="#denominator-terms" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># den = (beuc * h * sshx + db/2 * h * hx + ds.tau/1025)**2</span>
+
+<span class="p">(</span><span class="n">beuc</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">sshx</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$-gh η_x$&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">tau</span><span class="o">/</span><span class="mi">1025</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$τ/ρ_0$&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">db</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">hx</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$Δb/2 hh_x$&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.5e-4</span><span class="p">,</span> <span class="mf">1.5e-4</span><span class="p">])</span>
+<span class="p">(</span><span class="n">beuc</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">sshx</span> <span class="o">+</span> <span class="n">db</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">hx</span> <span class="o">+</span> <span class="n">ds</span><span class="o">.</span><span class="n">tau</span><span class="o">/</span><span class="mi">1025</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;denom&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/mi-simple-model_24_0.png" src="_images/mi-simple-model_24_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="medians-as-approx">
+<h2>Medians as approx.<a class="headerlink" href="#medians-as-approx" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;η_x = </span><span class="si">{</span><span class="n">sshx</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;h_x = </span><span class="si">{</span><span class="n">hx</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Δb/2 = </span><span class="si">{</span><span class="n">ds</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">/</span><span class="mi">2</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>η_x = -4.3e-08
+h_x = -1.5e-05
+Δb/2 = 6.4e-03
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="tao-ri-analysis.html" title="previous page">TAO Ri analysis</a>
+    <a class='right-next' id="next-link" href="les-tendencies.html" title="next page">LES tendencies</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Deepak Cherian<br/>
+        
+            &copy; Copyright 2020.<br/>
+          <div class="extra_footer">
+            <div>
+<script data-goatcounter="https://count.cherian.net/count"
+        async src="count.js"></script>
+</div>
+
+          </div>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.d3f166471bb80abb5163.js"></script>
+
+
+    
+  </body>
+</html>
