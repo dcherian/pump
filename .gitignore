@@ -392,3 +392,13 @@ TSWLatexianTemp*
 
 # Emacs
 *~
+
+*.png
+*.nc
+*.zarr
+*.cdf
+*.mat
+
+pump-backup/*
+dask-worker-space/*
+backup*/*

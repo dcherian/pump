@@ -1,0 +1,376 @@
+#+LATEX_CLASS: dcarticle
+#+TITLE: Zonal extent of marginally stable flow in the equatorial Pacific
+#+AUTHOR: D.A. Cherian, D.B. Whitt, R.M. Holmes, R.-C. Lien, S.D. Bachman, W.L. Large 
+#+OPTIONS: toc:nil
+
+#+begin_export latex
+\chapterstyle{dash}
+\setcounter{tocdepth}{3}
+%\vspace{-5em}
+\renewcommand{\bibsection}{}
+% \tableofcontents*
+% \newpage
+
+\newcommand{\Rig}{\Ri_g}
+\newcommand{\Rib}{\Ri_b}
+
+\newcommand{\euc}{_\text{EUC}}
+\newcommand{\zeuc}{z_\text{EUC}}
+\newcommand{\zmld}{z_\text{MLD}}
+\newcommand{\surf}{_\text{surf}}
+#+end_export
+
+\begin{abstract}
+The eastern equatorial Pacific cold tongue is a site of intense heat absorption by the ocean, enabled by a diurnal cycle of shear turbulence  beneath the mixed layer (deep-cycle turbulence) where the flow is marginally stable to shear instability (gradient Richardson number $Ri_g ≈ 0.25$).
+Despite its importance, the longitudinal and latitudinal extent of equatorial turbulence is unconstrained by direct observations.
+Possible deep-cycle turbulence can be inferred through the marginal stability property of the flow through $Ri_g$ computed with relatively coarse mooring observations of velocity and temperature citep:Smyth2013.
+Here we exploit this fact to show that flow in the upper equatorial Pacific is near a state of marginal stability between 170°W and 110°W throughout the year, likely implying the presence of deep-cycle turbulence, and associated intense downward heat fluxes.
+Farther west, using a bulk Richardson number to character the upper equatorial ocean, we show that the longitudinal intensification of the South Equatorial Current and the Equatorial Under Current controls the transition to marginally stable flow.
+
+\end{abstract}
+
+* To do                                                            :noexport:
+- Bill:
+  
+- Ryan:
+  - [ ] Add seasonality bit: Like Bill, I think more analysis/discussion of the seasonal variations would be great. For example, it looks like there is evidence for MI at 165E in MAM. This is the opposite seasonality to the moorings further west. Where is it coming from? Is it possible that there is a node in the seasonal cycle in-between 165E and 170W (that the TC is tilting around on a seasonal basis)? To help with this, it would be great to use the same Ri_b decomposition that you use for attributing longitudinal variations in MI for the seasonality. Are the seasonal variations coming from EUC/SEC velocity, EUC depth variations, buoyancy difference variations?
+
+- RC:
+  - [ ] You might need to explain why diagnose Ri_b instead of Ri_g.
+  - [ ] Different vertical resolutions among temperature and velocity, and at different longitudes and seasons need to be addresses. When computing Ri_g,  you should use the same vertical resolution of T and U. If the resolutions are different at different longitudes and seasons, they should be noted. I will suggest a table of vertical resolutions of T, U, and Ri.
+  - [ ] The error of using constant S needs to be addressed too. Instead of constant S, you could also use the S from T-S relations, at different longitudes and seasons. Again, the potential errors in estimates of Ri_g and Ri_b should be addresses.
+  - [ ] Marginal stable does not imply instability. Disturbance is needed to trigger the instability, such as internal waves from wind or mixed layer pumping,  and entrainment layer turbulence, and whatever. The strength and mechanism of disturbance might determine the strength of deep-cycle turbulence. In other words, it might be marginal stable at 170W, but does not imply deep-cycle turbulence.
+
+
+- [ ] check tao 110 chipod data
+- [ ] is u_s being sampled at MLD base?
+
+- [ ] are there interannual trends to the shallowing & deepening of the EUC?
+      am I oversampling one ENSO phase?
+- [X] plot that quantifies sampling at all locations
+- [X] add T, u profile plots; illustrate linear approx.
+- [X] use pei as motivation: DCL between 170E and 105W
+- [X] q0.25 profiles
+- [ ] longitude tick labels  
+- add 95W back to figure - no ADCP
+- apply to atlantic? - not enough data unless I get the merged TACE data?
+
+- [-] bulk Ri analysis [1/4]
+  - [ ] do analysis in time: seasonal cycle?
+  - [ ] similar thing for Ri_g ?
+  - [X] are Ri_g and Ri_b correlated? That would be important
+  - [ ] do dRi/dx diagnosis for CESM-LE
+
+- [ ] Simple model [0/1]
+  - [ ] need diathermal velocity to finish check
+
+* First attempt                                                    :noexport:
+
+- extent of the marginally stable layer of fluid is within the cold tongue (170-95)
+  - shown using gradient Ri from TAO moorings
+  - use a bulk Ri to show that this is because of the velocity shear between the accelerating SEC and EUC but *not* the shoaling of the EUC.
+  - ∂_x usurf and ∂_x ueuc are roughly equally important i.e. the SEC is as important as the EUC (?)
+
+- *new point*: Direct wind forcing is an important part of the equation
+  - all the existing papers point to wind driving a pressure gradient and thus forcing EUC as the main mechanism for shear enhancement
+
+- Introduce a simple model for Ri (if it works)
+
+- Why does this matter?
+  - submesoscale instability are a fn(Ri)
+  -
+
+* Introduction
+
+The eastern equatorial Pacific ocean is a "pacemaker" of the climate system through its cold sea surface temperature, and as the site of significant heat absorption (or uptake) by the ocean citep:Kosaka2016,Holmes2019.
+Both aspects are a consequence of uniquely intense shear turbulence below the mixed layer, where the flow is ``marginally stable''.
+The flow's gradient Richardson number $\Ri_g = N²/S²$ is approximately 0.25 below the base of the mixed layer and above the high stratification zone near the core of the Equatorial Under Current (EUC).
+Turbulence is triggered in this marginally stable layer most afternoons near the surface citep:Smyth2013b,Pham2017, and propagates downward up to a depth of approximately \SI{80}{m} at 140°W citep:Gregg1985,Smyth2013,Smyth2013b.
+The turbulence transports heat downward, cooling the sea surface citep:Moum2013 and ultimately moving the heat to colder isotherms citep:Holmes2019.
+The spatial extent of equatorial turbulence is key, since it influences both the extent of cold SSTs and the total heat energy absorbed by the ocean.
+What is the climatological spatial structure of asssociated turbulent heat fluxes in the upper equatorial Pacific?
+
+Intense turbulence exists over a wide range of longitudes in the eastern Pacific in model simulations.
+Estimates of diathermal heat flux through the 21.5°C isotherm from a model using the cite:Large1994 KPP turbulence scheme show intense downward heat transport between approximately 150°W and the Galapagos at 90°W, and between 2°S and 2°N citep:Holmes2019.
+cite:Pei2020 describe deep-cycle turbulence between approximately 170°E--100°W, 2°S--2°N using 4-day composites of turbulence fields in a model using the $k-ε$ turbulence scheme.
+Direct confirmation of these extents with microstruture observations is not yet possible since those have only been recorded at the equator, primarily at 0°N, 140°W citep:Gregg1985,Peters1994,Moum2009b,Warner2019.
+
+# The marginally  stable nature of equatorial flow with $\Ri_g≈0.25$ has been ... through indirect analysis of $\Ri_g$ ...
+Quoting cite:Smyth2013: "Through the MI [marginal instability] property, statistics of the Ri profile give a clear indication of the existence of turbulence, though not of its strength."
+cite:Smyth2013 use seasonal median vertical profiles of $\Ri_g$ to illustrate the presence of marginally stable flow ($\Ri_g ≈ 0.25$), and indirectly implied deep-cycle turbulence, throughout most of the year.
+Here we extend their $\Ri_g$ analysis to the other TAO moorings, illustrating the climatological extent of marginally stable flow along the equator (Section ref:sec:season).
+Unlike cite:Smyth2013, we avoid aliasing due to seasonal shoaling and deepening of the EUC by constructing median $\Ri_g$ profiles in a coordinate system referenced to the EUC maximum.
+The resulting $\Ri_g$ profiles indicate marginally stable flow throughout the year at 170°W, 140°W;  and for three seasons at 110°W (Figure ref:fig:rig).
+We further analyze the transition to marginal stability in the eastern Pacific by constructing a bulk Richardson number $\Ri_b$ that approximately characterizes upper-ocean equatorial flow (Section ref:sec:frac).
+Though an approximation, a fractional decomposition of contributions to $∂Ri_b/∂x$ shows that the acceleration of both the near-surface SEC and the subsurface EUC, and associated instensification of $∂u/∂z$, drives the flow toward marginal stability between approximately 170°W and 110°W (Figure ref:fig:frac).
+
+** notes :noexport:
+- observed turbulence varies on many timescales
+  - diurnal scale: mixed layer + deep cycle turbulence below mixed layer
+  - monthly timescale: TIW modulation
+  - interannual scale: ENSO modulation Warner & Moum (2019)
+
+- Maybe refer to biases in Earth system models. Useful references can be tracked forward and backward from:
+  Li et al. (2015) An Intermodel Approach to Identify the Source of Excessive Equatorial Pacific Cold Tongue in CMIP5 Models and Uncertainty in Observational Datasets
+  Perhaps revisit the first paragraphs of the proposal for ideas about motivating a study of the climatology of the system in general, and from the perspective of mixing and turbulent heat fluxes in particular.
+
+- When the deep cycle is active heat is subducted to depths below the convective mixing layer depth; the water parcel is permanently modified and heat isn't lost back to the atmosphere.
+
+*** Ri / marginal stability in general
+
+- A defining characteristic of equatorial Pacific turbulence has been the existence of the deep cycle which is intimately related to the concept of marginal stability
+- concept of marginal stability
+  - cite:Thorpe2009.
+  - self-organized criticality cite:Smyth2019
+  - seen in both eq Pac & eq Atl: cite:Wenegrat2015, Hummels et al (2013)?
+
+- In particular, SM13 fig 3b may be most important, because it links the direct measures of turbulence to the gradient Richardson number from TAO on seasonal timescales, which suggests that better knowledge of spatial structure of Ri could help guide future observational turbulence measurements.
+- Further, these observations provide a basis for at least including an explicit or implicit Richardson number dependence in the parameterization of turbulence in models that do not resolve the small scale features (e.g. CESM, KPP).
+
+- And, by the same token, these results suggest that it may be a pre-requisite for models to accurately simulate Ri in order to accurately parameterize mixing.
+
+I like the idea of discussing the link to the deep cycle/diurnal cycle and questions about its seasonality. Highlight uncertainties about spatial structure.
+
+*** MI / Ri at eq. pac. 140W: Figure ref:fig:rig
+
+Marginal stability in the equatorial Pacific has been observed and studied for a long time. citep:Smyth2013,Smyth2017,Pham2017,Smyth2019. (Figure [[fig:rig]]).
+  - note this is below the surface mixed layer
+  - A common metric is monthly or seasonal median gradient Richardson number $\Ri_g$. Figure [[fig:rig]]
+    - Summarize cite:Smyth2013,Pham2017
+
+
+
+- Has anyone connected deep cycle turbulence to cold tongue budget?
+  - Look at cite:Menkes2006 though that was TIW;
+
+*** summarize
+- cite:Pei2020 show hourly-mean composites of the rate of disipation of turbulent kinetic energy $ε$ over a 4 day period (21-25 November 2011) indicate deep cycle turbulence across a wide swath of the Pacific between approximately 170°E and 95°W.
+
+What controls the longitudinal extent of deep cycle turbulence in the center-eastern Pacific?
+- in the absence of direct turbulence measurements across the breadth of the Pacific, we focus on $\Ri$.
+  - cite:Smyth2013: Through the MI property, statistics of the Ri profile give a clear indication of the existence of turbulence, though not of its strength. If the opposing effects of large-scale forcing and turbulence are strong enough, they will drive Ri to 1 4. Beyond that point, further increases in forcing/ turbulence have no effect, and Ri therefore has no further value as a turbulence diagnostic.
+
+- *Dan*: In the context of marginal instability, you could comment that instantaneous Ri at small vertical scales is correlated with dissipation rate (Peters et al. 1988). But, the larger-scale time variability of Ri resolved by the TAO mooring is not necessarily expected to characterize the intensity of the stratified turbulence (not sure the best reference here, but we should address this tension; maybe Richards et al. 2015 small scale structures). Bottom line: Smyth and Moum show it is useful as a binary indicator on seasonal timescales, motivating the present study
+
+* Datasets
+The primary observational dataset used is the Tropical Atmosphere Ocean (TAO) mooring dataset, part of the Global Tropical Moored Buoy Array (GTMBA) maintained by NOAA's Pacific Marine Environmental Laboratory (PMEL).
+ADCP measurements are available on moorings along the equator at 165°E, 156°E, 170°W, 140°W, 110°W every half hour with 5m vertical bin sizes.
+The shortest ADCP record is at 165°E (approximately 1989-1994).
+Nearly three decades of data (1990-2020 with gaps) is available at the other moorings.
+
+# - gridding procedure:
+#  - PCHIP interpolation to fill gaps in u, T - monotonic gradient + no extrema between observation points
+
+# - *TODO*: I think it would be cleanest to do most of the analysis with both T and u measurements filtered to the same effective resolution, once interpolated to the same grid...
+# - Although, I think it is also nice to point out that including the smallest-resolved scales in the shear from ADCP does not break the relationships between Rig and Rib at some stage. All of this relates to your current Fig. 3
+
+Coincident temperature measurements are available at 10-minute resolution in the top 200m with spacings ranging from 5 to 20m.
+Both temperature and horizontal velocity measurements are averaged to hourly resolution and then interpolated vertically to the ADCP grid using Piecewise Cubic Hermite Interpolating Polynomials (PCHIP) that preserve measured values and avoid adding extrema at depths between measurements.
+Salinity measurements are significantly coarser, so salinity is assumed to be a constant 35 psu.
+We approximate buoyancy frequency $N² = -g/ρ_0 ρ_z ≈ gαT_z$.
+Gradient Richardson number $Ri_g = N²/S² = N²/(u_z² + v_z²)$ is estimated using the gridded $T, u, v$ fields with gradients estimated using centered differences.
+Calculation of $Ri_g$ is avoided in the mixed layer.
+Mixed layer depth is estimated as the shallowest depth where hourly mean potential density $ρ$ exceeds its surface value by \SI{0.015}{\kg\per\m\cubed}.
+With all datasets, $\zeuc$ is defined to be the depth of maximum zonal velocity in the top \SI{250}{m}.
+# , and when $N² < \SI{1e-7}{\per\second\square}$ or $S² < \SI{1e-10}{\per\second\squared}$.
+
+* Results
+** Seasonal median vertical profiles of $\Rig$
+<<sec:season>>
+# - describe zonal and seasonal structures Figure ref:fig:rig.
+- refer to the cite:Smyth2013 version.
+
+We present profiles of seasonal median gradient Richardson number calculated using hourly TAO measurements at five longitudes along the equator in Figure [[fig:rig]]a--e.
+# The median is calculated after excluding $\Ri_g$ estimates in the mixed layer, or when $S²$ ... and $N²$ ....
+Moving from west to east, near-surface flow in the equatorial Pacific transitions to a state close to marginal stability by 170°W (Figure [[fig:rig]]a--e).
+The profiles at 140°W (Figure [[fig:rig]]d) replicate those of \citet[][their Figure 3a]{Smyth2013}.
+
+Marginally stable flow is particularly evident when the seasonal medians are calculated in a coordinate system referenced to the depth of the EUC maximum $\zeuc$ that removes the seasonal shoaling and deepening of the EUC (Figure [[fig:rig]]f--j).
+Here the median is computed in 5m bins after linearly interpolating $\Ri_g$ computed in depth-space to the new reference frame.
+Median $Ri_g$ values are discarded when the number of observations (Figure [[fig:rig]]p--t) is less than 2000.
+EUC-referenced depths are converted back to depth below the surface using a climatological mean $\zeuc$ estimated from the cite:Johnson2002 climatology.
+cite:Pham2017 argued that marginal stability is not evident at 140°W during March-April-May (MAM, Figure [[fig:rig]]d) because the EUC shoals enough to move the marginally stable zone out of the region covered by instruments.
+Figure [[fig:rig]]i confirms this hypothesis --- transforming to an EUC relative frame reveals median $Ri_g ≈ 0.25$ between approximately 25m and 75m at 140°W.
+
+At 110°W, median $\Ri_g ≈ 0.3$ during DJF and JJA up to \SI{50}{m}.
+How should this be interpreted?
+$\Ri_g$ in marginally stable flows may fluctuate around 0.25, so one must consider the distribution of $\Ri_g$ citep:Smyth2019.
+We present profiles of the quantile corresponding to $\Ri_g=0.25$ ($q^{0.25}$), a measure the frequency of occurence of $\Ri_g < 0.25$ (Figure [[fig:rig]]k--o).
+These profiles show that $Ri_g = 0.25$ is at the 40th percentile above \SI{25}{m}, and drops down to the 30th percentile by \SI{50}{m}, so marginally stable flow is still relatively frequent near the surface at 110°W except during MAM.
+
+Taken together, Figure ref:fig:rig shows that flow transitions to a state of marginal stability in the central Pacific.
+
+$\Rig$ statistics suggest marginal stability for three seasons at 170°W (DJF, JJA, SON), one season at 110°W (SON), and none at 165°E.
+- Add/emphasize again that your results suggest that it is present all year at 140W (unlike Smyth and Moum).
+# *Note that the EUC is quite shallow at 110°W, limiting usefulness of these profiles.*
+
+** Contributors to the transition to marginal stability
+<<sec:frac>>
+
+What factors contribute to the zonal transition of equatorial flow to a state of marginal stability along the equator?
+We address this question by defining a simpler bulk Richardson number $\Ri_b$ computed using climatologies:
+#+begin_export latex
+\begin{equation}
+\label{eq:rib}
+    \Ri_b = \frac{h Δb}{(Δu)² }
+\end{equation}
+#+end_export
+Here $Δu$ ($Δb$) are the difference between $u$ ($b$) at the base of the climatological mixed layer and $u$ ($b$) at $\zeuc$.
+The climatological mixed layer depth is chosen to be the maximum mixed layer depth in the MIMOC climatology citep:Schmidtko2013.
+Two climatologies are used to estimate $Δu$, $Δb$, and $\zeuc$.
+One is a time-mean climatology constructed using the gridded TAO measurements.
+In addition we use the cite:Johnson2002 climatology of zonal velocity $u$ and potential temperature $T$ at ten longitudes between 143°E and 95°W averaged over 172 sections collected in the 1990s, provided with a vertical grid spacing of \SI{10}{m}.
+
+Approximating the vertical structure of $u$ and $b$ as being linear above the EUC core is reasonable (Supplementary Figures ref:fig:linearu, ref:fig:linearrho).
+Making this approximation permits a useful assessment of the relative contributions of longitudinal changes in $Δu$, $Δb$, and $h$ to longitudinal changes in $\Ri_b$ (and hence $Ri_g$) as follows.
+Differentiating (ref:eq:rib) with respect to longitude $x$, and dividing by $Ri_b$:
+# #+begin_export latex
+# \begin{align}
+# \log \Ri_b &= \log Δb + \log h - 2 \log Δu \\
+# \label{eq:frac}
+# \frac{1}{\Ri_b} ∂_x Ri &= \frac 1h ∂_xh + \frac{1}{Δb} ∂_x Δb - 2 \frac{1}{Δu} ∂_x Δu
+# \end{align}
+# #+end_export
+#+begin_export latex
+\begin{equation}
+\label{eq:frac}
+\frac{1}{\Ri_b} ∂_x \Ri_b = \frac 1h ∂_xh + \frac{1}{Δb} ∂_x Δb - 2 \frac{1}{Δu} ∂_x Δu
+\end{equation}
+#+end_export
+
+# $Ri_b$ covaries with the median $Ri_g$ ($\hat{Ri_g}$) between the EUC maximum and 25m depth; both estimated using hourly data (Figure [[fig:joint]]).
+
+# The terms in equation \eqref{eq:frac} are estimated using two /annual-mean/ climatologies: that of cite:Johnson2002 and an annual climatology constructed using the TAO dataset (Figure ref:fig:frac).
+Estimates of $Ri_b$ and remaining terms using the two climatologies are remarkably similar and paint a consistent picture.
+First, $Ri_b$ values change from \mO(10) in the central pacific to \mO(1) by 140°W, mirroring the transition seen in $Ri_g$ which is \mO(1) at 165°E and approximately 0.25 at 140°W (Figure [[fig:rig]]).
+The increase in $Ri_b$ between 110°W and 95°W is consistent with the slightly larger $Ri_g ≈ 0.4$ at 110°W in Figure [[fig:rig]]j.
+Decomposing into fractional contributions shows that the intensification of the SEC and EUC ($2/Δu \, ∂_x Δu$) is by far the largest contributor to the drop in $\Ri_b$ between 156°E and 140°W, as well as the increase in $Ri_b$ east of 125°W (Figure [[fig:frac]]e).
+Notably, the change in sign of $∂_x Ri_b$ east of 125°W coincides with a change in sign of $∂_x Δu$.
+Between 180°W and 160°W, both $∂_x u\surf$ and $∂_x u\euc$ are roughly equally important (TAO estimates) i.e. the intensification of the SEC is as important as that of the EUC (Figure [[fig:frac]]d).
+The shallowing of the EUC ($1/h\, ∂_xh$) plays a relatively minor role, and dominates only when $1/Δu ∂_x Δu$ is small between approximately 160°W and 140°W.
+The contribution from $Δb$ ($1/Δb \, ∂_x Δb$) is small enough that it has been removed for clarity.
+
+The SEC is a surface current directly forced by the winds.
+It's intensification is a reflection of strengthening trade winds.
+The EUC's intensification is a sign of meridional convergence at the equator (CITATION).
+
+# - extent of the marginally stable layer of fluid is within the cold tongue (170-95)
+# - the longitudinal variation in $Δu$ dominates the reduction in $\Ri_b$.
+#  - This is due to both an accelerating EUC and but also due to a reversal in sign of surface current starting at 195W (i.e. appearance of the SEC).
+  
+# - *possible new point*: Direct wind forcing is an important part of the equation
+#  - all the existing papers imply wind driving a pressure gradient and thus forcing EUC as the main mechanism for shear enhancement
+#  - the bulk Ri analysis → SEC is important →  wind's direct forcing of near-surface SEC is as important as its indirect forcing of the EUC
+
+# - *TODO* do this bulk analysis seasonally with the TAO data
+#  - If direct wind forcing is important, could that be a source of seasonality?
+
+*** Bulk Ri covaries with gradient Ri: Figure ref:fig:joint :noexport:
+
+What contributes to the transition to marginal stability in the eastern Pacific i.e. the decrease in $Ri_g$?
+
+We simplify this question by switching to a simpler bulk Richardson number $\Ri_b$ defined in \eqref{eq:rib} allows us to make a simple estimate of the relative contributions to longitudinal change in Ri.
+#+begin_export latex
+\begin{equation}
+\label{eq:rib}
+    \Ri_b = \frac{h Δb}{(Δu)² }
+\end{equation}
+#+end_export
+
+- Here $Δ \sim$ (value at surface) - (value at depth of EUC max);
+- define surface as 25m depth due to sampling constraints
+  - do we want this to be below mixed layer?
+- $Ri_b$ covaries with the median $Ri_g$ ($\hat{Ri_g}$) between the EUC maximum and 25m depth; both estimated using hourly data (Figure [[fig:joint]]).
+
+- *TODO* Can you say how this relationship depends on vertical resolution? Presumably it would break down eventually, e.g. certainly at microscales at higher temporal resolution?
+  For example, if you include only the mean shear and stratification across the Rib, the correlation should be perfect. As you start to include more and more smaller scales, the correlation should degrade. Can you show that in a figure somehow? Maybe separately for shear resolution, T resolution, and both? Could something like this also be shown in the EQUIX mooring in an appendix where we have very high-resolution of both?
+
+#+NAME: fig:joint
+#+CAPTION: Joint probability density functions of the bulk and depth-median gradient Richardson numbers estimated using hourly data. *TODO*: At 170, Ri is larger during MAM. *TODO:* Why is 170W not as dark as 140, 110. Data density? *TODO* add correlation coeffs
+[[file:../images/gradient-bulk-ri-joint-pdf.png]]
+
+** simple model for Ri_b (if it works) :noexport:
+- *TODO* need to talk to anna about diathermal velocity calculation
+
+* Discussion
+
+Many observational campaigns at 0°N, 140°W in the tropical Pacific have shown that marginally stable flow ($Ri_g≈0.25$) below the mixed layer is associated with deep-cycle turbulence citep:Gregg1985,Moum2009b that underlies the tropical Pacific's role as a major region of heat absorption by the ocean, as well as region of cold SSTs that is of major climatic relevance citep:Wang1999,Wang2000a,Moum2013.
+The lack of direct turbulence measurements away from 140°W means that the climatological spatial extent of equatorial Pacific deep-cycle turbulence is largely unknown, despite its importance to the climate system.
+Here we show that marginal stability, and possibly deep-cycle turbulence, is likely present between 170°W and 110°W at the equator with some seasonal variation (Figure [[fig:rig]], Section [[sec:season]]).
+We use a bulk Richardson number $\Ri_b$ that approximately characterizes climatological ocean state between the base of the mixed layer and the EUC maximum.
+Analysis of $\Ri_b$ shows that the intensification of both the SEC and EUC between 156°E and 170°W drives flow in the central equatorial Pacific toward a state of marginal stability (Section [[sec:frac]]).
+Reduced shear due to the weakening of the SEC and EUC in the east between 125°W and 110°W causes the flow to shift away from a state of marginal stability though median $Ri_g$ is still relatively small at 110°W ($≲ 0.4$ except during March-April-May).
+
+As cite:Smyth2013 point out, marginal stability is only an indication of the existence of turbulence.
+Our results may constrain the extent and seasonality of marginally stable flow and intense equatorial turbulence, but provide no guide to the magnitude of turbulent fluxes.
+Direct turbulence measurements beyond 140°W are required to fully understand the spatial and temporal variablity of equatorial Pacific turbulence.
+
+# Also, reiterate the key results: zonal structure of Ri profiles and bulk Ri, depth/height of MI layer above EUC, key role of EUC and SEC shear in providing the large-scale pre-conditioning. May be important to get this large-scale Ribulk and Rig structure right in models...
+
+# Highlight potential TPOS/PUMP process study goals, e.g. observations of the spatial and temporal structure of turbulent heat fluxes. This study provides some guidance about where one might expect strong stratified turbulence.
+
+# In particular, This Sm13 statement suggests that regions/seasons of marginal stability are areas where turbulent mixing and heat fluxes are stronger.
+
+# But, this also emphasizes the need for measurements of turbulence at these other longitudes to quantify the impact of low-Ri/MI on turbulent heat flux, since this has implications for the heat budget of the ECT and will provide important constraints on the models.
+
+
+# - future: could look at 110W χpods
+# - there is a need for at least off-equatorial ADCPs so that the latitudinal extent of the marginally stable zone can be quantified.
+
+* Figures :ignore:
+#+NAME: fig:rig
+#+CAPTION: (a--j) Vertical profiles of seasonal median gradient Richardson number $Ri_g$ in two coordinate systems: (a--e) Depth. (f--j) Height above EUC maximum $\zeuc$. (k--o) Quantile corresponding to $Ri_g = 0.25$, $q^{0.25}$.(p--t) Number of hourly observations used to compute median and IQR in (f)--(j).
+[[file:~/work/pump/images/rig-profiles-depth-zeuc.png]]
+
+#+NAME: fig:frac
+#+CAPTION: Longitudinal transition to marginal stability in the central Pacific diagnosed using $\Ri_b$. (a)$Ri_b$ (b) $h$ (c) $Δu$ (d)$∂_x Δu$ (e) Fractional contributions to $∂_x \Ri_b$: $1/h ∂_x h$ and $-2/Δu ∂_x Δu$. Terms in all panels are estimated using the cite:Johnson2002 climatology ($\textbullet$), and a climatology created from the TAO dataset ($\blacksquare$). Johnson points are slightly offset for clarity where TAO and cite:Johnson2002 measurements are available at the same longitudes.
+[[file:~/work/pump/images/bulk-ri-fractional-contrib.png]]
+
+
+#+NAME: fig:linearu
+#+CAPTION: [Supplementary Figure] Vertical profiles of zonal velocity $u$ from cite:Johnson2002. Horizontal lines mark maximum mixed layer depth from the MIMOC climatology $\zmld$ citep:Schmidtko2013 as well as the depth of the EUC maximum $\zeuc$.
+[[file:~/work/pump/images/johnson-u-linear-approx.png]]
+
+#+NAME: fig:linearrho
+#+CAPTION: [Supplementary Figure] Vertical profiles of potential density $ρ$ from cite:Johnson2002. Horizontal lines mark maximum mixed layer depth from the MIMOC climatology $\zmld$ citep:Schmidtko2013 as well as the depth of the EUC maximum $\zeuc$.
+[[file:~/work/pump/images/johnson-dens-linear-approx.png]]
+
+* References
+bibliography:~/p/bibtexLibrary.bib
+bibliographystyle:elsarticle
+* archive :noexport:
+
+#+NAME: fig:rig
+#+CAPTION: Vertical profiles of seasonal median gradient Richardson number presented as a function depth relative to $z_{euc}$. *TODO* merge with previous figure. *TODO* Use same colors as Smyth (2013) for easy comparison *TODO* should add a panel with number of hourly observations in each point.
+[[file:../images/tao-marginal-stability-zeuc-Rig-median.png]]
+
+* TAO chipods :noexport:
+** 110W
+#+BEGIN_SRC jupyter-python
+import xarray as xr
+
+
+def read_tao_chipod(lon):
+    # timeSeries could be depth
+    # FillValue should not be string
+    ds = (
+        xr.open_dataset(f"~/datasets/chipod/tao/chipods_0_{abs(lon)}W.nc")
+        .drop("depth")
+        .rename({"timeSeries": "depth"})
+        .assign_coords(lat=0, lon=-110)
+    )
+
+    for variable in ds:
+        if "valid_min" in ds[variable].attrs:
+            ds[variable] = ds[variable].where(
+                ds[variable] > ds[variable].attrs["valid_min"]
+            )
+
+    return ds
+
+
+c110 = read_tao_chipod(-110)
+c140 = read_tao_chipod(-140)
+#+END_SRC
+
+#+RESULTS:

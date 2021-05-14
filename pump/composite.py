@@ -1,18 +1,13 @@
 import dask
 import dcpy
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-import xarray as xr
-
-import toolz
-
-# from .calc import tiw_avg_filter_v
-
+from numba import float64, guvectorize
 from toolz import keyfilter
-from numba import guvectorize, float32, float64
 
+import xarray as xr
 
 good_periods = {
     # -110: [1, 2, 3, 4, 5, 7, 11, 13, 14,],  # 16 is borderline

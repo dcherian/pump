@@ -1,16 +1,14 @@
 import dask
 import dcpy
-
 import numpy as np
 import pandas as pd
 import tqdm
+
+import pump
 import xarray as xr
 
 from . import mdjwf
-
 from .constants import *
-
-root = "/glade/work/dcherian/pump/"
 
 
 def read_all(domain=None):
@@ -22,7 +20,10 @@ def read_all(domain=None):
     return [johnson, tao, sst, oscar]
 
 
-def read_johnson(filename=root + "/obs/johnson-eq-pac-adcp.cdf"):
+def read_johnson(filename=None):
+    root = pump.OPTIONS["root"]
+    if filename is None:
+        filename = f"{root}/obs/johnson-eq-pac-adcp.cdf"
     ds = xr.open_dataset(filename).rename(
         {
             "XLON": "longitude",
@@ -45,33 +46,18 @@ def read_johnson(filename=root + "/obs/johnson-eq-pac-adcp.cdf"):
     return ds
 
 
-def read_tao_adcp(domain=None, freq="dy"):
+def read_tao_adcp(domain=None, freq="dy", dirname=None):
+    root = pump.OPTIONS["root"]
+
+    if dirname is None:
+        dirname = root + "/obs/tao/"
 
     if freq == "dy":
-        adcp = xr.open_dataset(root + "/obs/tao/adcp_xyzt_dy.cdf").rename(
+        adcp = xr.open_dataset(f"{dirname}/adcp_xyzt_dy.cdf").rename(
             {"lon": "longitude", "lat": "latitude", "U_1205": "u", "V_1206": "v"}
         )
     elif freq == "hr":
-        afiles = [
-            root + "/obs/tao/adcp0n" + lon + "_hr.cdf"
-            for lon in ["156e", "165e", "170w", "140w", "110w"]
-        ]
-
-        ds = []
-        for file in tqdm.tqdm(afiles):
-            ds.append(
-                xr.open_dataset(file)
-                .drop(["QU_5205", "QV_5206"])
-                .rename(
-                    {
-                        "lon": "longitude",
-                        "lat": "latitude",
-                        "u_1205": "u",
-                        "v_1206": "v",
-                    }
-                )
-            )
-        adcp = xr.merge(xr.align(*ds, join="outer"))
+        adcp = tao_read_and_merge("hr", "adcp")
 
     adcp = adcp.chunk({"latitude": 1, "longitude": 1})
 
@@ -81,9 +67,6 @@ def read_tao_adcp(domain=None, freq="dy"):
         adcp[vv].attrs["units"] = "m/s"
         adcp[vv] = adcp[vv].where(np.abs(adcp[vv]) < 1000)
 
-    adcp["longitude"] -= 360
-    adcp["depth"] *= -1
-    adcp["depth"].attrs["units"] = "m"
     adcp["u"].attrs["units"] = "m/s"
     adcp["v"].attrs["units"] = "m/s"
 
@@ -92,37 +75,51 @@ def read_tao_adcp(domain=None, freq="dy"):
     else:
         adcp = adcp.sel(latitude=0)
 
-    return adcp.dropna("longitude", how="all").dropna("depth", how="all")
+    return adcp  # .dropna("longitude", how="all").dropna("depth", how="all")
 
 
 def tao_read_and_merge(suffix, kind):
     """ read non-ADCP files. """
 
+    root = pump.OPTIONS["root"]
     if kind == "temp":
         prefix = "t"
         renamer = {"T_20": "T"}
+    elif kind == "salt":
+        prefix = "s"
+        renamer = {"S_41": "S"}
 
     elif kind == "cur":
         prefix = "cur"
         renamer = {"U_320": "u", "V_321": "v"}
+
+    elif kind == "adcp":
+        prefix = "adcp"
+        renamer = {"u_1205": "u", "v_1206": "v"}
 
     ds = []
     tfiles = [
         f"{root}/obs/tao/{prefix}0n{lon}_{suffix}.cdf"
         for lon in ["156e", "165e", "170w", "140w", "110w"]
     ]
+
     for file in tqdm.tqdm(tfiles):
         try:
-            ds.append(xr.load_dataset(file)[list(renamer.keys())])
+            ds.append(
+                xr.open_dataset(file, chunks={"time": 100000})[list(renamer.keys())]
+            )
         except FileNotFoundError:
             pass
 
-    merged = xr.merge(xr.align(*ds, join="outer")).rename(
+    if not ds:
+        raise ValueError(f"0 files were found: {tfiles}")
+    merged = xr.concat(ds, join="outer", dim="lon").rename(
         {"lon": "longitude", "lat": "latitude"}
     )
 
-    merged["longitude"] -= 360
-    merged["depth"] *= -1
+    merged["longitude"] = merged.longitude - 360
+    merged["depth"] = -1 * merged.depth
+    merged["depth"].attrs["units"] = "m"
     return merged.rename_vars(renamer)
 
 
@@ -131,20 +128,14 @@ def tao_merge_10m_and_hourly(kind):
     m10 = tao_read_and_merge("10m", kind)
     hr = tao_read_and_merge("hr", kind)
 
-    # resample is really slow because it doesn't know about dask.
-    # instead reindex to a 10min freq and use rolling.
+    # instead reindex to a 10min freq and use coarsen.
     new_index = pd.date_range(
         start=m10.time[0].dt.round("H").values,
         end=m10.time[-1].dt.round("H").values,
         freq="10min",
     )
-    m10 = m10.reindex(time=new_index)
-    m10hr = (
-        m10.chunk({"longitude": 1})
-        .rolling(time=6, min_periods=4)
-        .construct("window_dim", stride=6)
-        .mean("window_dim")
-    )
+    m10 = m10.reindex(time=new_index, method="nearest")
+    m10hr = m10.chunk({"longitude": 1}).coarsen(time=6, boundary="trim").mean()
 
     new_hourly_index = pd.date_range(
         start=np.min([m10.time[0].values, hr.time[0].values]),
@@ -153,7 +144,10 @@ def tao_merge_10m_and_hourly(kind):
     )
 
     concat = xr.concat(
-        [m10hr.reindex(time=new_hourly_index), hr.reindex(time=new_hourly_index)],
+        [
+            m10hr.reindex(time=new_hourly_index, method="nearest"),
+            hr.reindex(time=new_hourly_index, method="nearest"),
+        ],
         dim="concat",
     )
 
@@ -163,11 +157,20 @@ def tao_merge_10m_and_hourly(kind):
 
     # adcp = read_tao_adcp(freq='hr')
     # return xr.merge(ds)
-    return concat.mean("concat").squeeze()
+    result = concat.mean("concat").squeeze()
+    result.attrs = hr.attrs
+    for variable in hr.variables:
+        result[variable].attrs = hr[variable].attrs
+
+    return result
 
 
 def read_eq_tao_cur_hr():
     return tao_merge_10m_and_hourly("cur") / 100
+
+
+def read_eq_tao_salt_hr():
+    return tao_read_and_merge("hr", "salt").S
 
 
 def read_eq_tao_temp_hr():
@@ -182,6 +185,8 @@ def read_eq_tao_temp_hr():
 
 
 def read_tao(domain=None):
+    root = pump.OPTIONS["root"]
+
     tao = xr.open_mfdataset(
         [
             root + "/obs/tao/" + ff
@@ -236,6 +241,8 @@ def read_tao(domain=None):
 
 def read_sst(domain=None):
 
+    root = pump.OPTIONS["root"]
+
     if domain is not None:
         years = range(
             pd.Timestamp(domain["time"].start).year,
@@ -268,6 +275,7 @@ def read_sst(domain=None):
 
 
 def read_oscar(domain=None):
+    root = pump.OPTIONS["root"]
 
     oscar = dcpy.oceans.read_oscar(root + "/obs/oscar/").rename(
         {"lat": "latitude", "lon": "longitude"}
@@ -282,6 +290,7 @@ def read_oscar(domain=None):
 
 
 def read_argo():
+    root = pump.OPTIONS["root"]
 
     dirname = root + "/obs/argo/"
     chunks = {"LATITUDE": 1, "LONGITUDE": 1}
@@ -323,9 +332,11 @@ def read_argo():
 
 
 def process_nino34():
-    nino34 = process_esrl_index("nina34.data")
+    root = pump.OPTIONS["root"]
 
-    nino34.to_netcdf(root + "/obs/nino34.nc")
+    nino34 = process_esrl_index("nino34.data", skipfooter=5)
+
+    return nino34  #nino34.to_netcdf(root + "/obs/nino34.nc")
 
 
 def process_oni():
@@ -336,6 +347,7 @@ def process_oni():
 
 def process_esrl_index(file, skipfooter=3):
     """ Read and make xarray version of climate indices from ESRL."""
+    root = pump.OPTIONS["root"]
 
     month_names = (
         pd.date_range("01-Jan-2001", "31-Dec-2001", freq="MS")
@@ -352,6 +364,7 @@ def process_esrl_index(file, skipfooter=3):
         skiprows=1,
         na_filter=False,
         skipfooter=skipfooter,
+        engine="python",
         dtype=np.float32,
     )
 
@@ -410,9 +423,7 @@ def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
 
 def read_jra_95():
 
-    jradir = (
-        "/glade/work/dcherian/pump/combined_95_97_JRA/"
-    )
+    jradir = "/glade/work/dcherian/pump/combined_95_97_JRA/"
 
     jrafull = read_jra(
         [
@@ -520,7 +531,7 @@ def read_drifters(kind="annual"):
     return drifter.sel(longitude=slice(-230, -90))
 
 
-def read_tao_zarr(kind="gridded"):
+def read_tao_zarr(kind="gridded", **kwargs):
 
     if kind not in ["gridded", "merged", "ancillary"]:
         raise ValueError(
@@ -528,12 +539,20 @@ def read_tao_zarr(kind="gridded"):
         )
 
     if kind == "merged":
-        tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True)
+        tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True, **kwargs)
     elif kind == "gridded":
-        tao = xr.open_zarr("tao_eq_hr_gridded.zarr")
+        tao = xr.open_zarr("tao_eq_hr_gridded.zarr", **kwargs)
     elif kind == "ancillary":
-        tao = xr.open_zarr("tao-gridded-ancillary.zarr")
+        tao = xr.open_zarr("tao-gridded-ancillary.zarr", **kwargs)
 
-    tao = tao.chunk({"depth": -1, "time": 10000})
-    tao["dens"] = dcpy.eos.dens(35, tao.T, tao.depth)
+    tao.depth.attrs.update({"axis": "Z", "positive": "up"})
+
+    # tao = tao.chunk({"depth": -1, "time": 10000})
+    #tao["densT"] = dcpy.eos.pden(35, tao.T, tao.depth)
+    #tao.densT.attrs["long_name"] = "$ρ_T$"
+    #tao.densT.attrs["description"] = "density from T only, assuming S=35"
+
+    #tao["dens"] = dcpy.eos.pden(tao.S, tao.T, tao.depth)
+    #tao.densT.attrs["description"] = "density using T, S"
+
     return tao

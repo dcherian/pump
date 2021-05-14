@@ -1,12 +1,12 @@
 import pdb
+import warnings
+from xml.dom import minidom
+
 import podaac as po
 import podaac.podaac as podaac
 import podaac.podaac_utils as utils
-from podaac import drive as drive
 import tqdm
-import warnings
-
-from xml.dom import minidom
+from podaac import drive as drive
 
 
 def filter_night(string):

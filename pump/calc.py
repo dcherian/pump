@@ -1,21 +1,14 @@
-import dask
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import scipy as sp
-import seawater as sw
-import xarray as xr
 import warnings
 
+import dask
 import dcpy
 import dcpy.eos
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy as sp
 import xfilter
 
-
-from numba import int64, float32, guvectorize
-
-from . import KPP
+import xarray as xr
 
 
 def ddx(a):
@@ -185,7 +178,14 @@ def get_euc_max(u, kind="model"):
 
     if kind == "data":
         u = u.fillna(-100)
-    euc_max = _get_max(u, "depth")
+
+
+    dim = u.cf.coordinates.get("vertical", [None])[0]
+    if not dim:
+        dim = u.cf.coordinates.get("Z", [None])[0]
+    if not dim:
+        dim = "depth"
+    euc_max = _get_max(u, dim)
 
     euc_max.attrs["long_name"] = "Depth of EUC max"
     euc_max.attrs["units"] = "m"
@@ -299,21 +299,18 @@ def get_euc_transport(u):
     return euc
 
 
-def calc_tao_ri(adcp, temp, dim="depth"):
+def calc_tao_ri(tao, dim="depth", fillna=False):
     """
     Calculate Ri for TAO dataset.
     Interpolates to 5m grid and then differentiates.
     Uses N^2 = g alpha dT/dz
 
 
-    Inputs
-    ------
+    Parameters
+    ----------
 
-    adcp: xarray.Dataset
-        Dataset with ['u', 'v']
-
-    temp: xarry.DataArray
-        Temperature DataArray
+    tao: xarray.Dataset
+        Dataset with ['u', 'v', 'densT', 'dens']
 
     References
     ----------
@@ -322,25 +319,37 @@ def calc_tao_ri(adcp, temp, dim="depth"):
     Pham et al. (2017)
     """
 
-    V = adcp[["u", "v"]].sortby(dim).interpolate_na(dim)
+    V = tao[["u", "v"]].sortby(dim).interpolate_na(dim)
     S2 = V["u"].differentiate(dim) ** 2 + V["v"].differentiate(dim) ** 2
+    S2.attrs["long_name"] = "$S²$"
 
-    T = temp.sortby(dim).interpolate_na(dim, "linear")
+    if fillna:
+        T = tao.T.sortby(dim).interpolate_na(dim, "linear")
+    else:
+        T = tao.T
 
     if "time" in T.dims and not T.time.equals(V.time):
-        T = temp.sel(time=V.time)
+        T = T.sel(time=V.time)
 
-    if not T[dim].equals(V[dim]):
+    if not T.indexes[dim].equals(V.indexes[dim]):
         T = T.interp({dim: V[dim]})
 
     # the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
-    N2 = 9.81 * dcpy.eos.alpha(35, T, T.depth) * T.differentiate(dim)
-    Ri = (N2 / S2).where((N2 > 1e-7) & (S2 > 1e-10))
+    N2T = -9.81 / 1025 * tao.densT.differentiate("depth")
+    N2 = -9.81 / 1025 * tao.dens.differentiate("depth")
+    N2.attrs["long_name"] = "$N²$"
+    N2T.attrs["long_name"] = "$N_T²$"
 
-    Ri.attrs["long_name"] = "Ri"
-    Ri.name = "Ri"
+    Rig_T = (N2T / S2).where((N2T > 1e-5) & (S2 > 1e-10))
+    Rig_T.attrs["long_name"] = "$Ri_g^T$"
+    Rig_T.attrs[
+        "description"
+    ] = "Ri_g calculated with N² assuming S=35, masked where N2T < 1e-5"
 
-    return Ri
+    Rig = (N2 / S2).where((N2 > 1e-6) & (S2 > 1e-10))
+    Rig.attrs["long_name"] = "$Ri_g$"
+    Rig.name = "Ri"
+    return tao.merge({"N2": N2, "N2T": N2T, "Rig_T": Rig_T, "Ri": Rig, "S2": S2})
 
 
 def kpp_diff_depth(obj, debug=False):
@@ -396,7 +405,7 @@ def get_kpp_mld(subset, debug=False):
     return kpp_mld
 
 
-def get_mld(dens):
+def get_mld_tao(dens):
     """
     Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
     # Interpolates density to 1m grid.
@@ -407,10 +416,10 @@ def get_mld(dens):
     # gcm1 is 1m
     # densi = dcpy.interpolate.pchip(dens, "depth", np.arange(0, -200, -1))
     densi = dens  # .interp(depth=np.arange(0, -200, -1))
-    drho = densi - densi.isel(depth=0)
+    drho = densi - densi.sel(depth=[0, -5], method="nearest").max("depth")
     N2 = -9.81 / 1025 * densi.differentiate("depth")
 
-    thresh = xr.where((np.abs(drho) > 0.015) & (N2 > 1e-5), drho.depth, np.nan)
+    thresh = xr.where((np.abs(drho) > 0.03) & (N2 > 1e-5), drho.depth, np.nan)
     mld = thresh.max("depth")
 
     mld.name = "mld"
@@ -419,7 +428,49 @@ def get_mld(dens):
     mld.attrs["description"] = (
         "Interpolate density to 1m grid. "
         "Search for max depth where "
-        " |drho| > 0.01 and N2 > 1e-5"
+        " |drho| > 0.03 and N2 > 1e-5"
+    )
+
+    return mld
+
+
+def get_mld(dens, min_delta_dens=0.015, min_N2=1e-5):
+    """
+    Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
+    # Interpolates density to 1m grid.
+    """
+    if not isinstance(dens, xr.DataArray):
+        raise ValueError(f"Expected DataArray, received {dens.__class__.__name__}")
+
+    if "Z" in dens.cf:
+        depth = dens.cf["Z"]
+        key = "Z"
+    else:
+        depth = dens.cf["vertical"]
+        key = "vertical"
+
+    positive = depth.attrs.get("positive", "up")
+    if positive == "down":
+        assert np.all(depth > 0)
+        func = "min"
+        sign = -1
+    else:
+        func = "max"
+        sign = 1
+
+    drho = dens - dens.cf.sel(**{key: 0, "method": "nearest"})
+    N2 = sign * -9.81 / 1025 * dens.cf.differentiate(key)
+
+    thresh = xr.where((np.abs(drho) > min_delta_dens) & (N2 > min_N2), depth, np.nan)
+    mld = getattr(thresh, func)("depth")
+
+    mld.name = "mld"
+    mld.attrs["long_name"] = "MLD"
+    mld.attrs["units"] = "m"
+    mld.attrs["description"] = (
+        "Interpolate density to 1m grid. "
+        f"Search for {func} depth where "
+        f" |drho| > {min_delta_dens} and N2 > {min_N2}"
     )
 
     return mld
@@ -1115,8 +1166,8 @@ def coare_fluxes_jra(ocean, forcing):
        weird bug.
     """
 
-    import xcoare
     import cf_xarray
+    import xcoare
 
     ocean = ocean.cf.sel(Z=0, method="nearest", drop=True)
 

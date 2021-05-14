@@ -14,6 +14,8 @@
   chapters:
     - file: bulk-Ri
     - file: MI-extent
+    - file: tao-ri-analysis
+    - file: mi-simple-model
 
 - part: Other
   chapters:

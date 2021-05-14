@@ -1,8 +1,8 @@
 import numpy as np
-import xarray as xr
-
-from numpy import abs, pi, sqrt, mean, ones_like, exp
 from dcpy import eos
+from numpy import abs, exp, mean, ones_like, pi, sqrt
+
+import xarray as xr
 
 
 def xkpp(*args):

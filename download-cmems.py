@@ -3,15 +3,14 @@
 # Script to loop on timespan (day / week / month or year) to optimize dataset requests (heavy in terms of number of files to be manipulated).
 
 
+import calendar
+import datetime as dt
 import os
 import platform
 import subprocess
-import datetime as dt
 import time
-import calendar
 
 import pandas as pd
-
 
 # Copernicus Marine API Key - Login Credentials
 # To create an account reach: http://marine.copernicus.eu/services-portfolio/register-now/.

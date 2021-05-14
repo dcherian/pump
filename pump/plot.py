@@ -1,19 +1,26 @@
-import cf_xarray
-import colorcet
+import itertools
+
 import dask
 import dcpy.plots
-import itertools
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from cycler import cycler
+
+import xarray
 import xarray as xr
 
-from .calc import get_dcl_base_Ri, get_mld, calc_reduced_shear, calc_kpp_terms
+from .calc import calc_kpp_terms, calc_reduced_shear, get_dcl_base_Ri, get_mld
 from .mdjwf import dens
 
 
-import xarray
+def fix_gradient_edge_labels(obj, dim):
+    diff = obj[dim].diff(dim).data / 2
+    diff[1:-1] = 0
+    diff[-1] *= -1
+    diff = np.insert(diff, -2, 0)
+    return obj.assign_coords({dim: obj[dim].data + diff})
 
 
 cmaps = {
@@ -29,6 +36,15 @@ cmaps = {
         norm=mpl.colors.TwoSlopeNorm(vcenter=-5e-7, vmin=-5e-4, vmax=1e-4),
         cmap=mpl.cm.RdBu_r,
     ),
+}
+
+# Smyth & Moum (2013) colors
+sm13_cycler = {
+    "axes.prop_cycle": cycler(
+        color=["#212121", "#FF5722", "#2196F3", "#4CAF50"],
+        linestyle=["-", "-", "-", "--"],
+        linewidth=[1] * 3 + [1.5],
+    )
 }
 
 
@@ -81,13 +97,13 @@ def plot_depths(ds, ax=None, **kwargs):
         ax = plt.gca()
 
     if "euc_max" in ds:
-        heuc = ds.euc_max.plot.line(ax=ax, color="k", lw=1, _labels=False, **kwargs)
+        ds.euc_max.plot.line(ax=ax, color="k", lw=1, _labels=False, **kwargs)
 
     if "dcl_base" in ds:
-        hdcl = ds.dcl_base.plot.line(ax=ax, color="gray", lw=1, _labels=False, **kwargs)
+        ds.dcl_base.plot.line(ax=ax, color="gray", lw=1, _labels=False, **kwargs)
 
     if "mld" in ds:
-        hmld = (ds.mld).plot.line(ax=ax, color="k", lw=0.5, _labels=False, **kwargs)
+        ds.mld.plot.line(ax=ax, color="k", lw=0.5, _labels=False, **kwargs)
 
 
 def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
@@ -100,6 +116,10 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
         # Better to call differentiate on log-transformed variable
         # This is a nicer estimate of the gradient and is analytically equal
         per = factor * np.log(np.abs(v)).compute().differentiate("longitude")
+
+        # assign one-sided derivative to mid point
+        per = fix_gradient_edge_labels(per, "longitude")
+
         # hdl = per.plot(
         #    ax=ax2,
         #    x="longitude",
@@ -157,7 +177,7 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
     )
 
     factor = dict(zip(ax.keys(), [1, 1, -2, 1]))
-    rhs = xr.zeros_like(ds.bs)
+    rhs = fix_gradient_edge_labels(xr.zeros_like(ds.bs), "longitude")
     per = dict()
     for var in ax.keys():
         if var not in ["u", "b", "contrib"]:
@@ -1475,3 +1495,25 @@ def plot_daily_cycles(ds):
 
     f.set_size_inches((dcpy.plots.pub_fig_width("jpo", "medium 2"), 6))
     return f, ax
+
+
+def plot_Rig_u(ds):
+
+    f, ax = plt.subplots(3, 1, sharex=True, sharey=True, squeeze=False)
+    ds.T.plot(robust=True, x="time", ax=ax[0, 0])
+    ds.Rig.plot(
+        robust=True,
+        x="time",
+        levels=[0.25, 0.5, 0.75, 1.0],
+        ax=ax[1, 0],
+        cmap=mpl.cm.Spectral_r,
+    )
+    ds.u.plot(robust=True, x="time", ax=ax[2, 0])
+
+    for axx in ax.flat:
+        if "mld" in ds.variables:
+            ds.mld.plot(ax=axx, color="k", lw=0.25, _labels=False)
+        if "eucmax" in ds.variables:
+            ds.eucmax.plot(ax=axx, color="w", lw=0.5, _labels=False)
+
+    dcpy.plots.clean_axes(ax)
