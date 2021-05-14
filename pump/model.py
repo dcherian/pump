@@ -1,6 +1,6 @@
 import glob
 import time
-
+import cf_xarray as cfxr
 import dask
 import dask.delayed
 import dcpy.plots
@@ -230,7 +230,7 @@ def read_roms_dataset(fnames, **chunk_kwargs):
     # ds = make_cartesian(ds).cf.guess_coord_axis()
     # ds.cf.decode_vertical_coords()
 
-    return ds
+    return ds.cf.guess_coord_axis()
 
 
 def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr="0*"):
@@ -239,8 +239,8 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
 
     stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
 
-    print(f"Reading {stationdirname}/{globstr}.nc ...")
-    # station = (
+    #print(f"Reading {stationdirname}/{globstr}.nc ...")
+    #station = (
     #    xr.open_mfdataset(
     #        f"{stationdirname}/{globstr}.nc",
     #        parallel=True,
@@ -249,10 +249,11 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     #    )
     #    .sortby("latitude")
     #    .squeeze()
-    # )
+    #)
 
     station = xr.open_mfdataset(
-        f"{dirname}/STATION_DATA/*.zarr", parallel=True, engine="zarr"
+        f"{dirname}/STATION_DATA/*.zarr", parallel=True, engine="zarr", backend_kwargs={"consolidated": True},
+        chunks={"longitude": 3, "latitude": 3},
     )
 
     # TODO: for some reason there are duplicated timestamps near the end
@@ -265,7 +266,7 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     # station = xr.decode_cf(station)
     # station["time"] = station.time - pd.Timedelta("7h")
 
-    metrics = metrics.sel(
+    metrics = metrics.reindex(
         longitude=station.longitude.values,
         latitude=station.latitude.values,
         method="nearest",

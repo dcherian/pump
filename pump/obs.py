@@ -556,3 +556,61 @@ def read_tao_zarr(kind="gridded", **kwargs):
     #tao.densT.attrs["description"] = "density using T, S"
 
     return tao
+
+
+def get_nan_block_lengths(obj, dim, index):
+    """
+    Return an object where each NaN element in 'obj' is replaced by the
+    length of the gap the element is in.
+    """
+
+    from xarray import Variable, ones_like
+
+    # make variable so that we get broadcasting for free
+    index = Variable([dim], index)
+
+    # algorithm from https://github.com/pydata/xarray/pull/3302#discussion_r324707072
+    arange = ones_like(obj) * index
+    valid = obj.notnull()
+    valid_arange = arange.where(valid)
+    cumulative_nans = valid_arange.ffill(dim=dim).fillna(index[0])
+
+    nan_block_lengths = (
+        cumulative_nans.diff(dim=dim, label="upper")
+        .reindex({dim: obj[dim]})
+        .where(valid)
+        .bfill(dim=dim)
+        .where(~valid, 0)
+        .fillna(index[-1] - valid_arange.max())
+    )
+
+    return nan_block_lengths
+
+
+def make_enso_mask(threshold=6):
+    from xarray.core.duck_array_ops import timedelta_to_numeric
+
+    oni = process_oni()
+    ntime = oni.sizes["time"]
+    freq = xr.infer_freq(oni.time)
+    fill_value = "_______"
+
+    enso = xr.DataArray(
+        np.full((ntime,), fill_value=fill_value),
+        dims=("time"),
+        coords={"time": oni.time},
+        name="ENSO",
+    )
+
+    # threshold =  6 #int(pd.Timedelta(threshold) / pd.Timedelta(f"1{freq}"))
+    for phase, mask in zip(["El-Nino", "La-Nina"], [oni >= 0.5, oni <= -0.5]):
+        length = get_nan_block_lengths(
+            xr.where(mask, np.nan, 0), "time", np.arange(ntime)
+        ).data
+        enso[length >= threshold] = phase
+
+    length = get_nan_block_lengths(
+        xr.where(enso == fill_value, np.nan, 0), "time", np.arange(oni.sizes["time"])
+    )
+    enso[length >= threshold] = "Neutral"
+    return enso[enso.data != fill_value].reindex_like(enso, method="nearest")
