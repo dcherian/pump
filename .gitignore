@@ -401,3 +401,4 @@ TSWLatexianTemp*
 
 pump-backup/*
 dask-worker-space/*
+backup*/*

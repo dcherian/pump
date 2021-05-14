@@ -178,7 +178,14 @@ def get_euc_max(u, kind="model"):
 
     if kind == "data":
         u = u.fillna(-100)
-    euc_max = _get_max(u, "depth")
+
+
+    dim = u.cf.coordinates.get("vertical", [None])[0]
+    if not dim:
+        dim = u.cf.coordinates.get("Z", [None])[0]
+    if not dim:
+        dim = "depth"
+    euc_max = _get_max(u, dim)
 
     euc_max.attrs["long_name"] = "Depth of EUC max"
     euc_max.attrs["units"] = "m"
@@ -421,13 +428,13 @@ def get_mld_tao(dens):
     mld.attrs["description"] = (
         "Interpolate density to 1m grid. "
         "Search for max depth where "
-        " |drho| > 0.01 and N2 > 1e-5"
+        " |drho| > 0.03 and N2 > 1e-5"
     )
 
     return mld
 
 
-def get_mld(dens):
+def get_mld(dens, min_delta_dens=0.015, min_N2=1e-5):
     """
     Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
     # Interpolates density to 1m grid.
@@ -435,22 +442,35 @@ def get_mld(dens):
     if not isinstance(dens, xr.DataArray):
         raise ValueError(f"Expected DataArray, received {dens.__class__.__name__}")
 
-    # gcm1 is 1m
-    # densi = dcpy.interpolate.pchip(dens, "depth", np.arange(0, -200, -1))
-    densi = dens  # .interp(depth=np.arange(0, -200, -1))
-    drho = densi - densi.isel(depth=0)
-    N2 = -9.81 / 1025 * densi.differentiate("depth")
+    if "Z" in dens.cf:
+        depth = dens.cf["Z"]
+        key = "Z"
+    else:
+        depth = dens.cf["vertical"]
+        key = "vertical"
 
-    thresh = xr.where((np.abs(drho) > 0.015) & (N2 > 1e-5), drho.depth, np.nan)
-    mld = thresh.max("depth")
+    positive = depth.attrs.get("positive", "up")
+    if positive == "down":
+        assert np.all(depth > 0)
+        func = "min"
+        sign = -1
+    else:
+        func = "max"
+        sign = 1
+
+    drho = dens - dens.cf.sel(**{key: 0, "method": "nearest"})
+    N2 = sign * -9.81 / 1025 * dens.cf.differentiate(key)
+
+    thresh = xr.where((np.abs(drho) > min_delta_dens) & (N2 > min_N2), depth, np.nan)
+    mld = getattr(thresh, func)("depth")
 
     mld.name = "mld"
     mld.attrs["long_name"] = "MLD"
     mld.attrs["units"] = "m"
     mld.attrs["description"] = (
         "Interpolate density to 1m grid. "
-        "Search for max depth where "
-        " |drho| > 0.01 and N2 > 1e-5"
+        f"Search for {func} depth where "
+        f" |drho| > {min_delta_dens} and N2 > {min_N2}"
     )
 
     return mld

@@ -39,7 +39,7 @@ Farther west, using a bulk Richardson number to character the upper equatorial o
   - [ ] You might need to explain why diagnose Ri_b instead of Ri_g.
   - [ ] Different vertical resolutions among temperature and velocity, and at different longitudes and seasons need to be addresses. When computing Ri_g,  you should use the same vertical resolution of T and U. If the resolutions are different at different longitudes and seasons, they should be noted. I will suggest a table of vertical resolutions of T, U, and Ri.
   - [ ] The error of using constant S needs to be addressed too. Instead of constant S, you could also use the S from T-S relations, at different longitudes and seasons. Again, the potential errors in estimates of Ri_g and Ri_b should be addresses.
-  - [ ] Marginal stable does not imply instability. Disturbance is needed to trigger the instability, such as internal waves from wind or mixed layer pumping,  and entrainment layer turbulence, and whatever. The strength and mechanism of disturbance might determine the strength of deep-cycle turbulence. In other words, it might be marginal stable at 170W, but does not imply deep-cycle turbulence.] 
+  - [ ] Marginal stable does not imply instability. Disturbance is needed to trigger the instability, such as internal waves from wind or mixed layer pumping,  and entrainment layer turbulence, and whatever. The strength and mechanism of disturbance might determine the strength of deep-cycle turbulence. In other words, it might be marginal stable at 170W, but does not imply deep-cycle turbulence.
 
 
 - [ ] check tao 110 chipod data

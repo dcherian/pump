@@ -128,7 +128,6 @@ def tao_merge_10m_and_hourly(kind):
     m10 = tao_read_and_merge("10m", kind)
     hr = tao_read_and_merge("hr", kind)
 
-    # resample is really slow because it doesn't know about dask.
     # instead reindex to a 10min freq and use coarsen.
     new_index = pd.date_range(
         start=m10.time[0].dt.round("H").values,
@@ -335,9 +334,9 @@ def read_argo():
 def process_nino34():
     root = pump.OPTIONS["root"]
 
-    nino34 = process_esrl_index("nina34.data")
+    nino34 = process_esrl_index("nino34.data", skipfooter=5)
 
-    nino34.to_netcdf(root + "/obs/nino34.nc")
+    return nino34  #nino34.to_netcdf(root + "/obs/nino34.nc")
 
 
 def process_oni():
@@ -365,6 +364,7 @@ def process_esrl_index(file, skipfooter=3):
         skiprows=1,
         na_filter=False,
         skipfooter=skipfooter,
+        engine="python",
         dtype=np.float32,
     )
 
