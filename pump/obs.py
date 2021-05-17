@@ -587,7 +587,7 @@ def get_nan_block_lengths(obj, dim, index):
     return nan_block_lengths
 
 
-def make_enso_mask(threshold=6):
+def make_enso_mask_old(threshold=6):
     from xarray.core.duck_array_ops import timedelta_to_numeric
 
     oni = process_oni()
@@ -614,3 +614,32 @@ def make_enso_mask(threshold=6):
     )
     enso[length >= threshold] = "Neutral"
     return enso[enso.data != fill_value].reindex_like(enso, method="nearest")
+
+
+def make_enso_mask():
+    from xarray.core.missing import _get_nan_block_lengths
+
+    nino34 = process_nino34()
+    ssta = nino34 - nino34.mean()  # .rolling(time=6, center=True).mean()
+
+    enso = xr.full_like(ssta, fill_value="Neutral", dtype="U8")
+    index = ssta.indexes["time"] - ssta.indexes["time"][0]
+    en_mask = _get_nan_block_lengths(
+        xr.where(ssta > 0.4, np.nan, 0), dim="time", index=index
+    ) >= pd.Timedelta("169d")
+
+    ln_mask = _get_nan_block_lengths(
+        xr.where(ssta < -0.4, np.nan, 0), dim="time", index=index
+    ) >= pd.Timedelta("169d")
+    # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
+
+    enso.loc[en_mask] = "El-Nino"
+    enso.loc[ln_mask] = "La-Nina"
+    # enso.loc[neut_mask] = "Neutral"
+
+    enso.name = "enso_phase"
+    enso.attrs[
+        "description"
+    ] = "ENSO phase; El-Nino = NINO34 SSTA > 0.4 for at least 6 months; La-Nina = NINO34 SSTA < -0.4 for at least 6 months"
+
+    return enso
