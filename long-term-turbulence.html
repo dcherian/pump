@@ -303,8 +303,8 @@
   </ul>
  </li>
  <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#lat-binne-jq-dcl-with-enso-phase">
-   Lat binne Jq_dcl with enso phase
+  <a class="reference internal nav-link" href="#lat-binned-jq-dcl-with-enso-phase-tiw-ke">
+   Lat binned Jq_dcl with enso phase, TIW KE
   </a>
   <ul class="visible nav section-nav flex-column">
    <li class="toc-h2 nav-item toc-entry">
@@ -3200,6 +3200,7 @@ dask       : 2.30.0
 
 <span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
     <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">client</span>
 <span class="c1">#if &quot;cluster&quot; in locals():</span>
 <span class="c1">#    cluster.close()</span>
 
@@ -3242,7 +3243,7 @@ dask       : 2.30.0
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/distributed/node.py:151: UserWarning: Port 8787 is already in use.
 Perhaps you already have a cluster running?
-Hosting the HTTP server on port 43640 instead
+Hosting the HTTP server on port 36050 instead
   warnings.warn(
 </pre></div>
 </div>
@@ -3256,7 +3257,7 @@ Hosting the HTTP server on port 43640 instead
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "8db3b0e4c80841de8607e850162d1bd1", "version_major": 2, "version_minor": 0}
+{"model_id": "f8c7eb3a20f748ed8cf0621a4657b798", "version_major": 2, "version_minor": 0}
 </script></div>
 </div>
 <div class="cell docutils container">
@@ -3275,8 +3276,8 @@ Hosting the HTTP server on port 43640 instead
 <td style="vertical-align: top; border: 0px solid white">
 <h3 style="text-align: left;">Client</h3>
 <ul style="text-align: left; list-style: none; margin: 0; padding: 0;">
-  <li><b>Scheduler: </b>tcp://10.12.1.2:44256</li>
-  <li><b>Dashboard: </b><a href='https://jupyterhub.ucar.edu/dav/user/dcherian/proxy/43640/status' target='_blank'>https://jupyterhub.ucar.edu/dav/user/dcherian/proxy/43640/status</a></li>
+  <li><b>Scheduler: </b>tcp://10.12.1.2:40087</li>
+  <li><b>Dashboard: </b><a href='https://jupyterhub.ucar.edu/dav/user/dcherian/proxy/36050/status' target='_blank'>https://jupyterhub.ucar.edu/dav/user/dcherian/proxy/36050/status</a></li>
 </ul>
 </td>
 <td style="vertical-align: top; border: 0px solid white">
@@ -11482,8 +11483,8 @@ Coordinates:
 </div>
 </div>
 </div>
-<div class="section" id="lat-binne-jq-dcl-with-enso-phase">
-<h1>Lat binne Jq_dcl with enso phase<a class="headerlink" href="#lat-binne-jq-dcl-with-enso-phase" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="lat-binned-jq-dcl-with-enso-phase-tiw-ke">
+<h1>Lat binned Jq_dcl with enso phase, TIW KE<a class="headerlink" href="#lat-binned-jq-dcl-with-enso-phase-tiw-ke" title="Permalink to this headline">¶</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lat_binned_Jq</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl_Jq</span><span class="o">.</span><span class="n">groupby_bins</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
@@ -11493,7 +11494,9 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">lat_binned_Jq</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;latitude_bins&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">lat_binned_Jq</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;latitude_bins&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">loc</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">fg</span><span class="o">.</span><span class="n">name_dicts</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
+    <span class="p">(</span><span class="mf">1e4</span><span class="o">*</span><span class="n">tiwke</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="p">[</span><span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">highlight_enso</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
 </pre></div>
 </div>
