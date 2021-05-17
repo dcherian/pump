@@ -1517,3 +1517,26 @@ def plot_Rig_u(ds):
             ds.eucmax.plot(ax=axx, color="w", lw=0.5, _labels=False)
 
     dcpy.plots.clean_axes(ax)
+
+
+def highlight_enso(ax, enso, coord="time"):
+    coord = enso[coord]
+    ylim = ax.get_ylim()
+    ax.fill_between(
+        coord.data,
+        ylim[0],
+        ylim[1],
+        where=enso.data == "El-Nino",
+        color="r",
+        alpha=0.2,
+        zorder=-1,
+    )
+    ax.fill_between(
+        coord.data,
+        ylim[0],
+        ylim[1],
+        where=enso.data == "La-Nina",
+        color="b",
+        alpha=0.2,
+        zorder=-1,
+    )
