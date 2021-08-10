@@ -105,7 +105,7 @@ one_day = pd.Timedelta("1D")
 
 # break requests along time dimension
 date_stops = pd.date_range(date_start - one_day, date_end + one_day, freq="M")
-date_starts = (date_stops[:-1] + pd.Timedelta("1D"))
+date_starts = date_stops[:-1] + pd.Timedelta("1D")
 date_stops = date_stops[1:]
 
 assert len(date_starts) == len(date_stops)
@@ -138,14 +138,14 @@ pre_name = "strip_"
 
 
 # Check if output directory is well formated and if it exists, otherwise create it
-#absolute_path_substring = ["/home/", "C:\\"]
+# absolute_path_substring = ["/home/", "C:\\"]
 ##if local_storage_directory_name[-1] != "/":
 #    local_storage_directory_name = local_storage_directory_name + "/"
-#if not any(x in local_storage_directory_name for x in absolute_path_substring):
+# if not any(x in local_storage_directory_name for x in absolute_path_substring):
 #    local_storage_directory_name = (
 #        os.path.expanduser("~") + "/" + local_storage_directory_name
 #    )
-#if not os.path.exists(local_storage_directory_name):
+# if not os.path.exists(local_storage_directory_name):
 #    os.makedirs(local_storage_directory_name)
 
 print("----------- Saving to {} -------------".format(local_storage_directory_name))

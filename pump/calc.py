@@ -1,14 +1,14 @@
 import warnings
 
+import cf_xarray
 import dask
 import dcpy
 import dcpy.eos
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-import xfilter
-
 import xarray as xr
+import xfilter
 
 
 def ddx(a):
@@ -174,11 +174,10 @@ def _get_max(var, dim="depth"):
 
 
 def get_euc_max(u, kind="model"):
-    """ Given a u field, returns depth of max speed i.e. EUC maximum. """
+    """Given a u field, returns depth of max speed i.e. EUC maximum."""
 
     if kind == "data":
         u = u.fillna(-100)
-
 
     dim = u.cf.coordinates.get("vertical", [None])[0]
     if not dim:
@@ -381,9 +380,6 @@ def get_kpp_mld(subset, debug=False):
     Given subset.dens, subset.u, subset.v, estimate MLD as shallowest depth
     where KPP Rib < 0.05.
     """
-
-    import dask
-
     b = (-9.81 / 1025) * subset.dens
     V = np.hypot(subset.u, subset.v)
     Rib = (b.isel(depth=0) - b) * (-b.depth) / (V.isel(depth=0) - V) ** 2
@@ -1032,7 +1028,7 @@ def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
 
 
 def calc_ptp(sst, period=None, debug=False):
-    """ Estimate TIW SST PTP amplitude. """
+    """Estimate TIW SST PTP amplitude."""
 
     def _calc_ptp(obj, dim="time"):
         obj = obj.unstack()
@@ -1061,7 +1057,7 @@ def calc_ptp(sst, period=None, debug=False):
 
 
 def estimate_N2_evolution_terms(ds):
-    """ Estimate N² budget terms. """
+    """Estimate N² budget terms."""
 
     ds["b"] = -9.81 / 1035 * ds.dens
 
@@ -1082,13 +1078,13 @@ def estimate_N2_evolution_terms(ds):
 
 
 def estimate_shear_evolution_terms(ds):
-    """ Estimates shear budget terms. """
+    """Estimates shear budget terms."""
     f = dcpy.oceans.coriolis(ds.latitude)
     uz = ds.u.differentiate("depth")
     vz = ds.v.differentiate("depth")
 
     b = -9.81 / 1035 * ds.dens
-    #### zonal shear
+    # --- zonal shear
     duzdt = xr.Dataset()
     # duzdt["shear"] = uz
     duzdt["xadv"] = -ds.u * ddx(uz)
@@ -1116,7 +1112,7 @@ def estimate_shear_evolution_terms(ds):
     duzdt["buoy"].attrs["term"] = "$-b_x$"
     duzdt["fric"].attrs["term"] = "$F^x_z$"
 
-    #### meridional shear
+    # --- meridional shear
     dvzdt = xr.Dataset()
     # dvzdt["shear"] = vz
     dvzdt["xadv"] = -ds.u * ddx(vz)
@@ -1161,12 +1157,11 @@ def estimate_shear_evolution_terms(ds):
 def coare_fluxes_jra(ocean, forcing):
     """
     Calculates COARE3.5 bulk fluxes using MITgcm output and JRA forcing files.
+
     1. ignores rain for now.
     2. Remember to do forcing['time'] = forcing.time.dt.floor("h") to work around some
        weird bug.
     """
-
-    import cf_xarray
     import xcoare
 
     ocean = ocean.cf.sel(Z=0, method="nearest", drop=True)

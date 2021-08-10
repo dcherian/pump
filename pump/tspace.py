@@ -36,7 +36,7 @@ def get_avg_dz(group):
 
 
 def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
-    """ Regrid chameleon profiles to temperature space.
+    """Regrid chameleon profiles to temperature space.
 
     Also calculates wci.
 

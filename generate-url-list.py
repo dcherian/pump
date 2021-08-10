@@ -14,7 +14,7 @@ def filter_night(string):
 
 
 def make_wget_str(url, name):
-    """ chooses netCDF4 and subsets to needed variables."""
+    """chooses netCDF4 and subsets to needed variables."""
     return f"{url[:-5]}.nc4?lat,lon,time,sea_surface_temperature,quality_level -O 'datasets/modis/{name}'"
 
 

@@ -4,10 +4,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
+import xarray as xr
 from numba import float64, guvectorize
 from toolz import keyfilter
-
-import xarray as xr
 
 good_periods = {
     # -110: [1, 2, 3, 4, 5, 7, 11, 13, 14,],  # 16 is borderline

@@ -10,7 +10,6 @@ import functools
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
 import xarray as xr
 from xarray.core.formatting import format_item
 from xarray.plot.utils import label_from_attrs

@@ -3,9 +3,9 @@ import dcpy
 import numpy as np
 import pandas as pd
 import tqdm
+import xarray as xr
 
 import pump
-import xarray as xr
 
 from . import mdjwf
 from .constants import *
@@ -79,7 +79,7 @@ def read_tao_adcp(domain=None, freq="dy", dirname=None):
 
 
 def tao_read_and_merge(suffix, kind):
-    """ read non-ADCP files. """
+    """read non-ADCP files."""
 
     root = pump.OPTIONS["root"]
     if kind == "temp":
@@ -124,7 +124,7 @@ def tao_read_and_merge(suffix, kind):
 
 
 def tao_merge_10m_and_hourly(kind):
-    """ Merge 10minute and hourly data into one record. """
+    """Merge 10minute and hourly data into one record."""
     m10 = tao_read_and_merge("10m", kind)
     hr = tao_read_and_merge("hr", kind)
 
@@ -174,7 +174,7 @@ def read_eq_tao_salt_hr():
 
 
 def read_eq_tao_temp_hr():
-    """ Read hourly resolution temperature for equatorial moorings. """
+    """Read hourly resolution temperature for equatorial moorings."""
 
     # sfiles = [root+'/obs/tao/s0n'+lon+'_hr.cdf'
     #           for lon in ['156e', '165e', '140w', '110w', '170w']]
@@ -346,7 +346,7 @@ def process_oni():
 
 
 def process_esrl_index(file, skipfooter=3):
-    """ Read and make xarray version of climate indices from ESRL."""
+    """Read and make xarray version of climate indices from ESRL."""
     root = pump.OPTIONS["root"]
 
     month_names = (
