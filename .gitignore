@@ -103,6 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# flymake
+*_flymake*
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
@@ -394,11 +396,16 @@ TSWLatexianTemp*
 *~
 
 *.png
+# data files
+dask-worker-space
+_build
+auto
 *.nc
-*.zarr
-*.cdf
 *.mat
+*.zarr
 
 pump-backup/*
-dask-worker-space/*
 backup*/*
+.DS_Store
+.auctex-auto
+frag-master.tex
