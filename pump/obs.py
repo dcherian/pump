@@ -336,7 +336,7 @@ def process_nino34():
 
     nino34 = process_esrl_index("nino34.data", skipfooter=5)
 
-    return nino34  #nino34.to_netcdf(root + "/obs/nino34.nc")
+    return nino34  # nino34.to_netcdf(root + "/obs/nino34.nc")
 
 
 def process_oni():
@@ -548,12 +548,12 @@ def read_tao_zarr(kind="gridded", **kwargs):
     tao.depth.attrs.update({"axis": "Z", "positive": "up"})
 
     # tao = tao.chunk({"depth": -1, "time": 10000})
-    #tao["densT"] = dcpy.eos.pden(35, tao.T, tao.depth)
-    #tao.densT.attrs["long_name"] = "$ρ_T$"
-    #tao.densT.attrs["description"] = "density from T only, assuming S=35"
+    # tao["densT"] = dcpy.eos.pden(35, tao.T, tao.depth)
+    # tao.densT.attrs["long_name"] = "$ρ_T$"
+    # tao.densT.attrs["description"] = "density from T only, assuming S=35"
 
-    #tao["dens"] = dcpy.eos.pden(tao.S, tao.T, tao.depth)
-    #tao.densT.attrs["description"] = "density using T, S"
+    # tao["dens"] = dcpy.eos.pden(tao.S, tao.T, tao.depth)
+    # tao.densT.attrs["description"] = "density using T, S"
 
     return tao
 
