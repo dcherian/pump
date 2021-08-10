@@ -35,7 +35,7 @@ def get_avg_dz(group):
     return dz.mean("time")
 
 
-def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
+def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
     """Regrid chameleon profiles to temperature space.
 
     Also calculates wci.
@@ -102,8 +102,8 @@ def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
         {"description": "number of profiles in average"},
     )
     if trim_mld:
-        means["Tmld"] = ([], trimmed.Tmld.mean(), {"description": "mean Tmld"})
-        means["σmld"] = ([], trimmed.σmld.mean(), {"description": "mean σmld"})
+        means["Tmld"] = ([], trimmed.Tmld.mean().data, {"description": "mean Tmld"})
+        means["σmld"] = ([], trimmed.σmld.mean().data, {"description": "mean σmld"})
 
     # TODO: this could be better. I could interp a really smooth profile and then get distances out.
     # This loses heat I think; could do some conservative regridding
@@ -125,7 +125,12 @@ def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
 
     ρcp = 1025 * 4000
     means["theta_f"] = ("z_f", bins)
+    means.theta_f.attrs["long_name"] = "$θ_f$"
+    means.theta_f.attrs["units"] = "°C"
+
     means["dT"] = ("z_c", np.diff(bins))
+    means.dT.attrs["long_name"] = "$Δθ$"
+    means.dT.attrs["units"] = "°C"
 
     means["dTdz"] = means["dT"] / means["dz"]
     means.coords["nobs"] = binned.count().chi
@@ -146,12 +151,21 @@ def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
         fill_value=np.nan,
     )
 
-    means["dJdz"] = grid.diff(means.Jq, "Z") / grid.diff(means.z_c, "Z")
     means["theta_c"] = grid.interp(means.theta_f, axis="Z")
+    means.theta_c.attrs["long_name"] = "$θ_c$"
+    means.theta_c.attrs["units"] = "°C"
+
+    means["dJdz"] = grid.diff(means.Jq, "Z") / grid.diff(means.z_c, "Z")
+    means.dJdz.attrs["long_name"] = "$∂J_q/∂z$"
+    means.dJdz.attrs["units"] = "W/m³"
+
     means["dJdT"] = -grid.diff(means.Jq, "Z") / grid.diff(means.theta_c, "Z")
-    means["wci"] = means.dJdT / ρcp
+    means.dJdT.attrs["long_name"] = "$∂J/∂θ$"
+    means.dJdT.attrs["units"] = "W/m²/°C"
+
+    means["wci"] = means.dJdT / ρcp * 86400
     means.wci.attrs["long_name"] = "$w_{ci}$"
-    means.wci.attrs["units"] = "m/s"
+    means.wci.attrs["units"] = "m/d"
 
     means = _rename_to_theta_coordinates(means)
 
@@ -160,12 +174,12 @@ def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
         # f.add_grispec
         f, ax = plt.subplots(1, 3, sharey=True, constrained_layout=True)
 
-        profiles.theta.mean("time").cf.plot(ax=ax[0])
-        trimmed.theta.mean("time").cf.plot(ax=ax[0])
-        means.theta_f.plot(ax=ax[0], y="z_f", marker="x")
-
+        profiles.theta.mean("time").cf.plot(ax=ax[0], label="mean")
+        # trimmed.theta.mean("time").cf.plot(ax=ax[0], label="median")
+        means.theta_f.plot(ax=ax[0], y="z_f", marker="x", label="regridded")
         # trimmed.theta.median("time").cf.plot(ax=ax[0])
-        dcpy.plots.linex(bins, ax=ax[0])
+        dcpy.plots.linex(bins, ax=ax[0], legend_label="θ bin")
+        ax[0].legend()
 
         means.Jq.cf.plot.step(ax=ax[1], y="z_c", where="mid")
 
@@ -174,7 +188,7 @@ def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
         dcpy.plots.set_axes_color(axdj, "C3", spine="top")
         dcpy.plots.set_axes_color(ax[1], "C0", spine="bottom")
 
-        means.wci.cf.plot.step(ax=ax[2], y="z_f", xlim=(-1e-4, 1e-4))
+        means.wci.cf.plot.step(ax=ax[2], y="z_f")
 
         dcpy.plots.linex(0, ax=ax[2])
         dcpy.plots.linex(0, ax=axdj, color="r")
@@ -206,3 +220,18 @@ def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
     if trim_mld:
         means = means.set_coords(["Tmld", "σmld"])
     return means
+
+
+def regrid_chameleon(profiles, bins, time_freq, debug=False, trim_mld=False):
+
+    dsets = [
+        regrid_chameleon_(
+            prof,
+            bins=bins,
+            trim_mld=False,
+            debug=False,
+        )
+        for _, prof in profiles.groupby(profiles.time.dt.floor(time_freq))
+    ]
+
+    return xr.concat(dsets, dim="time")
