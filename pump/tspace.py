@@ -1,9 +1,9 @@
 import dcpy.finestructure
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-import xgcm
-
 import numpy as np
 import xarray as xr
+import xgcm
 
 
 def _rename_to_theta_coordinates(means):
@@ -35,7 +35,23 @@ def get_avg_dz(group):
     return dz.mean("time")
 
 
-def process_chameleon_profiles(profiles, *, bins=None, debug=False, trim_mld=False):
+def regrid_chameleon(profiles, *, bins=None, debug=False, trim_mld=False):
+    """ Regrid chameleon profiles to temperature space.
+
+    Also calculates wci.
+
+    Parameters
+    ----------
+
+    profiles: xr.Dataset
+        Actual data.
+    bins: Sequence, optional
+        Temperature bins.
+    debug: bool, optional
+        Make debugging plots
+    trim_mld: bool, optional
+        Use dcpy.finestructure.trim_mld_mode_water first?
+    """
 
     trimmed = []
     for itime in range(profiles.sizes["time"]):
