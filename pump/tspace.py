@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 import xgcm
+import warnings
 
 
 def _rename_to_theta_coordinates(means):
@@ -107,7 +108,30 @@ def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
 
     # TODO: this could be better. I could interp a really smooth profile and then get distances out.
     # This loses heat I think; could do some conservative regridding
-    means.coords["dz"] = binned.map(get_avg_dz)
+    grid = xgcm.Grid(trimmed, coords={"Z": {"center": "depth"}}, periodic=False)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        zT = (
+            grid.transform(
+                profiles.depth.broadcast_like(profiles.theta),
+                axis="Z",
+                target=bins,
+                target_data=profiles.theta,
+                method="linear",
+            )
+            .ffill("time")
+            .bfill("time")
+        )
+
+    # means.coords["dz"] = binned.map(get_avg_dz)
+    # print(zT.mean("time"))
+    # plt.figure()
+    # zT.plot(x="time", robust=True)
+    # print(zTmean)
+
+    zTmean = zT.integrate("time") / xr.ones_like(zT).integrate("time")
+    dz = np.abs(zTmean.diff("theta"))
+    means.coords["dz"] = dz.drop("theta").rename({"theta": "theta_bins"})
 
     means = means.rename_dims({"theta_bins": "z_c"})
 
@@ -180,6 +204,8 @@ def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
         # trimmed.theta.median("time").cf.plot(ax=ax[0])
         dcpy.plots.linex(bins, ax=ax[0], legend_label="θ bin")
         ax[0].legend()
+        ax[0].set_xlim((min(bins) - 0.5, max(bins) + 0.2))
+        ax[0].set_ylim((140, None))
 
         means.Jq.cf.plot.step(ax=ax[1], y="z_c", where="mid")
 
