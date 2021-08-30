@@ -239,6 +239,8 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
 
     stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
 
+
+    #print(dirname)
     #print(f"Reading {stationdirname}/{globstr}.nc ...")
     #station = (
     #    xr.open_mfdataset(
@@ -254,7 +256,7 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     station = xr.open_mfdataset(
         f"{dirname}/STATION_DATA/*.zarr", parallel=True, engine="zarr", backend_kwargs={"consolidated": True},
         chunks={"longitude": 3, "latitude": 3},
-    )
+    ).cf.guess_coord_axis()
 
     # TODO: for some reason there are duplicated timestamps near the end
     # if ~station.indexes["time"].is_unique:
@@ -395,7 +397,7 @@ def read_metrics(dirname):
 
     metrics["cellvol"] = metrics.cellvol.where(metrics.cellvol > 0)
 
-    metrics["RF"] = RF
+    metrics.coords["RF"] = RF
 
     metrics["rAw"] = xr.DataArray(
         xmitgcm.utils.read_mds(dirname + "/RAW")["RAW"][lats, lons].astype("float32"),
@@ -419,6 +421,11 @@ def read_metrics(dirname):
     metrics["drF"] = xr.DataArray(
         xmitgcm.utils.read_mds(dirname + "/DRF")["DRF"].squeeze().astype("float32"),
         dims=["depth"],
+    )
+
+    metrics["drC"] = xr.DataArray(
+        xmitgcm.utils.read_mds(dirname + "/DRC")["DRC"].squeeze().astype("float32"),
+        dims=["RF"],
     )
 
     metrics["rAs"] = xr.DataArray(

@@ -6,9 +6,8 @@ import dcpy.eos
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
-import xfilter
-
 import xarray as xr
+import xfilter
 
 
 def ddx(a):
@@ -179,7 +178,6 @@ def get_euc_max(u, kind="model"):
     if kind == "data":
         u = u.fillna(-100)
 
-
     dim = u.cf.coordinates.get("vertical", [None])[0]
     if not dim:
         dim = u.cf.coordinates.get("Z", [None])[0]
@@ -246,7 +244,7 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None, depth_thresh=-150):
     #    euc_max = get_euc_max(data.u)
     # else:
     #    euc_max = data.eucmax
-    
+
     depth = data.Ri.cf["Z"]
 
     if np.any(depth > 0):
