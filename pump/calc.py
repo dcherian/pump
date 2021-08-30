@@ -228,7 +228,7 @@ def get_dcl_base_shear(data):
     return dcl_max
 
 
-def get_dcl_base_Ri(data, mld=None, eucmax=None):
+def get_dcl_base_Ri(data, mld=None, eucmax=None, depth_thresh=-150):
     """
     Estimates base of the deep cycle layer as max depth where Ri <= 0.25.
 
@@ -246,8 +246,10 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None):
     #    euc_max = get_euc_max(data.u)
     # else:
     #    euc_max = data.eucmax
+    
+    depth = data.Ri.cf["Z"]
 
-    if np.any(data.depth > 0):
+    if np.any(depth > 0):
         raise ValueError("depth > 0!")
 
     if "mld" in data and mld is None:
@@ -257,16 +259,16 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None):
 
     Ric = 0.54
 
-    dcl_max_1 = data.depth.where(
-        data.Ri.where((data.depth <= mld) & (data.depth > -150)) > Ric
-    ).max("depth")
+    dcl_max_1 = depth.where(
+        data.Ri.where((depth <= mld) & (depth > depth_thresh)) > Ric
+    ).cf.max("Z")
 
-    mask_2 = (data.depth <= (mld - 25)) & (np.abs(data.Ri - Ric) < 0.1)
+    mask_2 = (depth <= (mld - 25)) & (np.abs(data.Ri - Ric) < 0.1)
     if eucmax is not None:
-        mask_2 = mask_2 & (data.depth > eucmax)
-    dcl_max_2 = data.Ri.depth.where(mask_2)
-    counts = dcl_max_2.count("depth")
-    dcl_max_2 = dcl_max_2.fillna(-12345).max("depth")
+        mask_2 = mask_2 & (depth > eucmax)
+    dcl_max_2 = depth.where(mask_2)
+    counts = dcl_max_2.cf.count("Z")
+    dcl_max_2 = dcl_max_2.fillna(-12345).cf.max("Z")
 
     # cum_Ri = data.Ri.where(mask_2).cumsum("depth") / data.Ri.depth.copy(
     #    data=np.arange(1, data.sizes["depth"] + 1)
@@ -276,10 +278,10 @@ def get_dcl_base_Ri(data, mld=None, eucmax=None):
     maybe_too_shallow = np.abs(dcl_max_1 - mld) < 25
     dcl_max = xr.where(maybe_too_shallow & (counts > 0), dcl_max_2, dcl_max_1)
 
-    mask_3 = (data.depth <= mld) & (data.depth >= dcl_max)
+    mask_3 = (depth <= mld) & (depth >= dcl_max)
     if eucmax is not None:
-        mask_3 = mask_3 & (data.depth > eucmax)
-    median_dcl_Ri = data.Ri.where(mask_3).median("depth")
+        mask_3 = mask_3 & (depth > eucmax)
+    median_dcl_Ri = data.Ri.where(mask_3).cf.median("Z")
     median_Ri_too_high = median_dcl_Ri > (Ric + 0.05)
     dcl_max = dcl_max.where(np.logical_not(median_Ri_too_high), mld)
     # dcl_max = dcl_max.ffill("time")
@@ -434,7 +436,7 @@ def get_mld_tao(dens):
     return mld
 
 
-def get_mld(dens, min_delta_dens=0.015, min_N2=1e-5):
+def get_mld(dens, N2=None, min_delta_dens=0.015, min_N2=1e-5):
     """
     Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
     # Interpolates density to 1m grid.
@@ -459,10 +461,11 @@ def get_mld(dens, min_delta_dens=0.015, min_N2=1e-5):
         sign = 1
 
     drho = dens - dens.cf.sel(**{key: 0, "method": "nearest"})
-    N2 = sign * -9.81 / 1025 * dens.cf.differentiate(key)
+    if N2 is None:
+        N2 = sign * -9.81 / 1025 * dens.cf.differentiate(key)
 
     thresh = xr.where((np.abs(drho) > min_delta_dens) & (N2 > min_N2), depth, np.nan)
-    mld = getattr(thresh, func)("depth")
+    mld = getattr(thresh.cf, func)(key)
 
     mld.name = "mld"
     mld.attrs["long_name"] = "MLD"
@@ -1334,3 +1337,101 @@ def get_euc_bounds(usub, debug=False):
         dcpy.plots.linex(ym.squeeze().compute())
 
     return xr.Dataset({"yp": yp, "y0": y0, "ym": ym})
+
+
+def find_extent_ufunc(data, coord, breaks, debug=False):
+
+    from scipy.signal import find_peaks
+
+    minbaseheight = 10
+
+    orig_data = data
+    data = np.copy(data)
+    data[data < 5] = 0
+
+    peakidx, props = find_peaks(
+        data,
+        width=10,
+        # distance=10,
+        prominence=10,
+        # rel_height=0.4,
+    )
+
+    good_peaks = []
+    for ipeak, (l, r) in enumerate(zip(props["left_bases"], props["right_bases"])):
+        # if ipeak > 0:
+        #    if r == props["right_bases"][ipeak - 1]:
+        #        props["right_bases"][ipeak - 1] = l - 1
+        if data[l] < minbaseheight and data[r] < minbaseheight:
+            good_peaks.append(ipeak)
+
+    npeaks = len(good_peaks)
+    props = {k: v[good_peaks] for k, v in props.items()}
+    peakidx = peakidx[good_peaks]
+    used = []
+    idx = np.full((6, 3), fill_value=-12345)
+    for ipeak in range(npeaks):
+
+        for ibin, (lo, hi) in enumerate(zip(breaks[:-1], breaks[1:])):
+            peak_coord = coord[peakidx[ipeak]]
+            if peak_coord > lo and peak_coord <= hi:
+                # try to bin in the right place
+                # if there' already a peak in that slot, bump up by one;
+                # There's an extra buffer slot to account for this
+                if ibin not in used:
+                    whichpeak = ibin
+                    used.append(ibin)
+                else:
+                    whichpeak = ibin + 1
+                    used.append(ibin + 1)
+                if debug:
+                    print(f"binning {peak_coord} in bin {ibin}")
+
+        idx[whichpeak, 0] = props["left_bases"][ipeak]
+        idx[whichpeak, 1] = peakidx[ipeak]
+        idx[whichpeak, 2] = props["right_bases"][ipeak]
+
+    value = np.take(orig_data, idx, mode="wrap")
+    loc = np.take(coord, idx, mode="wrap")
+    value[idx == -12345] = np.nan
+    loc[idx == -12345] = np.nan
+
+    return loc, value, idx
+
+
+def find_mi_extent(subset, dim, debug=False, ax=None):
+    """Finds extent of marginally unstable zone"""
+
+    if debug:
+        if ax is None:
+            _, ax = plt.subplots(1, 1)
+        subset.cf.plot.line(y=dim, ax=ax, add_legend=False, lw=0.5)
+
+    breaks = [-np.inf, -4.5, -1.5, 1.5, 4.5, np.inf]
+    smoothed = subset.cf.rolling({dim: 11}, center=True).mean()
+    dimname = subset.cf[dim].name
+    loc, dcl_value, idx = xr.apply_ufunc(
+        find_extent_ufunc,
+        smoothed,
+        smoothed.cf[dim].data,
+        kwargs={"debug": debug, "breaks": breaks},
+        keep_attrs=False,
+        input_core_dims=[[dimname], [dimname]],
+        output_core_dims=[["peak", "point"]] * 3,
+        output_dtypes=[smoothed.dtype, smoothed.cf[dim].dtype, np.int64],
+        dask_gufunc_kwargs=dict(
+            output_sizes={"peak": 6, "point": 3}, allow_rechunk=True
+        ),
+        vectorize=True,
+        dask="parallelized",
+    )
+    loc["peak"] = ["south", "south-eq", "eq", "eq-north", "north", "nnorth"]
+    loc["point"] = ["left", "mid", "right"]
+
+    peaks = xr.Dataset({dim: loc, "dcl": dcl_value, "index": idx})
+
+    if debug:
+        ax.plot(peaks.dcl.data.ravel(), peaks[dim].data.ravel(), "rx")
+        dcpy.plots.liney(breaks[1:-1])
+
+    return peaks
