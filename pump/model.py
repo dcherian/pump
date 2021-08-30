@@ -1,5 +1,6 @@
 import glob
 import time
+
 import cf_xarray as cfxr
 import dask
 import dask.delayed
@@ -7,9 +8,8 @@ import dcpy.plots
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import xmitgcm
-
 import xarray as xr
+import xmitgcm
 
 from . import validate
 from .calc import (
@@ -130,7 +130,7 @@ def rename_mitgcm_budget_terms(hb, coords):
 
 
 def mitgcm_sw_prof(depth):
-    """ MITgcm Shortwave radiation penetration profile. """
+    """MITgcm Shortwave radiation penetration profile."""
     return 0.62 * np.exp(depth / 0.6) + (1 - 0.62) * np.exp(depth / 20)
 
 
@@ -239,10 +239,15 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
 
     stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
 
+<<<<<<< HEAD
 
     #print(dirname)
     #print(f"Reading {stationdirname}/{globstr}.nc ...")
     #station = (
+=======
+    # print(f"Reading {stationdirname}/{globstr}.nc ...")
+    # station = (
+>>>>>>> 97593caa2fee2ef95046e470de21bf313d58f708
     #    xr.open_mfdataset(
     #        f"{stationdirname}/{globstr}.nc",
     #        parallel=True,
@@ -251,10 +256,13 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     #    )
     #    .sortby("latitude")
     #    .squeeze()
-    #)
+    # )
 
     station = xr.open_mfdataset(
-        f"{dirname}/STATION_DATA/*.zarr", parallel=True, engine="zarr", backend_kwargs={"consolidated": True},
+        f"{dirname}/STATION_DATA/*.zarr",
+        parallel=True,
+        engine="zarr",
+        backend_kwargs={"consolidated": True},
         chunks={"longitude": 3, "latitude": 3},
     ).cf.guess_coord_axis()
 

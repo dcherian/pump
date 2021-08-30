@@ -7,7 +7,6 @@ except (ImportError, TypeError, RuntimeError):
     ncar_jobqueue = False
 
 import numpy as np
-
 import xarray as xr
 
 

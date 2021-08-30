@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tqdm
-
 import xarray as xr
 
 
@@ -530,7 +529,7 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
 
 
 def process_adcp_file(adcp_file: str, cruises):
-    """ processes an adcp adcp_file; finds matching CTD section. """
+    """processes an adcp adcp_file; finds matching CTD section."""
 
     expocode = os.path.split(adcp_file)[-1].split("_")[0].strip()
     print(expocode)

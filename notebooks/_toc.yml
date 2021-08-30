@@ -1,25 +1,29 @@
-- file: intro  # must have one
+format: jb-book
+root: intro
 
-- part: TIW Turbulence
+parts:
+- caption: TIW Turbulence
   chapters:
-    # - file: markdown
-    # - file: notebooks
-    - file: TIW-DCL
-    - file: dcl-paper
-    - file: ctd-adcp
-    - file: TIW-compositing
-    - file: vertical-velocity
+  - file: TIW-DCL
+  - file: dcl-paper
+  - file: ctd-adcp
+  - file: TIW-compositing
+  - file: vertical-velocity
 
-- part: Marginal Stability
+- caption: Marginal Stability
   chapters:
-    - file: bulk-Ri
-    - file: MI-extent
-    - file: tao-ri-analysis
-    - file: mi-simple-model
+  - file: bulk-Ri
+  - file: MI-extent
+  - file: tao-ri-analysis
+  - file: mi-simple-model
 
-- part: Other
+- caption: χpod/Chameleon
   chapters:
-    - file: long-term-turbulence
-    - file: les-tendencies
-    - file: heat-momentum-budget-checks
-    - file: submeso-deep-100
+  - file: equix-divergence
+
+- caption: Other
+  chapters:
+  - file: long-term-turbulence
+  - file: les-tendencies
+  - file: heat-momentum-budget-checks
+  - file: submeso-deep-100

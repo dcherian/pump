@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
 import xarray as xr
 
 
@@ -22,7 +21,7 @@ def write_to_txt(ds, outdir, prefix, interleave, t0=None):
 
 
 def interleave_time(ds, t0):
-    """ Interleaves time with values. For colpsh and colfrc files."""
+    """Interleaves time with values. For colpsh and colfrc files."""
 
     time = ds.cf["time"]
 
@@ -41,7 +40,7 @@ def interleave_time(ds, t0):
 
 
 def interpolate(ds, newz):
-    """ Interpolate to les Z grid"""
+    """Interpolate to les Z grid"""
 
     # dcpy.interpolate.UnivariateSpline(subset, "z_rho").interp(newz.values)
     interped = ds.cf.interp(

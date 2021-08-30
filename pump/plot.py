@@ -6,10 +6,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from cycler import cycler
-
 import xarray
 import xarray as xr
+from cycler import cycler
 
 from .calc import calc_kpp_terms, calc_reduced_shear, get_dcl_base_Ri, get_mld
 from .mdjwf import dens
@@ -1052,7 +1051,7 @@ def plot_dcl(subset, shear_max=False, zeros_flux=True, lw=2, kpp_terms=True):
 
 
 def debug_kpp_plot(sub):
-    """ Plot showing KPP terms estimated using a port of Bill Smyth's code. """
+    """Plot showing KPP terms estimated using a port of Bill Smyth's code."""
 
     h = calc_kpp_terms(sub)
 

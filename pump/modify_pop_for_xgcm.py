@@ -3,7 +3,6 @@ Module for modifying pop model output to be compatible with xgcm
 """
 
 import numpy as np
-
 import xarray as xr
 
 

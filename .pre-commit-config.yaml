@@ -1,40 +1,44 @@
 # https://pre-commit.com/
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v2.2.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
+      - id: seed-isort-config
+
   # isort should run before black as black sometimes tweaks the isort output
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.7.0
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.9.3
     hooks:
       - id: isort
+        files: .+\.py$
+
   # https://github.com/python/black#version-control-integration
-  - repo: https://github.com/psf/black
-    rev: 20.8b1
+  - repo: https://github.com/python/black
+    rev: 21.7b0
     hooks:
       - id: black
-  - repo: https://github.com/keewis/blackdoc
-    rev: v0.3.3
-    hooks:
-      - id: blackdoc
+
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.4
+    rev: 3.9.2
     hooks:
       - id: flake8
-  # - repo: https://github.com/Carreau/velin
-  #   rev: 0.0.8
-  #   hooks:
-  #     - id: velin
-  #       args: ["--write", "--compact"]
+
   - repo: https://github.com/pre-commit/mirrors-mypy
-    # version must correspond to the one in .github/workflows/ci-additional.yaml
-    rev: v0.812
+    rev: v0.910
     hooks:
-      - id: mypy
-        exclude: "properties|asv_bench"
+       - id: mypy
+         additional_dependencies: [types-all]
+
+  - repo: https://github.com/deathbeds/prenotebook
+    rev: f5bdb72a400f1a56fe88109936c83aa12cc349fa
+    hooks:
+       - id: prenotebook
+
+  - repo: https://github.com/myint/rstcheck
+    rev: 3f92957478422df87bd730abde66f089cc1ee19b
+    hooks:
+        - id: rstcheck
+
   # run this occasionally, ref discussion https://github.com/pydata/xarray/pull/3194
   # - repo: https://github.com/asottile/pyupgrade
   #   rev: v1.22.1

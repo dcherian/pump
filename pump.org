@@ -166,6 +166,67 @@ open_mfdataset).
 metrics files not available.
 #+end_example
 
+* NOAA CVP 2021 call
+** Marginal instability as hypothesis
+Overall Hypothesis: The large-scale wind and net surface fluxes acts to create a mean zonal shear S, and stratification N², such that the flow is in a state of marginal stability N²/S² ≈ 0.25 below the base of the mixed layer in the cold tongue.
+Marginally stable flow is the key physics underlying the cold tongue's importance to the climate syste:
+1. It keeps the cold tongue cold
+2. It makes the cold tongue a site of intense ocean heat uptake
+
+Hypothesis: The latitudinal and longitudinal extent of marginally stable flow is set by the extent of the EUC
+- is the SEC wider than the EUC? if so then EUC is the control on latitudinal extent?
+- bulk Ri analysis: longitudinal extent  is east of 165°E.
+What sets the large-scale structure of the shear?
+1. Zonal wind stress directly forces the SEC and creates a surface pressure gradient ∂P/∂x that forces the EUC.
+2. Meridional Ekman mass divergence in the near-surface ocean results in a Eulerian upwelling velocity w that upwells the EUC, intensifying the mean shear, eventually to the point at which shear turbulence is triggered and KE is dissipated.
+
+What sets the large-scale structure of the stratification?
+- ???
+
+What is the role of upwelling w?
+- Eulerian upwelling of zonal momentum is key to setting the mean shear and marginally stable flow.
+
+Split w into two: total eulerian upwelling velocity w = w_ci + w_iso; diathermal upwelling velocity w_ci ≈ (∂J/∂z) / (∂T/∂z); along-isotherm upwelling velocity w_iso = u.∇T
+- Does w_iso supply other properties i.e. tracers with zonal gradients on T-surfaces to the deep-cycle zone, where they get mixed up.
+- w_iso takes away the heat (and other tracers) dumped by w_ci?  
+
+Testable hypotheses:
+1. We hypothesize that we can infer total eulerian upwelling by estimating
+   1. w_iso = u.∇T ≈ u∂T/∂x calculated from large-scale TPOS array combined with argo sampling
+   2. w_ci = (∂J/∂z) / (∂T/∂z) which requires an estimate of ∂J/∂z potentially obtainable using χpods on a mooring.
+2. The latitudinal and zonal extents of the marginally stable zone are set by large-scale circulation (i.e. SEC-EUC shear) ≈ 170°W → 90°W and 2°S→2°N.
+
+   
+Intense deep-cycle turbulence is triggered daily in marginally stable flow.
+Deep-cycle turbulence cools the near surface allowing it to absorb more heat from the atmosphere, and then deposists that heat in the upper flanks of the EUC (a zone of large heat flux convergence ∂J/∂z and heating).
+
+It is essential that we understand the dynamics of mixing and upwelling in cold tongue; and that climate models accurately represent those dynamics....
+
+
+
+
+
+
+
+
+** Pathways of heat:
+Where is the heat moving off the equator?
+
+- Idealize as a two layer system. surface -> DCL Fbmax → EUC core (20°C)
+  measure surface flux; densely deploy χpods around Fbmax depth; assume Fb=0 at EUC core. This gives us cooling divergence above Fbmax; heating below Fbmax.
+  1. Trace heat pathways using lagrangian floats
+     a. keep them in lower box above EUC as much as possible?
+     b. or start in the west and have them profile up down; so they will in a loopy fashion (EUC → SEC → EUC) sampling W→E turbulence?
+  2. Links up with Karnauskus stuff about EUC encountering Galapagos.
+  3. Use heat flux divergence to test parmaterization performance in climate models
+** Connection between surface and thermocline
+Kessler et al (2005) PUMP
+- The relation between SST and thermocline depth is the key parameterization in simple ENSO models, with the memory carried in thermocline depth the dominant source of oscillation.
+- the oceanic vertical diffusivity is found to be a principal factor in the amplitude of their ENSO oscillations, with low background diffusivity producing a sharper thermocline and realistically more intense El Ni˜ no events
+
+** subtropical cells
+-
+
 * gyaan
 
 1. Maximum depth-integrated EUC transport at ≈ 135W.
