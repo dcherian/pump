@@ -239,15 +239,6 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
 
     stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
 
-<<<<<<< HEAD
-
-    #print(dirname)
-    #print(f"Reading {stationdirname}/{globstr}.nc ...")
-    #station = (
-=======
-    # print(f"Reading {stationdirname}/{globstr}.nc ...")
-    # station = (
->>>>>>> 97593caa2fee2ef95046e470de21bf313d58f708
     #    xr.open_mfdataset(
     #        f"{stationdirname}/{globstr}.nc",
     #        parallel=True,
