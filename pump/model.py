@@ -446,6 +446,111 @@ def read_metrics(dirname):
 
     return metrics
 
+def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=False, state=True, chunks=None):
+    if chunks is None:
+        chunks = {"latitude": -1, "longitude": 500}
+    gcmdir = "/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/"  # MITgcm output directory
+
+    # start date for les; noon is a good time (it is before sunrise)
+    sim_time = pd.Timestamp(start)  # pd.Timestamp("2003-01-01 12:00:00")
+
+    # ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)
+    # les_time_length = 366 * 15  # (days); length of time for forcing/pushing files
+
+    # don't change anything here
+    output_start_time = pd.Timestamp("1999-01-01")  # don't change
+    firstfilenum = (
+        (
+            pd.Timestamp(start) - output_start_time
+        )  # add one day offset to avoid bugs
+        .to_numpy()
+        .astype("timedelta64[D]")
+        .astype("int")
+    ) + 1
+    lastfilenum = ((
+            pd.Timestamp(stop) - output_start_time
+        )  # add one day offset to avoid bugs
+        .to_numpy()
+        .astype("timedelta64[D]")
+        .astype("int")
+    ) + 1
+
+    def gen_file_list(suffix):
+        files =[
+            f"{gcmdir}/File_{num:04d}_{suffix}.nc"
+            for num in range(firstfilenum, lastfilenum + 1)
+        ]
+        return files
+
+    print(firstfilenum, lastfilenum)
+
+    files = []
+    if surf:
+        files += gen_file_list(suffix="etan") + gen_file_list(suffix="surf")
+    if mombudget:
+        files += gen_file_list(suffix="ub") + gen_file_list(suffix="vb")
+    if heatbudget:
+        files += gen_file_list(suffix="hb")
+    if state:
+        files += gen_file_list(suffix="buoy")
+
+    coords = read_mitgcm_coords(gcmdir)
+
+    # grid metrics
+    # verify at http://gallery.pangeo.io/repos/xgcm/xgcm-examples/02_mitgcm.html#
+    metrics = (
+        read_metrics(gcmdir)
+        .compute()
+        .isel(longitude=slice(40, -40), latitude=slice(40, -40), depth=slice(136))
+        .chunk(chunks)
+        .drop(["latitude", "longitude", "depth", "dRF"])
+        .rename(
+            {"depth_left": "RF", "depth": "RC", "latitude": "YC", "longitude": "XC"}
+        )
+        .isel(RF=slice(136))
+    )
+    metrics["rAw"] = metrics.rAw.rename({"XC": "XG"})
+    metrics["rAs"] = metrics.rAs.rename({"YC": "YG"})
+
+    metrics["hFacW"] = metrics.hFacW.rename({"XC": "XG"})
+    metrics["hFacS"] = metrics.hFacS.rename({"YC": "YG"})
+
+    metrics["DXG"] = metrics.DXG.rename({"YC": "YG"})
+    metrics["DYG"] = metrics.DYG.rename({"XC": "XG"})
+
+    metrics["DXC"] = metrics.DXC.rename({"XC": "XG"})
+    metrics["DYC"] = metrics.DYC.rename({"YC": "YG"})
+
+    ds = (
+        xr.open_mfdataset(
+            files,
+            chunks=chunks,
+            combine="by_coords",
+            parallel=True
+        )
+        .rename({"latitude": "YC", "longitude": "XC"})
+        .update(coords.coords)
+    )
+
+    if surf:
+        ds["oceQsw"] = ds.oceQsw.fillna(0)
+    if mombudget:
+        ds["taux"] = 1035 * 2.5 * ds["Um_Ext"].isel(RC=0)
+        ds["tauy"] = 1035 * 2.5 * ds["Vm_Ext"].isel(RC=0)
+
+    #if heatbudget:
+    #   hb_ren = pump.model.rename_mitgcm_budget_terms(hb, coords).update(coords.coords)
+
+    ds["u"] = ds.u.drop("XC").rename({"XC": "XG"})
+    ds["v"] = ds.v.drop("YC").rename({"YC": "YG"})
+    ds = ds.drop("depth").rename({"depth": "RC"})
+
+    for var in ["w", "KPP_diffusivity"]:
+        ds[var] = ds[var].drop("RC").rename({"RC": "RF"})
+
+    ds["dens"] = dens(ds.salt, ds.theta, np.array([0.0]))
+
+    return ds, metrics
 
 class Model:
     def __init__(self, dirname, name, kind="mitgcm", full=False, budget=False):
