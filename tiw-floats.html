@@ -1,0 +1,718 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EM-APEX floats in TIWs &#8212; PUMP</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bulk Ri analysis" href="bulk-Ri.html" />
+    <link rel="prev" title="TIW vertical velocity in MITgcm simulations" href="vertical-velocity.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      <h1 class="site-logo" id="site-title">PUMP</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p class="caption">
+ <span class="caption-text">
+  TIW Turbulence
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-DCL.html">
+   TIW DCL
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dcl-paper.html">
+   TIW DCL Paper Figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ctd-adcp.html">
+   TIW Cruise Sections
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html">
+   TIW Compositing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vertical-velocity.html">
+   TIW vertical velocity in MITgcm simulations
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   EM-APEX floats in TIWs
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Marginal Stability
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="bulk-Ri.html">
+   Bulk Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MI-extent.html">
+   Extent of marginal stability
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tao-ri-analysis.html">
+   TAO Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="mi-simple-model.html">
+   Simple model analysis
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  χpod/Chameleon
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="equix-divergence.html">
+   EQUIX: Jq divergence
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Other
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="long-term-turbulence.html">
+   Long-term tubulence in 20-year simulation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="les-tendencies.html">
+   LES tendencies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="heat-momentum-budget-checks.html">
+   Heat and momentum budgets with MITgcm output
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="submeso-deep-100.html">
+   Deep submesoscales in 1/100°?
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/tiw-floats.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/dcherian/pump"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/tiw-floats.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="em-apex-floats-in-tiws">
+<h1>EM-APEX floats in TIWs<a class="headerlink" href="#em-apex-floats-in-tiws" title="Permalink to this headline">¶</a></h1>
+<p>Test out deployment strategies using OceanParcels</p>
+<p>Todo:</p>
+<ul class="simple">
+<li><p>[ ] check that grid is right given Scott’s subsampling</p></li>
+<li><p>[ ] slow down particles 10m below surface and 10m above maxdepth</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">load_ext</span> watermark
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+
+<span class="kn">import</span> <span class="nn">cf_xarray</span>
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.units</span> <span class="k">as</span> <span class="nn">munits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">parcels</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">parcels</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AdvectionRK4</span><span class="p">,</span>
+    <span class="n">ErrorCode</span><span class="p">,</span>
+    <span class="n">FieldSet</span><span class="p">,</span>
+    <span class="n">JITParticle</span><span class="p">,</span>
+    <span class="n">ParticleSet</span><span class="p">,</span>
+    <span class="n">StateCode</span><span class="p">,</span>
+    <span class="n">Variable</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">pump</span>
+
+<span class="o">%</span><span class="k">watermark</span> -iv
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: Compiled ParcelsRandom ==&gt; /glade/scratch/dcherian/tmp/parcels-25721/libparcels_random_e8684722-16b7-49c5-ab13-5ee6e4cc1801.so
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pandas     : 1.1.3
+xarray     : 0.16.3.dev150+g37522e991
+dcpy       : 0.1
+numpy      : 1.19.2
+parcels    : 2.2.2
+distributed: 2.30.0
+pump       : 0.1
+matplotlib : 3.3.2
+cf_xarray  : 0.4.1.dev31+g7a8c620
+dask       : 2.30.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/Day_2000.nc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/tiw&quot;</span>
+<span class="n">filenames</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/File*buoy.nc&quot;</span><span class="p">)</span>
+
+<span class="n">dirname</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/&quot;</span>
+<span class="p">)</span>
+<span class="n">filenames</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/Day_[0-9][0-9][0-9][0-9].nc&quot;</span><span class="p">)</span>
+
+
+<span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;U&quot;</span><span class="p">:</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;V&quot;</span><span class="p">:</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span>
+    <span class="c1"># &quot;temp&quot;: &quot;theta&quot;, &quot;salt&quot;: &quot;salt&quot;</span>
+<span class="p">}</span>
+
+<span class="n">dimensions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">}</span>
+
+<span class="c1"># from_netcdf assumes A-grid</span>
+<span class="c1"># from _mitgcm specialized from_c_grid_dataset to MITgcm conventions</span>
+<span class="c1"># I think it&#39;s handling the &quot;inner&quot;/&quot;outer&quot;/&quot;left&quot;/&quot;right&quot; stuff from xgcm</span>
+<span class="c1"># https://nbviewer.jupyter.org/github/OceanParcels/parcels/blob/master/parcels/examples/documentation_indexing.ipynb</span>
+<span class="n">fieldset</span> <span class="o">=</span> <span class="n">FieldSet</span><span class="o">.</span><span class="n">from_mitgcm</span><span class="p">(</span>
+    <span class="n">filenames</span><span class="p">,</span>
+    <span class="n">variables</span><span class="p">,</span>
+    <span class="n">dimensions</span><span class="p">,</span>
+    <span class="n">chunksize</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
+        <span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+        <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+<span class="n">fieldset</span><span class="o">.</span><span class="n">mindepth</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># fieldset.U.depth[0]  # uppermost layer in the hydrodynamic data</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the new Kernel that mimics Argo vertical movement</span>
+<span class="k">def</span> <span class="nf">EMApexVerticalMovement</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">fieldset</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+
+    <span class="c1"># if all(fieldset.U.depth &gt;= 0):</span>
+    <span class="c1">#    sign = 1</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#    sign = -1</span>
+
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># vertical coord is negative; positive upward</span>
+
+    <span class="c1"># driftdepth = 100  # maximum depth in m</span>
+    <span class="n">maxdepth</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># maximum depth in m</span>
+    <span class="n">vertical_speed</span> <span class="o">=</span> <span class="mf">0.15</span>  <span class="c1"># sink and rise speed in m/s</span>
+
+    <span class="n">surfacetime</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># time spent at surface</span>
+    <span class="n">mindepth</span> <span class="o">=</span> <span class="mf">0.6</span>  <span class="c1"># TODO: why</span>
+    <span class="c1"># drifttime = 10 * 86400  # time of deep drift in seconds</span>
+
+    <span class="c1"># debugstr = f&quot;in: phase: {particle.cycle_phase}, depth={particle.depth} || &quot;</span>
+    <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Phase 0: Sinking with vertical_speed until depth is driftdepth</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">maxdepth</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Phase 3: Rising with vertical_speed until at surface</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">-=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+
+        <span class="c1"># Sample fields</span>
+        <span class="c1"># particle.temp = fieldset.temp[particle]</span>
+        <span class="c1"># particle.salt = fieldset.salt[particle]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">mindepth</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">mindepth</span>
+            <span class="c1"># particle.temp = 0./0.  # reset temperature to NaN at end of sampling cycle</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="c1"># Phase 4: Transmitting at surface until cycletime is reached</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">transmit_age</span> <span class="o">+=</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+        <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">transmit_age</span> <span class="o">&gt;</span> <span class="n">surfacetime</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">transmit_age</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># if particle.state == StateCode.Evaluate:</span>
+    <span class="c1">#    particle.cycle_age += particle.dt  # update cycle_age</span>
+
+    <span class="c1"># debugstr += f&quot;, final: phase: {particle.cycle_phase}, depth = {particle.depth}, state: {particle.state}&quot;</span>
+    <span class="c1"># print(debugstr)</span>
+
+
+<span class="c1"># Define a new Particle type including extra Variables</span>
+<span class="k">class</span> <span class="nc">EMApexParticle</span><span class="p">(</span><span class="n">parcels</span><span class="o">.</span><span class="n">JITParticle</span><span class="p">):</span>
+    <span class="c1"># Phase of cycle: init_descend=0, drift=1, profile_descend=2, profile_ascend=3, transmit=4</span>
+    <span class="n">cycle_phase</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s2">&quot;cycle_phase&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">transmit_age</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s2">&quot;transmit_age&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="c1"># drift_age = Variable(&#39;drift_age&#39;, dtype=np.float32, initial=0.)</span>
+
+    <span class="c1"># temp = Variable(&quot;temp&quot;, dtype=np.float32, initial=np.nan)</span>
+    <span class="c1"># salt = Variable(&quot;salt&quot;, dtype=np.float32, initial=np.nan)</span>
+
+
+<span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">3.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="o">-</span><span class="mi">140</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">lats</span><span class="p">)</span>
+<span class="n">depths</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">lats</span><span class="p">)</span>
+
+<span class="n">pset</span> <span class="o">=</span> <span class="n">ParticleSet</span><span class="p">(</span>
+    <span class="n">fieldset</span><span class="o">=</span><span class="n">fieldset</span><span class="p">,</span>
+    <span class="n">pclass</span><span class="o">=</span><span class="n">EMApexParticle</span><span class="p">,</span>
+    <span class="n">lon</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span>
+    <span class="n">lat</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span>
+    <span class="n">depth</span><span class="o">=</span><span class="n">depths</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># combine Argo vertical movement kernel with built-in Advection kernel</span>
+<span class="n">kernels</span> <span class="o">=</span> <span class="n">EMApexVerticalMovement</span> <span class="o">+</span> <span class="n">pset</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">parcels</span><span class="o">.</span><span class="n">AdvectionRK4</span><span class="p">)</span>
+
+<span class="c1"># Create a ParticleFile object to store the output</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="n">pset</span><span class="o">.</span><span class="n">ParticleFile</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;../trajectories/emapex_float&quot;</span><span class="p">,</span> <span class="n">outputdt</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Now execute the kernels for 30 days, saving data every 30 minutes</span>
+<span class="n">pset</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="n">kernels</span><span class="p">,</span>
+    <span class="n">runtime</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">180</span><span class="p">),</span>
+    <span class="n">dt</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+    <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">output_file</span><span class="o">.</span><span class="n">export</span><span class="p">()</span>  <span class="c1"># export the trajectory data to a netcdf file</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Exception ignored in: &lt;function ParticleFile.__del__ at 0x2aec51d5cb80&gt;
+Traceback (most recent call last):
+  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/parcels/particlefile.py&quot;, line 189, in __del__
+    self.close()
+  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/parcels/particlefile.py&quot;, line 194, in close
+    self.export()
+  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/parcels/particlefile.py&quot;, line 305, in export
+    pset_info_local = np.load(os.path.join(tempwritedir, &#39;pset_info.npy&#39;), allow_pickle=True).item()
+  File &quot;/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/numpy/lib/npyio.py&quot;, line 416, in load
+    fid = stack.enter_context(open(os_fspath(file), &quot;rb&quot;))
+FileNotFoundError: [Errno 2] No such file or directory: &#39;../trajectories/out-WRLLBNRV/0/pset_info.npy&#39;
+INFO: Compiled EMApexParticleEMApexVerticalMovementAdvectionRK4 ==&gt; /glade/scratch/dcherian/tmp/parcels-25721/c9efc00314d248f2c0e7effb3ee2b30e_0.so
+INFO: Temporary output files are stored in ../trajectories/out-SVIYIQQW.
+INFO: You can use &quot;parcels_convert_npydir_to_netcdf ../trajectories/out-SVIYIQQW&quot; to convert these to a NetCDF file during the run.
+ 36% (5734800.0 of 15552000.0) |###      | Elapsed Time: 1:27:13 ETA:  20:49:00
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TimeExtrapolationError</span><span class="g g-Whitespace">                    </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mf">15e6</span><span class="n">ec7f43a4</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">83</span> 
+<span class="g g-Whitespace">     </span><span class="mi">84</span> <span class="c1"># Now execute the kernels for 30 days, saving data every 30 minutes</span>
+<span class="ne">---&gt; </span><span class="mi">85</span> <span class="n">pset</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">86</span>     <span class="n">kernels</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">87</span>     <span class="n">runtime</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">180</span><span class="p">),</span>
+
+<span class="nn">~/miniconda3/envs/dcpy/lib/python3.8/site-packages/parcels/particlesets/baseparticleset.py</span> in <span class="ni">execute</span><span class="nt">(self, pyfunc, endtime, runtime, dt, moviedt, recovery, output_file, movie_background_field, verbose_progress, postIterationCallbacks, callbackdt)</span>
+<span class="g g-Whitespace">    </span><span class="mi">472</span>                 <span class="n">next_callback</span> <span class="o">+=</span> <span class="n">callbackdt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">473</span>             <span class="k">if</span> <span class="n">time</span> <span class="o">!=</span> <span class="n">endtime</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">474</span>                 <span class="n">next_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fieldset</span><span class="o">.</span><span class="n">computeTimeChunk</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">475</span>             <span class="k">if</span> <span class="n">dt</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">476</span>                 <span class="k">break</span>
+
+<span class="nn">~/miniconda3/envs/dcpy/lib/python3.8/site-packages/parcels/fieldset.py</span> in <span class="ni">computeTimeChunk</span><span class="nt">(self, time, dt)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1035</span>                 <span class="n">nextTime_loc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">computeTimeChunk</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">signdt</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1036</span>                 <span class="k">if</span> <span class="n">time</span> <span class="o">==</span> <span class="n">nextTime_loc</span> <span class="ow">and</span> <span class="n">signdt</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1037</span>                     <span class="k">raise</span> <span class="n">TimeExtrapolationError</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;In fset.computeTimeChunk&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1038</span>             <span class="n">nextTime</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nextTime</span><span class="p">,</span> <span class="n">nextTime_loc</span><span class="p">)</span> <span class="k">if</span> <span class="n">signdt</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">nextTime</span><span class="p">,</span> <span class="n">nextTime_loc</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1039</span> 
+
+<span class="ne">TimeExtrapolationError</span>: U sampled outside time domain at time 1995-12-09T16:00:00.000000000.In fset.computeTimeChunk Try setting allow_time_extrapolation to True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_file</span><span class="o">.</span><span class="n">export</span><span class="p">()</span> 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">traj</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;ilat&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.PathCollection at 0x2aeefac29490&gt;
+</pre></div>
+</div>
+<img alt="_images/tiw-floats_6_1.png" src="_images/tiw-floats_6_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">traj</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;../trajectories/emapex_float.nc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_coords</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="n">traj</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;ilat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">obs</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Longitude&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;Depth (m)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/tiw-floats_7_0.png" src="_images/tiw-floats_7_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the new Kernel that mimics Argo vertical movement</span>
+<span class="k">def</span> <span class="nf">ArgoVerticalMovement</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">fieldset</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">fieldset</span><span class="o">.</span><span class="n">U</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="n">driftdepth</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># maximum depth in m</span>
+    <span class="n">maxdepth</span> <span class="o">=</span> <span class="mi">2000</span>  <span class="c1"># maximum depth in m</span>
+    <span class="n">vertical_speed</span> <span class="o">=</span> <span class="mf">0.10</span>  <span class="c1"># sink and xrise speed in m/s</span>
+    <span class="n">cycletime</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">86400</span>  <span class="c1"># total time of cycle in seconds</span>
+    <span class="n">drifttime</span> <span class="o">=</span> <span class="mi">9</span> <span class="o">*</span> <span class="mi">86400</span>  <span class="c1"># time of deep drift in seconds</span>
+
+    <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Phase 0: Sinking with vertical_speed until depth is driftdepth</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">driftdepth</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Phase 1: Drifting at depth for drifttime seconds</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">drift_age</span> <span class="o">+=</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+        <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">drift_age</span> <span class="o">&gt;=</span> <span class="n">drifttime</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">drift_age</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset drift_age for next cycle</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># Phase 2: Sinking further to maxdepth</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">maxdepth</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="c1"># Phase 3: Rising with vertical_speed until at surface</span>
+        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">-=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+        <span class="c1"># particle.temp = fieldset.temp[time, particle.depth, particle.lat, particle.lon]  # if fieldset has temperature</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">fieldset</span><span class="o">.</span><span class="n">mindepth</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">fieldset</span><span class="o">.</span><span class="n">mindepth</span>
+            <span class="c1"># particle.temp = 0./0.  # reset temperature to NaN at end of sampling cycle</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="c1"># Phase 4: Transmitting at surface until cycletime is reached</span>
+        <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_age</span> <span class="o">&gt;</span> <span class="n">cycletime</span><span class="p">:</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_age</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># if particle.state == ErrorCode.Evaluate:</span>
+    <span class="c1">#    particle.cycle_age += particle.dt  # update cycle_age</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+            
+
+
+
+<div class='prev-next-bottom'>
+    
+    <div id="prev">
+        <a class="left-prev" href="vertical-velocity.html" title="previous page">
+            <i class="prevnext-label fas fa-angle-left"></i>
+            <div class="prevnext-info">
+                <p class="prevnext-label">previous</p>
+                <p class="prevnext-title">TIW vertical velocity in MITgcm simulations</p>
+            </div>
+        </a>
+    </div>
+     <div id="next">
+        <a class="right-next" href="bulk-Ri.html" title="next page">
+            <div class="prevnext-info">
+                <p class="prevnext-label">next</p>
+                <p class="prevnext-title">Bulk Ri analysis</p>
+            </div>
+            <i class="prevnext-label fas fa-angle-right"></i>
+        </a>
+     </div>
+
+</div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Deepak Cherian<br/>
+        
+            &copy; Copyright 2021.<br/>
+          <div class="extra_footer">
+            <div>
+<script data-goatcounter="https://count.cherian.net/count"
+        async src="count.js"></script>
+</div>
+
+          </div>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
