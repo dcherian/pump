@@ -9,6 +9,7 @@ parts:
   - file: ctd-adcp
   - file: TIW-compositing
   - file: vertical-velocity
+  - file: tiw-floats 
 
 - caption: Marginal Stability
   chapters:
