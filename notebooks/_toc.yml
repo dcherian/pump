@@ -17,6 +17,7 @@ parts:
   - file: MI-extent
   - file: tao-ri-analysis
   - file: mi-simple-model
+  - file: shred2-evol
 
 - caption: χpod/Chameleon
   chapters:
