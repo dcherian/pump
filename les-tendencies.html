@@ -22,8 +22,8 @@
       
 
     
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
@@ -33,19 +33,19 @@
     
   <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/togglebutton.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script >
+    <script>
         const thebe_selector = ".thebe"
         const thebe_selector_input = "pre"
         const thebe_selector_output = ".output"
@@ -83,7 +83,7 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <p class="caption">
+        <p class="caption" role="heading">
  <span class="caption-text">
   TIW Turbulence
  </span>
@@ -120,7 +120,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Marginal Stability
  </span>
@@ -152,7 +152,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   χpod/Chameleon
  </span>
@@ -164,7 +164,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Other
  </span>
@@ -403,7 +403,7 @@
         
               <div>
                 
-  <div class="section" id="les-tendencies">
+  <div class="tex2jax_ignore mathjax_ignore section" id="les-tendencies">
 <h1>LES tendencies<a class="headerlink" href="#les-tendencies" title="Permalink to this headline">¶</a></h1>
 <ol class="simple">
 <li><p>This has to be run on casper</p></li>
@@ -2151,13 +2151,13 @@ Data variables:
 <p>Todo
 /glade/p/cgd/oce/people/dwhitt/TPOS/tpos_LES_runs_setup_scripts/tpos-DIABLO/diablo_2.0/tpos_config_files/ROMS_PSH_6HRLIN_0N140W_108x108x288_5OCT2020_fixedeps/</p>
 <ol class="simple">
-<li><p>[x] Staggered grid</p></li>
-<li><p>[x] Update grid</p></li>
-<li><p>[x] something is wrong with your ICs (ocean_ic_S.txt and ocean_ic_T.txt and ocean_ic_U.txt). The values are much too small, except for U = -1 + epsilon. U should be m/s (anomaly). S psu (anomaly). T deg C or Kelvin (anomaly).</p></li>
-<li><p>[x] except ocean_frc_time.txt. Something is off there with the units/order of magnitude. You need to make sure the time that you want the LES to start is zero, so you have to subtract off the initial time and then have all times as seconds after (and before) that point. I think it is necessary to have one time index (i.e. one negative ocean_frc_time value) before the targeted LES start time for interpolation.</p></li>
-<li><p>[x] please add the time step before each profile as in ocean_colpsh_T.txt in this directory:/glade/p/cgd/oce/people/dwhitt/TPOS/tpos_LES_runs_setup_scripts/tpos-DIABLO/diablo_2.0/tpos_config_files</p></li>
-<li><p>[x] put the outputs in units of deg C per day, m/s per day, psu per day. (I changed the LES to take in units of per day to mitigate precision issues).</p></li>
-<li><p>[x] You need ocean_colfrc_*.txt files, which are for restoring. They are just the basic fields, T(z,t), U(z,t), S(z,t) and V(z,t) (called “W” in LES world; don’t ask…).</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Staggered grid</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Update grid</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> something is wrong with your ICs (ocean_ic_S.txt and ocean_ic_T.txt and ocean_ic_U.txt). The values are much too small, except for U = -1 + epsilon. U should be m/s (anomaly). S psu (anomaly). T deg C or Kelvin (anomaly).</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> except ocean_frc_time.txt. Something is off there with the units/order of magnitude. You need to make sure the time that you want the LES to start is zero, so you have to subtract off the initial time and then have all times as seconds after (and before) that point. I think it is necessary to have one time index (i.e. one negative ocean_frc_time value) before the targeted LES start time for interpolation.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> please add the time step before each profile as in ocean_colpsh_T.txt in this directory:/glade/p/cgd/oce/people/dwhitt/TPOS/tpos_LES_runs_setup_scripts/tpos-DIABLO/diablo_2.0/tpos_config_files</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> put the outputs in units of deg C per day, m/s per day, psu per day. (I changed the LES to take in units of per day to mitigate precision issues).</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> You need ocean_colfrc_*.txt files, which are for restoring. They are just the basic fields, T(z,t), U(z,t), S(z,t) and V(z,t) (called “W” in LES world; don’t ask…).</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
