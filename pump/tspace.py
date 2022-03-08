@@ -65,7 +65,7 @@ def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
         profile = profile.sortby("theta", ascending=False)
         profile["depth"] = unsorted_depth
 
-        profile = profile.sel(depth=profile.theta.notnull())
+        profile = profile.isel(depth=profile.theta.notnull())
 
         if trim_mld:
             trimmed_ = dcpy.finestructure.trim_mld_mode_water(
