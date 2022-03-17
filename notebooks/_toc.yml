@@ -22,6 +22,7 @@ parts:
 - caption: χpod/Chameleon
   chapters:
   - file: equix-divergence
+  - file: equix-examine
 
 - caption: Other
   chapters:
