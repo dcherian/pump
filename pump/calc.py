@@ -115,7 +115,7 @@ def calc_reduced_shear(data):
     data["vz"] = data.v.differentiate("depth")
 
     print("calc S2")
-    data["S2"] = data.uz ** 2 + data.vz ** 2
+    data["S2"] = data.uz**2 + data.vz**2
     data["S2"].attrs["long_name"] = "$S^2$"
     data["S2"].attrs["units"] = "s$^{-2}$"
 
@@ -460,7 +460,11 @@ def get_mld(dens, N2=None, min_delta_dens=0.015, min_N2=1e-5):
     if N2 is None:
         N2 = sign * -9.81 / 1025 * dens.cf.differentiate(key)
 
-    thresh = xr.where((np.abs(drho) > min_delta_dens) & (N2 > min_N2), depth, np.nan)
+    thresh = xr.where(
+        (np.abs(drho) > min_delta_dens) & (N2 > min_N2), depth, np.nan, keep_attrs=False
+    )
+    # thresh.attrs = depth.attrs
+    thresh[depth.name].attrs = depth.attrs
     mld = getattr(thresh.cf, func)(key)
 
     mld.name = "mld"
@@ -972,7 +976,7 @@ def estimate_bulk_Ri_terms(ds, inplace=True, use_mld=True):
 
 def estimate_Rib(ds):
     with xr.set_options(keep_attrs=False):
-        ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du ** 2)
+        ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du**2)
     return ds
 
 
