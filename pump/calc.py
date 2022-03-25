@@ -4,11 +4,13 @@ import cf_xarray
 import dask
 import dcpy
 import dcpy.eos
+import flox
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import xarray as xr
 import xfilter
+from xhistogram.xarray import histogram
 
 
 def ddx(a):
@@ -1434,3 +1436,66 @@ def find_mi_extent(subset, dim, debug=False, ax=None):
         dcpy.plots.liney(breaks[1:-1])
 
     return peaks
+
+
+def add_mixing_diagnostics(chamρ):
+    chamρ["B"] = (
+        chamρ.chi
+        / 2
+        * chamρ.N2.where(chamρ.N2 > 1e-6)
+        / chamρ.dTdz.where(np.abs(chamρ.dTdz) > 1e-3) ** 2
+    )
+    chamρ.B.attrs = {
+        "long_name": "$B = χ/2 N^2/T_z^2$",
+    }
+
+    chamρ["Rif"] = chamρ.B / (chamρ.B + chamρ.eps)
+    chamρ.Rif.attrs = {
+        "long_name": "$Ri_f = B/(B+ε)$",
+        "standard_name": "flux_richardson_number",
+    }
+
+    chamρ["Reb"] = chamρ.eps / chamρ.N2.where(chamρ.N2 > 1e-6) / 1e-6
+    chamρ.Reb.attrs = {
+        "long_name": "$Re_b = ε/(νN^2)$",
+        "standard_name": "buoyancy_reynolds_number",
+    }
+
+    chamρ["Γ"] = chamρ.Rif / (1 - chamρ.Rif)
+    chamρ.Γ.attrs = {"long_name": "$Γ$", "standard_name": "flux_coefficient"}
+
+    # divide dataset into two regimes: above and below EUC
+    # Add 5m to EUC max depth as buffer
+    above = chamρ[["Rif", "Reb"]].where(
+        (chamρ.depth < (chamρ.eucmax + 5)) & (chamρ.depth > chamρ.mld)
+    )
+    below = chamρ[["Rif", "Reb"]].where(
+        (chamρ.depth > (chamρ.eucmax + 5)) & (chamρ.depth > chamρ.mld)
+    )
+    bins = (np.logspace(-1, 6, 51), np.logspace(-4, 1, 51))
+    above["counts"] = histogram(above.Reb, above.Rif, density=False, bins=bins)
+    below["counts"] = histogram(below.Reb, below.Rif, density=False, bins=bins)
+
+    above["mean_Rif"] = flox.xarray.xarray_reduce(
+        above.Rif,
+        above.Reb,
+        isbin=True,
+        expected_groups=np.logspace(-1, 5, 11),
+        func="mean",
+    ).rename({"Reb_bins": "Reb_bins_2"})
+    below["mean_Rif"] = flox.xarray.xarray_reduce(
+        below.Rif,
+        below.Reb,
+        isbin=True,
+        expected_groups=np.logspace(-1, 5, 11),
+        func="mean",
+    ).rename({"Reb_bins": "Reb_bins_2"})
+
+    try:
+        del chamρ["Rif_Reb_counts"]
+        del chamρ["mean_Rif"]
+    except KeyError:
+        pass
+    chamρ["Rif_Reb_counts"] = xr.concat([above.counts, below.counts], dim="euc_bin")
+    chamρ["mean_Rif"] = xr.concat([above.mean_Rif, below.mean_Rif], dim="euc_bin")
+    chamρ["euc_bin"] = ["above", "below"]
