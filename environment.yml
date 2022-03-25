@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - pyviz
 dependencies:
+  - anytree
   - bottleneck
   - cachey
   - cartopy
@@ -45,3 +46,4 @@ dependencies:
     - git+https://github.com/hetland/xroms.git
     - git+https://github.com/dcherian/xfilter.git
     - git+https://github.com/dcherian/xcoare.git
+    - git+https://github.com/xarray-contrib/datatree.git
