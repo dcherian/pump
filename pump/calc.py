@@ -1,6 +1,6 @@
 import warnings
 
-import cf_xarray
+import cf_xarray  # noqa
 import dask
 import dcpy
 import dcpy.eos
@@ -33,8 +33,6 @@ def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug
     """
 
     if debug:
-        import matplotlib.pyplot as plt
-
         f, ax = plt.subplots(2, 1, constrained_layout=True, sharex=True)
         sig.plot(ax=ax[0])
 
@@ -68,8 +66,6 @@ def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug
         np.all(np.isin(phase.dropna("time").diff("time"), [90, -270]))
         or np.all(np.isin(phase2.dropna("time").diff("time"), [90, -270]))
     ):
-        import warnings
-
         warnings.warn("Secondary peaks detected!")
 
     phase = phase.interpolate_na("time", method="linear")
@@ -1021,7 +1017,7 @@ def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
         dcl.plot(x="time")
 
         plt.figure()
-        fg = (
+        (
             (amp_cleaned / amp_cleaned.max("depth"))
             # .sel(depth=-20, method="nearest")
             .plot(

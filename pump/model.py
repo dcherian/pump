@@ -1,17 +1,18 @@
 import glob
 import time
 
-import cf_xarray as cfxr
+import cf_xarray as cfxr  # noqa
 import dask
 import dask.delayed
 import dcpy.plots
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import xarray as xr
 import xmitgcm
 
-from . import validate
+from . import obs
 from .calc import (
     calc_reduced_shear,
     get_dcl_base_Ri,
@@ -22,9 +23,8 @@ from .calc import (
     get_tiw_phase_sst,
     tiw_avg_filter_sst,
 )
-from .constants import *
+from .constants import section_lons
 from .mdjwf import dens
-from .obs import *
 from .plot import plot_depths
 
 
@@ -237,7 +237,7 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     metrics = read_metrics(dirname)
     metrics["longitude"] = metrics.longitude - 169.025
 
-    stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
+    # stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
 
     #    xr.open_mfdataset(
     #        f"{stationdirname}/{globstr}.nc",
@@ -446,13 +446,16 @@ def read_metrics(dirname):
 
     return metrics
 
-def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=False, state=True, chunks=None):
+
+def read_mitgcm_20_year(
+    start, stop, surf=False, mombudget=False, heatbudget=False, state=True, chunks=None
+):
     if chunks is None:
         chunks = {"latitude": -1, "longitude": 500}
     gcmdir = "/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/"  # MITgcm output directory
 
     # start date for les; noon is a good time (it is before sunrise)
-    sim_time = pd.Timestamp(start)  # pd.Timestamp("2003-01-01 12:00:00")
+    # sim_time = pd.Timestamp(start)  # pd.Timestamp("2003-01-01 12:00:00")
 
     # ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)
     # les_time_length = 366 * 15  # (days); length of time for forcing/pushing files
@@ -460,23 +463,20 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
     # don't change anything here
     output_start_time = pd.Timestamp("1999-01-01")  # don't change
     firstfilenum = (
-        (
-            pd.Timestamp(start) - output_start_time
-        )  # add one day offset to avoid bugs
+        (pd.Timestamp(start) - output_start_time)  # add one day offset to avoid bugs
         .to_numpy()
         .astype("timedelta64[D]")
         .astype("int")
     ) + 1
-    lastfilenum = ((
-            pd.Timestamp(stop) - output_start_time
-        )  # add one day offset to avoid bugs
+    lastfilenum = (
+        (pd.Timestamp(stop) - output_start_time)  # add one day offset to avoid bugs
         .to_numpy()
         .astype("timedelta64[D]")
         .astype("int")
     ) + 1
 
     def gen_file_list(suffix):
-        files =[
+        files = [
             f"{gcmdir}/File_{num:04d}_{suffix}.nc"
             for num in range(firstfilenum, lastfilenum + 1)
         ]
@@ -522,12 +522,7 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
     metrics["DYC"] = metrics.DYC.rename({"YC": "YG"})
 
     ds = (
-        xr.open_mfdataset(
-            files,
-            chunks=chunks,
-            combine="by_coords",
-            parallel=True
-        )
+        xr.open_mfdataset(files, chunks=chunks, combine="by_coords", parallel=True)
         .rename({"latitude": "YC", "longitude": "XC"})
         .update(coords.coords)
     )
@@ -538,7 +533,7 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
         ds["taux"] = 1035 * 2.5 * ds["Um_Ext"].isel(RC=0)
         ds["tauy"] = 1035 * 2.5 * ds["Vm_Ext"].isel(RC=0)
 
-    #if heatbudget:
+    # if heatbudget:
     #   hb_ren = pump.model.rename_mitgcm_budget_terms(hb, coords).update(coords.coords)
 
     ds["u"] = ds.u.drop("XC").rename({"XC": "XG"})
@@ -551,6 +546,7 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
     ds["dens"] = dens(ds.salt, ds.theta, np.array([0.0]))
 
     return ds, metrics
+
 
 class Model:
     def __init__(self, dirname, name, kind="mitgcm", full=False, budget=False):
@@ -612,7 +608,7 @@ class Model:
         self.domain["xyt"] = dict()
 
         if self.domain["xyt"]:
-            self.oisst = read_sst(self.domain["xyt"])
+            self.oisst = obs.read_sst(self.domain["xyt"])
 
         if full:
             self.read_full()
@@ -1053,7 +1049,7 @@ class Model:
         for _, aa in ax.items():
             aa.grid(True, axis="x")
 
-        return handles, ax, f
+        return handles, ax
 
     def plot_dcl(self, region, ds="tao"):
 
@@ -1098,7 +1094,7 @@ class Model:
 
         subset.v.isel(depth=1).plot(ax=ax["v"], x="time", _labels=False)
 
-        (subset.shear ** 2).plot(
+        (subset.shear**2).plot(
             ax=ax["shear"],
             x="time",
             ylim=[-150, 0],
@@ -1115,7 +1111,7 @@ class Model:
             norm=mpl.colors.LogNorm(1e-6, 1e-3),
         )
 
-        inv_Ri = 1 / (subset.N2 / subset.shear ** 2)
+        inv_Ri = 1 / (subset.N2 / subset.shear**2)
         inv_Ri.attrs["long_name"] = "Inv. Ri"
         inv_Ri.attrs["units"] = ""
 
@@ -1137,11 +1133,9 @@ class Model:
         )
 
         for axx0 in [ax["KT"], ax["shear"], ax["N2"]]:
-            heuc = subset.euc_max.plot(ax=axx0, color="k", lw=1, _labels=False)
-            hdcl = subset.dcl_base_shear.plot(
-                ax=axx0, color="gray", lw=1, _labels=False
-            )
-            hmld = (subset.mld - 5).plot(ax=axx0, color="k", lw=0.5, _labels=False)
+            subset.euc_max.plot(ax=axx0, color="k", lw=1, _labels=False)
+            subset.dcl_base_shear.plot(ax=axx0, color="gray", lw=1, _labels=False)
+            (subset.mld - 5).plot(ax=axx0, color="k", lw=0.5, _labels=False)
 
         ((subset.mld - 5).plot(ax=ax["Ri"], color="k", lw=0.5, _labels=False))
         (subset.euc_max.plot(ax=ax["Ri"], color="k", lw=0.5, _labels=False))
@@ -1158,9 +1152,6 @@ class Model:
         dcpy.plots.label_subplots(ax.values())
 
     def summarize_tiw_periods(self, subset):
-
-        import tqdm
-
         if "tiw_phase" not in subset:
             subset = xr.merge([subset, self.get_tiw_phase(subset.v)])
         if "sst" not in subset:

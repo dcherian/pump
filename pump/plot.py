@@ -580,11 +580,11 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     fmt.set_powerlimits((-1, 1))
 
     Ric = 0.4
-    (tsub.uz ** 2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["u"], **kwargs)
-    (tsub.vz ** 2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["v"], **kwargs)
+    (tsub.uz**2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["u"], **kwargs)
+    (tsub.vz**2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["v"], **kwargs)
     # tsub.v.plot.contour(ax=ax["v"], colors="k", linewidths=1, levels=7)
 
-    hdl = (tsub.uz ** 2 + tsub.vz ** 2 - 1 / Ric * tsub.N2).plot(ax=ax["Ri"], **kwargs)
+    hdl = (tsub.uz**2 + tsub.vz**2 - 1 / Ric * tsub.N2).plot(ax=ax["Ri"], **kwargs)
 
     if add_colorbar:
         plt.gcf().colorbar(

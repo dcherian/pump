@@ -1,10 +1,11 @@
+import warnings
+
 import dcpy.finestructure
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 import xgcm
-import warnings
 
 
 def _rename_to_theta_coordinates(means):
@@ -234,7 +235,7 @@ def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
             linewidths=1,
             colors="k",  # ylim=(120, 0)
         )
-        profiles.eucmax.plot.line(color='r', lw=3)
+        profiles.eucmax.plot.line(color="r", lw=3)
         plt.tight_layout()
 
     coord_names = means.coords.keys()
