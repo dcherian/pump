@@ -1434,7 +1434,7 @@ def find_mi_extent(subset, dim, debug=False, ax=None):
     return peaks
 
 
-def add_mixing_diagnostics(chamρ):
+def add_mixing_diagnostics(chamρ, nbins=51):
     chamρ["B"] = (
         chamρ.chi
         / 2
@@ -1468,7 +1468,7 @@ def add_mixing_diagnostics(chamρ):
     below = chamρ[["Rif", "Reb"]].where(
         (chamρ.depth > (chamρ.eucmax + 5)) & (chamρ.depth > chamρ.mld)
     )
-    bins = (np.logspace(-1, 6, 51), np.logspace(-4, 1, 51))
+    bins = (np.logspace(-1, 6, nbins), np.logspace(-4, 1, nbins))
     above["counts"] = histogram(above.Reb, above.Rif, density=False, bins=bins)
     below["counts"] = histogram(below.Reb, below.Rif, density=False, bins=bins)
 
@@ -1478,6 +1478,7 @@ def add_mixing_diagnostics(chamρ):
         isbin=True,
         expected_groups=np.logspace(-1, 5, 11),
         func="mean",
+        fill_value=np.nan,
     ).rename({"Reb_bins": "Reb_bins_2"})
     below["mean_Rif"] = flox.xarray.xarray_reduce(
         below.Rif,
@@ -1485,6 +1486,7 @@ def add_mixing_diagnostics(chamρ):
         isbin=True,
         expected_groups=np.logspace(-1, 5, 11),
         func="mean",
+        fill_value=np.nan,
     ).rename({"Reb_bins": "Reb_bins_2"})
 
     try:

@@ -1539,3 +1539,53 @@ def highlight_enso(ax, enso, coord="time"):
         alpha=0.2,
         zorder=-1,
     )
+
+
+def plot_reb_rif(chamρ, ax=None):
+    if ax is None:
+        f, ax = plt.subplots(1, 1)
+    for euc_bin, color in zip(chamρ.euc_bin.data, ["k", "r"]):
+        subset = chamρ.sel(euc_bin=euc_bin)
+        (subset.Rif_Reb_counts / subset.Rif_Reb_counts.max()).plot.contour(
+            levels=np.arange(0.1, 1.1, 0.2),
+            x="Reb_bin",
+            xscale="log",
+            yscale="log",
+            colors=color,
+            linewidths=1,
+            ax=ax,
+            # label="above EUC",
+        )
+        subset.mean_Rif.plot(ax=ax, marker=".", color=color, label=euc_bin + " EUC")
+    dcpy.plots.liney([0.06, 0.17], lw=1, ax=ax)
+    ax.set_xlabel("$Re_b$ = $ε/(νN^2)$")
+    ax.set_title(chamρ.attrs["name"])
+    ax.grid(True)
+    ax.legend()
+
+
+def plot_mixing_diagnostics_timeseries(ds, coarsen=False):
+    varnames = ["B", "Rif", "Reb"]
+    f, axx = plt.subplots(len(varnames), 1, sharex=True, sharey=True, squeeze=False)
+    f.set_size_inches((7, 4))
+    ax = dict(zip(varnames, axx.squeeze()))
+
+    norms = {
+        "eps": mpl.colors.LogNorm(1e-9, 1e-6),
+        "chi": mpl.colors.LogNorm(1e-9, 1e-6),
+        "B": mpl.colors.LogNorm(1e-9, 1e-6),
+        "Rif": mpl.colors.Normalize(vmax=0.17),
+        "Reb": mpl.colors.LogNorm(1e-1, 1e5),
+    }
+    for var, axis in ax.items():
+        if coarsen:
+            v = ds[var].coarsen(depth=5, boundary="trim").mean()
+        else:
+            v = ds[var]
+        v.cf.plot(x="time", norm=norms[var], ax=axis, cmap=mpl.cm.magma)
+        ds["Reb"].rolling(depth=3, time=2, center=True).mean().cf.plot.contour(
+            ax=axis, x="time", levels=[1e3, 1e4, 1e5], colors=["k"], linewidths=1
+        )
+        ds.eucmax.plot.line(color="w", ax=axis, lw=1, _labels=False)
+    dcpy.plots.clean_axes(axx)
+    axx.squeeze()[0].set_title(ds.attrs["name"])
