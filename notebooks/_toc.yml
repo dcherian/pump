@@ -23,6 +23,7 @@ parts:
   chapters:
   - file: equix-divergence
   - file: equix-examine
+  - file: mixing-efficiency
 
 - caption: Other
   chapters:
