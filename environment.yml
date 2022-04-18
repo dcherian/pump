@@ -38,6 +38,7 @@ dependencies:
   - xarray
   - xgcm
   - xmitgcm
+  - watermark
   - zarr
   - pip:
     - dask_jobqueue
