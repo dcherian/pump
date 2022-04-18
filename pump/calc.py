@@ -1462,38 +1462,54 @@ def add_mixing_diagnostics(chamρ, nbins=51):
 
     # divide dataset into two regimes: above and below EUC
     # Add 5m to EUC max depth as buffer
-    above = chamρ[["Rif", "Reb"]].where(
+    above = chamρ[["Rif", "Reb", "Ri"]].where(
         (chamρ.depth < (chamρ.eucmax + 5)) & (chamρ.depth > chamρ.mld)
     )
-    below = chamρ[["Rif", "Reb"]].where(
+    below = chamρ[["Rif", "Reb", "Ri"]].where(
         (chamρ.depth > (chamρ.eucmax + 5)) & (chamρ.depth > chamρ.mld)
     )
-    bins = (np.logspace(-1, 6, nbins), np.logspace(-4, 1, nbins))
-    above["counts"] = histogram(above.Reb, above.Rif, density=False, bins=bins)
-    below["counts"] = histogram(below.Reb, below.Rif, density=False, bins=bins)
+    bins = {
+        "Ri": np.linspace(0, 1, 30),
+        "Reb": np.logspace(-1, 6, nbins),
+        "Rif": np.logspace(-4, 1, nbins),
+    }
+    coarse_bins = {"Ri": np.linspace(0, 1, 11), "Reb": np.logspace(-1, 5, 11)}
+    for by in ["Reb", "Ri"]:
+        if by not in above:
+            continue
+        above["counts"] = histogram(
+            above[by], above.Rif, density=False, bins=(bins[by], bins["Rif"])
+        )
+        below["counts"] = histogram(
+            below[by], below.Rif, density=False, bins=(bins[by], bins["Rif"])
+        )
 
-    above["mean_Rif"] = flox.xarray.xarray_reduce(
-        above.Rif,
-        above.Reb,
-        isbin=True,
-        expected_groups=np.logspace(-1, 5, 11),
-        func="mean",
-        fill_value=np.nan,
-    ).rename({"Reb_bins": "Reb_bins_2"})
-    below["mean_Rif"] = flox.xarray.xarray_reduce(
-        below.Rif,
-        below.Reb,
-        isbin=True,
-        expected_groups=np.logspace(-1, 5, 11),
-        func="mean",
-        fill_value=np.nan,
-    ).rename({"Reb_bins": "Reb_bins_2"})
+        above["mean_Rif"] = flox.xarray.xarray_reduce(
+            above.Rif,
+            above[by],
+            isbin=True,
+            expected_groups=coarse_bins[by],
+            func="mean",
+            fill_value=np.nan,
+        ).rename({f"{by}_bins": f"{by}_bins_2"})
+        below["mean_Rif"] = flox.xarray.xarray_reduce(
+            below.Rif,
+            below[by],
+            isbin=True,
+            expected_groups=coarse_bins[by],
+            func="mean",
+            fill_value=np.nan,
+        ).rename({f"{by}_bins": f"{by}_bins_2"})
 
-    try:
-        del chamρ["Rif_Reb_counts"]
-        del chamρ["mean_Rif"]
-    except KeyError:
-        pass
-    chamρ["Rif_Reb_counts"] = xr.concat([above.counts, below.counts], dim="euc_bin")
-    chamρ["mean_Rif"] = xr.concat([above.mean_Rif, below.mean_Rif], dim="euc_bin")
+        try:
+            del chamρ[f"Rif_{by}_counts"]
+            del chamρ[f"mean_Rif_{by}"]
+        except KeyError:
+            pass
+        chamρ[f"Rif_{by}_counts"] = xr.concat(
+            [above.counts, below.counts], dim="euc_bin"
+        )
+        chamρ[f"mean_Rif_{by}"] = xr.concat(
+            [above.mean_Rif, below.mean_Rif], dim="euc_bin"
+        )
     chamρ["euc_bin"] = ["above", "below"]

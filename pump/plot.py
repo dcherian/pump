@@ -1541,22 +1541,22 @@ def highlight_enso(ax, enso, coord="time"):
     )
 
 
-def plot_reb_rif(counts, ax=None, color=None):
+def plot_rif_counts(counts, x, ax=None, **kwargs):
     if ax is None:
         f, ax = plt.subplots(1, 1)
 
     (counts / counts.max()).plot.contour(
         levels=np.arange(0.1, 1.1, 0.2),
-        x="Reb_bin",
-        xscale="log",
+        x=x,
         yscale="log",
-        colors=color,
         linewidths=1,
         ax=ax,
+        colors=kwargs.pop("color", None),
+        **kwargs,
     )
 
     dcpy.plots.liney([0.06, 0.17], lw=1, ax=ax)
-    ax.set_xlabel("$Re_b$ = $ε/(νN^2)$")
+    # ax.set_xlabel("$Re_b$ = $ε/(νN^2)$")
     ax.grid(True)
 
 
@@ -1566,8 +1566,10 @@ def plot_reb_rif_euc_bins(chamρ, ax=None):
 
     for euc_bin, color in zip(chamρ.euc_bin.data, ["k", "r"]):
         subset = chamρ.sel(euc_bin=euc_bin)
-        plot_reb_rif(subset.Rif_Reb_counts, ax=ax, color=color)
-        subset.mean_Rif.plot(
+        plot_rif_counts(
+            subset.Rif_Reb_counts, x="Reb_bin", ax=ax, color=color, xscale="log"
+        )
+        subset.mean_Rif_Reb.plot(
             ax=ax, marker=".", color=color, label=euc_bin + " EUC", _labels=False
         )
     ax.legend()
