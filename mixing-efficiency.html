@@ -2359,14 +2359,14 @@ if (window.Jupyter !== undefined) {
   }
 }
 </script><div class="output text_html"></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>numpy      : 1.21.5
-flox       : 0.4.1.dev11+gd895625.d20220401
-distributed: 2022.3.0
 matplotlib : 3.5.1
-pump       : 0.1
-dcpy       : 0.2.1.dev4+g05012cc.d20220325
 cf_xarray  : 0.7.0
+distributed: 2022.3.0
 xarray     : 2022.3.0
+dcpy       : 0.2.1.dev4+g05012cc.d20220325
+pump       : 0.1
 datatree   : 0.0.2.dev1+g2503606.d20220325
+flox       : 0.4.1.dev11+gd895625.d20220401
 hvplot     : 0.7.3
 </pre></div>
 </div>
@@ -2471,10 +2471,12 @@ hvplot     : 0.7.3
     <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">avg</span><span class="o">.</span><span class="n">N2</span> <span class="o">&lt;</span> <span class="mf">5e-2</span><span class="p">)</span>
     <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slopes</span><span class="o">.</span><span class="n">dudz</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">slopes</span><span class="o">.</span><span class="n">dvdz</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;shred2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">S2</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">avg</span><span class="o">.</span><span class="n">N2</span>
+    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;Ri&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">avg</span><span class="o">.</span><span class="n">N2</span> <span class="o">/</span> <span class="n">avg</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">avg</span><span class="o">.</span><span class="n">S2</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">)</span>
     <span class="n">avg</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$T_z$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;°C/m&quot;</span><span class="p">}</span>
     <span class="n">avg</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$N^2$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;s$^{-2}$&quot;</span><span class="p">}</span>
     <span class="n">avg</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$S^2$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;s$^{-2}$&quot;</span><span class="p">}</span>
     <span class="n">avg</span><span class="o">.</span><span class="n">shred2</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$Sh_</span><span class="si">{red}</span><span class="s2">^2$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;s$^{-2}$&quot;</span><span class="p">}</span>
+    <span class="n">avg</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$Ri$&quot;</span><span class="p">}</span>
     <span class="n">avg</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">swap_dims</span><span class="p">({</span><span class="s2">&quot;depth_&quot;</span><span class="p">:</span> <span class="s2">&quot;depth&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">(</span><span class="s2">&quot;depth_&quot;</span><span class="p">)</span>
     <span class="n">avg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">unsorted</span><span class="p">)</span>
 
@@ -2483,7 +2485,7 @@ hvplot     : 0.7.3
     <span class="k">return</span> <span class="n">avg</span>
 
 
-<span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">add_mixing_diagnostics</span><span class="p">(</span><span class="n">tiwe_</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
+<span class="c1">#pump.calc.add_mixing_diagnostics(tiwe_, nbins=51)</span>
 <span class="n">equix</span> <span class="o">=</span> <span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">equix_</span><span class="p">)</span>
 <span class="n">tiwe</span> <span class="o">=</span> <span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">tiwe_</span><span class="p">)</span>
 </pre></div>
@@ -2552,62 +2554,64 @@ hvplot     : 0.7.3
 <img alt="_images/mixing-efficiency_5_2.png" src="_images/mixing-efficiency_5_2.png" />
 </div>
 </div>
-<p>The combined dataset without paritioning  is a better view I think. The errorbars are too small to be seen</p>
+<p>I think the combined dataset without paritioning by EUC max is a better view:</p>
+<ol class="simple">
+<li><p>This figure relies on <span class="math notranslate nohighlight">\(Re_b\)</span> to pick out the DCL I guess.</p></li>
+<li><p>EQUIX totally dominates TIWE for  <span class="math notranslate nohighlight">\(Re_b\)</span> &gt; 1000, so there might still be value in plotting each expt separately  after  paritioning at DCL depth</p></li>
+</ol>
+<p>The errorbars are too small to be seen in log-space in the first plot</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">combined</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
-<span class="n">combined</span><span class="p">[</span><span class="s2">&quot;Rif_Reb_counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">Rif_Reb_counts</span> <span class="o">+</span> <span class="n">equix</span><span class="o">.</span><span class="n">Rif_Reb_counts</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;euc_bin&quot;</span><span class="p">)</span>
-<span class="n">combined</span><span class="p">[</span><span class="s2">&quot;mean_Rif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">xarray_reduce</span><span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">tiwe</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]],</span> <span class="n">equix</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]]],</span>
-        <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="s2">&quot;Reb&quot;</span><span class="p">,</span>
-    <span class="n">func</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
-    <span class="n">expected_groups</span><span class="o">=</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">Reb_bins_2</span><span class="o">.</span><span class="n">data</span><span class="p">,),</span>
-    <span class="n">isbin</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,),</span>
-    <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">Rif</span>
-<span class="n">combined</span><span class="p">[</span><span class="s2">&quot;std_Rif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">xarray_reduce</span><span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">tiwe</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]],</span> <span class="n">equix</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]]],</span>
-        <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="s2">&quot;Reb&quot;</span><span class="p">,</span>
-    <span class="n">func</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span>
-    <span class="n">expected_groups</span><span class="o">=</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">Reb_bins_2</span><span class="o">.</span><span class="n">data</span><span class="p">,),</span>
-    <span class="n">isbin</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,),</span>
-    <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">Rif</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;Reb_bins&quot;</span><span class="p">:</span> <span class="s2">&quot;Reb_bins_2&quot;</span><span class="p">})</span>
-<span class="n">combined</span><span class="p">[</span><span class="s2">&quot;count_Rif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">xarray_reduce</span><span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">tiwe</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]],</span> <span class="n">equix</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]]],</span>
-        <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="s2">&quot;Reb&quot;</span><span class="p">,</span>
-    <span class="n">func</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span>
-    <span class="n">expected_groups</span><span class="o">=</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">Reb_bins_2</span><span class="o">.</span><span class="n">data</span><span class="p">,),</span>
-    <span class="n">isbin</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,),</span>
-    <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">Rif</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;Reb_bins&quot;</span><span class="p">:</span> <span class="s2">&quot;Reb_bins_2&quot;</span><span class="p">})</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_reb_rif</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">Rif_Reb_counts</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">mid</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">combined</span><span class="o">.</span><span class="n">Reb_bins_2</span><span class="o">.</span><span class="n">values</span><span class="p">],</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">combined</span><span class="o">.</span><span class="n">mean_Rif</span><span class="p">,</span>
-    <span class="n">yerr</span><span class="o">=</span><span class="mf">1.96</span> <span class="o">*</span> <span class="n">combined</span><span class="o">.</span><span class="n">std_Rif</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">count_Rif</span><span class="p">),</span>
-    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;mean $Ri_f$&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Combined TIWE + EQUIX&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">combined_average</span><span class="p">(</span><span class="o">*</span><span class="n">datasets</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">functools</span>
+    <span class="kn">import</span> <span class="nn">operator</span>
+
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
+
+    <span class="n">concat</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ds</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="n">by</span><span class="p">]]</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+    <span class="n">flox_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">expected_groups</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">,),</span> <span class="n">isbin</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">]:</span>
+        <span class="n">combined</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">_Rif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">xarray_reduce</span><span class="p">(</span>
+            <span class="n">concat</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">flox_kwargs</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">Rif</span>
+
+    <span class="k">if</span> <span class="n">by</span> <span class="o">==</span> <span class="s2">&quot;Reb&quot;</span><span class="p">:</span>
+        <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;Rif_Reb_counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
+            <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">Rif_Reb_counts</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;euc_bin&quot;</span><span class="p">)</span>
+        <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_rif_counts</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">Rif_Reb_counts</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Reb_bin&quot;</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;Rif_Ri_counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
+            <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">Rif_Ri_counts</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;euc_bin&quot;</span><span class="p">)</span>
+        <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_rif_counts</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">Rif_Ri_counts</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Ri_bin&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">mid</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">by</span><span class="si">}</span><span class="s2">_bins&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">combined</span><span class="o">.</span><span class="n">mean_Rif</span><span class="p">,</span>
+        <span class="n">yerr</span><span class="o">=</span><span class="mf">1.96</span> <span class="o">*</span> <span class="n">combined</span><span class="o">.</span><span class="n">std_Rif</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">count_Rif</span><span class="p">),</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;mean $Ri_f$&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Combined TIWE + EQUIX&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+
+<span class="n">combined_average</span><span class="p">(</span><span class="n">tiwe</span><span class="p">,</span> <span class="n">equix</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">tiwe</span><span class="o">.</span><span class="n">Reb_bins_2</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">combined_average</span><span class="p">(</span><span class="n">tiwe</span><span class="p">,</span> <span class="n">equix</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;Ri&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="c1">#plt.yscale(&quot;linear&quot;)</span>
+<span class="c1">#plt.ylim([0, 1])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x16e2baf20&gt;
+<img alt="_images/mixing-efficiency_7_0.png" src="_images/mixing-efficiency_7_0.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 840x560 with 0 Axes&gt;
 </pre></div>
 </div>
-<img alt="_images/mixing-efficiency_7_1.png" src="_images/mixing-efficiency_7_1.png" />
+<img alt="_images/mixing-efficiency_7_2.png" src="_images/mixing-efficiency_7_2.png" />
 </div>
 </div>
 </div>
