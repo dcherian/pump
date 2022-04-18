@@ -409,3 +409,7 @@ backup*/*
 .DS_Store
 .auctex-auto
 frag-master.tex
+paper1/*
+paper2/*
+*.pdf
+*-backup/*

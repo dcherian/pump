@@ -580,11 +580,11 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
     fmt.set_powerlimits((-1, 1))
 
     Ric = 0.4
-    (tsub.uz ** 2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["u"], **kwargs)
-    (tsub.vz ** 2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["v"], **kwargs)
+    (tsub.uz**2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["u"], **kwargs)
+    (tsub.vz**2 - 1 / Ric / 2 * tsub.N2).plot(ax=ax["v"], **kwargs)
     # tsub.v.plot.contour(ax=ax["v"], colors="k", linewidths=1, levels=7)
 
-    hdl = (tsub.uz ** 2 + tsub.vz ** 2 - 1 / Ric * tsub.N2).plot(ax=ax["Ri"], **kwargs)
+    hdl = (tsub.uz**2 + tsub.vz**2 - 1 / Ric * tsub.N2).plot(ax=ax["Ri"], **kwargs)
 
     if add_colorbar:
         plt.gcf().colorbar(
@@ -1539,3 +1539,69 @@ def highlight_enso(ax, enso, coord="time"):
         alpha=0.2,
         zorder=-1,
     )
+
+
+def plot_rif_counts(counts, x, ax=None, **kwargs):
+    if ax is None:
+        f, ax = plt.subplots(1, 1)
+
+    (counts / counts.max()).plot.contour(
+        levels=np.arange(0.1, 1.1, 0.2),
+        x=x,
+        yscale="log",
+        linewidths=1,
+        ax=ax,
+        colors=kwargs.pop("color", None),
+        **kwargs,
+    )
+
+    dcpy.plots.liney([0.06, 0.17], lw=1, ax=ax)
+    # ax.set_xlabel("$Re_b$ = $ε/(νN^2)$")
+    ax.grid(True)
+
+
+def plot_reb_rif_euc_bins(chamρ, ax=None):
+    if ax is None:
+        f, ax = plt.subplots(1, 1)
+
+    for euc_bin, color in zip(chamρ.euc_bin.data, ["k", "r"]):
+        subset = chamρ.sel(euc_bin=euc_bin)
+        plot_rif_counts(
+            subset.Rif_Reb_counts, x="Reb_bin", ax=ax, color=color, xscale="log"
+        )
+        subset.mean_Rif_Reb.plot(
+            ax=ax, marker=".", color=color, label=euc_bin + " EUC", _labels=False
+        )
+    ax.legend()
+    ax.set_title(chamρ.attrs["name"])
+
+
+def plot_mixing_diagnostics_timeseries(ds, coarsen=False):
+    varnames = ["shred2", "eps", "B", "Rif", "Reb"]
+    f, axx = plt.subplots(len(varnames), 1, sharex=True, sharey=True, squeeze=False)
+    f.set_size_inches((7, 7))
+    ax = dict(zip(varnames, axx.squeeze()))
+
+    kwargs = {
+        "shred2": {
+            "norm": mpl.colors.TwoSlopeNorm(vmin=-4e-3, vcenter=0, vmax=5e-4),
+            "cmap": "RdBu_r",
+        },
+        "eps": {"norm": mpl.colors.LogNorm(1e-9, 1e-6), "cmap": "magma"},
+        "chi": {"norm": mpl.colors.LogNorm(1e-9, 1e-6), "cmap": "magma"},
+        "B": {"norm": mpl.colors.LogNorm(1e-9, 1e-6), "cmap": "magma"},
+        "Rif": {"norm": mpl.colors.Normalize(vmax=0.17), "cmap": "magma"},
+        "Reb": {"norm": mpl.colors.LogNorm(1e-1, 1e5), "cmap": "magma"},
+    }
+    for var, axis in ax.items():
+        if coarsen:
+            v = ds[var].coarsen(depth=5, boundary="trim").mean()
+        else:
+            v = ds[var]
+        v.cf.plot(x="time", ax=axis, **kwargs[var])
+        ds["Reb"].rolling(depth=3, time=2, center=True).mean().cf.plot.contour(
+            ax=axis, x="time", levels=[1e3, 1e4, 1e5], colors=["k"], linewidths=1
+        )
+        ds.eucmax.plot.line(color="w", ax=axis, lw=1, _labels=False)
+    dcpy.plots.clean_axes(axx)
+    axx.squeeze()[0].set_title(ds.attrs["name"])

@@ -176,7 +176,7 @@ def grid_ctd_adcp(ctd, adcp):
 
     binned["uz"] = adcp.u.differentiate("depth").assign_coords(latitude=lats)
     binned["vz"] = adcp.v.differentiate("depth").assign_coords(latitude=lats)
-    binned["S2"] = binned.uz ** 2 + binned.vz ** 2
+    binned["S2"] = binned.uz**2 + binned.vz**2
     binned["N2"] = 9.81 / 1025 * binned.density.compute().differentiate("depth")
     binned["Ri"] = binned.N2.where(binned.N2 > 1e-6) / binned.S2.where(binned.S2 > 1e-8)
     binned["mld"] = ctd.mld
@@ -251,8 +251,8 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
     norm = mpl.colors.DivergingNorm(vcenter=-1e-7, vmin=-5e-3, vmax=1e-4)
 
     shred2 = binned.S2 - 1 / Ric * binned.N2
-    ushred = binned.uz ** 2 - 1 / Ric / 2 * binned.N2
-    vshred = binned.vz ** 2 - 1 / Ric / 2 * binned.N2
+    ushred = binned.uz**2 - 1 / Ric / 2 * binned.N2
+    vshred = binned.vz**2 - 1 / Ric / 2 * binned.N2
     shred2_kwargs = dict(
         y="depth",
         yincrease=False,
@@ -260,7 +260,7 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
         add_colorbar=True,
         norm=norm,
     )
-    hdl = shred2.plot(ax=ax["Ri"], **shred2_kwargs)
+    hdl = shred2.plot(ax=ax["Ri"], **shred2_kwargs)  # noqa
     ushred.plot(ax=ax["u"], **shred2_kwargs)
     vshred.plot(ax=ax["v"], **shred2_kwargs)
 
@@ -509,12 +509,14 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
     # ax["v"].set_ylabel("")
     # ax["v"].set_yticklabels([])
 
-    str_time = lambda x: x.dt.round("D").dt.strftime("%Y-%m-%d").values
+    str_time = lambda x: x.dt.round("D").dt.strftime("%Y-%m-%d").values  # noqa
 
     adcp_str = "not found"
     if "EXPOCODE" in adcp.attrs and "CRUISE_NAME" in adcp.attrs:
         adcp_str = (
-            adcp.attrs["EXPOCODE"].strip() + "; " + adcp.attrs["CRUISE_NAME"].strip()
+            adcp.attrs["EXPOCODE"].strip()
+            + "; "
+            + adcp.attrs["CRUISE_NAME"].strip()  # noqa
         )
     elif "cruise_id" in adcp.attrs:
         import re
@@ -522,7 +524,7 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
         for strings in adcp.cruise_id.split():
             match = re.search("EXPOCODE=(.*)", strings)
             if match is not None:
-                adcp_str = match.string[9:]
+                adcp_str = match.string[9:]  # noqa
                 break
 
     return axes_rho

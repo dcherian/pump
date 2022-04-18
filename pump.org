@@ -230,8 +230,20 @@ Kessler et al (2005) PUMP
 * gyaan
 
 1. Maximum depth-integrated EUC transport at ≈ 135W.
-2.
+2. upwelling controls position of 20°C l important where this is relative to cooling/heating dJ/dz
 
+** WWV
+- McGregor et al 2014:
+  - first EOF wind stress, initiates equatorward surface Ekman transport during EN but poleward during LN
+  - surface Ekman transport > subsurface geostrophic transport
+
+- Huguenin et al 2020:
+  - EL-Nino event:
+    - meridional transport starts accumulating WW
+    - then surface forcing and mixing, start discharging 5 months before peak EN.
+
+  - La-Nina event:
+    - recharge fully dominated by surface forcing: colder water, stronger winds,
 ** Marginal instability
 
 1. In marginally unstable systems, Ri tends to cluster around 1/4 citep:Smyth2019 : this is /scale invariance/ --- This is why the usual averaging bias in Ri estimates is not a problem at the equator citep:Pham2017. This behaviour is seen for stratified turbulence forced by a mean shear that varies slowly on the time scale of the instabilities.
@@ -286,6 +298,7 @@ mean vertically integrated currents, both the eastward EUC^z and the westward SE
 
 - heat budget output are 4 hourly snapshots
 - others are daily averages
+
 
 * Vertical resolution
 

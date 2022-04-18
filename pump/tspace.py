@@ -1,10 +1,11 @@
+import warnings
+
 import dcpy.finestructure
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 import xgcm
-import warnings
 
 
 def _rename_to_theta_coordinates(means):
@@ -65,7 +66,7 @@ def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
         profile = profile.sortby("theta", ascending=False)
         profile["depth"] = unsorted_depth
 
-        profile = profile.sel(depth=profile.theta.notnull())
+        profile = profile.isel(depth=profile.theta.notnull())
 
         if trim_mld:
             trimmed_ = dcpy.finestructure.trim_mld_mode_water(
@@ -234,6 +235,7 @@ def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
             linewidths=1,
             colors="k",  # ylim=(120, 0)
         )
+        profiles.eucmax.plot.line(color="r", lw=3)
         plt.tight_layout()
 
     coord_names = means.coords.keys()

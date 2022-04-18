@@ -1,4 +1,3 @@
-import dask
 import dcpy
 import numpy as np
 import pandas as pd
@@ -8,7 +7,7 @@ import xarray as xr
 import pump
 
 from . import mdjwf
-from .constants import *
+from .constants import section_lons
 
 
 def read_all(domain=None):

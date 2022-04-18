@@ -223,10 +223,10 @@ def kpp(
     # Initial value:
     sl_depth = epsilon * hbl
     # Surface Friction Velocity (WUSURF and WVSURF are in m^2/s^2)
-    ustar = sqrt(sqrt(WVSURF ** 2 + WUSURF ** 2))
-    ustar2 = ustar ** 2
-    ustar3 = ustar ** 3
-    ustar4 = ustar ** 4
+    ustar = sqrt(sqrt(WVSURF**2 + WUSURF**2))
+    ustar2 = ustar**2
+    ustar3 = ustar**3
+    ustar4 = ustar**4
 
     # BoNet = net sfc buoyancy flux MINUS SHORTWAVE# (in m^2/s^3)
     # BoSol buoyancy flux carried by shortwave radiation
@@ -275,7 +275,7 @@ def kpp(
         dudz[-1] = (U[-2] - U[-1]) / (ZZ[-2] - ZZ[-1])
         dvdz[-1] = (V[-2] - V[-1]) / (ZZ[-2] - ZZ[-1])
 
-    shear2 = dudz ** 2 + dvdz ** 2
+    shear2 = dudz**2 + dvdz**2
     #
     #   Smooth squared buoyancy frequency and shear before dividing?
     #
@@ -355,7 +355,7 @@ def kpp(
                 wstar = (Bfsfc * hbl) ** (1.0 / 3.0)
 
             # langmuir cells as function of stability (eqn 13, C_w)
-            stab_lc = (ustar3 / (ustar3 + 0.6 * wstar ** 3 + tiny)) ** xce
+            stab_lc = (ustar3 / (ustar3 + 0.6 * wstar**3 + tiny)) ** xce
             # ......
             # .....Define the (non-)dimensional vertical co-ordinate, ---zlmd
             # .................................identical to gamma (sigma?) in LMD
@@ -472,7 +472,7 @@ def kpp(
     if Bfsfc > 0:
         wstar = (Bfsfc * hbl) ** (1 / 3)
 
-    stab_lc = (ustar3 / (ustar3 + 0.6 * wstar ** 3)) ** xce
+    stab_lc = (ustar3 / (ustar3 + 0.6 * wstar**3)) ** xce
 
     # Compute turbulent velocity scales (w_m,w_s) at hbl
     # hw:  for stable heat flux; zlmd=hbl;
@@ -583,7 +583,7 @@ def kpp(
     #   momentum flux. Frech & Mahrt (1995) say stab_nlm=1.0+wstar/ustar;
     #   Brown & Grant (1998) say stab_nlm=2.7*wstar**3/(ustar3+0.6*wstar**3).
     #       stab_nlm=1.0+wstar/ustar
-    stab_nlm = 2.7 * wstar ** 3 / (ustar3 + 0.6 * wstar ** 3 + tiny)
+    stab_nlm = 2.7 * wstar**3 / (ustar3 + 0.6 * wstar**3 + tiny)
 
     # Compute mixing coefficients and nonlocal fluxes within the boundary layer.
     ghatu = 0 * U
@@ -622,8 +622,8 @@ def kpp(
 
         # Shape functions LMD (11) with a0=0, a1=1 as per discussion on p. 370,371
         sigx = -ZP[k] / (hbl + tiny)
-        Gm = sigx * (1.0 + a2_m * sigx + a3_m * sigx ** 2)
-        Gs = sigx * (1.0 + a2_s * sigx + a3_s * sigx ** 2)
+        Gm = sigx * (1.0 + a2_m * sigx + a3_m * sigx**2)
+        Gs = sigx * (1.0 + a2_s * sigx + a3_s * sigx**2)
         #
         # LMD (10)
         #

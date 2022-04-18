@@ -15,8 +15,8 @@ import pandas as pd
 # Copernicus Marine API Key - Login Credentials
 # To create an account reach: http://marine.copernicus.eu/services-portfolio/register-now/.
 # If already created but forgotten reach: http://marine.copernicus.eu/faq/forgotten-password/?idpage=169
-username_cmems = "dcherian"
-password_cmems = "CherianCMEMS2017%"
+username_cmems = "YOUR_USERNAME"
+password_cmems = "YOUR_PASSWORD"
 
 # Output directory name to store the Copernicus Marine data - (do not use whitespace character)
 # If only 'folder-name' is given (not in absolute path), then it will be converted automatically into '$HOME/folder-name/'

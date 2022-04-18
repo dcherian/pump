@@ -1,14 +1,16 @@
 import warnings
 
-import cf_xarray
+import cf_xarray  # noqa
 import dask
 import dcpy
 import dcpy.eos
+import flox
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import xarray as xr
 import xfilter
+from xhistogram.xarray import histogram
 
 
 def ddx(a):
@@ -31,8 +33,6 @@ def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug
     """
 
     if debug:
-        import matplotlib.pyplot as plt
-
         f, ax = plt.subplots(2, 1, constrained_layout=True, sharex=True)
         sig.plot(ax=ax[0])
 
@@ -66,8 +66,6 @@ def merge_phase_label_period(sig, phase_0, phase_90, phase_180, phase_270, debug
         np.all(np.isin(phase.dropna("time").diff("time"), [90, -270]))
         or np.all(np.isin(phase2.dropna("time").diff("time"), [90, -270]))
     ):
-        import warnings
-
         warnings.warn("Secondary peaks detected!")
 
     phase = phase.interpolate_na("time", method="linear")
@@ -115,7 +113,7 @@ def calc_reduced_shear(data):
     data["vz"] = data.v.differentiate("depth")
 
     print("calc S2")
-    data["S2"] = data.uz ** 2 + data.vz ** 2
+    data["S2"] = data.uz**2 + data.vz**2
     data["S2"].attrs["long_name"] = "$S^2$"
     data["S2"].attrs["units"] = "s$^{-2}$"
 
@@ -460,7 +458,11 @@ def get_mld(dens, N2=None, min_delta_dens=0.015, min_N2=1e-5):
     if N2 is None:
         N2 = sign * -9.81 / 1025 * dens.cf.differentiate(key)
 
-    thresh = xr.where((np.abs(drho) > min_delta_dens) & (N2 > min_N2), depth, np.nan)
+    thresh = xr.where(
+        (np.abs(drho) > min_delta_dens) & (N2 > min_N2), depth, np.nan, keep_attrs=False
+    )
+    # thresh.attrs = depth.attrs
+    thresh[depth.name].attrs = depth.attrs
     mld = getattr(thresh.cf, func)(key)
 
     mld.name = "mld"
@@ -972,7 +974,7 @@ def estimate_bulk_Ri_terms(ds, inplace=True, use_mld=True):
 
 def estimate_Rib(ds):
     with xr.set_options(keep_attrs=False):
-        ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du ** 2)
+        ds["Rib"] = ds.db * np.abs(ds.h) / (ds.du**2)
     return ds
 
 
@@ -1015,7 +1017,7 @@ def get_dcl_base_dKdt(K, threshold=0.03, debug=False):
         dcl.plot(x="time")
 
         plt.figure()
-        fg = (
+        (
             (amp_cleaned / amp_cleaned.max("depth"))
             # .sel(depth=-20, method="nearest")
             .plot(
@@ -1430,3 +1432,84 @@ def find_mi_extent(subset, dim, debug=False, ax=None):
         dcpy.plots.liney(breaks[1:-1])
 
     return peaks
+
+
+def add_mixing_diagnostics(chamρ, nbins=51):
+    chamρ["B"] = (
+        chamρ.chi
+        / 2
+        * chamρ.N2.where(chamρ.N2 > 1e-6)
+        / chamρ.dTdz.where(np.abs(chamρ.dTdz) > 1e-3) ** 2
+    )
+    chamρ.B.attrs = {
+        "long_name": "$B = χ/2 N^2/T_z^2$",
+    }
+
+    chamρ["Rif"] = chamρ.B / (chamρ.B + chamρ.eps)
+    chamρ.Rif.attrs = {
+        "long_name": "$Ri_f = B/(B+ε)$",
+        "standard_name": "flux_richardson_number",
+    }
+
+    chamρ["Reb"] = chamρ.eps / chamρ.N2.where(chamρ.N2 > 1e-6) / 1e-6
+    chamρ.Reb.attrs = {
+        "long_name": "$Re_b = ε/(νN^2)$",
+        "standard_name": "buoyancy_reynolds_number",
+    }
+
+    chamρ["Γ"] = chamρ.Rif / (1 - chamρ.Rif)
+    chamρ.Γ.attrs = {"long_name": "$Γ$", "standard_name": "flux_coefficient"}
+
+    # divide dataset into two regimes: above and below EUC
+    # Add 5m to EUC max depth as buffer
+    above = chamρ[["Rif", "Reb", "Ri"]].where(
+        (chamρ.depth < (chamρ.eucmax + 5)) & (chamρ.depth > chamρ.mld)
+    )
+    below = chamρ[["Rif", "Reb", "Ri"]].where(
+        (chamρ.depth > (chamρ.eucmax + 5)) & (chamρ.depth > chamρ.mld)
+    )
+    bins = {
+        "Ri": np.linspace(0, 1, 30),
+        "Reb": np.logspace(-1, 6, nbins),
+        "Rif": np.logspace(-4, 1, nbins),
+    }
+    coarse_bins = {"Ri": np.linspace(0, 1, 11), "Reb": np.logspace(-1, 5, 11)}
+    for by in ["Reb", "Ri"]:
+        if by not in above:
+            continue
+        above["counts"] = histogram(
+            above[by], above.Rif, density=False, bins=(bins[by], bins["Rif"])
+        )
+        below["counts"] = histogram(
+            below[by], below.Rif, density=False, bins=(bins[by], bins["Rif"])
+        )
+
+        above["mean_Rif"] = flox.xarray.xarray_reduce(
+            above.Rif,
+            above[by],
+            isbin=True,
+            expected_groups=coarse_bins[by],
+            func="mean",
+            fill_value=np.nan,
+        ).rename({f"{by}_bins": f"{by}_bins_2"})
+        below["mean_Rif"] = flox.xarray.xarray_reduce(
+            below.Rif,
+            below[by],
+            isbin=True,
+            expected_groups=coarse_bins[by],
+            func="mean",
+            fill_value=np.nan,
+        ).rename({f"{by}_bins": f"{by}_bins_2"})
+
+        try:
+            del chamρ[f"Rif_{by}_counts"]
+            del chamρ[f"mean_Rif_{by}"]
+        except KeyError:
+            pass
+        chamρ[f"Rif_{by}_counts"] = xr.concat(
+            [above.counts, below.counts], dim="euc_bin"
+        )
+        chamρ[f"mean_Rif_{by}"] = xr.concat(
+            [above.mean_Rif, below.mean_Rif], dim="euc_bin"
+        )
+    chamρ["euc_bin"] = ["above", "below"]

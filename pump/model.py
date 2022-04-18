@@ -1,18 +1,19 @@
 import glob
 import time
 
-import cf_xarray as cfxr
+import cf_xarray as cfxr  # noqa
 import dask
 import dask.delayed
 import dcpy.plots
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import xarray as xr
 import xgcm
 import xmitgcm
 
-from . import validate
+from . import obs
 from .calc import (
     calc_reduced_shear,
     get_dcl_base_Ri,
@@ -23,9 +24,8 @@ from .calc import (
     get_tiw_phase_sst,
     tiw_avg_filter_sst,
 )
-from .constants import *
+from .constants import section_lons
 from .mdjwf import dens
-from .obs import *
 from .plot import plot_depths
 
 
@@ -238,7 +238,7 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     metrics = read_metrics(dirname)
     metrics["longitude"] = metrics.longitude - 169.025
 
-    stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
+    # stationdirname = f"{dirname}/STATION_DATA/Day_{dayglobstr}"
 
     #    xr.open_mfdataset(
     #        f"{stationdirname}/{globstr}.nc",
@@ -447,14 +447,13 @@ def read_metrics(dirname):
 
     return metrics
 
+
 def rename_metrics(metrics):
     metrics = (
-        metrics
-        .drop(["latitude", "longitude", "depth", "dRF"])
-        .rename(
+        metrics.drop(["latitude", "longitude", "depth", "dRF"]).rename(
             {"depth_left": "RF", "depth": "RC", "latitude": "YC", "longitude": "XC"}
         )
-        #.update(coords.coords)
+        # .update(coords.coords)
     )
     metrics["rAw"] = metrics.rAw.rename({"XC": "XG"})
     metrics["rAs"] = metrics.rAs.rename({"YC": "YG"})
@@ -467,7 +466,7 @@ def rename_metrics(metrics):
 
     metrics["DXC"] = metrics.DXC.rename({"XC": "XG"})
     metrics["DYC"] = metrics.DYC.rename({"YC": "YG"})
-    
+
     return metrics
 
 
@@ -479,7 +478,7 @@ def read_mitgcm_20_year(
     gcmdir = "/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/"  # MITgcm output directory
 
     # start date for les; noon is a good time (it is before sunrise)
-    sim_time = pd.Timestamp(start)  # pd.Timestamp("2003-01-01 12:00:00")
+    # sim_time = pd.Timestamp(start)  # pd.Timestamp("2003-01-01 12:00:00")
 
     # ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)
     # les_time_length = 366 * 15  # (days); length of time for forcing/pushing files
@@ -579,26 +578,25 @@ def read_mitgcm_20_year(
     )
 
     ds["N2"] = 9.81 / 1035 * grid.derivative(ds.dens, "Z")
-    ds["S2"] = (
-    grid.interp_like(grid.derivative(ds.u, "Z") ** 2, ds.N2)
-    + grid.interp_like(grid.derivative(ds.v, "Z") ** 2, ds.N2)
-)
+    ds["S2"] = grid.interp_like(
+        grid.derivative(ds.u, "Z") ** 2, ds.N2
+    ) + grid.interp_like(grid.derivative(ds.v, "Z") ** 2, ds.N2)
     ds["Ri"] = ds.N2 / ds.S2
 
     ds = dask.optimize(ds)[0]
 
     ds["Ri"].data = dask.optimize(ds.Ri)[0].data
-    ds["mld"]  = pump.calc.get_mld(ds.dens)
+    ds["mld"] = get_mld(ds.dens)
 
     fordcl = ds[["mld", "Ri"]].cf.chunk({"Z": -1}).unify_chunks()
     ds["dcl_base"] = xr.map_blocks(
-        pump.calc.get_dcl_base_Ri,
+        get_dcl_base_Ri,
         fordcl,
         template=fordcl.mld,
     )
-    ds.dcl_base.attrs["long_name"] = '$z_{Ri}$'
+    ds.dcl_base.attrs["long_name"] = "$z_{Ri}$"
 
-    #ds["dcl_base"] = pump.calc.get_dcl_base_Ri(ds, depth_thresh=-250)
+    # ds["dcl_base"] = pump.calc.get_dcl_base_Ri(ds, depth_thresh=-250)
     ds["dcl"] = ds.mld - ds.dcl_base
     ds.dcl.attrs["long_name"] = "DCL"
     return ds, metrics, grid
@@ -664,7 +662,7 @@ class Model:
         self.domain["xyt"] = dict()
 
         if self.domain["xyt"]:
-            self.oisst = read_sst(self.domain["xyt"])
+            self.oisst = obs.read_sst(self.domain["xyt"])
 
         if full:
             self.read_full()
@@ -1105,7 +1103,7 @@ class Model:
         for _, aa in ax.items():
             aa.grid(True, axis="x")
 
-        return handles, ax, f
+        return handles, ax
 
     def plot_dcl(self, region, ds="tao"):
 
@@ -1150,7 +1148,7 @@ class Model:
 
         subset.v.isel(depth=1).plot(ax=ax["v"], x="time", _labels=False)
 
-        (subset.shear ** 2).plot(
+        (subset.shear**2).plot(
             ax=ax["shear"],
             x="time",
             ylim=[-150, 0],
@@ -1167,7 +1165,7 @@ class Model:
             norm=mpl.colors.LogNorm(1e-6, 1e-3),
         )
 
-        inv_Ri = 1 / (subset.N2 / subset.shear ** 2)
+        inv_Ri = 1 / (subset.N2 / subset.shear**2)
         inv_Ri.attrs["long_name"] = "Inv. Ri"
         inv_Ri.attrs["units"] = ""
 
@@ -1189,11 +1187,9 @@ class Model:
         )
 
         for axx0 in [ax["KT"], ax["shear"], ax["N2"]]:
-            heuc = subset.euc_max.plot(ax=axx0, color="k", lw=1, _labels=False)
-            hdcl = subset.dcl_base_shear.plot(
-                ax=axx0, color="gray", lw=1, _labels=False
-            )
-            hmld = (subset.mld - 5).plot(ax=axx0, color="k", lw=0.5, _labels=False)
+            subset.euc_max.plot(ax=axx0, color="k", lw=1, _labels=False)
+            subset.dcl_base_shear.plot(ax=axx0, color="gray", lw=1, _labels=False)
+            (subset.mld - 5).plot(ax=axx0, color="k", lw=0.5, _labels=False)
 
         ((subset.mld - 5).plot(ax=ax["Ri"], color="k", lw=0.5, _labels=False))
         (subset.euc_max.plot(ax=ax["Ri"], color="k", lw=0.5, _labels=False))
@@ -1210,9 +1206,6 @@ class Model:
         dcpy.plots.label_subplots(ax.values())
 
     def summarize_tiw_periods(self, subset):
-
-        import tqdm
-
         if "tiw_phase" not in subset:
             subset = xr.merge([subset, self.get_tiw_phase(subset.v)])
         if "sst" not in subset:
