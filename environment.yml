@@ -2,6 +2,7 @@ name: pump
 channels:
   - conda-forge
   - pyviz
+  - nodefaults
 dependencies:
   - anytree
   - bottleneck
