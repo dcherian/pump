@@ -9,6 +9,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
+import xgcm
 import xmitgcm
 
 from . import validate
@@ -446,7 +447,33 @@ def read_metrics(dirname):
 
     return metrics
 
-def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=False, state=True, chunks=None):
+def rename_metrics(metrics):
+    metrics = (
+        metrics
+        .drop(["latitude", "longitude", "depth", "dRF"])
+        .rename(
+            {"depth_left": "RF", "depth": "RC", "latitude": "YC", "longitude": "XC"}
+        )
+        #.update(coords.coords)
+    )
+    metrics["rAw"] = metrics.rAw.rename({"XC": "XG"})
+    metrics["rAs"] = metrics.rAs.rename({"YC": "YG"})
+
+    metrics["hFacW"] = metrics.hFacW.rename({"XC": "XG"})
+    metrics["hFacS"] = metrics.hFacS.rename({"YC": "YG"})
+
+    metrics["DXG"] = metrics.DXG.rename({"YC": "YG"})
+    metrics["DYG"] = metrics.DYG.rename({"XC": "XG"})
+
+    metrics["DXC"] = metrics.DXC.rename({"XC": "XG"})
+    metrics["DYC"] = metrics.DYC.rename({"YC": "YG"})
+    
+    return metrics
+
+
+def read_mitgcm_20_year(
+    start, stop, surf=False, mombudget=False, heatbudget=False, state=True, chunks=None
+):
     if chunks is None:
         chunks = {"latitude": -1, "longitude": 500}
     gcmdir = "/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/"  # MITgcm output directory
@@ -460,23 +487,20 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
     # don't change anything here
     output_start_time = pd.Timestamp("1999-01-01")  # don't change
     firstfilenum = (
-        (
-            pd.Timestamp(start) - output_start_time
-        )  # add one day offset to avoid bugs
+        (pd.Timestamp(start) - output_start_time)  # add one day offset to avoid bugs
         .to_numpy()
         .astype("timedelta64[D]")
         .astype("int")
     ) + 1
-    lastfilenum = ((
-            pd.Timestamp(stop) - output_start_time
-        )  # add one day offset to avoid bugs
+    lastfilenum = (
+        (pd.Timestamp(stop) - output_start_time)  # add one day offset to avoid bugs
         .to_numpy()
         .astype("timedelta64[D]")
         .astype("int")
     ) + 1
 
     def gen_file_list(suffix):
-        files =[
+        files = [
             f"{gcmdir}/File_{num:04d}_{suffix}.nc"
             for num in range(firstfilenum, lastfilenum + 1)
         ]
@@ -501,33 +525,18 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
     metrics = (
         read_metrics(gcmdir)
         .compute()
-        .isel(longitude=slice(40, -40), latitude=slice(40, -40), depth=slice(136))
-        .chunk(chunks)
-        .drop(["latitude", "longitude", "depth", "dRF"])
-        .rename(
-            {"depth_left": "RF", "depth": "RC", "latitude": "YC", "longitude": "XC"}
+        .isel(
+            longitude=slice(40, -40),
+            latitude=slice(40, -40),
+            depth=slice(136),
+            depth_left=slice(136),
+            RF=slice(136),
         )
-        .isel(RF=slice(136))
+        .pipe(rename_metrics)
     )
-    metrics["rAw"] = metrics.rAw.rename({"XC": "XG"})
-    metrics["rAs"] = metrics.rAs.rename({"YC": "YG"})
-
-    metrics["hFacW"] = metrics.hFacW.rename({"XC": "XG"})
-    metrics["hFacS"] = metrics.hFacS.rename({"YC": "YG"})
-
-    metrics["DXG"] = metrics.DXG.rename({"YC": "YG"})
-    metrics["DYG"] = metrics.DYG.rename({"XC": "XG"})
-
-    metrics["DXC"] = metrics.DXC.rename({"XC": "XG"})
-    metrics["DYC"] = metrics.DYC.rename({"YC": "YG"})
 
     ds = (
-        xr.open_mfdataset(
-            files,
-            chunks=chunks,
-            combine="by_coords",
-            parallel=True
-        )
+        xr.open_mfdataset(files, chunks=chunks, combine="by_coords", parallel=True)
         .rename({"latitude": "YC", "longitude": "XC"})
         .update(coords.coords)
     )
@@ -538,7 +547,7 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
         ds["taux"] = 1035 * 2.5 * ds["Um_Ext"].isel(RC=0)
         ds["tauy"] = 1035 * 2.5 * ds["Vm_Ext"].isel(RC=0)
 
-    #if heatbudget:
+    # if heatbudget:
     #   hb_ren = pump.model.rename_mitgcm_budget_terms(hb, coords).update(coords.coords)
 
     ds["u"] = ds.u.drop("XC").rename({"XC": "XG"})
@@ -550,7 +559,50 @@ def read_mitgcm_20_year(start, stop, surf=False, mombudget=False, heatbudget=Fal
 
     ds["dens"] = dens(ds.salt, ds.theta, np.array([0.0]))
 
-    return ds, metrics
+    ds.YG.attrs["axis"] = "Y"
+    ds.YC.attrs["axis"] = "Y"
+    ds.XG.attrs["axis"] = "X"
+    ds.XC.attrs["axis"] = "X"
+    ds.RF.attrs["axis"] = "Z"
+    ds.RC.attrs["axis"] = "Z"
+
+    grid = xgcm.Grid(
+        xr.merge([coords, metrics]),
+        periodic=False,
+        boundary={"X": "extend", "Y": "extend", "Z": "extend"},
+        metrics={
+            "X": ("DXC", "DXG"),
+            "Y": ("DYG", "DYC"),
+            "Z": ("drF", "drC"),
+            ("X", "Y"): ("rAw", "rAs"),
+        },
+    )
+
+    ds["N2"] = 9.81 / 1035 * grid.derivative(ds.dens, "Z")
+    ds["S2"] = (
+    grid.interp_like(grid.derivative(ds.u, "Z") ** 2, ds.N2)
+    + grid.interp_like(grid.derivative(ds.v, "Z") ** 2, ds.N2)
+)
+    ds["Ri"] = ds.N2 / ds.S2
+
+    ds = dask.optimize(ds)[0]
+
+    ds["Ri"].data = dask.optimize(ds.Ri)[0].data
+    ds["mld"]  = pump.calc.get_mld(ds.dens)
+
+    fordcl = ds[["mld", "Ri"]].cf.chunk({"Z": -1}).unify_chunks()
+    ds["dcl_base"] = xr.map_blocks(
+        pump.calc.get_dcl_base_Ri,
+        fordcl,
+        template=fordcl.mld,
+    )
+    ds.dcl_base.attrs["long_name"] = '$z_{Ri}$'
+
+    #ds["dcl_base"] = pump.calc.get_dcl_base_Ri(ds, depth_thresh=-250)
+    ds["dcl"] = ds.mld - ds.dcl_base
+    ds.dcl.attrs["long_name"] = "DCL"
+    return ds, metrics, grid
+
 
 class Model:
     def __init__(self, dirname, name, kind="mitgcm", full=False, budget=False):
