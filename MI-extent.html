@@ -1864,18 +1864,18 @@ if (window.Jupyter !== undefined) {
   } catch(err) {
   }
 }
-</script><div class="output text_html"></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pandas     : 1.3.1
+</script><div class="output text_html"></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>seawater   : 3.3.4
+hvplot     : 0.7.3
+pump       : 0.1
+dcpy       : 0.1
+pandas     : 1.3.1
+dask       : 2021.7.2
+cf_xarray  : 0.6.0
+matplotlib : 3.4.2
 distributed: 2021.7.2
 numpy      : 1.21.1
-seawater   : 3.3.4
-matplotlib : 3.4.2
-dcpy       : 0.1
-pump       : 0.1
-dask       : 2021.7.2
 xgcm       : 0.5.1.dev138+g3b80993
-hvplot     : 0.7.3
 xarray     : 0.19.0
-cf_xarray  : 0.6.0
 </pre></div>
 </div>
 </div>
@@ -1926,6 +1926,14 @@ cf_xarray  : 0.6.0
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/dcpy/lib/python3.8/site-packages/distributed/node.py:160: UserWarning: Port 8787 is already in use.
+Perhaps you already have a cluster running?
+Hosting the HTTP server on port 46243 instead
+  warnings.warn(
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1946,7 +1954,7 @@ cf_xarray  : 0.6.0
             position: absolute;"> </div>
         <div style="margin-left: 48px;">
             <h3 style="margin-bottom: 0px;">Client</h3>
-            <p style="color: #9D9D9D; margin-bottom: 0px;">Client-4a47486a-09c2-11ec-9907-ac1f6bc7cc7e</p>
+            <p style="color: #9D9D9D; margin-bottom: 0px;">Client-cef8dd03-0fff-11ec-a2d3-3cecef1acc46</p>
             <table style="width: 100%; text-align: left;">
 
         <tr>
@@ -1957,7 +1965,7 @@ cf_xarray  : 0.6.0
         <tr>
             <td style="text-align: left;">
                 <strong>Dashboard: </strong>
-                <a href="/proxy/8787/status">/proxy/8787/status</a>
+                <a href="/proxy/46243/status">/proxy/46243/status</a>
             </td>
             <td style="text-align: left;"></td>
         </tr>
@@ -1977,12 +1985,12 @@ cf_xarray  : 0.6.0
             position: absolute;"> </div>
         <div style="margin-left: 48px;">
             <h3 style="margin-bottom: 0px; margin-top: 0px;">PBSCluster</h3>
-            <p style="color: #9D9D9D; margin-bottom: 0px;">3a3731d3</p>
+            <p style="color: #9D9D9D; margin-bottom: 0px;">3cef5387</p>
             <table style="width: 100%; text-align: left;">
 
     <tr>
         <td style="text-align: left;">
-            <strong>Dashboard:</strong> <a href="/proxy/8787/status">/proxy/8787/status</a>
+            <strong>Dashboard:</strong> <a href="/proxy/46243/status">/proxy/46243/status</a>
         </td>
         <td style="text-align: left;"><strong>Workers:</strong> 0</td>
     </tr>
@@ -2013,15 +2021,15 @@ cf_xarray  : 0.6.0
             position: absolute;"> </div>
         <div style="margin-left: 48px;">
             <h3 style="margin-bottom: 0px;">Scheduler</h3>
-            <p style="color: #9D9D9D; margin-bottom: 0px;">Scheduler-92fbd414-9d62-48d9-afac-b9c348f6fe58</p>
+            <p style="color: #9D9D9D; margin-bottom: 0px;">Scheduler-afdb8a0b-d79f-434d-aa80-46073f3d46e0</p>
             <table style="width: 100%; text-align: left;">
                 <tr>
-                    <td style="text-align: left;"><strong>Comm:</strong> tcp://10.12.1.3:33088</td>
+                    <td style="text-align: left;"><strong>Comm:</strong> tcp://10.12.206.3:40276</td>
                     <td style="text-align: left;"><strong>Workers:</strong> 0</td>
                 </tr>
                 <tr>
                     <td style="text-align: left;">
-                        <strong>Dashboard:</strong> <a href="/proxy/8787/status">/proxy/8787/status</a>
+                        <strong>Dashboard:</strong> <a href="/proxy/46243/status">/proxy/46243/status</a>
                     </td>
                     <td style="text-align: left;">
                         <strong>Total threads:</strong>
@@ -2058,141 +2066,15 @@ cf_xarray  : 0.6.0
     </div>
 </div></div>
 </div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="mitgcm-25-year">
 <h2>MITgcm 25 year<a class="headerlink" href="#mitgcm-25-year" title="Permalink to this headline">¶</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">surf</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">mombudget</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">heatbudget</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">state</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="c1"># start date for les; noon is a good time (it is before sunrise)</span>
-<span class="n">sim_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2003-01-01 12:00:00&quot;</span><span class="p">)</span>
-
-<span class="c1"># ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)</span>
-<span class="n">les_time_length</span> <span class="o">=</span> <span class="mi">366</span><span class="o">*</span><span class="mi">15</span> <span class="c1"># (days); length of time for forcing/pushing files</span>
-
-<span class="c1"># don&#39;t change anything here</span>
-<span class="n">output_start_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;1999-01-01&quot;</span><span class="p">)</span>  <span class="c1"># don&#39;t change</span>
-<span class="n">firstfilenum</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span>
-        <span class="n">sim_time</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;1D&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">output_start_time</span>
-    <span class="p">)</span>  <span class="c1"># add one day offset to avoid bugs</span>
-    <span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;timedelta64[D]&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">lastfilenum</span> <span class="o">=</span> <span class="n">firstfilenum</span> <span class="o">+</span> <span class="n">les_time_length</span>
-
-
-<span class="k">def</span> <span class="nf">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="p">):</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gcmdir</span><span class="si">}</span><span class="s2">/File_</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.nc&quot;</span>
-        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">firstfilenum</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lastfilenum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">files</span>
-
-
-<span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">if</span> <span class="n">surf</span><span class="p">:</span>
-    <span class="n">files</span> <span class="o">+=</span> <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;etan&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;surf&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">mombudget</span><span class="p">:</span>
-    <span class="n">files</span> <span class="o">+=</span> <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;ub&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;vb&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">heatbudget</span><span class="p">:</span>
-    <span class="n">files</span> <span class="o">+=</span> <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;hb&quot;</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">state</span><span class="p">:</span>
-    <span class="n">files</span> <span class="o">+=</span> <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;buoy&quot;</span><span class="p">)</span>
-
-<span class="n">coords</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_mitgcm_coords</span><span class="p">(</span><span class="n">gcmdir</span><span class="p">)</span>
-
-<span class="c1"># grid metrics</span>
-<span class="c1"># verify at http://gallery.pangeo.io/repos/xgcm/xgcm-examples/02_mitgcm.html#</span>
-<span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_metrics</span><span class="p">(</span><span class="n">gcmdir</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">40</span><span class="p">),</span> <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">40</span><span class="p">),</span> <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">136</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;dRF&quot;</span><span class="p">])</span>
-    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;depth_left&quot;</span><span class="p">:</span> <span class="s2">&quot;RF&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;RC&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;YC&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;XC&quot;</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RF</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">136</span><span class="p">))</span>
-<span class="p">)</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;rAw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;rAs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">rAs</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacS</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;DXG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXG</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;DYG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYG</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;DXC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXC</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;DYC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYC</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subsetter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">ds</span><span class="p">:</span> <span class="n">ds</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">155</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
-
-<span class="n">grid</span> <span class="o">=</span> <span class="n">xgcm</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-        <span class="p">[</span>
-            <span class="n">coords</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">155</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">),</span>
-            <span class="n">metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span>
-                <span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">155</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
-            <span class="p">),</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-    <span class="n">periodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">boundary</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="s2">&quot;extend&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="s2">&quot;extend&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="s2">&quot;extend&quot;</span><span class="p">},</span>
-    <span class="n">metrics</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;DXC&quot;</span><span class="p">,</span> <span class="s2">&quot;DXG&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;DYG&quot;</span><span class="p">,</span> <span class="s2">&quot;DYC&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;drF&quot;</span><span class="p">,</span> <span class="s2">&quot;drC&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">):</span> <span class="p">(</span><span class="s2">&quot;rAw&quot;</span><span class="p">,</span> <span class="s2">&quot;rAs&quot;</span><span class="p">),</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-
-
-<span class="n">ds</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-        <span class="n">files</span><span class="p">,</span>
-        <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span>
-        <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-        <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">preprocess</span><span class="o">=</span><span class="n">subsetter</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;YC&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;XC&quot;</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">coords</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">155</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">})</span>
-<span class="p">)</span>
-
-<span class="k">if</span> <span class="n">surf</span><span class="p">:</span>
-    <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;oceQsw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">oceQsw</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">mombudget</span><span class="p">:</span>
-    <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;taux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1035</span> <span class="o">*</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Um_Ext&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;tauy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1035</span> <span class="o">*</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Vm_Ext&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-
-<span class="c1"># if heatbudget:</span>
-<span class="c1">#    hb_ren = pump.model.rename_mitgcm_budget_terms(hb, coords).update(coords.coords)</span>
-
-
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;XC&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;YC&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;RC&quot;</span><span class="p">})</span>
-
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="s2">&quot;KPP_diffusivity&quot;</span><span class="p">]:</span>
-    <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;RC&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;RC&quot;</span><span class="p">:</span> <span class="s2">&quot;RF&quot;</span><span class="p">})</span>
-
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;dens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">print_metrics</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
@@ -2219,28 +2101,10 @@ cf_xarray  : 0.6.0
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="mi">1035</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">dens</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span>
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">grid</span><span class="o">.</span><span class="n">interp_like</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">N2</span><span class="p">)</span>
-    <span class="o">+</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp_like</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">N2</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_mitgcm_20_year</span><span class="p">(</span>
+    <span class="n">state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;2008-05-01&quot;</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="s2">&quot;2009-05-31&quot;</span>
 <span class="p">)</span>
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;Ri&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">N2</span> <span class="o">/</span> <span class="n">ds</span><span class="o">.</span><span class="n">S2</span>
-
-<span class="n">ds</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">ds</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;Ri&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">Ri</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;mld&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_mld</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">dens</span><span class="p">)</span>
-<span class="n">fordcl</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[[</span><span class="s2">&quot;mld&quot;</span><span class="p">,</span> <span class="s2">&quot;Ri&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">unify_chunks</span><span class="p">()</span>
-
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;dcl_base&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">map_blocks</span><span class="p">(</span>
-    <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_dcl_base_Ri</span><span class="p">,</span>
-    <span class="n">fordcl</span><span class="p">,</span>
-    <span class="n">template</span><span class="o">=</span><span class="n">fordcl</span><span class="o">.</span><span class="n">mld</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1">#ds[&quot;dcl_base&quot;] = pump.calc.get_dcl_base_Ri(ds, depth_thresh=-250)</span>
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;dcl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">mld</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">dcl_base</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">dcl</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DCL&quot;</span>
+<span class="n">ds</span>
 </pre></div>
 </div>
 </div>
@@ -2885,7 +2749,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2ad0754bc130&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_19_1.png" src="_images/MI-extent_19_1.png" />
+<img alt="_images/MI-extent_21_1.png" src="_images/MI-extent_21_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2925,7 +2789,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2b10b79f5d00&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_21_1.png" src="_images/MI-extent_21_1.png" />
+<img alt="_images/MI-extent_23_1.png" src="_images/MI-extent_23_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2937,7 +2801,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/MI-extent_22_0.png" src="_images/MI-extent_22_0.png" />
+<img alt="_images/MI-extent_24_0.png" src="_images/MI-extent_24_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2951,7 +2815,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2aea3f203e20&gt;]
 </pre></div>
 </div>
-<img alt="_images/MI-extent_23_1.png" src="_images/MI-extent_23_1.png" />
+<img alt="_images/MI-extent_25_1.png" src="_images/MI-extent_25_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2984,7 +2848,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/MI-extent_24_0.png" src="_images/MI-extent_24_0.png" />
+<img alt="_images/MI-extent_26_0.png" src="_images/MI-extent_26_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3004,7 +2868,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2ae885c605b0&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_26_1.png" src="_images/MI-extent_26_1.png" />
+<img alt="_images/MI-extent_28_1.png" src="_images/MI-extent_28_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3022,7 +2886,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.contour.QuadContourSet at 0x2b36a9a92dc0&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_27_1.png" src="_images/MI-extent_27_1.png" />
+<img alt="_images/MI-extent_29_1.png" src="_images/MI-extent_29_1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3035,7 +2899,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b36ab2acd60&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_28_1.png" src="_images/MI-extent_28_1.png" />
+<img alt="_images/MI-extent_30_1.png" src="_images/MI-extent_30_1.png" />
 </div>
 </div>
 </div>
@@ -8275,7 +8139,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f6694c98f10&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_40_2.png" src="_images/MI-extent_40_2.png" />
+<img alt="_images/MI-extent_42_2.png" src="_images/MI-extent_42_2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8300,7 +8164,7 @@ distributed.utils_perf - WARNING - full garbage collections took 92% CPU time re
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f68eb055a50&gt;]
 </pre></div>
 </div>
-<img alt="_images/MI-extent_41_2.png" src="_images/MI-extent_41_2.png" />
+<img alt="_images/MI-extent_43_2.png" src="_images/MI-extent_43_2.png" />
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.utils_perf - WARNING - full garbage collections took 92% CPU time recently (threshold: 10%)
 distributed.utils_perf - WARNING - full garbage collections took 92% CPU time recently (threshold: 10%)
 distributed.utils_perf - WARNING - full garbage collections took 92% CPU time recently (threshold: 10%)
@@ -8780,7 +8644,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/MI-extent_45_0.png" src="_images/MI-extent_45_0.png" />
+<img alt="_images/MI-extent_47_0.png" src="_images/MI-extent_47_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
