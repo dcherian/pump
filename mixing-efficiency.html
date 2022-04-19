@@ -55,7 +55,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Long-term tubulence in 20-year simulation" href="long-term-turbulence.html" />
+    <link rel="next" title="LES first look" href="les-examine.html" />
     <link rel="prev" title="Chameleon heat flux χ vs ε" href="equix-examine.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -192,6 +192,11 @@ const thebe_selector_output = ".output, .cell_output"
  </span>
 </p>
 <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="les-examine.html">
+   LES first look
+  </a>
+ </li>
  <li class="toctree-l1">
   <a class="reference internal" href="long-term-turbulence.html">
    Long-term tubulence in 20-year simulation
@@ -436,7 +441,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p>\begin{align*}
 Ri_f &amp;= \frac{B}{B + ε} \
 Re_b &amp;= \frac{ε}{νN^2} \
-B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
+B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2}  = K_Tb_z \
 Γ &amp;= \frac{Ri_f}{1 - Ri_f}
 \end{align*}</p>
 <p>I’m calculating these after</p>
@@ -447,6 +452,14 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </ol>
 <p>Averaging tends to raise mean <span class="math notranslate nohighlight">\(Ri_f\)</span> values for TIWE.</p>
 <p>I’ll look at EQUIX and TIWE.</p>
+<p>Quoting Monismith et al (2016):</p>
+<blockquote>
+<div><p>more generally B + ε represents the net supply of TKE including tke production <span class="math notranslate nohighlight">\(P\)</span>, vertical divergence of TKE flux, and the rate of change of TKE with time.</p>
+</div></blockquote>
+<p>Ivey et al (2008) say the following but the data is from Shi et al (2005) so do we still believe this?</p>
+<blockquote>
+<div><p>Both laboratory and DNS work indicate that at these extremes, when either <span class="math notranslate nohighlight">\(ε/ν N^2\)</span> ∼ O(1) or <span class="math notranslate nohighlight">\(ε/νN^2 ∼ O(10^5)\)</span>, the mixing efficiency <span class="math notranslate nohighlight">\(Ri_f\)</span> → 0 and the use of large <span class="math notranslate nohighlight">\(Ri_f ≈ 0.2\)</span> in field situations in these limits cannot be justified.</p>
+</div></blockquote>
 <div class="cell tag_hide-cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
@@ -2918,10 +2931,10 @@ posx and posy should be finite values
             <p class="prev-next-title">Chameleon heat flux χ vs ε</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="long-term-turbulence.html" title="next page">
+    <a class='right-next' id="next-link" href="les-examine.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Long-term tubulence in 20-year simulation</p>
+        <p class="prev-next-title">LES first look</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
