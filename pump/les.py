@@ -43,6 +43,9 @@ def read_les_file(fname):
     ds["Fim"] = ds.nududz - ds.uw + 1j * (ds.nudvdz - ds.vw)
     ds["Fimtop"] = ds.nududztop + 1j * (ds.nudvdztop)
 
+    # note Fb includes subgrid scale temperature flux, kappadTdz,
+    # resolved temperature flux -tempw, subgridscale salinity flux kappadSdz,
+    # and resolved salinity flux -saltw
     ds["Fb"] = ds.kappadbdz - ds.wb
     ds["FT"] = ds.kappadtdz - ds.tempw
     ds["FS"] = ds.kappadsdz - ds.saltw
@@ -61,6 +64,7 @@ def read_les_file(fname):
     ds["SHEARPROD"] = np.real(ds.Fim * np.conj(ds.dudzim))
 
     ds["epsilon"] = ds.epsilon.where((ds.epsilon < 1) & (ds.epsilon > 0))
+    ds["chi"] = ds.FT * ds.dTdz
 
     ds["tke"] = 0.5 * (ds.urms**2 + ds.vrms**2 + ds.wrms**2)
 
@@ -71,11 +75,11 @@ def read_les_file(fname):
     ds["Rif"] = ds.Fb / (ds.epsilon.where(ds.epsilon > 1e-8) + ds.Fb)
     ds["Rif"].attrs = {"long_name": "$Ri_f$"}
 
-    # note Fb includes subgrid scale temperature flux, kappadTdz,
-    # resolved temperature flux -tempw, subgridscale salinity flux kappadSdz,
-    # and resolved salinity flux -saltw ; see loadTPOSles.m
     ds["Reb"] = ds.epsilon / (1e-6 * ds.N2)
     ds["Reb"].attrs = {"long_name": "$Re_b$"}
+
+    ds["Jq"] = 1025 * 4200 * ds.kappadtdz
+    ds.Jq.attrs = {"long_name": "$J_q$", "units": "W/m^2"}
 
     return ds
 

@@ -27,6 +27,7 @@ parts:
 
 - caption: Other
   chapters:
+  - file: les-examine
   - file: long-term-turbulence
   - file: les-tendencies
   - file: heat-momentum-budget-checks
