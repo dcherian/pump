@@ -14,10 +14,11 @@ def make_clean_dataset(ds, /, *, timeres="1H", ndepth=5):
     """
     Processes chameleon datasets
 
-    1. Resample to hourly.
-    2. Sort ε, χ, T, S, ρ by density
-    3. Calculate N2, dTdz in 5m bins using density-sorted T, pden.
-    4. Coarsen all fields to 5m resolution
+    1. Mask out "bad" values
+    2. Resample to hourly.
+    3. Sort ε, χ, T, S, ρ by density
+    4. Calculate N2, dTdz in 5m bins using density-sorted T, pden.
+    5. Coarsen all fields to 5m resolution
 
     Parameters
     ----------
@@ -89,10 +90,12 @@ def make_clean_dataset(ds, /, *, timeres="1H", ndepth=5):
     avg["S2"] = slopes.dudz**2 + slopes.dvdz**2
     avg["shred2"] = avg.S2 - 4 * avg.N2
     avg["Ri"] = avg.N2 / avg.S2.where(avg.S2 > 1e-6)
+    avg["Jq"] = 1025 * 4200 * avg.chi / 2 / avg.dTdz
     avg.dTdz.attrs = {"long_name": "$T_z$", "units": "°C/m"}
     avg.N2.attrs = {"long_name": "$N^2$", "units": "s$^{-2}$"}
     avg.S2.attrs = {"long_name": "$S^2$", "units": "s$^{-2}$"}
     avg.shred2.attrs = {"long_name": "$Sh_{red}^2$", "units": "s$^{-2}$"}
+    avg.Jq.attrs = {"long_name": "$J_q^χ$", "units": "W/m$^2$"}
     avg.Ri.attrs = {"long_name": "$Ri$"}
     avg = avg.swap_dims({"depth_": "depth"}).drop_vars("depth_")
     avg.update(unsorted)
