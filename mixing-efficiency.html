@@ -4,11 +4,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Variations in \(Ri_f\), \(Γ\) &#8212; PUMP</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -18,20 +20,16 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -39,12 +37,13 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
@@ -64,7 +63,21 @@ const thebe_selector_output = ".output, .cell_output"
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
     
     <div class="container-fluid" id="banner"></div>
 
@@ -73,9 +86,10 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="container-xl">
       <div class="row">
           
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="index.html">
       
       
@@ -220,104 +234,177 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/mixing-efficiency.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
-
-            <!-- Source interaction buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/dcherian/pump"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        
-        
-    </div>
-</div>
-
-            <!-- Full screen (wrap in <a> to have style consistency -->
-
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/mixing-efficiency.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        
-    </div>
-</div>
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
             </div>
-            <nav id="bd-toc-nav" aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/mixing-efficiency.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/dcherian/pump"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/mixing-efficiency.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
  <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#">
    Variations in
@@ -364,12 +451,11 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
 </ul>
 
-            </nav>
-        </div>
-    </div>
+    </nav>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>Variations in Ri_f, Γ</h1>
@@ -432,11 +518,12 @@ const thebe_selector_output = ".output, .cell_output"
                     </div>
                 </div>
             </div>
-            
+            <main id="main-content" role="main">
+                
               <div>
                 
-  <div class="section" id="variations-in-ri-f">
-<h1>Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span><a class="headerlink" href="#variations-in-ri-f" title="Permalink to this headline">¶</a></h1>
+  <section id="variations-in-ri-f">
+<h1>Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span><a class="headerlink" href="#variations-in-ri-f" title="Permalink to this headline">#</a></h1>
 <p>Γ is potentially a large uncertainty in <span class="math notranslate nohighlight">\(J_q^ε\)</span>. Lets try the analysis of Monismith et al (2016). Definitions:</p>
 <p>\begin{align*}
 Ri_f &amp;= \frac{B}{B + ε} \
@@ -2404,103 +2491,9 @@ hvplot     : 0.7.3
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">resample_mean</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">resampler</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">resample_reduce</span><span class="p">(</span><span class="n">resampler</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">make_clean_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes chameleon datasets</span>
-
-<span class="sd">    1. Resample to hourly.</span>
-<span class="sd">    2. Sort ε, χ, T, S, ρ by density</span>
-<span class="sd">    3. Calculate N2, dTdz in 5m bins using density-sorted T, pden.</span>
-<span class="sd">    4. Coarsen all fields to 5m resolution</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1"># averaging scales</span>
-    <span class="n">ndepth</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="n">timeres</span> <span class="o">=</span> <span class="s2">&quot;1H&quot;</span>
-
-    <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span>
-        <span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">,</span> <span class="s2">&quot;pres&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;pden&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;eucmax&quot;</span><span class="p">,</span> <span class="s2">&quot;mld&quot;</span><span class="p">]</span>
-    <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;rhoav&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="mi">1000</span>
-    <span class="c1"># mask out bad values</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">chi</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">eps</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">]:</span>
-        <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
-
-    <span class="c1"># thorpesort turbulence and CTD fields</span>
-    <span class="n">sort</span> <span class="o">=</span> <span class="n">thorpesort</span><span class="p">(</span>
-        <span class="n">ds</span><span class="p">[[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;pden&quot;</span><span class="p">]],</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;pden&quot;</span><span class="p">,</span> <span class="n">core_dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span>
-    <span class="p">)</span>
-
-    <span class="n">dsmean</span> <span class="o">=</span> <span class="n">resample_mean</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">timeres</span><span class="p">)</span>
-    <span class="n">sortmean</span> <span class="o">=</span> <span class="n">resample_mean</span><span class="p">(</span><span class="n">sort</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">timeres</span><span class="p">)</span>
-    <span class="n">sortmean</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dsmean</span><span class="p">[[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;pres&quot;</span><span class="p">]])</span>
-
-    <span class="n">unsorted</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">dsmean</span><span class="p">[[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;pden&quot;</span><span class="p">]]</span>
-        <span class="o">.</span><span class="n">coarsen</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">ndepth</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;trim&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="o">.</span><span class="n">rename</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;theta&quot;</span><span class="p">:</span> <span class="s2">&quot;theta_unsorted&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;salt&quot;</span><span class="p">:</span> <span class="s2">&quot;salt_unsorted&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pden&quot;</span><span class="p">:</span> <span class="s2">&quot;pden_unsorted&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
-    <span class="n">reshaped</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">sortmean</span><span class="o">.</span><span class="n">coarsen</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">ndepth</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;trim&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;depth_&quot;</span><span class="p">,</span> <span class="s2">&quot;window&quot;</span><span class="p">))</span>
-        <span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
-
-    <span class="n">avg</span> <span class="o">=</span> <span class="n">reshaped</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;window&quot;</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">,</span> <span class="s2">&quot;mld&quot;</span><span class="p">]:</span>
-        <span class="n">avg</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">dsmean</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">slopes</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">reshaped</span><span class="p">[[</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;pden&quot;</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">]]</span>
-        <span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="s2">&quot;window&quot;</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">rename_vars</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;theta_polyfit_coefficients&quot;</span><span class="p">:</span> <span class="s2">&quot;dTdz&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pden_polyfit_coefficients&quot;</span><span class="p">:</span> <span class="s2">&quot;dρdz&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;u_polyfit_coefficients&quot;</span><span class="p">:</span> <span class="s2">&quot;dudz&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;v_polyfit_coefficients&quot;</span><span class="p">:</span> <span class="s2">&quot;dvdz&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
-    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">slopes</span><span class="o">.</span><span class="n">dTdz</span>
-    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">avg</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="mi">1025</span> <span class="o">*</span> <span class="n">slopes</span><span class="o">.</span><span class="n">dρdz</span>
-    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">avg</span><span class="o">.</span><span class="n">N2</span> <span class="o">&lt;</span> <span class="mf">5e-2</span><span class="p">)</span>
-    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">slopes</span><span class="o">.</span><span class="n">dudz</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">slopes</span><span class="o">.</span><span class="n">dvdz</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;shred2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">S2</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">avg</span><span class="o">.</span><span class="n">N2</span>
-    <span class="n">avg</span><span class="p">[</span><span class="s2">&quot;Ri&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">avg</span><span class="o">.</span><span class="n">N2</span> <span class="o">/</span> <span class="n">avg</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">avg</span><span class="o">.</span><span class="n">S2</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">)</span>
-    <span class="n">avg</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$T_z$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;°C/m&quot;</span><span class="p">}</span>
-    <span class="n">avg</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$N^2$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;s$^{-2}$&quot;</span><span class="p">}</span>
-    <span class="n">avg</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$S^2$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;s$^{-2}$&quot;</span><span class="p">}</span>
-    <span class="n">avg</span><span class="o">.</span><span class="n">shred2</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$Sh_</span><span class="si">{red}</span><span class="s2">^2$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;s$^{-2}$&quot;</span><span class="p">}</span>
-    <span class="n">avg</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$Ri$&quot;</span><span class="p">}</span>
-    <span class="n">avg</span> <span class="o">=</span> <span class="n">avg</span><span class="o">.</span><span class="n">swap_dims</span><span class="p">({</span><span class="s2">&quot;depth_&quot;</span><span class="p">:</span> <span class="s2">&quot;depth&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">(</span><span class="s2">&quot;depth_&quot;</span><span class="p">)</span>
-    <span class="n">avg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">unsorted</span><span class="p">)</span>
-
-    <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">add_mixing_diagnostics</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">avg</span>
-
-
-<span class="c1">#pump.calc.add_mixing_diagnostics(tiwe_, nbins=51)</span>
-<span class="n">equix</span> <span class="o">=</span> <span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">equix_</span><span class="p">)</span>
-<span class="n">tiwe</span> <span class="o">=</span> <span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">tiwe_</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pump.calc.add_mixing_diagnostics(tiwe_, nbins=51)</span>
+<span class="n">equix</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">micro</span><span class="o">.</span><span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">equix_</span><span class="p">)</span>
+<span class="n">tiwe</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">micro</span><span class="o">.</span><span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">tiwe_</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2535,9 +2528,9 @@ hvplot     : 0.7.3
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="above-vs-below-euc-distributions">
-<h1>Above vs below EUC distributions<a class="headerlink" href="#above-vs-below-euc-distributions" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="above-vs-below-euc-distributions">
+<h1>Above vs below EUC distributions<a class="headerlink" href="#above-vs-below-euc-distributions" title="Permalink to this headline">#</a></h1>
 <p>This started as a crude attempt to parition the data into “within DCL” and “outside DCL”.</p>
 <p>But that approximation only works for EQUIX. TIWE is quite different! (see next section on  timeseries)</p>
 <p>Note that calculating <span class="math notranslate nohighlight">\(Ri_f\)</span>  with averaged quantities makes some  difference for TIWE.</p>
@@ -2627,9 +2620,9 @@ hvplot     : 0.7.3
 <img alt="_images/mixing-efficiency_7_2.png" src="_images/mixing-efficiency_7_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="distributions-of-re-b-and-ri-f">
-<h1>Distributions of  <span class="math notranslate nohighlight">\(Re_b\)</span> and  <span class="math notranslate nohighlight">\(Ri_f\)</span><a class="headerlink" href="#distributions-of-re-b-and-ri-f" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="distributions-of-re-b-and-ri-f">
+<h1>Distributions of  <span class="math notranslate nohighlight">\(Re_b\)</span> and  <span class="math notranslate nohighlight">\(Ri_f\)</span><a class="headerlink" href="#distributions-of-re-b-and-ri-f" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -2654,9 +2647,9 @@ hvplot     : 0.7.3
 <img alt="_images/mixing-efficiency_9_1.png" src="_images/mixing-efficiency_9_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="timeseries">
-<h1>Timeseries<a class="headerlink" href="#timeseries" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="timeseries">
+<h1>Timeseries<a class="headerlink" href="#timeseries" title="Permalink to this headline">#</a></h1>
 <p>These timeseries are more meaningful. Black contours are <span class="math notranslate nohighlight">\(Re_b\)</span>. White line is EUC max.</p>
 <ol class="simple">
 <li><p>In TIWE, high <span class="math notranslate nohighlight">\(Ri_f\)</span> is seen near the base of the “DCL” i.e. when <span class="math notranslate nohighlight">\(ε\)</span> is generally low.</p></li>
@@ -2684,9 +2677,9 @@ posx and posy should be finite values
 <img alt="_images/mixing-efficiency_11_2.png" src="_images/mixing-efficiency_11_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="tiwe-more-closely">
-<h1>TIWE more closely<a class="headerlink" href="#tiwe-more-closely" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="tiwe-more-closely">
+<h1>TIWE more closely<a class="headerlink" href="#tiwe-more-closely" title="Permalink to this headline">#</a></h1>
 <p>First I divide the timeseries into a few periods (period = time instants where red line is flat). Then look at profiles of quantities averaged over those  periods.</p>
 <p>It turns out this is slightly misleading.</p>
 <div class="cell tag_hide-input docutils container">
@@ -2842,9 +2835,9 @@ Invalid limit will be ignored.
 <img alt="_images/mixing-efficiency_18_1.png" src="_images/mixing-efficiency_18_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="a-bunch-of-fields">
-<h1>A bunch of fields<a class="headerlink" href="#a-bunch-of-fields" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="a-bunch-of-fields">
+<h1>A bunch of fields<a class="headerlink" href="#a-bunch-of-fields" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">))</span>
@@ -2897,7 +2890,7 @@ posx and posy should be finite values
 <img alt="_images/mixing-efficiency_22_3.png" src="_images/mixing-efficiency_22_3.png" />
 </div>
 </div>
-</div>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -2921,9 +2914,11 @@ posx and posy should be finite values
 
               </div>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="equix-examine.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -2939,31 +2934,35 @@ posx and posy should be finite values
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-            
+            </footer>
         </div>
     </div>
-    <footer class="footer">
-  <p>
-    
-      By Deepak Cherian<br/>
-    
-        &copy; Copyright 2021.<br/>
-      <div class="extra_footer">
-        <div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Deepak Cherian<br/>
+  
+      &copy; Copyright 2022.<br/>
+    <div class="extra_footer">
+      <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-      </div>
-  </p>
-</footer>
-</main>
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
 
 
       </div>
     </div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
 
   </body>
 </html>

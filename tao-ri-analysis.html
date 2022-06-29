@@ -4,11 +4,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>TAO Ri analysis &#8212; PUMP</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -18,20 +20,16 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -39,12 +37,13 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
@@ -64,7 +63,21 @@ const thebe_selector_output = ".output, .cell_output"
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
     
     <div class="container-fluid" id="banner"></div>
 
@@ -73,9 +86,10 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="container-xl">
       <div class="row">
           
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="index.html">
       
       
@@ -220,104 +234,177 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/tao-ri-analysis.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
-
-            <!-- Source interaction buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/dcherian/pump"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        
-        
-    </div>
-</div>
-
-            <!-- Full screen (wrap in <a> to have style consistency -->
-
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/tao-ri-analysis.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        
-    </div>
-</div>
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
             </div>
-            <nav id="bd-toc-nav" aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/tao-ri-analysis.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/dcherian/pump"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/tao-ri-analysis.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#next-steps">
    Next steps
@@ -446,12 +533,11 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
 </ul>
 
-            </nav>
-        </div>
-    </div>
+    </nav>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>TAO Ri analysis</h1>
@@ -596,11 +682,12 @@ const thebe_selector_output = ".output, .cell_output"
                     </div>
                 </div>
             </div>
-            
+            <main id="main-content" role="main">
+                
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="tao-ri-analysis">
-<h1>TAO Ri analysis<a class="headerlink" href="#tao-ri-analysis" title="Permalink to this headline">¶</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="tao-ri-analysis">
+<h1>TAO Ri analysis<a class="headerlink" href="#tao-ri-analysis" title="Permalink to this headline">#</a></h1>
 <p>Analysis of bulk &amp; gradient Ri with TAO data</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -639,8 +726,8 @@ matplotlib : 3.3.4
 </div>
 </div>
 </div>
-<div class="section" id="next-steps">
-<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
+<section id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">#</a></h2>
 <ol class="simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Make a merged velocity dataset</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Add 147E to merged dataset</p></li>
@@ -667,9 +754,9 @@ matplotlib : 3.3.4
 </ul>
 </li>
 </ol>
-</div>
-<div class="section" id="ri-g-quantile-analysis">
-<h2>Ri_g quantile analysis<a class="headerlink" href="#ri-g-quantile-analysis" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="ri-g-quantile-analysis">
+<h2>Ri_g quantile analysis<a class="headerlink" href="#ri-g-quantile-analysis" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_q_old</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;tao-hourly-Ri-seasonal-percentiles-before-salinity.nc&quot;</span><span class="p">)</span>
@@ -1681,9 +1768,9 @@ Data variables:
 <img alt="_images/tao-ri-analysis_8_1.png" src="_images/tao-ri-analysis_8_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="argo-how-important-is-salinity-to-n2">
-<h2>Argo: How “important” is salinity to N²<a class="headerlink" href="#argo-how-important-is-salinity-to-n2" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="argo-how-important-is-salinity-to-n2">
+<h2>Argo: How “important” is salinity to N²<a class="headerlink" href="#argo-how-important-is-salinity-to-n2" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">argo</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">oceans</span><span class="o">.</span><span class="n">read_argo_clim</span><span class="p">()</span>
@@ -4213,9 +4300,9 @@ Attributes:
 <img alt="_images/tao-ri-analysis_18_1.png" src="_images/tao-ri-analysis_18_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="sampling-how-is-tao-resolving-mi-at-140w-during-mam">
-<h2>Sampling: how is tao resolving MI at 140W during MAM<a class="headerlink" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="sampling-how-is-tao-resolving-mi-at-140w-during-mam">
+<h2>Sampling: how is tao resolving MI at 140W during MAM<a class="headerlink" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_zarr</span><span class="p">(</span><span class="s2">&quot;ancillary&quot;</span><span class="p">)</span>
@@ -4298,9 +4385,9 @@ Attributes:
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="calculate-rig">
-<h2>calculate Rig<a class="headerlink" href="#calculate-rig" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="calculate-rig">
+<h2>calculate Rig<a class="headerlink" href="#calculate-rig" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">Rig</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;time.season&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -4719,9 +4806,9 @@ dl.xr-attrs {
 <img alt="_images/tao-ri-analysis_30_0.png" src="_images/tao-ri-analysis_30_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="bin-in-euc-relative-coordinates">
-<h2>bin in euc-relative coordinates<a class="headerlink" href="#bin-in-euc-relative-coordinates" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="bin-in-euc-relative-coordinates">
+<h2>bin in euc-relative coordinates<a class="headerlink" href="#bin-in-euc-relative-coordinates" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_zarr</span><span class="p">(</span><span class="s2">&quot;ancillary&quot;</span><span class="p">)</span>
@@ -6152,9 +6239,9 @@ Data variables:
 <img alt="_images/tao-ri-analysis_35_2.png" src="_images/tao-ri-analysis_35_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="gradient-ri-quantiles">
-<h2>Gradient Ri quantiles<a class="headerlink" href="#gradient-ri-quantiles" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="gradient-ri-quantiles">
+<h2>Gradient Ri quantiles<a class="headerlink" href="#gradient-ri-quantiles" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grouped</span> <span class="o">=</span> <span class="n">interped</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;time.season&quot;</span><span class="p">)</span>
@@ -6249,9 +6336,9 @@ findfont: Font family [&#39;DejaVu Sans Display&#39;] not found. Falling back to
 <img alt="_images/tao-ri-analysis_39_2.png" src="_images/tao-ri-analysis_39_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="median-in-euc-relative-coordinate">
-<h2>Median in euc-relative coordinate<a class="headerlink" href="#median-in-euc-relative-coordinate" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="median-in-euc-relative-coordinate">
+<h2>Median in euc-relative coordinate<a class="headerlink" href="#median-in-euc-relative-coordinate" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_q</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataarray</span><span class="p">(</span><span class="s2">&quot;tao-hourly-Ri-seasonal-percentiles.nc&quot;</span><span class="p">)</span>
@@ -8299,8 +8386,8 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 </div>
-<div class="section" id="after-binning-instead-of-reinterpolating-to-euc-depth-coordinate">
-<h3>after binning instead of reinterpolating to euc depth coordinate<a class="headerlink" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate" title="Permalink to this headline">¶</a></h3>
+<section id="after-binning-instead-of-reinterpolating-to-euc-depth-coordinate">
+<h3>after binning instead of reinterpolating to euc depth coordinate<a class="headerlink" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">median_Rig</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">median_Rig</span><span class="o">.</span><span class="n">num_obs</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="o">*</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>    
@@ -8320,9 +8407,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/tao-ri-analysis_45_0.png" src="_images/tao-ri-analysis_45_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="after-gridding-t-u-to-same-grid">
-<h3>after gridding T,u to same grid<a class="headerlink" href="#after-gridding-t-u-to-same-grid" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="after-gridding-t-u-to-same-grid">
+<h3>after gridding T,u to same grid<a class="headerlink" href="#after-gridding-t-u-to-same-grid" title="Permalink to this headline">#</a></h3>
 <p>some minor differences especially at 110W</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -8345,9 +8432,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/tao-ri-analysis_47_0.png" src="_images/tao-ri-analysis_47_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="after-filling-nans-with-pchip">
-<h3>after filling NaNs with pchip<a class="headerlink" href="#after-filling-nans-with-pchip" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="after-filling-nans-with-pchip">
+<h3>after filling NaNs with pchip<a class="headerlink" href="#after-filling-nans-with-pchip" title="Permalink to this headline">#</a></h3>
 <p>and properly filtering eucmax</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -8370,9 +8457,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/tao-ri-analysis_49_0.png" src="_images/tao-ri-analysis_49_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="before-filling-nans-with-pchip">
-<h3>before filling NaNs with pchip<a class="headerlink" href="#before-filling-nans-with-pchip" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="before-filling-nans-with-pchip">
+<h3>before filling NaNs with pchip<a class="headerlink" href="#before-filling-nans-with-pchip" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">Ri_q</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Ri_q</span><span class="o">.</span><span class="n">num_obs</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="o">*</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span> 
@@ -8396,9 +8483,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/tao-ri-analysis_51_0.png" src="_images/tao-ri-analysis_51_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="using-number-of-observations-90">
-<h3>Using number of observations &gt; 90<a class="headerlink" href="#using-number-of-observations-90" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="using-number-of-observations-90">
+<h3>Using number of observations &gt; 90<a class="headerlink" href="#using-number-of-observations-90" title="Permalink to this headline">#</a></h3>
 <p>This seems to work best.</p>
 <p>There is an error here. Need 90*24</p>
 <div class="cell docutils container">
@@ -8417,9 +8504,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/tao-ri-analysis_53_1.png" src="_images/tao-ri-analysis_53_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="after-removing-mld">
-<h3>after removing mld<a class="headerlink" href="#after-removing-mld" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="after-removing-mld">
+<h3>after removing mld<a class="headerlink" href="#after-removing-mld" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">Ri_q</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
@@ -8436,9 +8523,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/tao-ri-analysis_55_1.png" src="_images/tao-ri-analysis_55_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="before-removing-mld">
-<h3>before removing mld<a class="headerlink" href="#before-removing-mld" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="before-removing-mld">
+<h3>before removing mld<a class="headerlink" href="#before-removing-mld" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">Ri_q</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">zeuc</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;season&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;zeuc&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">250</span><span class="p">])</span>
@@ -8453,9 +8540,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/tao-ri-analysis_57_1.png" src="_images/tao-ri-analysis_57_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="before-limiting-eucmax-to-be-deeper-than-20m">
-<h3>Before limiting eucmax to be deeper than 20m<a class="headerlink" href="#before-limiting-eucmax-to-be-deeper-than-20m" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="before-limiting-eucmax-to-be-deeper-than-20m">
+<h3>Before limiting eucmax to be deeper than 20m<a class="headerlink" href="#before-limiting-eucmax-to-be-deeper-than-20m" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_q</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;season&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;zeuc&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">])</span>
@@ -8612,10 +8699,10 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="how-good-is-bulk-ri-vs-gradient-ri">
-<h2>How good is bulk Ri vs gradient Ri<a class="headerlink" href="#how-good-is-bulk-ri-vs-gradient-ri" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="how-good-is-bulk-ri-vs-gradient-ri">
+<h2>How good is bulk Ri vs gradient Ri<a class="headerlink" href="#how-good-is-bulk-ri-vs-gradient-ri" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># del tao.time.encoding[&quot;_FillValue&quot;]</span>
@@ -13079,8 +13166,8 @@ dl.xr-attrs {
 </div>
 </div>
 </div>
-<div class="section" id="estimate-and-plot-histograms">
-<h3>Estimate and plot histograms<a class="headerlink" href="#estimate-and-plot-histograms" title="Permalink to this headline">¶</a></h3>
+<section id="estimate-and-plot-histograms">
+<h3>Estimate and plot histograms<a class="headerlink" href="#estimate-and-plot-histograms" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;rib-median-rig.nc&quot;</span><span class="p">)</span>
@@ -13624,9 +13711,9 @@ dl.xr-attrs {
 <img alt="_images/tao-ri-analysis_95_4.png" src="_images/tao-ri-analysis_95_4.png" />
 </div>
 </div>
-</div>
-<div class="section" id="seasonal-rib-vs-rig">
-<h3>seasonal Rib vs Rig<a class="headerlink" href="#seasonal-rib-vs-rig" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="seasonal-rib-vs-rig">
+<h3>seasonal Rib vs Rig<a class="headerlink" href="#seasonal-rib-vs-rig" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_seasonal_hist</span> <span class="o">=</span> <span class="p">(</span>
@@ -14227,12 +14314,12 @@ dl.xr-attrs {
 <img alt="_images/tao-ri-analysis_99_1.png" src="_images/tao-ri-analysis_99_1.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="datasets">
-<h2>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="johnson">
-<h3>johnson<a class="headerlink" href="#johnson" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="datasets">
+<h2>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">#</a></h2>
+<section id="johnson">
+<h3>johnson<a class="headerlink" href="#johnson" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">johnson</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_johnson</span><span class="p">()</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -15294,9 +15381,9 @@ dl.xr-attrs {
        0.01918499, 0.02063676, 0.01635865, 0.01667926, 0.01474153])</pre></li><li class='xr-var-item'><div class='xr-var-name'><span>Rib</span></div><div class='xr-var-dims'>(longitude)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>57.7 39.51 37.72 ... 1.929 2.307</div><input id='attrs-22c13ba5-2c6e-461d-8be3-5d0b0290a6c1' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-22c13ba5-2c6e-461d-8be3-5d0b0290a6c1' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-171ce0b6-7629-411d-88c0-e15a9b5629d4' class='xr-var-data-in' type='checkbox'><label for='data-171ce0b6-7629-411d-88c0-e15a9b5629d4' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><pre class='xr-var-data'>array([57.69520508, 39.50630823, 37.72013662, 10.21731178,  3.07548718,
         1.52116955,  1.41671203,  1.18509875,  1.92855819,  2.30654635])</pre></li></ul></div></li><li class='xr-section-item'><input id='section-d7fc60dd-f45c-4c7f-948e-036ddec1f1a5' class='xr-section-summary-in' type='checkbox'  checked><label for='section-d7fc60dd-f45c-4c7f-948e-036ddec1f1a5' class='xr-section-summary' >Attributes: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>history :</span></dt><dd>FERRET V5.41    1-Oct-02</dd><dt><span>name :</span></dt><dd>Johnson</dd></dl></div></li></ul></div></div></div></div>
 </div>
-</div>
-<div class="section" id="tao-daily-full-average">
-<h3>TAO daily → full average<a class="headerlink" href="#tao-daily-full-average" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="tao-daily-full-average">
+<h3>TAO daily → full average<a class="headerlink" href="#tao-daily-full-average" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># need to fill to the surface</span>
@@ -15735,9 +15822,9 @@ dl.xr-attrs {
        0.00918281])</pre></li><li class='xr-var-item'><div class='xr-var-name'><span>Rib</span></div><div class='xr-var-dims'>(longitude)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>33.96 37.01 18.15 ... 0.6735 0.767</div><input id='attrs-f1ffffce-ab1e-40ab-952d-761e4460eb3d' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-f1ffffce-ab1e-40ab-952d-761e4460eb3d' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4420db9f-e072-4439-b1ee-10dde3954477' class='xr-var-data-in' type='checkbox'><label for='data-4420db9f-e072-4439-b1ee-10dde3954477' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><pre class='xr-var-data'>array([33.96095672, 37.01382707, 18.14700667,  3.02287714,  0.67345763,
         0.76704032])</pre></li></ul></div></li><li class='xr-section-item'><input id='section-3a2603b0-fafd-43c0-a32b-9903f738eca8' class='xr-section-summary-in' type='checkbox'  checked><label for='section-3a2603b0-fafd-43c0-a32b-9903f738eca8' class='xr-section-summary' >Attributes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>TAO</dd></dl></div></li></ul></div></div></div></div>
 </div>
-</div>
-<div class="section" id="tao-hourly-average">
-<h3>TAO hourly → average<a class="headerlink" href="#tao-hourly-average" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="tao-hourly-average">
+<h3>TAO hourly → average<a class="headerlink" href="#tao-hourly-average" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_clim</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -17056,10 +17143,10 @@ dl.xr-attrs {
 </tr>
 </table></pre></li></ul></div></li><li class='xr-section-item'><input id='section-52dfd37a-e95c-4ecd-8f64-79fe448c0670' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-52dfd37a-e95c-4ecd-8f64-79fe448c0670' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="figure-5">
-<h2>Figure 5<a class="headerlink" href="#figure-5" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="figure-5">
+<h2>Figure 5<a class="headerlink" href="#figure-5" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_zeuc</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="s2">&quot;tao-zeuc.zarr&quot;</span><span class="p">)</span>
@@ -20960,8 +21047,8 @@ dl.xr-attrs {
 <img alt="_images/tao-ri-analysis_128_1.png" src="_images/tao-ri-analysis_128_1.png" />
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -20985,9 +21072,11 @@ dl.xr-attrs {
 
               </div>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="MI-extent.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -21003,31 +21092,35 @@ dl.xr-attrs {
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-            
+            </footer>
         </div>
     </div>
-    <footer class="footer">
-  <p>
-    
-      By Deepak Cherian<br/>
-    
-        &copy; Copyright 2021.<br/>
-      <div class="extra_footer">
-        <div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Deepak Cherian<br/>
+  
+      &copy; Copyright 2022.<br/>
+    <div class="extra_footer">
+      <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-      </div>
-  </p>
-</footer>
-</main>
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
 
 
       </div>
     </div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
 
   </body>
 </html>

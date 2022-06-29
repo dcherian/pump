@@ -4,11 +4,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>TIW Compositing &#8212; PUMP</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -18,20 +20,16 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -39,12 +37,13 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
@@ -64,7 +63,21 @@ const thebe_selector_output = ".output, .cell_output"
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
     
     <div class="container-fluid" id="banner"></div>
 
@@ -73,9 +86,10 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="container-xl">
       <div class="row">
           
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="index.html">
       
       
@@ -220,104 +234,177 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/TIW-compositing.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
-
-            <!-- Source interaction buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/dcherian/pump"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        
-        
-    </div>
-</div>
-
-            <!-- Full screen (wrap in <a> to have style consistency -->
-
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/TIW-compositing.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        
-    </div>
-</div>
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
             </div>
-            <nav id="bd-toc-nav" aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/dcherian/pump/master?urlpath=tree/notebooks/TIW-compositing.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/dcherian/pump"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/TIW-compositing.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#load-data">
    load data
@@ -577,12 +664,11 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
 </ul>
 
-            </nav>
-        </div>
-    </div>
+    </nav>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>TIW Compositing</h1>
@@ -858,13 +944,14 @@ const thebe_selector_output = ".output, .cell_output"
                     </div>
                 </div>
             </div>
-            
+            <main id="main-content" role="main">
+                
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="tiw-compositing">
-<h1>TIW Compositing<a class="headerlink" href="#tiw-compositing" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="load-data">
-<h2>load data<a class="headerlink" href="#load-data" title="Permalink to this headline">¶</a></h2>
+  <section class="tex2jax_ignore mathjax_ignore" id="tiw-compositing">
+<h1>TIW Compositing<a class="headerlink" href="#tiw-compositing" title="Permalink to this headline">#</a></h1>
+<section id="load-data">
+<h2>load data<a class="headerlink" href="#load-data" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
@@ -982,9 +1069,9 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="remake-surface-file">
-<h2>remake surface file<a class="headerlink" href="#remake-surface-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="remake-surface-file">
+<h2>remake surface file<a class="headerlink" href="#remake-surface-file" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
@@ -1161,9 +1248,9 @@ Data variables:
 <img alt="_images/TIW-compositing_18_1.png" src="_images/TIW-compositing_18_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="groupby-plotting">
-<h2>groupby plotting<a class="headerlink" href="#groupby-plotting" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="groupby-plotting">
+<h2>groupby plotting<a class="headerlink" href="#groupby-plotting" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">obj</span> <span class="o">=</span> <span class="n">surf140</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">tao0140</span><span class="o">.</span><span class="n">period</span><span class="p">)</span>
@@ -1230,9 +1317,9 @@ Data variables:
 <img alt="_images/TIW-compositing_20_1.png" src="_images/TIW-compositing_20_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="phase-average">
-<h2>Phase average<a class="headerlink" href="#phase-average" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="phase-average">
+<h2>Phase average<a class="headerlink" href="#phase-average" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">surf140</span> <span class="o">=</span> <span class="n">surf140</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
@@ -1261,9 +1348,9 @@ Data variables:
 <img alt="_images/TIW-compositing_24_1.png" src="_images/TIW-compositing_24_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="time-compositing">
-<h2>time compositing<a class="headerlink" href="#time-compositing" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="time-compositing">
+<h2>time compositing<a class="headerlink" href="#time-compositing" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao110</span> <span class="o">=</span> <span class="n">gcm1</span><span class="o">.</span><span class="n">tao</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">110</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1320,9 +1407,9 @@ Data variables:
 <img alt="_images/TIW-compositing_29_1.png" src="_images/TIW-compositing_29_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="surface-compositing">
-<h2>surface compositing<a class="headerlink" href="#surface-compositing" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="surface-compositing">
+<h2>surface compositing<a class="headerlink" href="#surface-compositing" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sst</span> <span class="o">=</span> <span class="n">surf</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;period&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -2272,8 +2359,8 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 </div>
-<div class="section" id="surface-variables">
-<h3>surface variables<a class="headerlink" href="#surface-variables" title="Permalink to this headline">¶</a></h3>
+<section id="surface-variables">
+<h3>surface variables<a class="headerlink" href="#surface-variables" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sst</span> <span class="o">=</span> <span class="n">gcm1</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
@@ -2306,9 +2393,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/TIW-compositing_47_2.png" src="_images/TIW-compositing_47_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="look-at-surface-anomalies">
-<h3>look at surface anomalies<a class="headerlink" href="#look-at-surface-anomalies" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="look-at-surface-anomalies">
+<h3>look at surface anomalies<a class="headerlink" href="#look-at-surface-anomalies" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
@@ -2354,9 +2441,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/TIW-compositing_49_0.png" src="_images/TIW-compositing_49_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="kpp-mixing-layer-depth">
-<h3>KPP mixing layer depth<a class="headerlink" href="#kpp-mixing-layer-depth" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="kpp-mixing-layer-depth">
+<h3>KPP mixing layer depth<a class="headerlink" href="#kpp-mixing-layer-depth" title="Permalink to this headline">#</a></h3>
 <p>Looks like the best way to detect it from the diffusivity. I pick the K value at one grid point below the surface <span class="math notranslate nohighlight">\(K_{-1}\)</span>. and find the shallowest depth where <span class="math notranslate nohighlight">\(K ≤ K_{-1} / 3\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -2417,9 +2504,9 @@ if (IPython.notebook.kernel != null) {
 <img alt="_images/TIW-compositing_55_1.png" src="_images/TIW-compositing_55_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="kpp-mixing-layer-depth-deep-cycle">
-<h3>KPP mixing layer depth &amp; deep cycle<a class="headerlink" href="#kpp-mixing-layer-depth-deep-cycle" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="kpp-mixing-layer-depth-deep-cycle">
+<h3>KPP mixing layer depth &amp; deep cycle<a class="headerlink" href="#kpp-mixing-layer-depth-deep-cycle" title="Permalink to this headline">#</a></h3>
 <p>Looks like we do see the shear mixing scheme kick in on a daily timescale beneath a descending convecting layer.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -2518,9 +2605,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_60_1.png" src="_images/TIW-compositing_60_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="dk-dt-based-deep-cycle-depth">
-<h3>dK/dt based deep cycle depth<a class="headerlink" href="#dk-dt-based-deep-cycle-depth" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="dk-dt-based-deep-cycle-depth">
+<h3>dK/dt based deep cycle depth<a class="headerlink" href="#dk-dt-based-deep-cycle-depth" title="Permalink to this headline">#</a></h3>
 <p>Hmmm…. the Ri thing seems OK enough</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -2781,9 +2868,9 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="explore-vertical-reference-frame">
-<h3>explore vertical reference frame<a class="headerlink" href="#explore-vertical-reference-frame" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="explore-vertical-reference-frame">
+<h3>explore vertical reference frame<a class="headerlink" href="#explore-vertical-reference-frame" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">set_coords</span><span class="p">(</span><span class="s2">&quot;mld&quot;</span><span class="p">)</span>
@@ -2914,9 +3001,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_80_1.png" src="_images/TIW-compositing_80_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="further-compositing">
-<h3>further compositing<a class="headerlink" href="#further-compositing" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="further-compositing">
+<h3>further compositing<a class="headerlink" href="#further-compositing" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">250</span><span class="p">))</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">48</span><span class="p">})</span>
@@ -2993,9 +3080,9 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="single-period-images">
-<h3>single period images<a class="headerlink" href="#single-period-images" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="single-period-images">
+<h3>single period images<a class="headerlink" href="#single-period-images" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">period</span> <span class="o">==</span> <span class="mi">5</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -3365,9 +3452,9 @@ JobQueueCluster.scale_down was called with a number of worker greater than what 
 <img alt="_images/TIW-compositing_106_1.png" src="_images/TIW-compositing_106_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="shears">
-<h3>shears<a class="headerlink" href="#shears" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="shears">
+<h3>shears<a class="headerlink" href="#shears" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">150</span>
@@ -3450,9 +3537,9 @@ concurrent.futures._base.CancelledError
 <img alt="_images/TIW-compositing_111_1.png" src="_images/TIW-compositing_111_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="actually-composite">
-<h3>actually composite<a class="headerlink" href="#actually-composite" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="actually-composite">
+<h3>actually composite<a class="headerlink" href="#actually-composite" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">masked</span><span class="o">.</span><span class="n">yref</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
@@ -4949,9 +5036,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_153_1.png" src="_images/TIW-compositing_153_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="write-longitude-subset-to-file">
-<h3>write longitude subset to file<a class="headerlink" href="#write-longitude-subset-to-file" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="write-longitude-subset-to-file">
+<h3>write longitude subset to file<a class="headerlink" href="#write-longitude-subset-to-file" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">encoding</span>
@@ -5150,10 +5237,10 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="consolidate-compositing-steps">
-<h2>consolidate compositing steps<a class="headerlink" href="#consolidate-compositing-steps" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="consolidate-compositing-steps">
+<h2>consolidate compositing steps<a class="headerlink" href="#consolidate-compositing-steps" title="Permalink to this headline">#</a></h2>
 <p>TODO:</p>
 <ol class="simple">
 <li><p>Get rid of subset_fields?</p></li>
@@ -5791,9 +5878,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_185_2.png" src="_images/TIW-compositing_185_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="some-v-expts">
-<h2>some v expts<a class="headerlink" href="#some-v-expts" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="some-v-expts">
+<h2>some v expts<a class="headerlink" href="#some-v-expts" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vfilt</span> <span class="o">=</span> <span class="n">xfilter</span><span class="o">.</span><span class="n">bandpass</span><span class="p">(</span><span class="n">surf</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
@@ -5832,9 +5919,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_189_1.png" src="_images/TIW-compositing_189_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="single-tiw-period-analysis">
-<h2>single TIW period analysis<a class="headerlink" href="#single-tiw-period-analysis" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="single-tiw-period-analysis">
+<h2>single TIW period analysis<a class="headerlink" href="#single-tiw-period-analysis" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">euc_max</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">euc_max</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -5852,8 +5939,8 @@ Coordinates:
 </div>
 </div>
 </div>
-<div class="section" id="off-equatorial-deep-cycle-mixing">
-<h3>off equatorial deep cycle mixing<a class="headerlink" href="#off-equatorial-deep-cycle-mixing" title="Permalink to this headline">¶</a></h3>
+<section id="off-equatorial-deep-cycle-mixing">
+<h3>off equatorial deep cycle mixing<a class="headerlink" href="#off-equatorial-deep-cycle-mixing" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline 
@@ -6155,9 +6242,9 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="are-we-seeing-a-deep-cycle-off-the-equator-yes">
-<h3>are we seeing a deep cycle off the equator? Yes!<a class="headerlink" href="#are-we-seeing-a-deep-cycle-off-the-equator-yes" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="are-we-seeing-a-deep-cycle-off-the-equator-yes">
+<h3>are we seeing a deep cycle off the equator? Yes!<a class="headerlink" href="#are-we-seeing-a-deep-cycle-off-the-equator-yes" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="o">=</span> <span class="n">full_subset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">110</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
@@ -6179,10 +6266,10 @@ Coordinates:
 <img alt="_images/TIW-compositing_201_1.png" src="_images/TIW-compositing_201_1.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="aiyo-further-debugging">
-<h2>aiyo further debugging<a class="headerlink" href="#aiyo-further-debugging" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="aiyo-further-debugging">
+<h2>aiyo further debugging<a class="headerlink" href="#aiyo-further-debugging" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">gcm1</span>
@@ -6228,8 +6315,8 @@ Coordinates:
 </div>
 </div>
 </div>
-<div class="section" id="test-diffusive-flux-reconstruction">
-<h3>test diffusive flux reconstruction<a class="headerlink" href="#test-diffusive-flux-reconstruction" title="Permalink to this headline">¶</a></h3>
+<section id="test-diffusive-flux-reconstruction">
+<h3>test diffusive flux reconstruction<a class="headerlink" href="#test-diffusive-flux-reconstruction" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#CV = gcm1.metrics.cellvol</span>
@@ -6596,9 +6683,9 @@ Data variables:
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="work-on-dcl-mld-detection">
-<h3>work on dcl, mld detection<a class="headerlink" href="#work-on-dcl-mld-detection" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="work-on-dcl-mld-detection">
+<h3>work on dcl, mld detection<a class="headerlink" href="#work-on-dcl-mld-detection" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mld</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_mld</span><span class="p">(</span><span class="n">full_subset</span><span class="o">.</span><span class="n">dens</span><span class="p">)</span>
@@ -6761,9 +6848,9 @@ distributed.utils_perf - WARNING - full garbage collections took 14% CPU time re
 <img alt="_images/TIW-compositing_227_1.png" src="_images/TIW-compositing_227_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="test-out-new-phase-detection">
-<h3>Test out new phase detection<a class="headerlink" href="#test-out-new-phase-detection" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="test-out-new-phase-detection">
+<h3>Test out new phase detection<a class="headerlink" href="#test-out-new-phase-detection" title="Permalink to this headline">#</a></h3>
 <p>With -110 as a special case for bandpass window and prominence</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -6875,9 +6962,9 @@ Attributes:
 <img alt="_images/TIW-compositing_231_1.png" src="_images/TIW-compositing_231_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="sst-gradient-front-detection">
-<h3>SST gradient front detection<a class="headerlink" href="#sst-gradient-front-detection" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="sst-gradient-front-detection">
+<h3>SST gradient front detection<a class="headerlink" href="#sst-gradient-front-detection" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grad</span> <span class="o">=</span> <span class="n">gradT_subset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
@@ -7041,9 +7128,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_241_1.png" src="_images/TIW-compositing_241_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="skimage-feature-detection-experiments">
-<h3>skimage feature detection experiments<a class="headerlink" href="#skimage-feature-detection-experiments" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="skimage-feature-detection-experiments">
+<h3>skimage feature detection experiments<a class="headerlink" href="#skimage-feature-detection-experiments" title="Permalink to this headline">#</a></h3>
 <p>Not really getting anywhere. The <code class="docutils literal notranslate"><span class="pre">medial_axis</span></code> stuff was most promising but still too complex.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -7055,8 +7142,8 @@ Coordinates:
 </div>
 </div>
 </div>
-<div class="section" id="medial-axis">
-<h4>medial_axis<a class="headerlink" href="#medial-axis" title="Permalink to this headline">¶</a></h4>
+<section id="medial-axis">
+<h4>medial_axis<a class="headerlink" href="#medial-axis" title="Permalink to this headline">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
@@ -7078,9 +7165,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_245_1.png" src="_images/TIW-compositing_245_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="skeleton">
-<h4>skeleton<a class="headerlink" href="#skeleton" title="Permalink to this headline">¶</a></h4>
+</section>
+<section id="skeleton">
+<h4>skeleton<a class="headerlink" href="#skeleton" title="Permalink to this headline">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">skimage</span>
@@ -7127,10 +7214,10 @@ Coordinates:
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="am-i-filtering-in-the-right-band">
-<h3>Am I filtering in the right band?<a class="headerlink" href="#am-i-filtering-in-the-right-band" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="am-i-filtering-in-the-right-band">
+<h3>Am I filtering in the right band?<a class="headerlink" href="#am-i-filtering-in-the-right-band" title="Permalink to this headline">#</a></h3>
 <p>On Jan 27, I switched to different bands for -110 and the rest</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -7151,12 +7238,12 @@ Coordinates:
 <img alt="_images/TIW-compositing_251_1.png" src="_images/TIW-compositing_251_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="lowpass-vs-bandpass-sst-for-phase-calculation">
-<h3>lowpass vs bandpass SST for phase calculation<a class="headerlink" href="#lowpass-vs-bandpass-sst-for-phase-calculation" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id1">
-<h3>Am I filtering in the right band?<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="lowpass-vs-bandpass-sst-for-phase-calculation">
+<h3>lowpass vs bandpass SST for phase calculation<a class="headerlink" href="#lowpass-vs-bandpass-sst-for-phase-calculation" title="Permalink to this headline">#</a></h3>
+</section>
+<section id="id1">
+<h3>Am I filtering in the right band?<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">lon</span> <span class="ow">in</span> <span class="n">sst</span><span class="o">.</span><span class="n">longitude</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
@@ -7220,9 +7307,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_256_1.png" src="_images/TIW-compositing_256_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="actually-test">
-<h3>actually test<a class="headerlink" href="#actually-test" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="actually-test">
+<h3>actually test<a class="headerlink" href="#actually-test" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xfilter</span>
@@ -7278,9 +7365,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_258_0.png" src="_images/TIW-compositing_258_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="testing-peak-to-peak-filtering-of-tiw-periods">
-<h3>testing peak-to-peak filtering of TIW periods<a class="headerlink" href="#testing-peak-to-peak-filtering-of-tiw-periods" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="testing-peak-to-peak-filtering-of-tiw-periods">
+<h3>testing peak-to-peak filtering of TIW periods<a class="headerlink" href="#testing-peak-to-peak-filtering-of-tiw-periods" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">detrend_period</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -7318,9 +7405,9 @@ Coordinates:
 <img alt="_images/TIW-compositing_260_2.png" src="_images/TIW-compositing_260_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="debugging-y-reference">
-<h3>debugging y reference<a class="headerlink" href="#debugging-y-reference" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="debugging-y-reference">
+<h3>debugging y reference<a class="headerlink" href="#debugging-y-reference" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiw_phase</span><span class="p">,</span> <span class="n">period</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_tiw_phase_sst</span><span class="p">(</span><span class="n">sstfilt</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">140</span><span class="p">])</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span> 
@@ -7448,9 +7535,9 @@ iterating south
 <img alt="_images/TIW-compositing_265_4.png" src="_images/TIW-compositing_265_4.png" />
 </div>
 </div>
-</div>
-<div class="section" id="save-y-reference-debugging-plots">
-<h3>save y reference debugging plots.<a class="headerlink" href="#save-y-reference-debugging-plots" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="save-y-reference-debugging-plots">
+<h3>save y reference debugging plots.<a class="headerlink" href="#save-y-reference-debugging-plots" title="Permalink to this headline">#</a></h3>
 <p>With some manual tweaking this looks OK.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -7465,9 +7552,9 @@ iterating south
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="commit-1365139-date-30-jan-2020">
-<h3>Commit: 1365139 Date: 30 Jan 2020<a class="headerlink" href="#commit-1365139-date-30-jan-2020" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="commit-1365139-date-30-jan-2020">
+<h3>Commit: 1365139 Date: 30 Jan 2020<a class="headerlink" href="#commit-1365139-date-30-jan-2020" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">longitude</span> <span class="ow">in</span> <span class="n">sst_sub</span><span class="o">.</span><span class="n">longitude</span><span class="p">:</span>
@@ -7510,9 +7597,9 @@ iterating south
 <img alt="_images/TIW-compositing_269_9.png" src="_images/TIW-compositing_269_9.png" />
 </div>
 </div>
-</div>
-<div class="section" id="commit-8a3ec4e-date-27-jan-2019">
-<h3>Commit: 8a3ec4e Date: 27 Jan 2019<a class="headerlink" href="#commit-8a3ec4e-date-27-jan-2019" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="commit-8a3ec4e-date-27-jan-2019">
+<h3>Commit: 8a3ec4e Date: 27 Jan 2019<a class="headerlink" href="#commit-8a3ec4e-date-27-jan-2019" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">longitude</span> <span class="ow">in</span> <span class="n">sst_sub</span><span class="o">.</span><span class="n">longitude</span><span class="p">:</span>
@@ -7597,9 +7684,9 @@ iterating south
 <img alt="_images/TIW-compositing_271_19.png" src="_images/TIW-compositing_271_19.png" />
 </div>
 </div>
-</div>
-<div class="section" id="commit-93f50d9-date-14-jan-2019">
-<h3>Commit: 93f50d9 Date: 14 Jan 2019<a class="headerlink" href="#commit-93f50d9-date-14-jan-2019" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="commit-93f50d9-date-14-jan-2019">
+<h3>Commit: 93f50d9 Date: 14 Jan 2019<a class="headerlink" href="#commit-93f50d9-date-14-jan-2019" title="Permalink to this headline">#</a></h3>
 <p>This used bandpassed 10-40day SST to estimate phase</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -7615,9 +7702,9 @@ iterating south
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="commit-0251fb5-date-14-jan-2019">
-<h3>Commit: 0251fb5 Date: 14 Jan 2019<a class="headerlink" href="#commit-0251fb5-date-14-jan-2019" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="commit-0251fb5-date-14-jan-2019">
+<h3>Commit: 0251fb5 Date: 14 Jan 2019<a class="headerlink" href="#commit-0251fb5-date-14-jan-2019" title="Permalink to this headline">#</a></h3>
 <p>This used lowpass 15day SST to estimate phase</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -7793,12 +7880,12 @@ iterating south
 <img alt="_images/TIW-compositing_276_1.png" src="_images/TIW-compositing_276_1.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="osm2020-figures">
-<h2>OSM2020 figures<a class="headerlink" href="#osm2020-figures" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="dcl-snapshot">
-<h3>DCL snapshot<a class="headerlink" href="#dcl-snapshot" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="osm2020-figures">
+<h2>OSM2020 figures<a class="headerlink" href="#osm2020-figures" title="Permalink to this headline">#</a></h2>
+<section id="dcl-snapshot">
+<h3>DCL snapshot<a class="headerlink" href="#dcl-snapshot" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">sst</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -7912,12 +7999,12 @@ iterating south
 <img alt="_images/TIW-compositing_283_0.png" src="_images/TIW-compositing_283_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="deep-cycle-in-time-at-3n-110w-period-4">
-<h3>deep cycle in time at 3°N, 110W, period 4<a class="headerlink" href="#deep-cycle-in-time-at-3n-110w-period-4" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="jq-sst-many-periods">
-<h3>jq, sst many periods<a class="headerlink" href="#jq-sst-many-periods" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="deep-cycle-in-time-at-3n-110w-period-4">
+<h3>deep cycle in time at 3°N, 110W, period 4<a class="headerlink" href="#deep-cycle-in-time-at-3n-110w-period-4" title="Permalink to this headline">#</a></h3>
+</section>
+<section id="jq-sst-many-periods">
+<h3>jq, sst many periods<a class="headerlink" href="#jq-sst-many-periods" title="Permalink to this headline">#</a></h3>
 <ol class="simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> where is the EUC. use that to select latitudes</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> jq contours?</p></li>
@@ -8103,12 +8190,12 @@ Attributes:
 <img alt="_images/TIW-compositing_296_0.png" src="_images/TIW-compositing_296_0.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="stuff">
-<h2>stuff<a class="headerlink" href="#stuff" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="saving-density-to-file">
-<h3>saving density to file<a class="headerlink" href="#saving-density-to-file" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="stuff">
+<h2>stuff<a class="headerlink" href="#stuff" title="Permalink to this headline">#</a></h2>
+<section id="saving-density-to-file">
+<h3>saving density to file<a class="headerlink" href="#saving-density-to-file" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">pden</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">full</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">full</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;dens&quot;</span><span class="p">)</span>
@@ -8122,9 +8209,9 @@ Attributes:
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="other">
-<h3>other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="other">
+<h3>other<a class="headerlink" href="#other" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gcm1</span><span class="o">.</span><span class="n">budget</span> <span class="o">=</span> <span class="n">gcm1</span><span class="o">.</span><span class="n">budget</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
@@ -8193,10 +8280,10 @@ open_mfdataset).
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="reference-by-sst-warm-anomaly">
-<h2>reference by SST warm anomaly<a class="headerlink" href="#reference-by-sst-warm-anomaly" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="reference-by-sst-warm-anomaly">
+<h2>reference by SST warm anomaly<a class="headerlink" href="#reference-by-sst-warm-anomaly" title="Permalink to this headline">#</a></h2>
 <p>Define t=180 as time of warmest anomaly SST</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -9293,8 +9380,8 @@ Attributes:
 </div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -9318,9 +9405,11 @@ Attributes:
 
               </div>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="ctd-adcp.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -9336,31 +9425,35 @@ Attributes:
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-            
+            </footer>
         </div>
     </div>
-    <footer class="footer">
-  <p>
-    
-      By Deepak Cherian<br/>
-    
-        &copy; Copyright 2021.<br/>
-      <div class="extra_footer">
-        <div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Deepak Cherian<br/>
+  
+      &copy; Copyright 2022.<br/>
+    <div class="extra_footer">
+      <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-      </div>
-  </p>
-</footer>
-</main>
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
 
 
       </div>
     </div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
 
   </body>
 </html>
