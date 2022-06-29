@@ -4,7 +4,6 @@ channels:
   - pyviz
   - nodefaults
 dependencies:
-  - anytree
   - bottleneck
   - cachey
   - cartopy
@@ -13,7 +12,10 @@ dependencies:
   - colorcet
   - dask
   - dask_labextension
+  - datatree
   - distributed
+  - flox
+  - gsw
   - h5py
   - hdf5
   - ipympl
@@ -36,16 +38,18 @@ dependencies:
   - scipy
   - tqdm
   - xarray
+  - xarray-datatree
   - xgcm
+  - xhistogram
   - xmitgcm
   - watermark
   - zarr
   - pip:
     - dask_jobqueue
     - ncar_jobqueue
+    - gsw_xarray
     - git+https://github.com/dcherian/pump.git
     - git+https://github.com/dcherian/dcpy.git
     - git+https://github.com/hetland/xroms.git
     - git+https://github.com/dcherian/xfilter.git
     - git+https://github.com/dcherian/xcoare.git
-    - git+https://github.com/xarray-contrib/datatree.git
