@@ -18,3 +18,9 @@ repos:
     rev: 3.9.2
     hooks:
       - id: flake8
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.5.0
+    hooks:
+      - id: nbstripout
+        args: [--keep-output, --extra-keys=metadata.kernelspec metadata.language_info.version]
