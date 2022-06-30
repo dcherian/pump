@@ -7,7 +7,7 @@ import xarray as xr
 import pump
 
 from . import mdjwf
-from .constants import section_lons
+from .constants import section_lons  # noqa
 
 
 def read_all(domain=None):
@@ -20,8 +20,8 @@ def read_all(domain=None):
 
 
 def read_johnson(filename=None):
-    root = pump.OPTIONS["root"]
     if filename is None:
+        root = pump.OPTIONS["root"]
         filename = f"{root}/obs/johnson-eq-pac-adcp.cdf"
     ds = xr.open_dataset(filename).rename(
         {
@@ -331,10 +331,7 @@ def read_argo():
 
 
 def process_nino34():
-    root = pump.OPTIONS["root"]
-
     nino34 = process_esrl_index("nino34.data", skipfooter=5)
-
     return nino34  # nino34.to_netcdf(root + "/obs/nino34.nc")
 
 
@@ -587,11 +584,10 @@ def get_nan_block_lengths(obj, dim, index):
 
 
 def make_enso_mask_old(threshold=6):
-    from xarray.core.duck_array_ops import timedelta_to_numeric
 
     oni = process_oni()
     ntime = oni.sizes["time"]
-    freq = xr.infer_freq(oni.time)
+    # freq = xr.infer_freq(oni.time)
     fill_value = "_______"
 
     enso = xr.DataArray(
@@ -640,5 +636,36 @@ def make_enso_mask():
     enso.attrs[
         "description"
     ] = "ENSO phase; El-Nino = NINO34 SSTA > 0.4 for at least 6 months; La-Nina = NINO34 SSTA < -0.4 for at least 6 months"
+
+    return enso
+
+
+def make_enso_transition_mask():
+    from xarray.core.missing import _get_nan_block_lengths
+
+    oni = process_oni()
+
+    enso = xr.full_like(oni, fill_value="________", dtype="U8")
+    index = oni.indexes["time"] - oni.indexes["time"][0]
+    en_mask = _get_nan_block_lengths(
+        xr.where(oni > 0.5, np.nan, 0), dim="time", index=index
+    ) >= pd.Timedelta("169d")
+
+    ln_mask = _get_nan_block_lengths(
+        xr.where(oni < -0.5, np.nan, 0), dim="time", index=index
+    ) >= pd.Timedelta("169d")
+    # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
+
+    donidt = oni.differentiate("time")
+
+    enso.loc[en_mask * (donidt > 0)] = "El-Nino warm"
+    enso.loc[en_mask * (donidt < 0)] = "El-Nino cool"
+    enso.loc[ln_mask * (donidt > 0)] = "La-Nina warm"
+    enso.loc[ln_mask * (donidt < 0)] = "La-Nina cool"
+
+    enso.name = "enso_phase"
+    enso.attrs[
+        "description"
+    ] = "Warner & Moum (2019) ENSO transition phase; El-Nino = ONI > 0.5 for at least 6 months; La-Nina = ONI < -0.5 for at least 6 months"
 
     return enso
