@@ -605,7 +605,9 @@ def make_enso_mask_old(threshold=6):
         enso[length >= threshold] = phase
 
     length = get_nan_block_lengths(
-        xr.where(enso == fill_value, np.nan, 0), "time", np.arange(oni.sizes["time"])
+        xr.where(enso == fill_value, np.nan, 0, keep_attrs=False),
+        "time",
+        np.arange(oni.sizes["time"]),
     )
     enso[length >= threshold] = "Neutral"
     return enso[enso.data != fill_value].reindex_like(enso, method="nearest")
@@ -620,11 +622,11 @@ def make_enso_mask():
     enso = xr.full_like(ssta, fill_value="Neutral", dtype="U8")
     index = ssta.indexes["time"] - ssta.indexes["time"][0]
     en_mask = _get_nan_block_lengths(
-        xr.where(ssta > 0.4, np.nan, 0), dim="time", index=index
+        xr.where(ssta > 0.4, np.nan, 0, keep_attrs=False), dim="time", index=index
     ) >= pd.Timedelta("169d")
 
     ln_mask = _get_nan_block_lengths(
-        xr.where(ssta < -0.4, np.nan, 0), dim="time", index=index
+        xr.where(ssta < -0.4, np.nan, 0, keep_attrs=False), dim="time", index=index
     ) >= pd.Timedelta("169d")
     # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
 
