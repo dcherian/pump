@@ -1,0 +1,957 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>miχpods - TAO &#8212; PUMP</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=62ba249389abaaa9ffc34bf36a076bdc1d65ee18" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=f31d14ad54b65d19161ba51d4ffff3a77ae00456"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TIW DCL" href="TIW-DCL.html" />
+    <link rel="prev" title="miχpods" href="mixpods.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">PUMP</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  miχpods
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="mixpods.html">
+   miχpods
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   miχpods - TAO
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  TIW Turbulence
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-DCL.html">
+   TIW DCL
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="dcl-paper.html">
+   TIW DCL Paper Figures
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ctd-adcp.html">
+   TIW Cruise Sections
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="TIW-compositing.html">
+   TIW Compositing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="vertical-velocity.html">
+   TIW vertical velocity in MITgcm simulations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tiw-floats.html">
+   EM-APEX floats in TIWs
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Marginal Stability
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="bulk-Ri.html">
+   Bulk Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MI-extent.html">
+   Extent of marginal stability
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="tao-ri-analysis.html">
+   TAO Ri analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="mi-simple-model.html">
+   Simple model analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="shred2-evol.html">
+   Reduced Shear Evolution equation
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  χpod/Chameleon
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="equix-divergence.html">
+   EQUIX: Jq divergence
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="equix-examine.html">
+   Chameleon heat flux χ vs ε
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="mixing-efficiency.html">
+   Variations in
+   <span class="math notranslate nohighlight">
+    \(Ri_f\)
+   </span>
+   ,
+   <span class="math notranslate nohighlight">
+    \(Γ\)
+   </span>
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Other
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="les-examine.html">
+   LES first look
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="long-term-turbulence.html">
+   Long-term tubulence in 20-year simulation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="les-tendencies.html">
+   LES tendencies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="heat-momentum-budget-checks.html">
+   Heat and momentum budgets with MITgcm output
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="submeso-deep-100.html">
+   Deep submesoscales in 1/100°?
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/dcherian/pump"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/mixpods-tao.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#labeling-enso-phase-transitions">
+   Labeling ENSO phase transitions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#n2-vs-n2t">
+   N2 vs N2T
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pdfs-change">
+   PDFs change
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>miχpods - TAO</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#labeling-enso-phase-transitions">
+   Labeling ENSO phase transitions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#n2-vs-n2t">
+   N2 vs N2T
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pdfs-change">
+   PDFs change
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="mipods-tao">
+<h1>miχpods - TAO<a class="headerlink" href="#mipods-tao" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">cf_xarray</span>
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">flox.xarray</span>
+<span class="kn">import</span> <span class="nn">hvplot.xarray</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+
+<span class="kn">import</span> <span class="nn">pump</span>
+<span class="kn">from</span> <span class="nn">pump</span> <span class="kn">import</span> <span class="n">mixpods</span>
+
+<span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">({</span><span class="s2">&quot;array.slicing.split_large_chunks&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span> 
+<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/&quot;</span>  <span class="c1"># MITgcm output directory</span>
+<span class="n">stationdirname</span> <span class="o">=</span> <span class="n">gcmdir</span>
+
+<span class="o">%</span><span class="k">watermark</span> -iv
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The watermark extension is already loaded. To reload it, use:
+  %reload_ext watermark
+numpy      : 1.22.4
+dcpy       : 0.1.dev360+g65bcf1a
+xarray     : 2022.6.0rc0
+dask       : 2022.6.1
+flox       : 0.5.8.dev1+gc387edc
+sys        : 3.10.5 | packaged by conda-forge | (main, Jun 14 2022, 07:04:59) [GCC 10.3.0]
+hvplot     : 0.8.0
+distributed: 2022.6.1
+pandas     : 1.4.3
+matplotlib : 3.5.2
+pump       : 0.1
+json       : 2.0.9
+ipywidgets : 7.7.1
+cf_xarray  : 0.7.2
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
+
+<span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">client</span>
+<span class="c1">#if &quot;cluster&quot; in locals():</span>
+<span class="c1">#    cluster.close()</span>
+
+<span class="c1">#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}</span>
+
+<span class="c1"># cluster = distributed.LocalCluster(</span>
+<span class="c1">#    n_workers=8,</span>
+<span class="c1">#    threads_per_worker=1,</span>
+<span class="c1">#    env=env</span>
+<span class="c1"># )</span>
+
+<span class="k">if</span> <span class="s2">&quot;cluster&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="k">del</span> <span class="n">cluster</span>
+
+<span class="c1">#cluster = ncar_jobqueue.NCARCluster(</span>
+<span class="c1">#    project=&quot;NCGD0011&quot;,</span>
+<span class="c1">#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),</span>
+<span class="c1">#)</span>
+<span class="c1"># cluster = dask_jobqueue.PBSCluster(</span>
+<span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
+<span class="c1">#    env_extra=env,</span>
+<span class="c1"># )</span>
+
+<span class="kn">import</span> <span class="nn">dask_jobqueue</span>
+
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">dask_jobqueue</span><span class="o">.</span><span class="n">PBSCluster</span><span class="p">(</span>
+    <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># The number of cores you want</span>
+    <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;23GB&#39;</span><span class="p">,</span> <span class="c1"># Amount of memory</span>
+    <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># How many processes</span>
+    <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;casper&#39;</span><span class="p">,</span> <span class="c1"># The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)</span>
+    <span class="n">local_directory</span><span class="o">=</span><span class="s1">&#39;$TMPDIR&#39;</span><span class="p">,</span> <span class="c1"># Use your local directory</span>
+    <span class="n">resource_spec</span><span class="o">=</span><span class="s1">&#39;select=1:ncpus=1:mem=23GB&#39;</span><span class="p">,</span> <span class="c1"># Specify resources</span>
+    <span class="n">project</span><span class="o">=</span><span class="s1">&#39;ncgd0011&#39;</span><span class="p">,</span> <span class="c1"># Input your project ID here</span>
+    <span class="n">walltime</span><span class="o">=</span><span class="s1">&#39;02:00:00&#39;</span><span class="p">,</span> <span class="c1"># Amount of wall time</span>
+    <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ib0&#39;</span><span class="p">,</span> <span class="c1"># Interface to use</span>
+<span class="p">)</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/pump/lib/python3.10/site-packages/distributed/node.py:180: UserWarning: Port 8787 is already in use.
+Perhaps you already have a cluster running?
+Hosting the HTTP server on port 36058 instead
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<span class="n">client</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+    <div style="width: 24px; height: 24px; background-color: #e1e1e1; border: 3px solid #9D9D9D; border-radius: 5px; position: absolute;"> </div>
+    <div style="margin-left: 48px;">
+        <h3 style="margin-bottom: 0px;">Client</h3>
+        <p style="color: #9D9D9D; margin-bottom: 0px;">Client-a23cc9ca-0218-11ed-b39a-3cecef1acbfa</p>
+        <table style="width: 100%; text-align: left;">
+
+        <tr>
+
+            <td style="text-align: left;"><strong>Connection method:</strong> Cluster object</td>
+            <td style="text-align: left;"><strong>Cluster type:</strong> dask_jobqueue.PBSCluster</td>
+
+        </tr>
+
+
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard: </strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/dcherian/proxy/36058/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/dcherian/proxy/36058/status</a>
+                </td>
+                <td style="text-align: left;"></td>
+            </tr>
+
+
+        </table>
+
+
+            <details>
+            <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Cluster Info</h3></summary>
+            <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-mod-trusted jp-OutputArea-output">
+    <div style="width: 24px; height: 24px; background-color: #e1e1e1; border: 3px solid #9D9D9D; border-radius: 5px; position: absolute;">
+    </div>
+    <div style="margin-left: 48px;">
+        <h3 style="margin-bottom: 0px; margin-top: 0px;">PBSCluster</h3>
+        <p style="color: #9D9D9D; margin-bottom: 0px;">5a0408c3</p>
+        <table style="width: 100%; text-align: left;">
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard:</strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/dcherian/proxy/36058/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/dcherian/proxy/36058/status</a>
+                </td>
+                <td style="text-align: left;">
+                    <strong>Workers:</strong> 0
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Total threads:</strong> 0
+                </td>
+                <td style="text-align: left;">
+                    <strong>Total memory:</strong> 0 B
+                </td>
+            </tr>
+
+        </table>
+
+        <details>
+            <summary style="margin-bottom: 20px;">
+                <h3 style="display: inline;">Scheduler Info</h3>
+            </summary>
+
+            <div style="">
+    <div>
+        <div style="width: 24px; height: 24px; background-color: #FFF7E5; border: 3px solid #FF6132; border-radius: 5px; position: absolute;"> </div>
+        <div style="margin-left: 48px;">
+            <h3 style="margin-bottom: 0px;">Scheduler</h3>
+            <p style="color: #9D9D9D; margin-bottom: 0px;">Scheduler-00fee34f-3b83-4b61-abc5-50584dd75481</p>
+            <table style="width: 100%; text-align: left;">
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Comm:</strong> tcp://10.12.206.63:43433
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Workers:</strong> 0
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Dashboard:</strong> <a href="https://jupyterhub.hpc.ucar.edu/stable/user/dcherian/proxy/36058/status" target="_blank">https://jupyterhub.hpc.ucar.edu/stable/user/dcherian/proxy/36058/status</a>
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Total threads:</strong> 0
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">
+                        <strong>Started:</strong> Just now
+                    </td>
+                    <td style="text-align: left;">
+                        <strong>Total memory:</strong> 0 B
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <details style="margin-left: 48px;">
+        <summary style="margin-bottom: 20px;">
+            <h3 style="display: inline;">Workers</h3>
+        </summary>
+
+
+
+    </details>
+</div>
+
+        </details>
+    </div>
+</div>
+            </details>
+
+
+    </div>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/work/pump/zarrs/tao-gridded-ancillary.zarr&quot;</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;zarr&quot;</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">140</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2005-Jun&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">tao_gridded</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
+<span class="c1"># eucmax exists</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="c1">#pump.calc.calc_reduced_shear(tao_gridded)</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;enso_transition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">make_enso_transition_mask</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">eucmax</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/glade/u/home/dcherian/miniconda3/envs/pump/lib/python3.10/site-packages/xarray/core/dataset.py:248: UserWarning: The specified Dask chunks separate the stored chunks along dimension &quot;depth&quot; starting at index 58. This could degrade performance. Instead, consider rechunking after loading.
+  warnings.warn(
+/glade/u/home/dcherian/miniconda3/envs/pump/lib/python3.10/site-packages/xarray/core/dataset.py:248: UserWarning: The specified Dask chunks separate the stored chunks along dimension &quot;time&quot; starting at index 139586. This could degrade performance. Instead, consider rechunking after loading.
+  warnings.warn(
+/glade/u/home/dcherian/miniconda3/envs/pump/lib/python3.10/site-packages/xarray/core/dataset.py:248: UserWarning: The specified Dask chunks separate the stored chunks along dimension &quot;longitude&quot; starting at index 2. This could degrade performance. Instead, consider rechunking after loading.
+  warnings.warn(
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b371a3ea890&gt;]
+</pre></div>
+</div>
+<img alt="_images/mixpods-tao_4_2.png" src="_images/mixpods-tao_4_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+        <span class="s2">&quot;n2s2Tpdf&quot;</span><span class="p">:</span> <span class="n">mixpods</span><span class="o">.</span><span class="n">pdf_N2S2</span><span class="p">(</span>
+            <span class="n">tao_gridded</span><span class="p">[[</span><span class="s2">&quot;S2&quot;</span><span class="p">,</span> <span class="s2">&quot;N2T&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">([</span><span class="s2">&quot;shallowest&quot;</span><span class="p">,</span> <span class="s2">&quot;zeuc&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">rename_vars</span><span class="p">({</span><span class="s2">&quot;N2T&quot;</span><span class="p">:</span> <span class="s2">&quot;N2&quot;</span><span class="p">})</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span>
+        <span class="s2">&quot;n2s2pdf&quot;</span><span class="p">:</span> <span class="n">mixpods</span><span class="o">.</span><span class="n">pdf_N2S2</span><span class="p">(</span>
+            <span class="n">tao_gridded</span><span class="p">[[</span><span class="s2">&quot;S2&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">([</span><span class="s2">&quot;shallowest&quot;</span><span class="p">,</span> <span class="s2">&quot;zeuc&quot;</span><span class="p">])</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="labeling-enso-phase-transitions">
+<h2>Labeling ENSO phase transitions<a class="headerlink" href="#labeling-enso-phase-transitions" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">process_oni</span><span class="p">()</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2005-Oct&quot;</span><span class="p">,</span> <span class="s2">&quot;2016-Feb&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">aspect</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">make_enso_transition_mask</span><span class="p">()</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2005-Oct&quot;</span><span class="p">,</span> <span class="s2">&quot;2016-Feb&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">twinx</span><span class="p">(),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/mixpods-tao_7_0.png" src="_images/mixpods-tao_7_0.png" />
+</div>
+</div>
+</section>
+<section id="n2-vs-n2t">
+<h2>N2 vs N2T<a class="headerlink" href="#n2-vs-n2t" title="Permalink to this headline">#</a></h2>
+<p>Lot more data with N2T</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b36c9291570&gt;
+</pre></div>
+</div>
+<img alt="_images/mixpods-tao_9_1.png" src="_images/mixpods-tao_9_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">N2T</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b372d13aa10&gt;
+</pre></div>
+</div>
+<img alt="_images/mixpods-tao_10_1.png" src="_images/mixpods-tao_10_1.png" />
+</div>
+</div>
+</section>
+<section id="pdfs-change">
+<h2>PDFs change<a class="headerlink" href="#pdfs-change" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2pdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{value}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">line45</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-4.5, -2.5)
+</pre></div>
+</div>
+<img alt="_images/mixpods-tao_12_1.png" src="_images/mixpods-tao_12_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>   
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2pdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;N2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2pdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;S2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b36e3762830&gt;,
+ &lt;matplotlib.lines.Line2D at 0x2b36e3762800&gt;,
+ &lt;matplotlib.lines.Line2D at 0x2b36e37629b0&gt;,
+ &lt;matplotlib.lines.Line2D at 0x2b36e3762ad0&gt;]
+</pre></div>
+</div>
+<img alt="_images/mixpods-tao_13_1.png" src="_images/mixpods-tao_13_1.png" />
+<img alt="_images/mixpods-tao_13_2.png" src="_images/mixpods-tao_13_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2Tpdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{value}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">line45</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-4.5, -2.5)
+</pre></div>
+</div>
+<img alt="_images/mixpods-tao_14_1.png" src="_images/mixpods-tao_14_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>   
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2Tpdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;N2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2Tpdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;S2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b36e3622ec0&gt;,
+ &lt;matplotlib.lines.Line2D at 0x2b36e3622ef0&gt;,
+ &lt;matplotlib.lines.Line2D at 0x2b36e3623070&gt;,
+ &lt;matplotlib.lines.Line2D at 0x2b36e3623190&gt;]
+</pre></div>
+</div>
+<img alt="_images/mixpods-tao_15_1.png" src="_images/mixpods-tao_15_1.png" />
+<img alt="_images/mixpods-tao_15_2.png" src="_images/mixpods-tao_15_2.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="mixpods.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">miχpods</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="TIW-DCL.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">TIW DCL</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Deepak Cherian<br/>
+  
+      &copy; Copyright 2022.<br/>
+    <div class="extra_footer">
+      <div>
+<script data-goatcounter="https://count.cherian.net/count"
+        async src="count.js"></script>
+</div>
+
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
