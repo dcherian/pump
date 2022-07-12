@@ -186,6 +186,8 @@ def get_euc_max(u, kind="model"):
 
     euc_max.attrs["long_name"] = "Depth of EUC max"
     euc_max.attrs["units"] = "m"
+    if "axis" in euc_max.attrs:
+        euc_max.attrs.pop("axis")
 
     return euc_max
 
@@ -403,7 +405,7 @@ def get_kpp_mld(subset, debug=False):
 
 def get_mld_tao(dens):
     """
-    Given density field, estimate MLD as depth where drho > 0.01 and N2 > 2e-5.
+    Given density field, estimate MLD as depth where drho > 0.03 and N2 > 2e-5.
     # Interpolates density to 1m grid.
     """
     if not isinstance(dens, xr.DataArray):
@@ -411,9 +413,9 @@ def get_mld_tao(dens):
 
     # gcm1 is 1m
     # densi = dcpy.interpolate.pchip(dens, "depth", np.arange(0, -200, -1))
-    densi = dens  # .interp(depth=np.arange(0, -200, -1))
+    densi = dens.interp(depth=np.arange(0, -200, -1))
     drho = densi - densi.sel(depth=[0, -5], method="nearest").max("depth")
-    N2 = -9.81 / 1025 * densi.differentiate("depth")
+    N2 = -9.81 / 1025 * densi.cf.differentiate("depth", positive_upward=True)
 
     thresh = xr.where((np.abs(drho) > 0.03) & (N2 > 1e-5), drho.depth, np.nan)
     mld = thresh.max("depth")
@@ -425,6 +427,29 @@ def get_mld_tao(dens):
         "Interpolate density to 1m grid. "
         "Search for max depth where "
         " |drho| > 0.03 and N2 > 1e-5"
+    )
+
+    return mld
+
+
+def get_mld_tao_theta(theta):
+    """
+    Given pot temp field, estimate MLD as depth where dθ > 0.15C
+    """
+    if not isinstance(theta, xr.DataArray):
+        raise ValueError(f"Expected DataArray, received {theta.__class__.__name__}")
+
+    thetai = theta.interp(depth=np.arange(0, -200, -1))
+    dθ = thetai - thetai.sel(depth=[0, -5], method="nearest").max("depth")
+
+    thresh = xr.where(np.abs(dθ) > 0.15, dθ.depth, np.nan)
+    mld = thresh.max("depth")
+
+    mld.name = "mldT"
+    mld.attrs["long_name"] = "MLD$_θ$"
+    mld.attrs["units"] = "m"
+    mld.attrs["description"] = (
+        "Interpolate thetaito 1m grid. " "Search for max depth where " " |dθ| > 0.15"
     )
 
     return mld
@@ -467,6 +492,7 @@ def get_mld(dens, N2=None, min_delta_dens=0.015, min_N2=1e-5):
 
     mld.name = "mld"
     mld.attrs["long_name"] = "MLD"
+    mld.attrs["standard_name"] = "mixed_layer_thickness"
     mld.attrs["units"] = "m"
     mld.attrs["description"] = (
         "Interpolate density to 1m grid. "

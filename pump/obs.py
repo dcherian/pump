@@ -105,7 +105,7 @@ def tao_read_and_merge(suffix, kind):
     for file in tqdm.tqdm(tfiles):
         try:
             ds.append(
-                xr.open_dataset(file, chunks={"time": 100000})[list(renamer.keys())]
+                xr.open_dataset(file, chunks={"time": 1000000})[list(renamer.keys())]
             )
         except FileNotFoundError:
             pass
@@ -118,7 +118,7 @@ def tao_read_and_merge(suffix, kind):
 
     merged["longitude"] = merged.longitude - 360
     merged["depth"] = -1 * merged.depth
-    merged["depth"].attrs["units"] = "m"
+    merged["depth"].attrs.update({"units": "m", "axis": "Z", "positive": "up"})
     return merged.rename_vars(renamer)
 
 
@@ -534,22 +534,29 @@ def read_tao_zarr(kind="gridded", **kwargs):
             f"'kind' must be one of ['gridded', 'merged']. Received {kind!r}"
         )
 
+    root = pump.OPTIONS["root"] + "/datasets/zarrs/"
     if kind == "merged":
-        tao = xr.open_zarr("tao_eq_hr_merged_cur.zarr", consolidated=True, **kwargs)
+        tao = xr.open_zarr(f"{root}/tao_eq_hr_merged_cur.zarr", **kwargs)
     elif kind == "gridded":
-        tao = xr.open_zarr("tao_eq_hr_gridded.zarr", **kwargs)
+        tao = xr.open_zarr(f"{root}/tao_eq_hr_gridded.zarr", **kwargs)
     elif kind == "ancillary":
-        tao = xr.open_zarr("tao-gridded-ancillary.zarr", **kwargs)
+        tao = xr.open_zarr(f"{root}/tao-gridded-ancillary.zarr", **kwargs)
 
-    tao.depth.attrs.update({"axis": "Z", "positive": "up"})
-
+    orig = tao.copy()
+    # tao.depth.attrs.update({"axis": "Z", "positive": "up"})
     # tao = tao.chunk({"depth": -1, "time": 10000})
-    # tao["densT"] = dcpy.eos.pden(35, tao.T, tao.depth)
-    # tao.densT.attrs["long_name"] = "$ρ_T$"
-    # tao.densT.attrs["description"] = "density from T only, assuming S=35"
+    tao["densT"] = dcpy.eos.pden(35 * xr.ones_like(tao.T), tao.T, tao.depth)
+    tao.densT.attrs["long_name"] = "$ρ_T$"
+    tao.densT.attrs["description"] = "density from T only, assuming S=35"
 
-    # tao["dens"] = dcpy.eos.pden(tao.S, tao.T, tao.depth)
-    # tao.densT.attrs["description"] = "density using T, S"
+    tao["dens"] = dcpy.eos.pden(tao.S, tao.T, tao.depth)
+    tao.densT.attrs["description"] = "density using T, S"
+
+    tao["theta"] = dcpy.eos.ptmp(35 * xr.ones_like(tao.T), tao.T, tao.depth)
+    tao.theta.attrs["description"] = "potential temperature using T, S=35"
+
+    for var in orig.variables:
+        tao[var].attrs = orig[var].attrs
 
     return tao
 
@@ -647,23 +654,35 @@ def make_enso_transition_mask():
 
     oni = process_oni()
 
-    enso = xr.full_like(oni, fill_value="________", dtype="U8")
+    enso = xr.full_like(oni, fill_value="____________", dtype="U12")
     index = oni.indexes["time"] - oni.indexes["time"][0]
     en_mask = _get_nan_block_lengths(
-        xr.where(oni > 0.5, np.nan, 0), dim="time", index=index
-    ) >= pd.Timedelta("169d")
+        xr.where(oni >= 0.45, np.nan, 0, keep_attrs=False), dim="time", index=index
+    ) >= pd.Timedelta("59d")
 
     ln_mask = _get_nan_block_lengths(
-        xr.where(oni < -0.5, np.nan, 0), dim="time", index=index
-    ) >= pd.Timedelta("169d")
+        xr.where(oni <= -0.5, np.nan, 0, keep_attrs=False), dim="time", index=index
+    ) >= pd.Timedelta("59d")
     # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
 
+    # donidt = oni.diff("time").reindex(time=oni.time)
     donidt = oni.differentiate("time")
 
-    enso.loc[en_mask * (donidt > 0)] = "El-Nino warm"
-    enso.loc[en_mask * (donidt < 0)] = "El-Nino cool"
-    enso.loc[ln_mask * (donidt > 0)] = "La-Nina warm"
-    enso.loc[ln_mask * (donidt < 0)] = "La-Nina cool"
+    # warm_mask = _get_nan_block_lengths(xr.where(donidt >= 0, np.nan, 0, keep_attrs=False), dim="time", index=index) >= pd.Timedelta("59d")
+    cool_mask = _get_nan_block_lengths(
+        xr.where(donidt <= 0, np.nan, 0, keep_attrs=False), dim="time", index=index
+    ) >= pd.Timedelta("120d")
+    warm_mask = ~cool_mask
+
+    # warm_mask = donidt >= 0
+    # cool_mask = donidt <= 0
+    enso.loc[en_mask & warm_mask] = "El-Nino warm"
+    enso.loc[en_mask & cool_mask] = "El-Nino cool"
+    enso.loc[ln_mask & warm_mask] = "La-Nina warm"
+    enso.loc[ln_mask & cool_mask] = "La-Nina cool"
+
+    enso.coords["warm_mask"] = warm_mask
+    enso.coords["cool_mask"] = cool_mask
 
     enso.name = "enso_phase"
     enso.attrs[
