@@ -2,6 +2,11 @@ format: jb-book
 root: intro
 
 parts:
+- caption: miχpods
+  chapters:
+  - file: mixpods
+  - file: mixpods-tao
+
 - caption: TIW Turbulence
   chapters:
   - file: TIW-DCL
