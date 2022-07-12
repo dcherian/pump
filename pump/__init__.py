@@ -6,6 +6,7 @@ from . import cesm  # noqa
 from . import composite  # noqa
 from . import les  # noqa
 from . import micro  # noqa
+from . import mixpods  # noqa
 from . import model  # noqa
 from . import obs  # noqa
 from . import sections  # noqa

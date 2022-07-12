@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 
-sponge_amp = 0.000001
-mldthresh = 0.00015  # buoyancy
+from .calc import get_euc_max
+
+SPONGE_AMP = 0.000001
+MLDTHRESH = 0.00015  # buoyancy
 
 
 def derivative(da):
@@ -15,8 +17,25 @@ def derivative(da):
 
 
 def read_les_file(fname):
-    ds = xr.load_dataset(fname).cf.guess_coord_axis()
+    ds = (
+        xr.open_dataset(fname, decode_cf=False)
+        .cf.guess_coord_axis()
+        .set_coords(["alpha", "beta", "T0", "S0"])
+    )
+    for var in ds:
+        ds[var].attrs["_FillValue"] = 9.969209968386869e36
+    ds = xr.decode_cf(ds)
+
     ds["z"].data[-1] = 0
+    ds.coords["dz"] = 0.5
+
+    if "tempw" not in ds:
+        # mooring file
+        ds["rho"] = ds.rho0 * (
+            1 - ds.alpha * (ds.temp - ds.T0) - ds.beta * (ds.salt - ds.S0)
+        )
+        ds["buoy"] = -9.81 * ds.rho / ds.rho0
+        return ds
 
     ds["wb"] = 9.81 * (ds.alpha * ds.tempw + ds.beta * ds.saltw)
     ds["rho"] = ds.rho0 * (
@@ -24,10 +43,8 @@ def read_les_file(fname):
     )
     ds["buoy"] = -9.81 * ds.rho / ds.rho0
 
-    ds.coords["dz"] = 0.5
-
     mask = ds.buoy.isel(z=slice(1, -1)) < (
-        ds.buoy.isel(z=slice(-20, -1)).mean("z") - mldthresh
+        ds.buoy.isel(z=slice(-20, -1)).mean("z") - MLDTHRESH
     )
     ds["mld"] = ds.z.where(mask).max("z")
 
@@ -80,6 +97,8 @@ def read_les_file(fname):
 
     ds["Jq"] = 1025 * 4200 * ds.kappadtdz
     ds.Jq.attrs = {"long_name": "$J_q$", "units": "W/m^2"}
+
+    ds["eucmax"] = get_euc_max(ds.ume)
 
     return ds
 
