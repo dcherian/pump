@@ -12,12 +12,20 @@ dependencies:
   - colorcet
   - dask
   - dask_labextension
-  - datatree
+  - xarray-datatree
   - distributed
   - flox
   - gsw
   - h5py
   - hdf5
+  - intake
+  - intake-xarray
+  - flox
+  - ecgtools
+  - fsspec
+  - h5netcdf
+  - pydantic
+  - intake-esm
   - ipympl
   - ipython
   - ipywidgets
@@ -30,7 +38,7 @@ dependencies:
   - nodejs
   - notebook
   - numba
-  - pandas=1.1.0
+  - pandas
   - pep8
   - pip
   - seaborn
