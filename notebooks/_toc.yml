@@ -6,6 +6,7 @@ parts:
   chapters:
   - file: mixpods
   - file: mixpods-tao
+  - file: mixpods-les
 
 - caption: TIW Turbulence
   chapters:
