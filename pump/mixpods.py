@@ -14,6 +14,53 @@ ENSO_COLORS_RGB = {
 ENSO_COLORS = {k: np.array(v) / 255 for k, v in ENSO_COLORS_RGB.items()}
 ENSO_TRANSITION_PHASES = ENSO_COLORS.keys()
 
+import pump
+
+
+def prepare(ds, grid=None):
+    dens = ds.cf["sea_water_potential_density"]
+    u = ds.cf["sea_water_x_velocity"]
+    v = ds.cf["sea_water_y_velocity"]
+
+    out = ds.copy()
+    with xr.set_options(arithmetic_join="exact"):
+        # dρdz = ddz(dens, grid, ds.h)
+        # dudz = ddz(u, grid, ds.hu)
+        # dvdz = ddz(v, grid, ds.hv)
+        if "N2" not in ds:
+            assert grid is not None
+            dρdz = grid.derivative(dens, "Z")
+            out["N2"] = -9.81 / grid.interp_like(dens, like=dρdz) * dρdz
+            if u.cf["Z"].attrs.get("positive", None) == "down":
+                out["N2"] *= -1
+
+            out["N2"].attrs["long_name"] = "$N^2$"
+            out["N2"].attrs["units"] = "s$^{-2}$"
+        else:
+            out["N2"] = ds.N2
+
+        if "S2" not in ds:
+            assert grid is not None
+            dudz = grid.derivative(u, "Z")
+            dvdz = grid.derivative(v, "Z")
+            out["S2"] = dudz**2 + grid.interp(dvdz, "Y", to="center") ** 2
+            out["S2"].attrs["long_name"] = "$S^2$"
+            out["S2"].attrs["units"] = "s$^{-2}$"
+        else:
+            out["S2"] = ds.S2
+
+        out["shred2"] = out.S2 - 4 * out.N2
+        out.shred2.attrs["long_name"] = "$Sh_{red}^2$"
+        out.shred2.attrs["units"] = "$s^{-2}$"
+
+        out["Ri"] = out.N2 / out.S2
+        out.Ri.attrs["long_name"] = "Ri"
+        out.Ri.attrs["units"] = ""
+
+    out["eucmax"] = pump.calc.get_euc_max(u)
+
+    return out
+
 
 def find_pdf_contour(density, targets):
     """
@@ -67,8 +114,10 @@ def pdf_N2S2(data, coord_is_center=False):
     bins = np.linspace(-5, -2, 30)
     index = pd.IntervalIndex.from_breaks(bins)
 
-    assert np.all(data.cf["Z"].data < 1)
-    data["S2"] = data.S2.where(data.cf["Z"] > data.eucmax + 5)
+    if np.all(data.cf["Z"].data < 1):
+        data["S2"] = data.S2.where(data.cf["Z"] > (data.eucmax + 5))
+    else:
+        data["S2"] = data.S2.where(data.cf["Z"] < (data.eucmax - 5))
 
     by = [np.log10(4 * data.N2), np.log10(data.S2)]
     expected_groups = [index, index]
@@ -137,34 +186,43 @@ def pdf_N2S2(data, coord_is_center=False):
 def plot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
     levels = find_pdf_contour(da, targets=targets)
     if pcolor:
-        da.plot(robust=True)
+        da.plot(robust=True, **kwargs)
     cs = da.reset_coords(drop=True).plot.contour(levels=levels, **kwargs)
     dcpy.plots.line45(ax=kwargs.get("ax", None))
     return cs
 
 
-def plot_enso_stability_diagram(ds, title=None, ax=None, add_legend=True, **kwargs):
+def plot_stability_diagram(
+    ds,
+    hue="enso_transition_phase",
+    targets=(0.5,),
+    title=None,
+    ax=None,
+    add_legend=True,
+    **kwargs
+):
     if ax is None:
         ax = plt.gca()
 
     handles = []
     labels = []
-    for label, group in ds.n2s2pdf.groupby("enso_transition_phase"):
+    for label, group in ds.n2s2pdf.groupby(hue):
         group["N2_bins"] = group["N2_bins"].copy(
             data=pd.IntervalIndex(group.N2_bins.data).mid
         )
         group["S2_bins"] = group["S2_bins"].copy(data=group.N2_bins.data)
 
-        if "Nin" not in label:
+        if isinstance(label, str) and "Nin" not in label:
             continue
 
-        color = kwargs.pop("color", ENSO_COLORS[label])
+        if hue == "enso_transition_phase":
+            color = (kwargs.pop("color", ENSO_COLORS[label]),)
+        else:
+            color = kwargs.pop("color", next(ax._get_lines.prop_cycler)["color"])
         cs = plot_n2s2pdf(
             group.squeeze(),
-            targets=[
-                0.5,
-            ],
-            colors=(color,),
+            targets=targets,
+            colors=color,
             pcolor=False,
             **kwargs,
             ax=ax
@@ -186,11 +244,11 @@ def plot_stability_diagram_by_dataset(tao_gridded, simulations, fig=None):
 
     ax = fig.subplots(1, 1 + len(simulations), sharex=True, sharey=True)
 
-    plot_enso_stability_diagram(
+    plot_stability_diagram(
         tao_gridded, ax=ax[0], linewidths=2, title="TAO", add_legend=False
     )
     for name, sim in simulations.items():
-        plot_enso_stability_diagram(sim, linewidths=2, ax=ax[1], title=name)
+        plot_stability_diagram(sim, linewidths=2, ax=ax[1], title=name)
 
     dcpy.plots.clean_axes(ax)
 
@@ -205,7 +263,7 @@ def plot_stability_diagram_by_phase(tao_gridded, simulations, fig=None):
 
     for phase in ENSO_TRANSITION_PHASES:
         kwargs = dict(ax=ax[phase], add_legend=False)
-        plot_enso_stability_diagram(
+        plot_stability_diagram(
             tao_gridded.sel(enso_transition_phase=[phase]),
             **kwargs,
             color="k",
@@ -213,9 +271,7 @@ def plot_stability_diagram_by_phase(tao_gridded, simulations, fig=None):
         )
 
         for name, sim in simulations.items():
-            plot_enso_stability_diagram(
-                sim.sel(enso_transition_phase=[phase]), **kwargs
-            )
+            plot_stability_diagram(sim.sel(enso_transition_phase=[phase]), **kwargs)
 
         ax[phase].text(
             x=0.35, y=0.03, s=phase.upper() + "ING", transform=ax[phase].transAxes

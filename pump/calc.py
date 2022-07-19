@@ -107,10 +107,16 @@ def calc_reduced_shear(data):
     """
 
     print("calc uz")
-    data["uz"] = data.u.differentiate("depth")
+    try:
+        data["uz"] = data.cf["sea_water_x_velocity"].cf.differentiate("Z")
+    except KeyError:
+        data["uz"] = data["u"].cf.differentiate("Z")
 
     print("calc vz")
-    data["vz"] = data.v.differentiate("depth")
+    try:
+        data["vz"] = data.cf["sea_water_y_velocity"].cf.differentiate("Z")
+    except KeyError:
+        data["vz"] = data["v"].cf.differentiate("Z")
 
     print("calc S2")
     data["S2"] = data.uz**2 + data.vz**2
@@ -125,7 +131,9 @@ def calc_reduced_shear(data):
     #              - 9.81 * 7.6e-4 * data.salt.differentiate('depth'))
 
     print("calc N2")
-    data["N2"] = -9.81 / 1025 * data.dens.differentiate("depth")
+    data["N2"] = (
+        -9.81 / 1025 * data.cf["sea_water_potential_density"].cf.differentiate("Z")
+    )
     data["N2"].attrs["long_name"] = "$N^2$"
     data["N2"].attrs["units"] = "s$^{-2}$"
 

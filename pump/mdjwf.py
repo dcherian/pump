@@ -133,7 +133,7 @@ def densmdjwf(s, t, p):
 
 # aliases
 def dens(s, theta, p):
-    return xr.apply_ufunc(
+    rho = xr.apply_ufunc(
         densmdjwf,
         s.astype("float32"),
         theta.astype("float32"),
@@ -141,6 +141,8 @@ def dens(s, theta, p):
         dask="parallelized",
         output_dtypes=[np.dtype("float32")],
     )
+    rho.attrs["standard_name"] = "sea_water_potential_density"
+    return rho
 
 
 # dens = densmdjwf
