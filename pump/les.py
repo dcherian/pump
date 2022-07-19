@@ -8,45 +8,75 @@ SPONGE_AMP = 0.000001
 MLDTHRESH = 0.00015  # buoyancy
 
 
-def derivative(da):
+def derivative(da, dz):
     ddz = xr.zeros_like(da)
-    ddz.data[1:-1, :] = (da.data[2:, :] - da.data[:-2, :]) / 2 / da.dz.data
+    ddz.attrs = {}
+    ddz.data[1:-1, :] = (da.data[2:, :] - da.data[:-2, :]) / 2 / dz.data
     ddz.data[0, :] = ddz.data[1, :]
     ddz.data[-1, :] = ddz.data[-2, :]
     return ddz
 
 
 def read_les_file(fname):
-    ds = (
-        xr.open_dataset(fname, decode_cf=False)
-        .cf.guess_coord_axis()
-        .set_coords(["alpha", "beta", "T0", "S0"])
+    ds = xr.open_dataset(fname, decode_cf=False)
+    return preprocess_les_dataset(ds)
+
+
+def add_ancillary_variables(ds):
+    """Add variables that I can calculate with both mooring and domain-average files."""
+    ds["buoy"] = -9.81 * ds.rho / ds.rho0
+    ds.buoy.attrs["standard_name"] = "sea_water_buoyancy"
+
+    mask = ds.buoy.isel(z=slice(1, -1)) < (
+        ds.buoy.isel(z=slice(-20, -1)).mean("z") - MLDTHRESH
     )
+    ds["mld"] = ds.z.where(mask).max("z")
+    ds["mld"].attrs["standard_name"] = "ocean_mixed_layer_thickness"
+
+    ds["dudz"] = derivative(ds.cf["sea_water_x_velocity"], ds.dz)
+    ds["dvdz"] = derivative(ds.cf["sea_water_y_velocity"], ds.dz)
+    ds["dudzim"] = ds.dudz + 1j * ds.dvdz
+
+    ds["dTdz"] = derivative(ds.cf["sea_water_potential_temperature"], ds.dz)
+    ds["dSdz"] = derivative(ds.cf["sea_water_salinity"], ds.dz)
+
+
+def preprocess_les_dataset(ds):
+    ds = ds.cf.guess_coord_axis()  # .set_coords(["alpha", "beta", "T0", "S0"])
     for var in ds:
         ds[var].attrs["_FillValue"] = 9.969209968386869e36
     ds = xr.decode_cf(ds)
 
     ds["z"].data[-1] = 0
     ds.coords["dz"] = 0.5
+    ds["zc"] = ("zc", (ds.z.data[:-1] + ds.z.data[1:]) / 2)
 
     if "tempw" not in ds:
         # mooring file
+        ds["u"].attrs["standard_name"] = "sea_water_x_velocity"
+        ds["v"].attrs["standard_name"] = "sea_water_y_velocity"
+        ds["temp"].attrs["standard_name"] = "sea_water_potential_temperature"
+        ds["salt"].attrs["standard_name"] = "sea_water_salinity"
         ds["rho"] = ds.rho0 * (
             1 - ds.alpha * (ds.temp - ds.T0) - ds.beta * (ds.salt - ds.S0)
         )
-        ds["buoy"] = -9.81 * ds.rho / ds.rho0
+        ds.rho.attrs["standard_name"] = "sea_water_potential_density"
+
+        add_ancillary_variables(ds)
         return ds
 
-    ds["wb"] = 9.81 * (ds.alpha * ds.tempw + ds.beta * ds.saltw)
+    ds["ume"].attrs["standard_name"] = "sea_water_x_velocity"
+    ds["vme"].attrs["standard_name"] = "sea_water_y_velocity"
     ds["rho"] = ds.rho0 * (
         1 - ds.alpha * (ds.tempme - ds.T0) - ds.beta * (ds.saltme - ds.S0)
     )
-    ds["buoy"] = -9.81 * ds.rho / ds.rho0
+    ds.rho.attrs["standard_name"] = "sea_water_potential_density"
+    ds["tempme"].attrs["standard_name"] = "sea_water_potential_temperature"
+    ds["saltme"].attrs["standard_name"] = "sea_water_salinity"
 
-    mask = ds.buoy.isel(z=slice(1, -1)) < (
-        ds.buoy.isel(z=slice(-20, -1)).mean("z") - MLDTHRESH
-    )
-    ds["mld"] = ds.z.where(mask).max("z")
+    add_ancillary_variables(ds)
+
+    ds["wb"] = 9.81 * (ds.alpha * ds.tempw + ds.beta * ds.saltw)
 
     ds["kappadbdz"] = 9.81 * (ds.alpha * ds.kappadtdz + ds.beta * ds.kappadsdz)
 
@@ -66,13 +96,6 @@ def read_les_file(fname):
     ds["Fb"] = ds.kappadbdz - ds.wb
     ds["FT"] = ds.kappadtdz - ds.tempw
     ds["FS"] = ds.kappadsdz - ds.saltw
-
-    ds["dudz"] = derivative(ds.ume)
-    ds["dvdz"] = derivative(ds.vme)
-    ds["dudzim"] = ds.dudz + 1j * ds.dvdz
-
-    ds["dTdz"] = derivative(ds.tempme)
-    ds["dSdz"] = derivative(ds.saltme)
 
     ds["KM"] = np.real(ds.Fim * np.conj(ds.dudzim)) / (ds.dudzim * np.conj(ds.dudzim))
     ds["Kb"] = (ds.Fb * ds.N2) / ((ds.N2) ** 2)
