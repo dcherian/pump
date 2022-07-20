@@ -24,6 +24,13 @@ def read_les_file(fname):
 
 def add_ancillary_variables(ds):
     """Add variables that I can calculate with both mooring and domain-average files."""
+    ds["rho"] = ds.rho0 * (
+        1
+        - ds.alpha * (ds.cf["sea_water_potential_temperature"] - ds.T0)
+        - ds.beta * (ds.cf["sea_water_salinity"] - ds.S0)
+    )
+    ds.rho.attrs["standard_name"] = "sea_water_potential_density"
+
     ds["buoy"] = -9.81 * ds.rho / ds.rho0
     ds.buoy.attrs["standard_name"] = "sea_water_buoyancy"
 
@@ -33,12 +40,28 @@ def add_ancillary_variables(ds):
     ds["mld"] = ds.z.where(mask).max("z")
     ds["mld"].attrs["standard_name"] = "ocean_mixed_layer_thickness"
 
-    ds["dudz"] = derivative(ds.cf["sea_water_x_velocity"], ds.dz)
-    ds["dvdz"] = derivative(ds.cf["sea_water_y_velocity"], ds.dz)
+    ds["dudz"] = ds.cf["sea_water_x_velocity"].cf.differentiate(
+        "Z", positive_upward=True
+    )
+    ds["dvdz"] = ds.cf["sea_water_y_velocity"].cf.differentiate(
+        "Z", positive_upward=True
+    )
     ds["dudzim"] = ds.dudz + 1j * ds.dvdz
 
-    ds["dTdz"] = derivative(ds.cf["sea_water_potential_temperature"], ds.dz)
-    ds["dSdz"] = derivative(ds.cf["sea_water_salinity"], ds.dz)
+    ds["dTdz"] = ds.cf["sea_water_potential_temperature"].cf.differentiate(
+        "Z", positive_upward=True
+    )
+    ds["dSdz"] = ds.cf["sea_water_salinity"].cf.differentiate("Z", positive_upward=True)
+
+    if "N2" not in ds:
+        ds["N2"] = ds.buoy.cf.differentiate("Z", positive_upward=True)
+    ds["N2"].attrs["long_name"] = "$N^2$"
+    ds["N2"].attrs["units"] = "s$^{-2}$"
+
+    if "S2" not in ds:
+        ds["S2"] = ds.dudz**2 + ds.dvdz**2
+    ds["S2"].attrs["long_name"] = "$S^2$"
+    ds["S2"].attrs["units"] = "s$^{-2}$"
 
 
 def preprocess_les_dataset(ds):
@@ -57,10 +80,6 @@ def preprocess_les_dataset(ds):
         ds["v"].attrs["standard_name"] = "sea_water_y_velocity"
         ds["temp"].attrs["standard_name"] = "sea_water_potential_temperature"
         ds["salt"].attrs["standard_name"] = "sea_water_salinity"
-        ds["rho"] = ds.rho0 * (
-            1 - ds.alpha * (ds.temp - ds.T0) - ds.beta * (ds.salt - ds.S0)
-        )
-        ds.rho.attrs["standard_name"] = "sea_water_potential_density"
 
         add_ancillary_variables(ds)
         return ds
