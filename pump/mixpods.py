@@ -184,12 +184,30 @@ def pdf_N2S2(data, coord_is_center=False):
 
 
 def plot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
+    da = da.squeeze()
     levels = find_pdf_contour(da, targets=targets)
     if pcolor:
         da.plot(robust=True, **kwargs)
     cs = da.reset_coords(drop=True).plot.contour(levels=levels, **kwargs)
     dcpy.plots.line45(ax=kwargs.get("ax", None))
     return cs
+
+
+def hvplot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
+    import holoviews as hv
+    import hvplot.xarray  # noqa
+
+    da = da.squeeze().copy()
+    da["N2_bins"] = pd.IntervalIndex(da.N2_bins.data).mid.to_numpy()
+    da["S2_bins"] = pd.IntervalIndex(da.S2_bins.data).mid.to_numpy()
+    levels = find_pdf_contour(da, targets=targets)
+    if pcolor:
+        da.hvplot.quadmesh(robust=True, **kwargs)
+    cs = da.reset_coords(drop=True).hvplot.contour(
+        levels=levels, colorbar=pcolor, **kwargs
+    )
+
+    return cs * hv.Slope(1, 0)
 
 
 def plot_stability_diagram(
