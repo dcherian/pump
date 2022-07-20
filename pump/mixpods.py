@@ -204,7 +204,7 @@ def hvplot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
     if pcolor:
         da.hvplot.quadmesh(robust=True, **kwargs)
     cs = da.reset_coords(drop=True).hvplot.contour(
-        levels=levels, colorbar=pcolor, **kwargs
+        levels=levels, colorbar=pcolor, muted_alpha=0, **kwargs
     )
 
     return cs * hv.Slope(1, 0)
