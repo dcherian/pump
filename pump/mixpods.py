@@ -14,7 +14,12 @@ ENSO_COLORS_RGB = {
 ENSO_COLORS = {k: np.array(v) / 255 for k, v in ENSO_COLORS_RGB.items()}
 ENSO_TRANSITION_PHASES = ENSO_COLORS.keys()
 
-import pump
+
+# TODO: delete
+def ddz(data, grid, h):
+    Δ = grid.diff(data, "Z")
+    Δz = grid.interp(grid.get_metric(data, "Z"), "Z")
+    return (Δ / Δz).rename(f"d{data.name}dz")
 
 
 def prepare(ds, grid=None):
@@ -57,9 +62,21 @@ def prepare(ds, grid=None):
         out.Ri.attrs["long_name"] = "Ri"
         out.Ri.attrs["units"] = ""
 
-    out["eucmax"] = pump.calc.get_euc_max(u)
+    # out["eucmax"] = pump.calc.get_euc_max(u)
+    out["eucmax"] = euc_max(
+        u.cf.sel(Z=slice(10, 350)).cf.sel(Y=0, method="nearest", drop=True)
+    )
 
     return out
+
+
+def euc_max(u):
+    euc_max = u.cf.idxmax("Z")
+    euc_max.attrs.clear()
+    euc_max.attrs["units"] = "m"
+    if "positive" in u.cf["Z"].attrs:
+        euc_max.attrs["positive"] = u.cf["Z"].attrs["positive"]
+    return euc_max
 
 
 def find_pdf_contour(density, targets):
@@ -217,7 +234,7 @@ def plot_stability_diagram(
     title=None,
     ax=None,
     add_legend=True,
-    **kwargs
+    **kwargs,
 ):
     if ax is None:
         ax = plt.gca()
@@ -243,7 +260,7 @@ def plot_stability_diagram(
             colors=color,
             pcolor=False,
             **kwargs,
-            ax=ax
+            ax=ax,
         )
         handles.append(cs.legend_elements()[0][0])
         labels.append(label)
@@ -285,7 +302,7 @@ def plot_stability_diagram_by_phase(tao_gridded, simulations, fig=None):
             tao_gridded.sel(enso_transition_phase=[phase]),
             **kwargs,
             color="k",
-            linewidths=2
+            linewidths=2,
         )
 
         for name, sim in simulations.items():
@@ -296,3 +313,100 @@ def plot_stability_diagram_by_phase(tao_gridded, simulations, fig=None):
         )
 
     dcpy.plots.clean_axes(axx)
+
+
+def calc_oni(monthly):
+    # https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php
+
+    # Calculate a monthly 30-year climatological value,
+    # updated every 5 years (1856-1885, ..., 1986-2015, 1991-2020).
+    nyears_in_window = 30
+
+    climatology = (
+        monthly
+        # 30 year rolling windows
+        .rolling(time=nyears_in_window * 12, center=True)
+        .construct(time="month")
+        .assign_coords(month=np.concatenate([np.arange(1, 13)] * nyears_in_window))
+        # climatology in those 30 year windows
+        .groupby("month")
+        .mean()
+        # decimate appropriately
+        .isel(time=slice(4 * 12, None, 5 * 12))
+    )
+
+    # Calculate a monthly anomaly with years centered in the climatology
+    # (1871-1875 uses 1856-1885 climo, ..., 1996-2000 uses 1981-2010,
+    # 2001-2005 uses 1986-2015 climo, 2006-2010 uses 1991-2020 climo,
+    # 2011-2025 also uses 1991-2020 climo because 1996-2025 climo does not exist yet).
+    reshaped = (
+        monthly.coarsen(time=5 * 12, boundary="trim")
+        .construct(time=("time_", "month"))
+        .assign_coords(month=np.concatenate([np.arange(1, 13)] * 5))
+    )
+    reshaped["time_"] = reshaped.time.isel(month=0).data
+    reshaped = reshaped.rename({"time": "original_time"}).rename({"time_": "time"})
+
+    # calculate anomaly
+    anom_ = reshaped - climatology.reindex(
+        time=reshaped.time, method="nearest"
+    ).reindex(month=reshaped.month)
+    anom = (
+        anom_.stack({"newtime": ("time", "month")})
+        .drop_vars("newtime")
+        .swap_dims({"newtime": "original_time"})
+        .rename({"original_time": "time"})
+    )
+    # 3 month centered rolling mean of anomaly
+    oni = anom.rolling(time=3, center=True).mean()
+
+    return oni
+
+
+def make_enso_transition_mask(oni):
+    """
+    Make ENSO transition mask following Warner & Moum (2019)
+
+    Parameters
+    ----------
+    oni: float,
+        Oceanic Nino Idnex time series
+    """
+    from xarray.core.missing import _get_nan_block_lengths
+
+    enso = xr.full_like(oni, fill_value="____________", dtype="U12")
+    index = oni.indexes["time"] - oni.indexes["time"][0]
+    en_mask = _get_nan_block_lengths(
+        xr.where(oni >= 0.45, np.nan, 0, keep_attrs=False), dim="time", index=index
+    ) >= pd.Timedelta("59d")
+
+    ln_mask = _get_nan_block_lengths(
+        xr.where(oni <= -0.5, np.nan, 0, keep_attrs=False), dim="time", index=index
+    ) >= pd.Timedelta("59d")
+    # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
+
+    # donidt = oni.diff("time").reindex(time=oni.time)
+    donidt = oni.differentiate("time")
+
+    # warm_mask = _get_nan_block_lengths(xr.where(donidt >= 0, np.nan, 0, keep_attrs=False), dim="time", index=index) >= pd.Timedelta("59d")
+    cool_mask = _get_nan_block_lengths(
+        xr.where(donidt <= 0, np.nan, 0, keep_attrs=False), dim="time", index=index
+    ) >= pd.Timedelta("120d")
+    warm_mask = ~cool_mask
+
+    # warm_mask = donidt >= 0
+    # cool_mask = donidt <= 0
+    enso.loc[en_mask & warm_mask] = "El-Nino warm"
+    enso.loc[en_mask & cool_mask] = "El-Nino cool"
+    enso.loc[ln_mask & warm_mask] = "La-Nina warm"
+    enso.loc[ln_mask & cool_mask] = "La-Nina cool"
+
+    enso.coords["warm_mask"] = warm_mask
+    enso.coords["cool_mask"] = cool_mask
+
+    enso.name = "enso_phase"
+    enso.attrs[
+        "description"
+    ] = "Warner & Moum (2019) ENSO transition phase; El-Nino = ONI > 0.5 for at least 6 months; La-Nina = ONI < -0.5 for at least 6 months"
+
+    return enso
