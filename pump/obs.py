@@ -1,3 +1,5 @@
+import warnings
+
 import dcpy
 import numpy as np
 import pandas as pd
@@ -6,7 +8,7 @@ import xarray as xr
 
 import pump
 
-from . import mdjwf
+from . import mdjwf, mixpods
 from .constants import section_lons  # noqa
 
 
@@ -620,10 +622,13 @@ def make_enso_mask_old(threshold=6):
     return enso[enso.data != fill_value].reindex_like(enso, method="nearest")
 
 
-def make_enso_mask():
+def make_enso_mask(nino34=None):
     from xarray.core.missing import _get_nan_block_lengths
 
-    nino34 = process_nino34()
+    if nino34 is None:
+        warnings.warn("Pass ONI directly please", DeprecationWarning)
+        nino34 = process_nino34()
+
     ssta = nino34 - nino34.mean()  # .rolling(time=6, center=True).mean()
 
     enso = xr.full_like(ssta, fill_value="Neutral", dtype="U8")
@@ -649,44 +654,10 @@ def make_enso_mask():
     return enso
 
 
-def make_enso_transition_mask():
-    from xarray.core.missing import _get_nan_block_lengths
+def make_enso_transition_mask(oni=None):
 
-    oni = process_oni()
+    if oni is None:
+        warnings.warn("Pass ONI directly please", DeprecationWarning)
+        oni = process_oni()
 
-    enso = xr.full_like(oni, fill_value="____________", dtype="U12")
-    index = oni.indexes["time"] - oni.indexes["time"][0]
-    en_mask = _get_nan_block_lengths(
-        xr.where(oni >= 0.45, np.nan, 0, keep_attrs=False), dim="time", index=index
-    ) >= pd.Timedelta("59d")
-
-    ln_mask = _get_nan_block_lengths(
-        xr.where(oni <= -0.5, np.nan, 0, keep_attrs=False), dim="time", index=index
-    ) >= pd.Timedelta("59d")
-    # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
-
-    # donidt = oni.diff("time").reindex(time=oni.time)
-    donidt = oni.differentiate("time")
-
-    # warm_mask = _get_nan_block_lengths(xr.where(donidt >= 0, np.nan, 0, keep_attrs=False), dim="time", index=index) >= pd.Timedelta("59d")
-    cool_mask = _get_nan_block_lengths(
-        xr.where(donidt <= 0, np.nan, 0, keep_attrs=False), dim="time", index=index
-    ) >= pd.Timedelta("120d")
-    warm_mask = ~cool_mask
-
-    # warm_mask = donidt >= 0
-    # cool_mask = donidt <= 0
-    enso.loc[en_mask & warm_mask] = "El-Nino warm"
-    enso.loc[en_mask & cool_mask] = "El-Nino cool"
-    enso.loc[ln_mask & warm_mask] = "La-Nina warm"
-    enso.loc[ln_mask & cool_mask] = "La-Nina cool"
-
-    enso.coords["warm_mask"] = warm_mask
-    enso.coords["cool_mask"] = cool_mask
-
-    enso.name = "enso_phase"
-    enso.attrs[
-        "description"
-    ] = "Warner & Moum (2019) ENSO transition phase; El-Nino = ONI > 0.5 for at least 6 months; La-Nina = ONI < -0.5 for at least 6 months"
-
-    return enso
+    return mixpods.make_enso_transition_mask(oni)
