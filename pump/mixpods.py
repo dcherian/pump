@@ -22,7 +22,7 @@ def ddz(data, grid, h):
     return (Δ / Δz).rename(f"d{data.name}dz")
 
 
-def prepare(ds, grid=None):
+def prepare(ds, grid=None, sst_nino34=None):
     dens = ds.cf["sea_water_potential_density"]
     u = ds.cf["sea_water_x_velocity"]
     v = ds.cf["sea_water_y_velocity"]
@@ -66,6 +66,13 @@ def prepare(ds, grid=None):
     out["eucmax"] = euc_max(
         u.cf.sel(Z=slice(10, 350)).cf.sel(Y=0, method="nearest", drop=True)
     )
+
+    if sst_nino34 is not None:
+        oni = calc_oni(sst_nino34)
+        enso_transition = make_enso_transition_mask(oni).rename("enso_transition")
+        out.coords.update(
+            xr.merge([oni, enso_transition]).reindex(time=ds.time, method="ffill")
+        )
 
     return out
 
@@ -206,7 +213,7 @@ def plot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
     if pcolor:
         da.plot(robust=True, **kwargs)
     cs = da.reset_coords(drop=True).plot.contour(levels=levels, **kwargs)
-    dcpy.plots.line45(ax=kwargs.get("ax", None))
+    dcpy.plots.line45(ax=kwargs.get("ax", None), ls="--", lw=1.25)
     return cs
 
 
@@ -241,19 +248,23 @@ def plot_stability_diagram(
 
     handles = []
     labels = []
+
+    assert hue in ds.dims
+
+    # Note this groupby sorts the hue labels...
     for label, group in ds.n2s2pdf.groupby(hue):
         group["N2_bins"] = group["N2_bins"].copy(
             data=pd.IntervalIndex(group.N2_bins.data).mid
         )
         group["S2_bins"] = group["S2_bins"].copy(data=group.N2_bins.data)
 
-        if isinstance(label, str) and "Nin" not in label:
-            continue
+        default_color = (
+            ENSO_COLORS[label]
+            if hue == "enso_transition_phase"
+            else next(ax._get_lines.prop_cycler)["color"]
+        )
+        color = kwargs.pop("color", (default_color,))
 
-        if hue == "enso_transition_phase":
-            color = (kwargs.pop("color", ENSO_COLORS[label]),)
-        else:
-            color = kwargs.pop("color", next(ax._get_lines.prop_cycler)["color"])
         cs = plot_n2s2pdf(
             group.squeeze(),
             targets=targets,
@@ -273,22 +284,23 @@ def plot_stability_diagram(
         ax.set_title(title)
 
 
-def plot_stability_diagram_by_dataset(tao_gridded, simulations, fig=None):
+def plot_stability_diagram_by_dataset(datasets, fig=None):
     if fig is None:
         fig = plt.figure(constrained_layout=True, figsize=(8, 4))
 
-    ax = fig.subplots(1, 1 + len(simulations), sharex=True, sharey=True)
+    ax = fig.subplots(1, len(datasets), sharex=True, sharey=True)
+    for (name, sim), (iaxis, axis) in zip(datasets.items(), enumerate(ax)):
+        plot_stability_diagram(
+            sim.drop_sel(enso_transition_phase=["all", "none", "____________"]),
+            linewidths=2,
+            ax=axis,
+            title=name,
+            add_legend=(iaxis == len(datasets) - 1),
+        )
+        dcpy.plots.clean_axes(ax)
 
-    plot_stability_diagram(
-        tao_gridded, ax=ax[0], linewidths=2, title="TAO", add_legend=False
-    )
-    for name, sim in simulations.items():
-        plot_stability_diagram(sim, linewidths=2, ax=ax[1], title=name)
 
-    dcpy.plots.clean_axes(ax)
-
-
-def plot_stability_diagram_by_phase(tao_gridded, simulations, fig=None):
+def plot_stability_diagram_by_phase(datasets, obs="TAO", fig=None):
     if fig is None:
         fig = plt.figure(figsize=(12, 4), constrained_layout=True)
 
@@ -296,18 +308,27 @@ def plot_stability_diagram_by_phase(tao_gridded, simulations, fig=None):
 
     ax = dict(zip(ENSO_TRANSITION_PHASES, axx))
 
+    merged = (
+        xr.Dataset(
+            {
+                k: ds["n2s2pdf"].cf.drop_vars(
+                    ["latitude", "longitude"], errors="ignore"
+                )
+                for k, ds in datasets.items()
+            }
+        )
+        .to_array("dataset")
+        .to_dataset(name="n2s2pdf")
+    )
+    last_phase = list(ENSO_TRANSITION_PHASES)[-1]
     for phase in ENSO_TRANSITION_PHASES:
-        kwargs = dict(ax=ax[phase], add_legend=False)
         plot_stability_diagram(
-            tao_gridded.sel(enso_transition_phase=[phase]),
-            **kwargs,
-            color="k",
+            merged.sel(enso_transition_phase=phase),
+            hue="dataset",
+            ax=ax[phase],
+            add_legend=(phase == last_phase),
             linewidths=2,
         )
-
-        for name, sim in simulations.items():
-            plot_stability_diagram(sim.sel(enso_transition_phase=[phase]), **kwargs)
-
         ax[phase].text(
             x=0.35, y=0.03, s=phase.upper() + "ING", transform=ax[phase].transAxes
         )
