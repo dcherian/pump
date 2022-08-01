@@ -1,3 +1,6 @@
+import operator
+from functools import reduce
+
 import dcpy
 import flox.xarray
 import matplotlib.pyplot as plt
@@ -435,3 +438,44 @@ def make_enso_transition_mask(oni):
     ] = "Warner & Moum (2019) ENSO transition phase; El-Nino = ONI > 0.5 for at least 6 months; La-Nina = ONI < -0.5 for at least 6 months"
 
     return enso
+
+
+def normalize_z(da):
+    """Normalize vertical depth so that positive is always up."""
+    datapos = da.attrs.get("positive", None)
+    if not datapos:
+        return da
+
+    if datapos == "down":
+        da = da * -1
+        da.attrs["positive"] = "up"
+
+    return da
+
+
+def sel_like(da, other, dims):
+    """Select along dims using cf-xarray"""
+    if isinstance(dims, str):
+        dims = (dims,)
+    return da.cf.sel(
+        {dim: slice(other.cf[dim].data[0], other.cf[dim].data[-1]) for dim in dims}
+    )
+
+
+def plot_eucmax_timeseries(datasets, obs="TAO"):
+    """Hvplot of EUC maximum time series."""
+    obsts = datasets[obs].eucmax.reset_coords(drop=True)
+    handles = []
+    for name, ds in datasets.items():
+        kwargs = dict(label=name)
+        if name != obs:
+            toplot = ds.eucmax.reset_coords(drop=True).pipe(sel_like, obsts, "time")
+            kwargs.pop("color", None)
+        else:
+            toplot = obsts
+            kwargs["color"] = "darkgray"
+        handles.append(normalize_z(toplot).hvplot.line(**kwargs))
+
+    return reduce(operator.mul, handles).opts(
+        legend_position="right", frame_width=700, title="EUC maximum", xlabel=""
+    )
