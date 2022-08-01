@@ -381,6 +381,10 @@ def calc_oni(monthly):
     # 3 month centered rolling mean of anomaly
     oni = anom.rolling(time=3, center=True).mean()
 
+    oni.name = "oni"
+    oni.attrs["long_name"] = "ONI"
+    oni.attrs["standard_name"] = "oceanic_nino_index"
+
     return oni
 
 
