@@ -25,8 +25,32 @@ def ddz(data, grid, h):
     return (Δ / Δz).rename(f"d{data.name}dz")
 
 
-def prepare(ds, grid=None, sst_nino34=None):
-    dens = ds.cf["sea_water_potential_density"]
+def prepare(ds, grid=None, sst_nino34=None, oni=None):
+    """
+    Prepare an input dataset for miχpod diagnostics.
+
+    Parameters
+    ----------
+    ds: xr.Dataset
+        Dataset with "densT", "sea_water_x_velocity", "sea_water_y_velocity"
+        optionally with "N2T", "S2"
+    grid: xgcm.Grid, optional
+        Grid object; neccessary if N2 or S2 need to be calculated.
+    sst_nino34: xr.DataArray, optional
+        Monthly mean SST in NINO3.4 region. Used to estimate ONI
+        if "oni" is not provided.
+    oni: xr.DataArray, optional
+        Monthly Oceanic Nino Index timeseries. Used to estimate
+        "enso_transition" labels..
+
+    Returns
+    -------
+    xr.Dataset
+        with "shred2", "N2T", "S2", "Rig_T", "eucmax", "oni", "enso_transition"
+        oni and enso_transition are reindexed from monthly frequency to ds.time
+    """
+
+#    dens = ds.cf["sea_water_potential_density"]
     u = ds.cf["sea_water_x_velocity"]
     v = ds.cf["sea_water_y_velocity"]
 
