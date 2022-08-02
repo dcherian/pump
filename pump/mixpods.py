@@ -532,3 +532,35 @@ def plot_eucmax_timeseries(datasets, obs="TAO"):
     return reduce(operator.mul, handles).opts(
         legend_position="right", frame_width=700, title="EUC maximum", xlabel=""
     )
+
+
+def plot_profile_fill(da, label):
+    import hvplot.pandas  # noqa
+
+    Zname = da.cf.axes["Z"][0]
+    da = da.copy(deep=True)
+    da[Zname] = normalize_z(da[Zname])
+    mean = da.mean("time")
+    std = da.std("time")
+
+    df_ = (
+        xr.Dataset({"low": mean - std, "high": mean + std})
+        .reset_coords(drop=True)
+        .to_dataframe()
+    )
+    return df_.hvplot.area(x=Zname, y="low", y2="high", hover=False).opts(
+        alpha=0.5
+    ) * mean.hvplot.line(label=label)
+
+
+def cfplot(da, label):
+    Zname = da.cf.axes["Z"][0]
+    da = da.load().copy(deep=True)
+    da[Zname] = normalize_z(da[Zname])
+    return da.hvplot.line(label=label)
+
+
+def map_hvplot(func, datasets):
+    return reduce(
+        operator.mul, (func(ds.load(), name) for name, ds in datasets.items())
+    )
