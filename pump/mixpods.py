@@ -479,6 +479,13 @@ def normalize_z(da):
     """Normalize vertical depth so that positive is always up."""
     datapos = da.attrs.get("positive", None)
     if not datapos:
+        Z = da.cf["Z"]
+        if "positive" not in Z.attrs:
+            raise ValueError(
+                "Could not find a 'positive' attribute to use for normalization."
+            )
+        newz = normalize_z(Z)
+        da[Z.name] = newz
         return da
 
     if datapos == "down":
