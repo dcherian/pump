@@ -337,7 +337,7 @@ def read_metrics(dirname):
     RF = h["RF"]
     DXC = h["DXC"]
     DYC = h["DYC"]
-    longitude = h["XC"][0, :].compute()
+    longitude = h["XC"][0, :].compute() - 170 - 0.025
     latitude = h["YC"][:, 0].compute()
 
     del h
@@ -377,7 +377,7 @@ def read_metrics(dirname):
         (RF[1:] + RF[:-1]) / 2,
         dims=["depth"],
         name="depth",
-        attrs={"long_name": "depth", "units": "m"},
+        attrs={"long_name": "depth", "units": "m", "positive": "up", "axis": "Z"},
     )
 
     dRF = xr.DataArray(
@@ -385,10 +385,19 @@ def read_metrics(dirname):
         dims=["depth"],
         coords={"depth": depth},
         name="dRF",
-        attrs={"long_name": "cell_height", "units": "m"},
+        attrs={
+            "standard_name": "cell_thickness",
+            "long_name": "cell_height",
+            "units": "m",
+        },
     )
 
-    RF = xr.DataArray(RF.squeeze(), dims=["depth_left"], name="depth_left")
+    RF = xr.DataArray(
+        RF.squeeze(),
+        dims=["RF"],
+        name="RF",
+        attrs={"long_name": "depth", "units": "m", "positive": "up", "axis": "Z"},
+    )
 
     hFacC = xr.DataArray(
         hFacC[:, lats, lons],
