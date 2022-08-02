@@ -413,3 +413,5 @@ paper1/*
 paper2/*
 *.pdf
 *-backup/*
+datasets/*
+obs/*
