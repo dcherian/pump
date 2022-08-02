@@ -279,6 +279,7 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     station["Jq_shear"] = 1035 * 3994 * (station.DFrI_TH.fillna(0)) / metrics.RAC
     station["nonlocal_flux"] = 1035 * 3994 * (station.KPPg_TH) / metrics.RAC
     station["dens"] = dens(station.salt, station.theta, np.array([0.0]))
+    station["densT"] = dens(np.array([35.0]), station.theta, np.array([0.0]))
 
     station["mld"] = get_mld(station.dens)
     # station["Jq"] += station.nonlocal_flux.fillna(0)  # add the non-local term too
@@ -293,6 +294,15 @@ def read_stations_20(dirname="~/pump/TPOS_MITgcm_fix3/", globstr="*", dayglobstr
     station["dTdt"] = -station.dJdz / 1035 / 3995 * 86400 * 30
     station.dTdt.attrs["long_name"] = "$∂T/∂t = -1/(ρ_0c_p) ∂J_q/∂z$"
     station.dTdt.attrs["units"] = "°C/month"
+
+    station.u.attrs["standard_name"] = "sea_water_x_velocity"
+    station.u.attrs["units"] = "m/s"
+
+    station.v.attrs["standard_name"] = "sea_water_y_velocity"
+    station.v.attrs["units"] = "m/s"
+
+    station.depth.attrs["unit"] = "m"
+    station.depth.attrs["positive"] = "up"
 
     return station
 
