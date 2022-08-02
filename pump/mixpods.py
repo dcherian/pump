@@ -66,7 +66,10 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
             assert grid is not None
             dρdz = grid.derivative(dens, "Z")
             out["N2T"] = -9.81 / grid.interp_like(dens, like=dρdz) * dρdz
-            if u.cf["Z"].attrs.get("positive", None) == "down":
+            # TODO: this needs work.
+            if dens.cf["Z"].attrs.get("positive", None) == "down" or (
+                dens.cf.indexes["Z"].is_monotonic_decreasing
+            ):
                 out["N2T"] *= -1
 
             out["N2T"].attrs["long_name"] = "$N_T^2$"
@@ -103,6 +106,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     if "Y" in ueq.cf.axes:
         ueq = ueq.cf.sel(Y=0, method="nearest", drop=True)
     out["eucmax"] = np.abs(euc_max(ueq)) * Zsign
+    out.eucmax.attrs["positive"] = v.cf["Z"].attrs["positive"]
 
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
