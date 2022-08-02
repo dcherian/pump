@@ -55,6 +55,8 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     u = ds.cf["sea_water_x_velocity"]
     v = ds.cf["sea_water_y_velocity"]
 
+    Zsign = np.sign(u.cf["Z"].mean().data)
+
     out = ds.copy()
     with xr.set_options(arithmetic_join="exact"):
         # dρdz = ddz(dens, grid, ds.h)
@@ -100,7 +102,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     ueq = normalize_z(u).cf.sortby("Z").cf.sel(Z=slice(-350, -10))
     if "Y" in ueq.cf.axes:
         ueq = ueq.cf.sel(Y=0, method="nearest", drop=True)
-    out["eucmax"] = euc_max(ueq)
+    out["eucmax"] = np.abs(euc_max(ueq)) * Zsign
 
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
