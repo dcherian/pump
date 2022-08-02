@@ -50,7 +50,8 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         oni and enso_transition are reindexed from monthly frequency to ds.time
     """
 
-#    dens = ds.cf["sea_water_potential_density"]
+    # dens = ds.cf["sea_water_potential_density"]
+    dens = ds["densT"]  # Since that's what Warner & Moum do.
     u = ds.cf["sea_water_x_velocity"]
     v = ds.cf["sea_water_y_velocity"]
 
@@ -59,43 +60,53 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         # dρdz = ddz(dens, grid, ds.h)
         # dudz = ddz(u, grid, ds.hu)
         # dvdz = ddz(v, grid, ds.hv)
-        if "N2" not in ds:
+        if "N2T" not in ds:
             assert grid is not None
             dρdz = grid.derivative(dens, "Z")
-            out["N2"] = -9.81 / grid.interp_like(dens, like=dρdz) * dρdz
+            out["N2T"] = -9.81 / grid.interp_like(dens, like=dρdz) * dρdz
             if u.cf["Z"].attrs.get("positive", None) == "down":
-                out["N2"] *= -1
+                out["N2T"] *= -1
 
-            out["N2"].attrs["long_name"] = "$N^2$"
-            out["N2"].attrs["units"] = "s$^{-2}$"
+            out["N2T"].attrs["long_name"] = "$N_T^2$"
+            out["N2T"].attrs["units"] = "s$^{-2}$"
         else:
-            out["N2"] = ds.N2
+            out["N2T"] = ds.N2T
 
         if "S2" not in ds:
             assert grid is not None
             dudz = grid.derivative(u, "Z")
             dvdz = grid.derivative(v, "Z")
-            out["S2"] = dudz**2 + grid.interp(dvdz, "Y", to="center") ** 2
+
+            # TODO: upstream to xgcm
+            yaxes = grid.axes["Y"]
+            pos = yaxes._get_position_name(v)[0]
+            if pos != "center":
+                dvdz = grid.interp(dvdz, "Y", to="center")
+
+            out["S2"] = dudz**2 + dvdz**2
             out["S2"].attrs["long_name"] = "$S^2$"
             out["S2"].attrs["units"] = "s$^{-2}$"
         else:
             out["S2"] = ds.S2
 
-        out["shred2"] = out.S2 - 4 * out.N2
+        out["shred2"] = out.S2 - 4 * out.N2T
         out.shred2.attrs["long_name"] = "$Sh_{red}^2$"
         out.shred2.attrs["units"] = "$s^{-2}$"
 
-        out["Ri"] = out.N2 / out.S2
-        out.Ri.attrs["long_name"] = "Ri"
-        out.Ri.attrs["units"] = ""
+        out["Rig_T"] = out.N2T / out.S2
+        out.Rig_T.attrs["long_name"] = "$Ri^g_T$"
+        out.Rig_T.attrs["units"] = ""
 
-    # out["eucmax"] = pump.calc.get_euc_max(u)
-    out["eucmax"] = euc_max(
-        u.cf.sel(Z=slice(10, 350)).cf.sel(Y=0, method="nearest", drop=True)
-    )
+    ueq = normalize_z(u).cf.sortby("Z").cf.sel(Z=slice(-350, -10))
+    if "Y" in ueq.cf.axes:
+        ueq = ueq.cf.sel(Y=0, method="nearest", drop=True)
+    out["eucmax"] = euc_max(ueq)
 
-    if sst_nino34 is not None:
+    if sst_nino34 is not None and oni is not None:
+        raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
+    if sst_nino34 is not None and oni is None:
         oni = calc_oni(sst_nino34)
+    if oni is not None:
         enso_transition = make_enso_transition_mask(oni).rename("enso_transition")
         out.coords.update(
             xr.merge([oni, enso_transition]).reindex(time=ds.time, method="ffill")
@@ -145,7 +156,7 @@ def find_pdf_contour(density, targets):
     )
 
 
-def to_density(counts, dims=("N2_bins", "S2_bins")):
+def to_density(counts, dims=("N2T_bins", "S2_bins")):
     total = counts.sum(dims)
     area = 1
     for dim in dims:
@@ -170,7 +181,7 @@ def pdf_N2S2(data, coord_is_center=False):
     else:
         data["S2"] = data.S2.where(data.cf["Z"] < (data.eucmax - 5))
 
-    by = [np.log10(4 * data.N2), np.log10(data.S2)]
+    by = [np.log10(4 * data.N2T), np.log10(data.S2)]
     expected_groups = [index, index]
     isbin = [True, True]
 
@@ -211,7 +222,7 @@ def pdf_N2S2(data, coord_is_center=False):
     counts = xr.concat(to_concat, dim="enso_transition").rename(
         {"enso_transition": "enso_transition_phase"}
     )
-    counts.N2_bins.attrs["long_name"] = "log$_{10} 4N^2$"
+    counts.N2T_bins.attrs["long_name"] = "log$_{10} 4N_T^2$"
     counts.S2_bins.attrs["long_name"] = "log$_{10} S^2$"
 
     if "enso_transition" in data.variables:
@@ -222,13 +233,13 @@ def pdf_N2S2(data, coord_is_center=False):
             )
         }
 
-    counts.attrs = {"long_name": "$P(S^2, 4N^2)$"}
+    counts.attrs = {"long_name": "$P(S^2, 4N_T^2)$"}
     with xr.set_options(keep_attrs=True):
-        density = to_density(counts, dims=("N2_bins", "S2_bins"))
+        density = to_density(counts, dims=("N2T_bins", "S2_bins"))
 
     if coord_is_center:
         vec = np.linspace(-5, -2, 50)
-        density["N2_bins"] = (vec[1:] + vec[:-1]) / 2
+        density["N2T_bins"] = (vec[1:] + vec[:-1]) / 2
         density["S2_bins"] = (vec[1:] + vec[:-1]) / 2
 
     return density
@@ -249,7 +260,7 @@ def hvplot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
     import hvplot.xarray  # noqa
 
     da = da.squeeze().copy()
-    da["N2_bins"] = pd.IntervalIndex(da.N2_bins.data).mid.to_numpy()
+    da["N2T_bins"] = pd.IntervalIndex(da.N2T_bins.data).mid.to_numpy()
     da["S2_bins"] = pd.IntervalIndex(da.S2_bins.data).mid.to_numpy()
     levels = find_pdf_contour(da, targets=targets)
     if pcolor:
@@ -280,10 +291,10 @@ def plot_stability_diagram(
 
     # Note this groupby sorts the hue labels...
     for label, group in ds.n2s2pdf.groupby(hue):
-        group["N2_bins"] = group["N2_bins"].copy(
-            data=pd.IntervalIndex(group.N2_bins.data).mid
+        group["N2T_bins"] = group["N2T_bins"].copy(
+            data=pd.IntervalIndex(group.N2T_bins.data).mid
         )
-        group["S2_bins"] = group["S2_bins"].copy(data=group.N2_bins.data)
+        group["S2_bins"] = group["S2_bins"].copy(data=group.N2T_bins.data)
 
         default_color = (
             ENSO_COLORS[label]
