@@ -176,10 +176,11 @@ def pdf_N2S2(data, coord_is_center=False):
     bins = np.linspace(-5, -2, 30)
     index = pd.IntervalIndex.from_breaks(bins)
 
-    if np.all(data.cf["Z"].data < 1):
-        data["S2"] = data.S2.where(data.cf["Z"] > (data.eucmax + 5))
+    # TODO: normalize_Z here
+    if np.all(data.S2.cf["Z"].data < 1):
+        data["S2"] = data.S2.where(data.S2.cf["Z"] > (data.eucmax + 5))
     else:
-        data["S2"] = data.S2.where(data.cf["Z"] < (data.eucmax - 5))
+        data["S2"] = data.S2.where(data.S2.cf["Z"] < (data.eucmax - 5))
 
     by = [np.log10(4 * data.N2T), np.log10(data.S2)]
     expected_groups = [index, index]
@@ -189,6 +190,10 @@ def pdf_N2S2(data, coord_is_center=False):
         by.append(data.enso_transition)
         expected_groups.append(None)
         isbin.append(False)
+
+    # TODO: assert specific dimensions instead
+    assert data.S2.ndim < 3
+    assert data.N2T.ndim < 3
 
     enso_counts = flox.xarray.xarray_reduce(
         data.S2, *by, func="count", expected_groups=tuple(expected_groups), isbin=isbin
