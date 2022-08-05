@@ -106,7 +106,9 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         ueq = ueq.cf.sel(Y=0, method="nearest", drop=True)
     out.coords["eucmax"] = euc_max(ueq)
 
-    out.coords["mldT"] = get_mld_tao_theta(out.cf["sea_water_potential_temperature"])
+    out.coords["mldT"] = get_mld_tao_theta(
+        out.cf["sea_water_potential_temperature"].reset_coords(drop=True)
+    )
 
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
@@ -184,6 +186,9 @@ def pdf_N2S2(data, coord_is_center=False):
 
     assert_z_is_normalized(data)
 
+    data["S2"] = data.S2.where(
+        (data.S2.cf["Z"] > (data.eucmax + 5)) & (data.S2.cf["Z"] < (data.mldT - 5))
+    )
 
     by = [np.log10(4 * data.N2T), np.log10(data.S2)]
     expected_groups = [index, index]
