@@ -12,6 +12,8 @@ import xarray as xr
 import xfilter
 from xhistogram.xarray import histogram
 
+from .mixpods import get_mld_tao_theta  # noqa
+
 
 def ddx(a):
     return a.differentiate("longitude") / 110e3
@@ -435,29 +437,6 @@ def get_mld_tao(dens):
         "Interpolate density to 1m grid. "
         "Search for max depth where "
         " |drho| > 0.03 and N2 > 1e-5"
-    )
-
-    return mld
-
-
-def get_mld_tao_theta(theta):
-    """
-    Given pot temp field, estimate MLD as depth where dθ > 0.15C
-    """
-    if not isinstance(theta, xr.DataArray):
-        raise ValueError(f"Expected DataArray, received {theta.__class__.__name__}")
-
-    thetai = theta.interp(depth=np.arange(0, -200, -1))
-    dθ = thetai - thetai.sel(depth=[0, -5], method="nearest").max("depth")
-
-    thresh = xr.where(np.abs(dθ) > 0.15, dθ.depth, np.nan)
-    mld = thresh.max("depth")
-
-    mld.name = "mldT"
-    mld.attrs["long_name"] = "MLD$_θ$"
-    mld.attrs["units"] = "m"
-    mld.attrs["description"] = (
-        "Interpolate thetaito 1m grid. " "Search for max depth where " " |dθ| > 0.15"
     )
 
     return mld

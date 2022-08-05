@@ -102,6 +102,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         ueq = ueq.cf.sel(Y=0, method="nearest", drop=True)
     out.coords["eucmax"] = euc_max(ueq)
 
+    out.coords["mldT"] = get_mld_tao_theta(out.cf["sea_water_potential_temperature"])
 
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
@@ -573,3 +574,31 @@ def map_hvplot(func, datasets):
     return reduce(
         operator.mul, (func(ds.load(), name) for name, ds in datasets.items())
     )
+
+
+def get_mld_tao_theta(theta):
+    """
+    Given pot temp field, estimate MLD as depth where dθ > 0.15C
+    """
+    if not isinstance(theta, xr.DataArray):
+        raise ValueError(f"Expected DataArray, received {theta.__class__.__name__}")
+
+    thetai = theta.cf.interp(Z=np.arange(0, -200, -1))
+    dθ = thetai - thetai.cf.sel(Z=[0, -5], method="nearest").cf.max("Z")
+
+    thresh = xr.where(np.abs(dθ) > 0.15, dθ.cf["Z"], np.nan, keep_attrs=False)
+    thresh.attrs = dθ.cf["Z"].attrs
+    for dim in thresh.dims:
+        thresh[dim].attrs = dθ[dim].attrs
+    mld = thresh.cf.max("Z")
+
+    mld.name = "mldT"
+    mld.attrs = {
+        "long_name": "MLD$_θ$",
+        "units": "m",
+        "description": (
+            "Interpolate θi to 1m grid. " "Search for max depth where " " |dθ| > 0.15"
+        ),
+    }
+
+    return mld
