@@ -127,6 +127,7 @@ def euc_max(u):
     euc_max = u.cf.idxmax("Z")
     euc_max.attrs.clear()
     euc_max.attrs["units"] = "m"
+    euc_max.attrs["long_name"] = "EUC maximum"
     if "positive" in u.cf["Z"].attrs:
         euc_max.attrs["positive"] = u.cf["Z"].attrs["positive"]
     return euc_max
@@ -548,16 +549,20 @@ def plot_timeseries(datasets, var, obs="TAO"):
         handles.append(toplot.hvplot.line(**kwargs))
 
     return reduce(operator.mul, handles).opts(
-        legend_position="right", frame_width=700, title="EUC maximum", xlabel=""
+        legend_position="right",
+        frame_width=700,
+        title=obsts.attrs["long_name"],
+        xlabel="",
     )
 
 
 def plot_profile_fill(da, label):
     import hvplot.pandas  # noqa
 
+    assert_z_is_normalized(da.to_dataset())
+
     Zname = da.cf.axes["Z"][0]
     da = da.copy(deep=True)
-    da[Zname] = normalize_z(da[Zname])
     mean = da.mean("time")
     std = da.std("time")
 
@@ -579,9 +584,7 @@ def cfplot(da, label):
 
 
 def map_hvplot(func, datasets):
-    return reduce(
-        operator.mul, (func(ds.load(), name) for name, ds in datasets.items())
-    )
+    return reduce(operator.mul, (func(ds, name) for name, ds in datasets.items()))
 
 
 def get_mld_tao_theta(theta):
