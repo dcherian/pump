@@ -25,6 +25,13 @@ def ddz(data, grid, h):
     return (Δ / Δz).rename(f"d{data.name}dz")
 
 
+def assert_z_is_normalized(ds):
+    for z in set(ds.cf.axes["Z"]) & set(ds.dims):
+        assert ds[z].attrs["positive"] == "up", ds[z].attrs
+        assert (ds[z].data < 1).all(), f"{z!r} is not all negative"
+        assert ds.indexes[z].is_monotonic_increasing
+
+
 def prepare(ds, grid=None, sst_nino34=None, oni=None):
     """
     Prepare an input dataset for miχpod diagnostics.
@@ -57,10 +64,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     u = out.cf["sea_water_x_velocity"]
     v = out.cf["sea_water_y_velocity"]
 
-    for z in ds.cf.axes["Z"]:
-        assert ds[z].attrs["positive"] == "up", ds[z].attrs
-        assert (ds[z].data < 1).all(), f"{z!r} is not all negative"
-        assert ds.indexes[z].is_monotonic_increasing
+    assert_z_is_normalized(out)
 
     with xr.set_options(arithmetic_join="exact"):
         # dρdz = ddz(dens, grid, ds.h)
@@ -178,11 +182,8 @@ def pdf_N2S2(data, coord_is_center=False):
     bins = np.linspace(-5, -2, 30)
     index = pd.IntervalIndex.from_breaks(bins)
 
-    # TODO: normalize_Z here
-    if np.all(data.S2.cf["Z"].data < 1):
-        data["S2"] = data.S2.where(data.S2.cf["Z"] > (data.eucmax + 5))
-    else:
-        data["S2"] = data.S2.where(data.S2.cf["Z"] < (data.eucmax - 5))
+    assert_z_is_normalized(data)
+
 
     by = [np.log10(4 * data.N2T), np.log10(data.S2)]
     expected_groups = [index, index]
