@@ -51,33 +51,30 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     """
 
     # dens = ds.cf["sea_water_potential_density"]
-    dens = ds["densT"]  # Since that's what Warner & Moum do.
-    u = ds.cf["sea_water_x_velocity"]
-    v = ds.cf["sea_water_y_velocity"]
 
-    Zsign = np.sign(u.cf["Z"].mean().data)
+    out = ds.copy(deep=True)
+    dens = out["densT"]  # Since that's what Warner & Moum do.
+    u = out.cf["sea_water_x_velocity"]
+    v = out.cf["sea_water_y_velocity"]
 
-    out = ds.copy()
+    for z in ds.cf.axes["Z"]:
+        assert ds[z].attrs["positive"] == "up", ds[z].attrs
+        assert (ds[z].data < 1).all(), f"{z!r} is not all negative"
+        assert ds.indexes[z].is_monotonic_increasing
+
     with xr.set_options(arithmetic_join="exact"):
         # dρdz = ddz(dens, grid, ds.h)
         # dudz = ddz(u, grid, ds.hu)
         # dvdz = ddz(v, grid, ds.hv)
-        if "N2T" not in ds:
+        if "N2T" not in out:
             assert grid is not None
             dρdz = grid.derivative(dens, "Z")
             out["N2T"] = -9.81 / grid.interp_like(dens, like=dρdz) * dρdz
-            # TODO: this needs work.
-            if dens.cf["Z"].attrs.get("positive", None) == "down" or (
-                dens.cf.indexes["Z"].is_monotonic_decreasing
-            ):
-                out["N2T"] *= -1
 
             out["N2T"].attrs["long_name"] = "$N_T^2$"
             out["N2T"].attrs["units"] = "s$^{-2}$"
-        else:
-            out["N2T"] = ds.N2T
 
-        if "S2" not in ds:
+        if "S2" not in out:
             assert grid is not None
             dudz = grid.derivative(u, "Z")
             dvdz = grid.derivative(v, "Z")
@@ -91,8 +88,6 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
             out["S2"] = dudz**2 + dvdz**2
             out["S2"].attrs["long_name"] = "$S^2$"
             out["S2"].attrs["units"] = "s$^{-2}$"
-        else:
-            out["S2"] = ds.S2
 
         out["shred2"] = out.S2 - 4 * out.N2T
         out.shred2.attrs["long_name"] = "$Sh_{red}^2$"
@@ -102,11 +97,11 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         out.Rig_T.attrs["long_name"] = "$Ri^g_T$"
         out.Rig_T.attrs["units"] = ""
 
-    ueq = normalize_z(u).cf.sortby("Z").cf.sel(Z=slice(-350, -10))
+    ueq = u.cf.sel(Z=slice(-350, -10))
     if "Y" in ueq.cf.axes:
         ueq = ueq.cf.sel(Y=0, method="nearest", drop=True)
-    out["eucmax"] = np.abs(euc_max(ueq)) * Zsign
-    out.eucmax.attrs["positive"] = v.cf["Z"].attrs["positive"]
+    out.coords["eucmax"] = euc_max(ueq)
+
 
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
@@ -486,7 +481,7 @@ def make_enso_transition_mask(oni):
     return enso
 
 
-def normalize_z(da):
+def normalize_z_da(da):
     """Normalize vertical depth so that positive is always up."""
     datapos = da.attrs.get("positive", None)
     if not datapos:
@@ -504,6 +499,20 @@ def normalize_z(da):
         da.attrs["positive"] = "up"
 
     return da
+
+
+def normalize_z(obj, sort=False):
+    if isinstance(obj, xr.DataArray):
+        return normalize_z_da(obj)
+    else:
+        out = obj.copy(deep=True)
+        for z in set(out.cf.axes["Z"]) & set(out.dims):
+            assert "positive" in out[z].attrs
+            out[z] = normalize_z_da(out[z])
+            if sort:
+                out = out.sortby(z)
+
+        return out
 
 
 def sel_like(da, other, dims):
