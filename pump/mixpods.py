@@ -525,19 +525,21 @@ def sel_like(da, other, dims):
     )
 
 
-def plot_eucmax_timeseries(datasets, obs="TAO"):
-    """Hvplot of EUC maximum time series."""
-    obsts = datasets[obs].eucmax.reset_coords(drop=True)
+def plot_timeseries(datasets, var, obs="TAO"):
+    """Line hvplot of time series. Selects to match obs."""
+    obsts = datasets[obs].reset_coords()[var]
     handles = []
     for name, ds in datasets.items():
         kwargs = dict(label=name)
+        if var not in ds.variables:
+            raise ValueError(f"Dataset {name!r} is missing {var!r}")
         if name != obs:
-            toplot = ds.eucmax.reset_coords(drop=True).pipe(sel_like, obsts, "time")
+            toplot = ds.reset_coords()[var].pipe(sel_like, obsts, "time")
             kwargs.pop("color", None)
         else:
             toplot = obsts
             kwargs["color"] = "darkgray"
-        handles.append(normalize_z(toplot).hvplot.line(**kwargs))
+        handles.append(toplot.hvplot.line(**kwargs))
 
     return reduce(operator.mul, handles).opts(
         legend_position="right", frame_width=700, title="EUC maximum", xlabel=""
