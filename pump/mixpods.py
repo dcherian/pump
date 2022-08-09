@@ -2,11 +2,11 @@ import operator
 from functools import reduce
 
 import dcpy
-import flox.xarray
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import xarray as xr
+from flox.xarray import xarray_reduce
 
 ENSO_COLORS_RGB = {
     "El-Nino warm": (177, 0, 19),
@@ -111,10 +111,15 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     if sst_nino34 is not None and oni is None:
         oni = calc_oni(sst_nino34)
     if oni is not None:
+        oni = oni.rename("oni")
         enso_transition = make_enso_transition_mask(oni).rename("enso_transition")
         out.coords.update(
             xr.merge([oni, enso_transition]).reindex(time=ds.time, method="ffill")
         )
+
+    if "eps" not in out:
+        assert grid is not None
+        add_turbulence_quantities(out, grid)
 
     return out
 
@@ -200,9 +205,9 @@ def pdf_N2S2(data, coord_is_center=False):
     assert data.S2.ndim < 3
     assert data.N2T.ndim < 3
 
-    enso_counts = flox.xarray.xarray_reduce(
-        data.S2, *by, func="count", expected_groups=tuple(expected_groups), isbin=isbin
-    )
+    enso_kwargs = dict(expected_groups=tuple(expected_groups), isbin=isbin)
+
+    enso_counts = xarray_reduce(data.S2, *by, func="count", **enso_kwargs)
 
     to_concat = []
     if "enso_transition" in data.variables:
@@ -248,11 +253,67 @@ def pdf_N2S2(data, coord_is_center=False):
         density = to_density(counts, dims=("N2T_bins", "S2_bins"))
 
     if coord_is_center:
-        vec = np.linspace(-5, -2, 50)
-        density["N2T_bins"] = (vec[1:] + vec[:-1]) / 2
-        density["S2_bins"] = (vec[1:] + vec[:-1]) / 2
+        density["N2T_bins"] = (bins[1:] + bins[:-1]) / 2
+        density["S2_bins"] = (bins[1:] + bins[:-1]) / 2
 
-    return density
+    out = xr.Dataset(data_vars={"n2s2pdf": density})
+
+    if "eps" in data:
+        epsZ = data.eps.cf["Z"]
+        # χpod data are available at a subset of depths
+        newby = tuple(
+            b.cf.rename(Z=epsZ.name).cf.reindex(Z=epsZ, method="nearest")
+            if "N2" in b.name or "S2" in b.name
+            else b
+            for b in by
+        )
+        out["eps_n2s2"] = xarray_reduce(
+            data.eps, *newby, func="mean", **enso_kwargs
+        ).rename({"enso_transition": "enso_transition_phase"})
+
+        Ri = data.Rig_T.cf.rename(Z=epsZ.name).cf.reindex(Z=epsZ, method="nearest")
+        Ri_bins = np.array([0.04, 0.06, 0.1, 0.3, 0.5, 0.7, 1.5, 2])
+        Ri_kwargs = {
+            "expected_groups": (Ri_bins, None),
+            "isbin": (True, False),
+        }
+
+        eps_ri = xr.concat(
+            [
+                xarray_reduce(
+                    data.eps, Ri, data.enso_transition, func="mean", **Ri_kwargs
+                ),
+                xarray_reduce(
+                    data.eps, Ri, data.enso_transition, func="std", **Ri_kwargs
+                ),
+            ],
+            dim="stat",
+        ).rename({"enso_transition": "enso_transition_phase"})
+
+        eps_ri_noen = xr.concat(
+            [
+                xarray_reduce(
+                    data.eps,
+                    Ri,
+                    expected_groups=Ri_bins,
+                    isbin=True,
+                    func="mean",
+                ),
+                xarray_reduce(
+                    data.eps,
+                    Ri,
+                    expected_groups=Ri_bins,
+                    isbin=True,
+                    func="std",
+                ),
+            ],
+            dim="stat",
+        ).assign_coords({"enso_transition_phase": "none"})
+
+        out["eps_ri"] = xr.concat([eps_ri, eps_ri_noen], dim="enso_transition_phase")
+        out["stat"] = ["mean", "std"]
+
+    return out
 
 
 def plot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
@@ -609,6 +670,29 @@ def get_mld_tao_theta(theta):
     }
 
     return mld
+
+
+def add_turbulence_quantities(ds, grid):
+    """
+    This is an inaccurate estimate of ε.
+    We should accumulate online and save ε, χ directly.
+    """
+
+    epsx = (
+        grid.interp(ds.cf["ocean_vertical_x_viscosity"], "Z")
+        * grid.derivative(ds.cf["sea_water_x_velocity"], "Z") ** 2
+    )
+    epsy = (
+        grid.interp(ds.cf["ocean_vertical_y_viscosity"], "Z")
+        * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
+    )
+
+    ds["eps"] = 15 / 4 * (epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center"))
+    ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
+
+    assert ds.eps.ndim == ds.cf["sea_water_x_velocity"].ndim, ds.eps.dims
+
+
 def xgcm_interp_to(grid, da, *, axis, to):
     # TODO: upstream to xgcm
     yaxes = grid.axes[axis]
@@ -623,7 +707,7 @@ def load(ds):
         "sea_water_x_velocity",
         # TODO fix cf-xarray bug, after selection, vars dont remain as coordinates
         # "eucmax",
-        #"mldT",
+        # "mldT",
         "n2s2pdf",
         "S2",
         "N2T",
