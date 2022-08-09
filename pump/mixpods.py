@@ -83,11 +83,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
             dudz = grid.derivative(u, "Z")
             dvdz = grid.derivative(v, "Z")
 
-            # TODO: upstream to xgcm
-            yaxes = grid.axes["Y"]
-            pos = yaxes._get_position_name(v)[0]
-            if pos != "center":
-                dvdz = grid.interp(dvdz, "Y", to="center")
+            dvdz = xgcm_interp_to(grid, dvdz, axis="Y", to="center")
 
             out["S2"] = dudz**2 + dvdz**2
             out["S2"].attrs["long_name"] = "$S^2$"
@@ -613,3 +609,12 @@ def get_mld_tao_theta(theta):
     }
 
     return mld
+def xgcm_interp_to(grid, da, *, axis, to):
+    # TODO: upstream to xgcm
+    yaxes = grid.axes[axis]
+    pos = yaxes._get_position_name(da)[0]
+    if pos != to:
+        da = grid.interp(da, axis, to=to)
+    return da
+
+
