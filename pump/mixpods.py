@@ -618,3 +618,16 @@ def xgcm_interp_to(grid, da, *, axis, to):
     return da
 
 
+def load(ds):
+    varnames = [
+        "sea_water_x_velocity",
+        # TODO fix cf-xarray bug, after selection, vars dont remain as coordinates
+        # "eucmax",
+        #"mldT",
+        "n2s2pdf",
+        "S2",
+        "N2T",
+        "eps_ri",
+        "eps_n2s2",
+    ]
+    return ds.update(ds.cf[varnames].load())
