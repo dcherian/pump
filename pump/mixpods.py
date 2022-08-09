@@ -29,7 +29,7 @@ def assert_z_is_normalized(ds):
     for z in set(ds.cf.axes["Z"]) & set(ds.dims):
         assert ds[z].attrs["positive"] == "up", ds[z].attrs
         assert (ds[z].data < 1).all(), f"{z!r} is not all negative"
-        assert ds.indexes[z].is_monotonic_increasing
+        assert ds.indexes[z].is_monotonic_increasing, f"{z} is not monotonic increasing"
 
 
 def prepare(ds, grid=None, sst_nino34=None, oni=None):
