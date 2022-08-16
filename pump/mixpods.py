@@ -178,13 +178,19 @@ def to_density(counts, dims=("N2T_bins", "S2_bins")):
     return density
 
 
+def reindex_Z_to(us, other):
+    return us.cf.rename(Z=other.name).cf.reindex(Z=other, method="nearest")
+
+
 def pdf_N2S2(data, coord_is_center=False):
     """
     Calculate pdf of data in S2-4N2 space.
     """
 
-    bins = np.linspace(-5, -2, 30)
-    index = pd.IntervalIndex.from_breaks(bins)
+    original = data
+    data = data.copy()
+    bins = np.arange(-5, -2.01, 0.1)
+    index = pd.IntervalIndex.from_breaks(bins, closed="left")
 
     assert_z_is_normalized(data)
 
@@ -262,7 +268,7 @@ def pdf_N2S2(data, coord_is_center=False):
         epsZ = data.eps.cf["Z"]
         # χpod data are available at a subset of depths
         newby = tuple(
-            b.cf.rename(Z=epsZ.name).cf.reindex(Z=epsZ, method="nearest")
+            reindex_Z_to(original[b.name], epsZ)
             if "N2" in b.name or "S2" in b.name
             else b
             for b in by
@@ -271,8 +277,10 @@ def pdf_N2S2(data, coord_is_center=False):
             data.eps, *newby, func="mean", **enso_kwargs
         ).rename({"enso_transition": "enso_transition_phase"})
 
-        Ri = data.Rig_T.cf.rename(Z=epsZ.name).cf.reindex(Z=epsZ, method="nearest")
-        Ri_bins = np.array([0.04, 0.06, 0.1, 0.3, 0.5, 0.7, 1.5, 2])
+        Ri = np.log10(reindex_Z_to(data.Rig_T, epsZ))
+        # Ri_bins = np.logspace(np.log10(0.025), np.log10(2), 11)
+        Ri_bins = np.arange(-1.6, 0.4, 0.2)  # in log space from Sally
+        # Ri_bins = np.array([0.02, 0.04, 0.06, 0.1, 0.3, 0.5, 0.7, 1.5, 2])
         Ri_kwargs = {
             "expected_groups": (Ri_bins, None),
             "isbin": (True, False),
@@ -683,7 +691,7 @@ def get_mld_tao_theta(theta):
     thetai = theta.cf.interp(Z=np.arange(0, -200, -1))
     dθ = thetai - thetai.cf.sel(Z=[0, -5], method="nearest").cf.max("Z")
 
-    thresh = xr.where(np.abs(dθ) > 0.15, dθ.cf["Z"], np.nan, keep_attrs=False)
+    thresh = xr.where(dθ < -0.1, dθ.cf["Z"], np.nan, keep_attrs=False)
     thresh.attrs = dθ.cf["Z"].attrs
     for dim in thresh.dims:
         thresh[dim].attrs = dθ[dim].attrs
