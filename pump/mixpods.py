@@ -114,7 +114,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         oni = oni.rename("oni")
         enso_transition = make_enso_transition_mask(oni).rename("enso_transition")
         out.coords.update(
-            xr.merge([oni, enso_transition]).reindex(time=ds.time, method="ffill")
+            xr.merge([oni, enso_transition]).reindex(time=ds.time, method="nearest")
         )
 
     if "eps" not in out:
@@ -508,24 +508,47 @@ def make_enso_transition_mask(oni):
     """
     from xarray.core.missing import _get_nan_block_lengths
 
-    enso = xr.full_like(oni, fill_value="____________", dtype="U12")
+    # While they say 0.5, 0.45 seems to work better
+    thresh = 0.45
+
+    # Need to add an extra value so that things work at the end
+    # of the time series
+    oni = oni.pad(time=(0, 1), mode="constant", constant_values=0)
+    newtime = oni.time.data
+    newtime[-1] = newtime[-2] + np.timedelta64(1, "D")
+    oni["time"] = newtime
+
+    enso = xr.full_like(
+        oni.isel(time=slice(-1)), fill_value="____________", dtype="U12"
+    )
     index = oni.indexes["time"] - oni.indexes["time"][0]
-    en_mask = _get_nan_block_lengths(
-        xr.where(oni >= 0.45, np.nan, 0, keep_attrs=False), dim="time", index=index
+
+    en_mask = (
+        _get_nan_block_lengths(
+            xr.where(oni >= thresh, np.nan, 0, keep_attrs=False),
+            dim="time",
+            index=index,
+        ).isel(time=slice(-1))
     ) >= pd.Timedelta("59d")
 
     ln_mask = _get_nan_block_lengths(
-        xr.where(oni <= -0.5, np.nan, 0, keep_attrs=False), dim="time", index=index
-    ) >= pd.Timedelta("59d")
+        xr.where(oni <= -thresh, np.nan, 0, keep_attrs=False), dim="time", index=index
+    ).isel(time=slice(-1)) >= pd.Timedelta("59d")
     # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
 
     # donidt = oni.diff("time").reindex(time=oni.time)
-    donidt = oni.differentiate("time")
+    oni = oni.isel(time=slice(-1))
+    donidt = oni.diff("time", label="upper").reindex(time=oni.time)
+    index = index[:-1]
 
     # warm_mask = _get_nan_block_lengths(xr.where(donidt >= 0, np.nan, 0, keep_attrs=False), dim="time", index=index) >= pd.Timedelta("59d")
     cool_mask = _get_nan_block_lengths(
         xr.where(donidt <= 0, np.nan, 0, keep_attrs=False), dim="time", index=index
     ) >= pd.Timedelta("120d")
+
+    # Manual fixes to match Warner & Moum figure
+    # cool_mask.loc[{"time": "2009-01"}] = True
+
     warm_mask = ~cool_mask
 
     # warm_mask = donidt >= 0
@@ -535,6 +558,12 @@ def make_enso_transition_mask(oni):
     enso.loc[ln_mask & warm_mask] = "La-Nina warm"
     enso.loc[ln_mask & cool_mask] = "La-Nina cool"
 
+    # tweaks from Warner & Moum
+    enso.loc[{"time": "2015-12"}] = "El-Nino warm"
+    enso.loc[{"time": "2015-01"}] = "El-Nino warm"
+
+    enso.coords["en_mask"] = en_mask
+    enso.coords["ln_mask"] = ln_mask
     enso.coords["warm_mask"] = warm_mask
     enso.coords["cool_mask"] = cool_mask
 
@@ -715,3 +744,18 @@ def load(ds):
         "eps_n2s2",
     ]
     return ds.update(ds.cf[varnames].load())
+
+
+def plot_enso_transition(oni, enso_transition):
+    import hvplot.pandas  # noqa
+
+    handles = []
+    for phase in np.unique(enso_transition.data):
+        handles.append(
+            oni.where(enso_transition == phase)
+            .reset_coords(drop=True)
+            .hvplot.bar(color=tuple(ENSO_COLORS.get(phase, (0.5, 0.5, 0.5))))
+            .opts(line_alpha=0, bar_width=1.5)
+        )
+
+    return reduce(operator.mul, handles).opts(frame_width=1200)

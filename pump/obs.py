@@ -368,9 +368,9 @@ def process_esrl_index(file, skipfooter=3):
 
     flat = index.stack().reset_index()
     flat["time"] = pd.date_range(
-        "01-jan-" + str(flat["level_0"].iloc[0]),
-        "01-Jan-" + str(flat["level_0"].iloc[-1] + 1),
-        freq="M",
+        "01-Jan-" + str(flat["level_0"].iloc[0]),
+        "02-Dec-" + str(flat["level_0"].iloc[-1]),
+        freq="MS",
     )
     da = (
         flat.drop(["level_0", "level_1"], axis=1)
