@@ -1,6 +1,7 @@
 import operator
 from functools import reduce
 
+import cf_xarray as cfxr
 import dcpy
 import matplotlib.pyplot as plt
 import numpy as np
@@ -715,14 +716,23 @@ def add_turbulence_quantities(ds, grid):
     We should accumulate online and save ε, χ directly.
     """
 
-    epsx = (
-        grid.interp(ds.cf["ocean_vertical_x_viscosity"], "Z")
-        * grid.derivative(ds.cf["sea_water_x_velocity"], "Z") ** 2
-    )
-    epsy = (
-        grid.interp(ds.cf["ocean_vertical_y_viscosity"], "Z")
-        * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
-    )
+    visc_criteria = {
+        "ocean_vertical_x_viscosity": {
+            "standard_name": "ocean_vertical_x_viscosity|ocean_vertical_viscosity"
+        },
+        "ocean_vertical_y_viscosity": {
+            "standard_name": "ocean_vertical_y_viscosity|ocean_vertical_viscosity"
+        },
+    }
+    with cfxr.set_options(custom_criteria=visc_criteria):
+        epsx = (
+            grid.interp(ds.cf["ocean_vertical_x_viscosity"], "Z")
+            * grid.derivative(ds.cf["sea_water_x_velocity"], "Z") ** 2
+        )
+        epsy = (
+            grid.interp(ds.cf["ocean_vertical_y_viscosity"], "Z")
+            * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
+        )
 
     ds["eps"] = 15 / 4 * (epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center"))
     ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
