@@ -734,7 +734,7 @@ def add_turbulence_quantities(ds, grid):
             * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
         )
 
-    ds["eps"] = 15 / 4 * (epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center"))
+    ds["eps"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
     ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
 
     assert ds.eps.ndim == ds.cf["sea_water_x_velocity"].ndim, ds.eps.dims
