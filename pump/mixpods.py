@@ -478,8 +478,21 @@ def calc_oni(monthly):
     # (1871-1875 uses 1856-1885 climo, ..., 1996-2000 uses 1981-2010,
     # 2001-2005 uses 1986-2015 climo, 2006-2010 uses 1991-2020 climo,
     # 2011-2025 also uses 1991-2020 climo because 1996-2025 climo does not exist yet).
+
+    # First reindex so that pentads are fully included. This lets us use coarsen
+    # with boundary="exact" to avoid bugs. "trim", for example, could drop data.
+    time = monthly.indexes["time"]
+    pentad_start = pd.date_range("1956-01-01", "2020-01-01", freq="5YS")
+    pentad_stop = pd.date_range("1970-12-31", "2025-12-31", freq="5Y")
+    start = pentad_start[pentad_start.searchsorted(time[0], side="left") - 1]
+    stop = pentad_stop[pentad_stop.searchsorted(time[-1], side="right") - 1]
+    monthly_ = monthly.reindex(
+        time=xr.date_range(
+            str(start), str(stop), freq="M", calendar=monthly.time.dt.calendar
+        )
+    )
     reshaped = (
-        monthly.coarsen(time=5 * 12, boundary="trim")
+        monthly_.coarsen(time=5 * 12)
         .construct(time=("time_", "month"))
         .assign_coords(month=np.concatenate([np.arange(1, 13)] * 5))
     )
@@ -513,7 +526,7 @@ def make_enso_transition_mask(oni):
     Parameters
     ----------
     oni: float,
-        Oceanic Nino Idnex time series
+        Oceanic Nino Index time series
     """
     from xarray.core.missing import _get_nan_block_lengths
 
