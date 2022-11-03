@@ -283,14 +283,13 @@ def pdf_N2S2(data, coord_is_center=False):
     out = xr.Dataset(data_vars={"n2s2pdf": density})
 
     if "eps" in data:
-        epsZ = data.eps.cf["Z"]
+        epsZ = data.eps.cf["Z"].cf.sel(Z=slice(-69, -29))
         # χpod data are available at a subset of depths
-        newby = tuple(
-            reindex_Z_to(original[b.name], epsZ)
-            if "N2" in b.name or "S2" in b.name
-            else b
-            for b in by
-        )
+        newby = [
+            np.log10(4 * reindex_Z_to(original["N2"], epsZ)),
+            np.log10(reindex_Z_to(original["S2"], epsZ)),
+        ]
+        newby.extend(by[2:])
         out["eps_n2s2"] = xarray_reduce(
             data.eps, *newby, func="mean", **enso_kwargs
         ).rename({"enso_transition": "enso_transition_phase"})
