@@ -1,8 +1,13 @@
+import datetime
+import glob
 import operator
+import warnings
 from functools import reduce
 
 import cf_xarray as cfxr
 import dcpy
+import holoviews as hv
+import hvplot.xarray  # noqa
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -336,9 +341,6 @@ def plot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
 
 
 def hvplot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
-    import holoviews as hv
-    import hvplot.xarray  # noqa
-
     da = da.squeeze().copy()
     da["N2T_bins"] = pd.IntervalIndex(da.N2T_bins.data).mid.to_numpy()
     da["S2_bins"] = pd.IntervalIndex(da.S2_bins.data).mid.to_numpy()
@@ -692,7 +694,7 @@ def cfplot(da, label):
 
 
 def map_hvplot(func, datasets):
-    return reduce(operator.mul, (func(ds, name) for name, ds in datasets.items()))
+    return hv.Overlay(func(ds, name) for name, ds in datasets.items())
 
 
 def get_mld_tao_theta(theta):
@@ -789,4 +791,142 @@ def plot_enso_transition(oni, enso_transition):
             .opts(line_alpha=0, bar_width=1.5)
         )
 
-    return reduce(operator.mul, handles).opts(frame_width=1200)
+    return hv.Overlay(handles).opts(frame_width=1200)
+
+
+def interp_to_center(ds):
+    # import toolz as tlz
+
+    # ix0 = np.arange(1, ds.sizes["xq"], 4)
+    # ix1 = ix0 + 1
+    # indices = list(tlz.interleave([ix0, ix1]))
+
+    # print(ds.xq.data[indices])
+    out = (
+        ds
+        # .isel(xq=[1, 2, 5, 6, 8, 9, 12, 13, 16, 17])
+        .isel(xq=[1, 2])
+        .coarsen(xq=2)
+        .mean()
+    )
+    out = out.sel(xh=out.xq.data, method="nearest", tolerance=0.05)
+
+    for var in out:
+        if "xq" in out[var].dims:
+            out[var] = out[var].rename({"xq": "xh"}).drop("xh")
+    return out.drop_vars("xq")
+
+
+def read_mom6_sections(casename):
+    from mom6_tools.sections import combine_variables_by_coords, read_raw_files
+    from mom6_tools.wright_eos import wright_eos
+
+    dirname = f"/glade/scratch/dcherian/{casename}/run/"
+    globstr = f"{dirname}/*TAO*140W*.nc.*"
+    files = sorted(glob.glob(globstr))
+
+    if not files:
+        raise ValueError(
+            f"No files found. Check casename={casename!r} and glob string: {globstr!r}"
+        )
+
+    dsets = read_raw_files(files, parallel=True)
+
+    combined = combine_variables_by_coords(dsets)
+    combined["time"] = combined["time"] + datetime.timedelta(days=1957 * 365)
+
+    mom6tao = interp_to_center(combined).cf.chunk({"Y": -1})
+
+    mom6tao["time"] = mom6tao.indexes["time"].to_datetimeindex()
+
+    mom6tao["dens"] = wright_eos(mom6tao.thetao, mom6tao.so, 0)
+    mom6tao["dens"].attrs.update(
+        {"units": "kg/m^3", "standard_name": "sea_water_potential_density"}
+    )
+    mom6tao["densT"] = wright_eos(mom6tao.thetao, 35, 0)
+    mom6tao["densT"].attrs.update(
+        {"standard_name": "sea_water_potential_density", "units": "kg/m3"}
+    )
+
+    if "Kv_v" not in mom6tao:
+        warnings.warn("Kv_v not present. Assuming equal to Kv_u")
+        mom6tao["Kv_v"] = (mom6tao["vo"].dims, mom6tao.Kv_u.data)
+
+    mom6tao.Kv_u.attrs["standard_name"] = "ocean_vertical_x_viscosity"
+    mom6tao.Kv_v.attrs["standard_name"] = "ocean_vertical_y_viscosity"
+
+    return mom6tao
+
+
+def mom6_sections_to_zarr(casename):
+
+    mom6tao = read_mom6_sections(casename)
+    mom6tao.drop_vars(
+        ["average_DT", "average_T2", "average_T1", "time_bnds"], errors="ignore"
+    ).chunk({"time": 24 * 365}).to_zarr(
+        f"/glade/scratch/dcherian/archive/{casename}/ocn/moorings/tao.zarr",
+        mode="w",
+        consolidated=True,
+    )
+
+
+def load_mom6_sections(casename):
+    import xgcm
+
+    mom6tao = xr.open_dataset(
+        f"/glade/scratch/dcherian/archive/{casename}/ocn/moorings/tao.zarr",
+        engine="zarr",
+        chunks="auto",
+        consolidated=True,
+    )
+    # Unfortunately have to do this here so that Grid is right.
+    mom6tao = normalize_z(mom6tao, sort=True)
+
+    grid = xgcm.Grid(
+        mom6tao,
+        coords={
+            "Z": {"outer": "zi", "center": "zl"},
+            "X": {"center": "xh"},
+            "Y": {"center": "yh", "left": "yq"},
+        },
+        periodic=False,
+        boundary="fill",
+        fill_value=np.nan,
+        metrics={("Z",): "h"},
+    )
+
+    dirname = f"/glade/scratch/dcherian/archive/{casename}/ocn/hist"
+    static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
+    sfc = xr.open_mfdataset(
+        sorted(glob.glob(f"{dirname}/*sfc*")),
+        coords="minimal",
+        data_vars="minimal",
+        compat="override",
+        use_cftime=True,
+        parallel=True,
+    )
+    sfc["time"] = sfc.time + datetime.timedelta(days=365 * 1957)
+    # sfc["time"] = sfc.time + xr.coding.cftime_offsets.YearBegin(1957)
+    sfc.coords.update(static.drop("time"))
+    # sfc["tos"].attrs["coordinates"] = "geolon geolat"
+
+    sst = sfc.cf["sea_surface_temperature"]
+
+    # Calculate a monthly average sea surface temperature in the Nino 3.4 region (5°S-5°N, 170°W-120°W).
+    monthly_ = (
+        sst.cf.sel(latitude=slice(-5, 5), longitude=slice(-170, -120))
+        .cf.mean(["X", "Y"])
+        .resample(time="M")
+        .mean()
+        .load()
+    )
+
+    monthly = monthly_.convert_calendar("gregorian", use_cftime=False)
+
+    mom6tao = prepare(mom6tao, grid, sst_nino34=monthly)
+
+    mom6140 = mom6tao.cf.sel(longitude=-140, latitude=0, method="nearest")
+    mom6140 = mom6140.cf.sel(Z=slice(-250, 0))
+    mom6140 = mom6140.update(pdf_N2S2(mom6140))
+
+    return mom6140
