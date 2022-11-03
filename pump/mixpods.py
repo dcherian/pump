@@ -1,8 +1,6 @@
 import datetime
 import glob
-import operator
 import warnings
-from functools import reduce
 
 import cf_xarray as cfxr
 import dcpy
@@ -653,11 +651,12 @@ def sel_like(da, other, dims):
     )
 
 
-def plot_timeseries(datasets, var, obs="TAO"):
+def plot_timeseries(tree, var, obs="TAO"):
     """Line hvplot of time series. Selects to match obs."""
-    obsts = datasets[obs].reset_coords()[var]
+    obsts = tree[obs].ds.reset_coords()[var]
     handles = []
-    for name, ds in datasets.items():
+    for name, tree in tree.children.items():
+        ds = tree.ds
         kwargs = dict(label=name)
         if var not in ds.variables:
             raise ValueError(f"Dataset {name!r} is missing {var!r}")
@@ -669,7 +668,7 @@ def plot_timeseries(datasets, var, obs="TAO"):
             kwargs["color"] = "darkgray"
         handles.append(toplot.hvplot.line(**kwargs))
 
-    return reduce(operator.mul, handles).opts(
+    return hv.Overlay(handles).opts(
         legend_position="right",
         frame_width=700,
         title=obsts.attrs["long_name"],
@@ -692,9 +691,9 @@ def plot_profile_fill(da, label):
         .reset_coords(drop=True)
         .to_dataframe()
     )
-    return df_.hvplot.area(x=Zname, y="low", y2="high", hover=False).opts(
-        alpha=0.5
-    ) * mean.hvplot.line(label=label)
+    return df_.hvplot.area(
+        x=Zname, y="low", y2="high", group_label=label, hover=False
+    ).opts(alpha=0.5) * mean.hvplot.line(label=label, group_label=label)
 
 
 def cfplot(da, label):
@@ -762,6 +761,9 @@ def add_turbulence_quantities(ds, grid):
 
     ds["eps"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
     ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
+
+    # ds["eps_chi"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
+    # ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
 
     assert ds.eps.ndim == ds.cf["sea_water_x_velocity"].ndim, ds.eps.dims
 
