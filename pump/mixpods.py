@@ -76,6 +76,14 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         # dρdz = ddz(dens, grid, ds.h)
         # dudz = ddz(u, grid, ds.hu)
         # dvdz = ddz(v, grid, ds.hv)
+        if "N2" not in out:
+            assert grid is not None
+            dρdz = grid.derivative(out["dens"], "Z")
+            out["N2"] = -9.81 / grid.interp_like(out["dens"], like=dρdz) * dρdz
+
+            out["N2"].attrs["long_name"] = "$N^2$"
+            out["N2"].attrs["units"] = "s$^{-2}$"
+
         if "N2T" not in out:
             assert grid is not None
             dρdz = grid.derivative(dens, "Z")
@@ -101,7 +109,11 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
 
         out["Rig_T"] = out.N2T / out.S2
         out.Rig_T.attrs["long_name"] = "$Ri^g_T$"
-        out.Rig_T.attrs["units"] = ""
+        out.Rig_T.attrs.pop("units", None)
+
+        out["Rig"] = out.N2 / out.S2
+        out.Rig_T.attrs["long_name"] = "$Ri^g$"
+        out.Rig_T.attrs.pop("units", None)
 
     ueq = u.cf.sel(Z=slice(-350, -10))
     if "Y" in ueq.cf.axes:
