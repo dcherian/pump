@@ -195,7 +195,11 @@ def to_density(counts, dims=("N2T_bins", "S2_bins")):
 
 
 def reindex_Z_to(us, other):
-    return us.cf.rename(Z=other.name).cf.reindex(Z=other, method="nearest")
+    (Zname,) = us.cf.axes["Z"]
+    if Zname != other.name:
+        # avoid a warning about indexes
+        us = us.cf.rename(Z=other.name)
+    return us.cf.reindex(Z=other, method="nearest")
 
 
 def pdf_N2S2(data, coord_is_center=False):
