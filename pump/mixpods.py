@@ -292,9 +292,16 @@ def pdf_N2S2(data, coord_is_center=False):
             np.log10(reindex_Z_to(original["S2"], epsZ)),
         ]
         newby.extend(by[2:])
-        out["eps_n2s2"] = xarray_reduce(
-            data.eps, *newby, func="mean", **enso_kwargs
-        ).rename({"enso_transition": "enso_transition_phase"})
+        eps = data.eps.cf.sel(Z=epsZ)
+        out["eps_n2s2"] = xr.concat(
+            [
+                xarray_reduce(eps, *newby, func=func, **enso_kwargs)
+                .rename({"enso_transition": "enso_transition_phase"})
+                .expand_dims(stat=[func])
+                for func in ["mean", "count"]
+            ],
+            dim="stat",
+        )
 
         Ri = np.log10(reindex_Z_to(data.Rig_T, epsZ))
         # Ri_bins = np.logspace(np.log10(0.025), np.log10(2), 11)
@@ -308,11 +315,9 @@ def pdf_N2S2(data, coord_is_center=False):
         eps_ri = xr.concat(
             [
                 xarray_reduce(
-                    data.eps, Ri, data.enso_transition, func="mean", **Ri_kwargs
-                ),
-                xarray_reduce(
-                    data.eps, Ri, data.enso_transition, func="std", **Ri_kwargs
-                ),
+                    eps, Ri, data.enso_transition, func=func, **Ri_kwargs
+                ).expand_dims(stat=[func])
+                for func in ["mean", "std", "count"]
             ],
             dim="stat",
         ).rename({"enso_transition": "enso_transition_phase"})
@@ -320,25 +325,14 @@ def pdf_N2S2(data, coord_is_center=False):
         eps_ri_noen = xr.concat(
             [
                 xarray_reduce(
-                    data.eps,
-                    Ri,
-                    expected_groups=Ri_bins,
-                    isbin=True,
-                    func="mean",
-                ),
-                xarray_reduce(
-                    data.eps,
-                    Ri,
-                    expected_groups=Ri_bins,
-                    isbin=True,
-                    func="std",
-                ),
+                    eps, Ri, expected_groups=Ri_bins, isbin=True, func=func
+                ).expand_dims(stat=[func])
+                for func in ["mean", "std", "count"]
             ],
             dim="stat",
         ).assign_coords({"enso_transition_phase": "none"})
 
         out["eps_ri"] = xr.concat([eps_ri, eps_ri_noen], dim="enso_transition_phase")
-        out["stat"] = ["mean", "std"]
 
     return out
 
