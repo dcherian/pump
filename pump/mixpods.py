@@ -713,7 +713,7 @@ def cfplot(da, label):
 
 
 def map_hvplot(func, datasets):
-    return hv.Overlay(func(ds, name) for name, ds in datasets.items())
+    return hv.Overlay([func(ds, name) for name, ds in datasets.items()])
 
 
 def get_mld_tao_theta(theta):
