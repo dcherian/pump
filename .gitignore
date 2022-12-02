@@ -404,14 +404,14 @@ auto
 *.mat
 *.zarr
 
-pump-backup/*
+pump-backup
 backup*/*
 .DS_Store
 .auctex-auto
 frag-master.tex
-paper1/*
-paper2/*
+paper1
+paper2*
 *.pdf
 *-backup/*
-datasets/*
-obs/*
+datasets
+obs
