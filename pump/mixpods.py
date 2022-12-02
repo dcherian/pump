@@ -67,6 +67,8 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     dens = out["densT"]  # Since that's what Warner & Moum do.
     u = out.cf["sea_water_x_velocity"]
     v = out.cf["sea_water_y_velocity"]
+    T = out.cf["sea_water_potential_temperature"]
+    S = out.cf["sea_water_salinity"]
 
     assert_z_is_normalized(out)
 
@@ -81,6 +83,18 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
 
             out["N2"].attrs["long_name"] = "$N^2$"
             out["N2"].attrs["units"] = "s$^{-2}$"
+
+        if "Tz" not in out:
+            assert grid is not None
+            out["Tz"] = grid.derivative(T, "Z")
+            out["Tz"].attrs["long_name"] = "$T_z$"
+            out["Tz"].attrs["units"] = "Cm$^{-1}$"
+
+        if "Sz" not in out:
+            assert grid is not None
+            out["Sz"] = grid.derivative(S, "Z")
+            out["Sz"].attrs["long_name"] = "$S_z$"
+            out["Sz"].attrs["units"] = "m$^{-1}$"
 
         if "N2T" not in out:
             assert grid is not None
@@ -758,23 +772,47 @@ def add_turbulence_quantities(ds, grid):
             "standard_name": "ocean_vertical_y_viscosity|ocean_vertical_viscosity"
         },
     }
-    with cfxr.set_options(custom_criteria=visc_criteria):
-        epsx = (
-            grid.interp(ds.cf["ocean_vertical_x_viscosity"], "Z")
-            * grid.derivative(ds.cf["sea_water_x_velocity"], "Z") ** 2
-        )
-        epsy = (
-            grid.interp(ds.cf["ocean_vertical_y_viscosity"], "Z")
-            * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
-        )
+    if "eps" not in ds and "eps_chi" not in ds:
+        with cfxr.set_options(custom_criteria=visc_criteria):
+            epsx = (
+                grid.interp(ds.cf["ocean_vertical_x_viscosity"], "Z")
+                * grid.derivative(ds.cf["sea_water_x_velocity"], "Z") ** 2
+            )
+            epsy = (
+                grid.interp(ds.cf["ocean_vertical_y_viscosity"], "Z")
+                * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
+            )
 
-    ds["eps"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
-    ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
+        ds["eps"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
+        ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
 
-    # ds["eps_chi"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
-    # ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
+        # ds["eps_chi"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
+        # ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
 
-    assert ds.eps.ndim == ds.cf["sea_water_x_velocity"].ndim, ds.eps.dims
+    if "chi" not in ds:
+        ds["chi"] = 2 * ds.cf["ocean_vertical_heat_diffusivity"] * ds.Tz**2
+        ds["chi"].attrs = {"long_name": "$χ$", "units": "C^2/s"}
+
+    for var in ["eps", "eps_chi", "chi"]:
+        if var in ds:
+            assert ds[var].ndim == ds.cf["sea_water_x_velocity"].ndim, (
+                var,
+                ds[var].dims,
+            )
+
+    # buoyancy flux
+    α = xgcm_interp_to(
+        grid, ds.cf["sea_water_thermal_expansion_coefficient"], axis="Z", to="outer"
+    )
+    β = xgcm_interp_to(
+        grid, ds.cf["sea_water_haline_contraction_coefficient"], axis="Z", to="outer"
+    )
+    ds["Jb"] = -9.81 * (-ds.Kd_heat * α * ds.Tz + ds.Kd_heat * β * ds.Sz)
+    ds["Jb"].attrs["standard_name"] = "turbulent_buoyancy_flux"
+
+    # flux Ri
+    ds["Rif"] = ds.Jb / ds.eps
+    ds.Rif.attrs["standard_name"] = "flux_richardson_number"
 
 
 def xgcm_interp_to(grid, da, *, axis, to):
@@ -840,8 +878,8 @@ def interp_to_center(ds):
 
 
 def read_mom6_sections(casename):
+    from mom6_tools import wright_eos
     from mom6_tools.sections import combine_variables_by_coords, read_raw_files
-    from mom6_tools.wright_eos import wright_eos
 
     dirname = f"/glade/scratch/dcherian/{casename}/run/"
     globstr = f"{dirname}/*TAO*140W*.nc.*"
@@ -861,14 +899,25 @@ def read_mom6_sections(casename):
 
     mom6tao["time"] = mom6tao.indexes["time"].to_datetimeindex()
 
-    mom6tao["dens"] = wright_eos(mom6tao.thetao, mom6tao.so, 0)
+    mom6tao["dens"] = wright_eos.wright_eos(mom6tao.thetao, mom6tao.so, 0)
     mom6tao["dens"].attrs.update(
         {"units": "kg/m^3", "standard_name": "sea_water_potential_density"}
     )
-    mom6tao["densT"] = wright_eos(mom6tao.thetao, 35, 0)
+    mom6tao["densT"] = wright_eos.wright_eos(mom6tao.thetao, 35, 0)
     mom6tao["densT"].attrs.update(
         {"standard_name": "sea_water_potential_density", "units": "kg/m3"}
     )
+
+    mom6tao["α"] = wright_eos.alpha_wright_eos(mom6tao.thetao, mom6tao.so, p=0) / 1025
+    mom6tao["α"].attrs = {
+        "standard_name": "sea_water_thermal_expansion_coefficient",
+        "units": "C-1",
+    }
+    mom6tao["β"] = wright_eos.beta_wright_eos(mom6tao.thetao, mom6tao.so, p=0) / 1025
+    mom6tao["β"].attrs = {
+        "standard_name": "sea_water_haline_contraction_coefficient",
+        "units": "kg/g",
+    }
 
     if "Kv_v" not in mom6tao:
         warnings.warn("Kv_v not present. Assuming equal to Kv_u")
@@ -876,6 +925,7 @@ def read_mom6_sections(casename):
 
     mom6tao.Kv_u.attrs["standard_name"] = "ocean_vertical_x_viscosity"
     mom6tao.Kv_v.attrs["standard_name"] = "ocean_vertical_y_viscosity"
+    mom6tao.Kd_heat.attrs["standard_name"] = "ocean_vertical_heat_diffusivity"
 
     return mom6tao
 
