@@ -643,24 +643,24 @@ title="Print to PDF"
 <p><code class="docutils literal notranslate"><span class="pre">/glade/p/cgd/oce/people/dwhitt/TPOS/tpos_LES_runs_setup_scripts/tpos-DIABLO/diablo_2.0/tpos_config_files</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import glob
 
-<span class="kn">import</span> <span class="nn">cf_xarray</span>
-<span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">h5py</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">import</span> <span class="nn">xgcm</span>
+import cf_xarray
+import dask
+import dcpy
+import h5py
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import xarray as xr
+import xgcm
 
-<span class="kn">import</span> <span class="nn">pump</span>
-<span class="kn">import</span> <span class="nn">pump.les</span>
-<span class="kn">import</span> <span class="nn">pump.model</span>
-<span class="kn">from</span> <span class="nn">pump.les</span> <span class="kn">import</span> <span class="n">interleave_time</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">write_to_txt</span>
+import pump
+import pump.les
+import pump.model
+from pump.les import interleave_time, interpolate, write_to_txt
 
-<span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;array.slicing.split_large_chunks&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>  <span class="c1"># silence some warnings</span>
+dask.config.set(**{&quot;array.slicing.split_large_chunks&quot;: False})  # silence some warnings
 </pre></div>
 </div>
 </div>
@@ -673,14 +673,14 @@ title="Print to PDF"
 <p>Sets up a dask cluster; only run once</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import ncar_jobqueue
 
-<span class="n">cluster</span> <span class="o">=</span> <span class="n">ncar_jobqueue</span><span class="o">.</span><span class="n">NCARCluster</span><span class="p">(</span><span class="n">account</span><span class="o">=</span><span class="s2">&quot;ncgd0011&quot;</span><span class="p">)</span>
-<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
+cluster = ncar_jobqueue.NCARCluster(account=&quot;ncgd0011&quot;)
+cluster.scale(12)
+import distributed
 
-<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
-<span class="n">client</span>
+client = distributed.Client(cluster)
+client
 </pre></div>
 </div>
 </div>
@@ -708,37 +708,37 @@ title="Print to PDF"
 <p>Things you could change; if changing, rerun all cells below (Use the <code class="docutils literal notranslate"><span class="pre">Run</span></code> menu above)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sst</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gcmdir</span><span class="si">}</span><span class="s2">/*buoy*.nc&quot;</span><span class="p">,</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sst = xr.open_mfdataset(
+    f&quot;{gcmdir}/*buoy*.nc&quot;,
+    chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500, &quot;depth&quot;: 1},
+    combine=&quot;by_coords&quot;,
+    parallel=True,
+).theta.isel(depth=0)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sst</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">),</span> <span class="n">axx</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
-    <span class="p">(</span>
-        <span class="n">sst</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-        <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">-Jun&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">-Dec&quot;</span><span class="p">))</span>
-        <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">110</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
-            <span class="n">vmin</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span>
-            <span class="n">vmax</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span>
-            <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">,</span>
-            <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">add_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, axx = plt.subplots(10, 2,sharey=True, constrained_layout=True)
+for year, ax in zip(np.unique(sst.time.dt.year), axx.flat):
+    (
+        sst.theta.isel(depth=0)
+        .sel(latitude=slice(-2, 5))
+        .sel(time=slice(f&quot;{year}-Jun&quot;, f&quot;{year}-Dec&quot;))
+        .sel(longitude=-110, method=&quot;nearest&quot;)
+        .plot(
+            x=&quot;time&quot;,
+            ax=ax,
+            vmin=22,
+            vmax=28,
+            cmap=mpl.cm.RdYlBu_r,
+            add_colorbar=False,
+            add_labels=False,
+        )
+    )
 
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>
+f.set_size_inches((12, 18))
 </pre></div>
 </div>
 </div>
@@ -750,93 +750,94 @@ title="Print to PDF"
 <h2>Choose time period + plot ocean state to see what we get<a class="headerlink" href="#choose-time-period-plot-ocean-state-to-see-what-we-get" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year_output/&quot;</span>  <span class="c1"># MITgcm output directory</span>
-<span class="n">outdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/work/dcherian/pump/les_forcing/mitgcm_test/&quot;</span>  <span class="c1"># output directory for txt files</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+gcmdir = &quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year_output/&quot;  # MITgcm output directory
+outdir = &quot;/glade/work/dcherian/pump/les_forcing/mitgcm_test/&quot;  # output directory for txt files
 
-<span class="n">whichz</span> <span class="o">=</span> <span class="s2">&quot;216&quot;</span>  <span class="c1"># or &quot;288&quot;  # which z grid h5 file to use</span>
+whichz = &quot;216&quot;  # or &quot;288&quot;  # which z grid h5 file to use
 
-<span class="n">leslon</span> <span class="o">=</span> <span class="o">-</span><span class="mi">110</span>  <span class="c1"># it will find the nearest</span>
-<span class="n">leslat</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># will find the nearest</span>
+leslon = -110  # it will find the nearest
+leslat = 0  # will find the nearest
 
-<span class="c1"># start date for les; noon is a good time (it is before sunrise)</span>
-<span class="n">sim_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2015-09-20 12:00:00&quot;</span><span class="p">)</span>
+# start date for les; noon is a good time (it is before sunrise)
+sim_time = pd.Timestamp(&quot;2015-09-20 12:00:00&quot;)
 
-<span class="c1"># ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)</span>
-<span class="n">les_time_length</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># (days); length of time for forcing/pushing files</span>
+# ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)
+les_time_length = 30  # (days); length of time for forcing/pushing files
 
-<span class="c1"># don&#39;t change anything here</span>
-<span class="n">output_start_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;1999-01-01&quot;</span><span class="p">)</span>  <span class="c1"># don&#39;t change</span>
-<span class="n">firstfilenum</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span>
-        <span class="n">sim_time</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;1D&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">output_start_time</span>
-    <span class="p">)</span>  <span class="c1"># add one day offset to avoid bugs</span>
-    <span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;timedelta64[D]&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">lastfilenum</span> <span class="o">=</span> <span class="n">firstfilenum</span> <span class="o">+</span> <span class="n">les_time_length</span>
-
-
-<span class="k">def</span> <span class="nf">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="p">):</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gcmdir</span><span class="si">}</span><span class="s2">/File_</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.nc&quot;</span>
-        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">firstfilenum</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lastfilenum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">files</span>
+# don&#39;t change anything here
+output_start_time = pd.Timestamp(&quot;1999-01-01&quot;)  # don&#39;t change
+firstfilenum = (
+    (
+        sim_time - pd.Timedelta(&quot;1D&quot;) - output_start_time
+    )  # add one day offset to avoid bugs
+    .to_numpy()
+    .astype(&quot;timedelta64[D]&quot;)
+    .astype(&quot;int&quot;)
+)
+lastfilenum = firstfilenum + les_time_length
 
 
+def gen_file_list(suffix):
+    files = [
+        f&quot;{gcmdir}/File_{num}_{suffix}.nc&quot;
+        for num in range(firstfilenum - 1, lastfilenum + 1)
+    ]
 
-<span class="c1"># station = pump.model.model.read_stations_20(</span>
-<span class="c1">#    dayglobstr=folder, dirname=gcmdir, globstr=&quot;*_-140*.nc&quot;</span>
-<span class="c1"># )</span>
-
-<span class="n">state</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;buoy&quot;</span><span class="p">),</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;YC&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;XC&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;RC&quot;</span><span class="p">})</span>
-<span class="n">state</span><span class="p">[</span><span class="s2">&quot;YC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span>
+    return files
 
 
-<span class="n">q</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">firstfilenum</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
-<span class="n">folder</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">250</span><span class="o">*</span><span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="mi">250</span><span class="o">*</span><span class="p">(</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gcmdir</span><span class="si">}</span><span class="s2">/STATION_DATA/Day_</span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2">/&quot;</span>
 
-<span class="n">station</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-        <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/*_</span><span class="si">{</span><span class="n">leslon</span><span class="si">}</span><span class="s2">.000.nc&quot;</span><span class="p">)),</span>
-        <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">decode_times</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">150</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-<span class="p">)</span>
-<span class="n">station</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;seconds since </span><span class="si">{</span><span class="n">output_start_time</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="n">station</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">decode_cf</span><span class="p">(</span><span class="n">station</span><span class="p">)</span>
-<span class="n">station</span><span class="p">[</span><span class="s2">&quot;dens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">station</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">station</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span>
-<span class="n">station</span><span class="p">[</span><span class="s2">&quot;mld&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_mld</span><span class="p">(</span><span class="n">station</span><span class="o">.</span><span class="n">dens</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="n">station</span>
+# station = pump.model.model.read_stations_20(
+#    dayglobstr=folder, dirname=gcmdir, globstr=&quot;*_-140*.nc&quot;
+# )
 
-<span class="n">choose_lats</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-<span class="n">subset</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">sim_time</span><span class="p">,</span> <span class="n">sim_time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;30D&quot;</span><span class="p">)))</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-    <span class="n">latitude</span><span class="o">=</span><span class="n">choose_lats</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
-<span class="p">)</span>
-<span class="n">subset</span><span class="p">[</span><span class="s2">&quot;sst&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">XC</span><span class="o">=</span><span class="n">leslon</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">subset</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;pad&quot;</span><span class="p">)</span>
-<span class="n">subset</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">calc_reduced_shear</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
-<span class="n">subset</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
-<span class="n">subset</span><span class="p">[</span><span class="s2">&quot;dcl_base&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_dcl_base_Ri</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
-<span class="n">subset</span><span class="p">[</span><span class="s2">&quot;Jq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1035</span> <span class="o">*</span> <span class="mi">3995</span> <span class="o">*</span> <span class="n">subset</span><span class="o">.</span><span class="n">DFrI_TH</span> <span class="o">/</span> <span class="mf">3.09e7</span>
+state = xr.open_mfdataset(
+    gen_file_list(suffix=&quot;buoy&quot;),
+    chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500},
+    combine=&quot;by_coords&quot;,
+    parallel=True,
+).rename({&quot;latitude&quot;: &quot;YC&quot;, &quot;longitude&quot;: &quot;XC&quot;, &quot;depth&quot;: &quot;RC&quot;})
+state[&quot;YC&quot;].attrs[&quot;units&quot;] = &quot;degrees_north&quot;
 
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_jq_sst</span><span class="p">(</span>
-    <span class="n">subset</span><span class="p">,</span>
-    <span class="n">full</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
-    <span class="n">lon</span><span class="o">=</span><span class="n">leslon</span><span class="p">,</span>
-    <span class="n">lat</span><span class="o">=</span><span class="n">choose_lats</span><span class="p">,</span>
-    <span class="n">periods</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">subset</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+q, r = divmod(firstfilenum, 250)
+folder = f&quot;{250*q + 1}-{250*(q+1)}&quot;
+path = f&quot;{gcmdir}/STATION_DATA/Day_{folder}/&quot;
+
+station = (
+    xr.open_mfdataset(
+        sorted(glob.glob(path + f&quot;/*_{leslon}.000.nc&quot;)),
+        parallel=True,
+        decode_times=False,
+    )
+    .sel(depth=slice(-150))
+    .squeeze()
+)
+station.time.attrs[&quot;units&quot;] = f&quot;seconds since {output_start_time}&quot;
+station = xr.decode_cf(station)
+station[&quot;dens&quot;] = pump.mdjwf.dens(station.salt, station.theta, np.array([0]))
+station[&quot;mld&quot;] = pump.calc.get_mld(station.dens).compute()
+station
+
+choose_lats = [-0.25, 2]
+subset = station.sel(time=slice(sim_time, sim_time + pd.Timedelta(&quot;30D&quot;))).sel(
+    latitude=choose_lats, method=&quot;nearest&quot;
+)
+subset[&quot;sst&quot;] = state.theta.sel(XC=leslon, method=&quot;nearest&quot;, RC=0).reindex(time=subset.time, method=&quot;pad&quot;)
+subset = pump.calc.calc_reduced_shear(subset)
+subset[&quot;eucmax&quot;] = pump.calc.get_euc_max(subset.isel(latitude=0).u)
+subset[&quot;dcl_base&quot;] = pump.calc.get_dcl_base_Ri(subset)
+subset[&quot;Jq&quot;] = 1035 * 3995 * subset.DFrI_TH / 3.09e7
+
+f, ax = pump.plot.plot_jq_sst(
+    subset,
+    full=subset,
+    lon=leslon,
+    lat=choose_lats,
+    periods=slice(subset.time[0].values, subset.time[-1].values),
+)
+ax[2, 0].set_ylim([-150, 0])
 </pre></div>
 </div>
 </div>
@@ -857,24 +858,24 @@ Calc Ri
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">XC</span><span class="o">=</span><span class="n">leslon</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span>
-<span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="n">choose_lats</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>state.theta.sel(XC=leslon, method=&quot;nearest&quot;, RC=0).plot(
+    x=&quot;time&quot;, robust=True, cmap=mpl.cm.RdYlBu_r
+)
+dcpy.plots.liney(choose_lats, zorder=1)
 
-<span class="n">fg</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">DFrI_TH</span><span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">row</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">}</span>
-<span class="p">)</span>
-<span class="p">[</span>
-    <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">subset</span><span class="o">.</span><span class="n">KPPhbl</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fg</span><span class="o">.</span><span class="n">name_dicts</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
-<span class="p">]</span>
-<span class="p">[</span>
-    <span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">mld</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fg</span><span class="o">.</span><span class="n">name_dicts</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
-<span class="p">]</span>
+fg = subset.DFrI_TH.sortby(&quot;latitude&quot;, ascending=False).plot(
+    row=&quot;latitude&quot;, robust=True, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;}
+)
+[
+    (-1 * subset.KPPhbl).sel(loc).plot(color=&quot;r&quot;, ax=ax, zorder=12, _labels=False)
+    for loc, ax in zip(fg.name_dicts.squeeze(), fg.axes.squeeze())
+]
+[
+    (subset.mld).sel(loc).plot(color=&quot;C1&quot;, ax=ax, zorder=13, _labels=False)
+    for loc, ax in zip(fg.name_dicts.squeeze(), fg.axes.squeeze())
+]
 
-<span class="n">fg</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+fg.fig.set_size_inches((10, 5))
 </pre></div>
 </div>
 </div>
@@ -889,27 +890,27 @@ Calc Ri
 <p>LES things that you need not change; Grid is chosen by <code class="docutils literal notranslate"><span class="pre">whichz</span></code> in the above cell</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Should not need to change anything below this</span>
-<span class="n">griddir</span> <span class="o">=</span> <span class="s2">&quot;/glade/p/cgd/oce/people/dwhitt/TPOS/tpos_LES_runs_setup_scripts/tpos-DIABLO/diablo_2.0/pre_process/&quot;</span>
-<span class="n">renamer</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="s2">&quot;U&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
-    <span class="c1"># &quot;salt&quot;: &quot;S&quot;</span>
-<span class="p">}</span>
-<span class="n">offset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">({</span><span class="s2">&quot;U&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mf">35.25</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
-<span class="n">t0</span> <span class="o">=</span> <span class="p">(</span><span class="n">sim_time</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Should not need to change anything below this
+griddir = &quot;/glade/p/cgd/oce/people/dwhitt/TPOS/tpos_LES_runs_setup_scripts/tpos-DIABLO/diablo_2.0/pre_process/&quot;
+renamer = {
+    &quot;u&quot;: &quot;U&quot;,
+    &quot;v&quot;: &quot;W&quot;,
+    &quot;temp&quot;: &quot;T&quot;,
+    # &quot;salt&quot;: &quot;S&quot;
+}
+offset = xr.Dataset({&quot;U&quot;: 0.4, &quot;T&quot;: 25, &quot;S&quot;: 35.25, &quot;W&quot;: 0})
+t0 = (sim_time).to_numpy()
 
-<span class="n">grid</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">griddir</span><span class="si">}</span><span class="s2">/gridtpos</span><span class="si">{</span><span class="n">whichz</span><span class="si">}</span><span class="s2">.h5&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span>
-<span class="p">)</span>
-<span class="n">zles</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="s2">&quot;grids&quot;</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">][:]</span>
-<span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">zles</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">zles</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">zles</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
-<span class="n">newz</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-    <span class="n">zles</span> <span class="o">-</span> <span class="n">zles</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;z&quot;</span>  <span class="c1"># this is what dan does</span>
-<span class="p">)</span>
-<span class="n">newz</span>  <span class="c1"># prints out the grid</span>
+grid = h5py.File(
+    f&quot;{griddir}/gridtpos{whichz}.h5&quot;, mode=&quot;r&quot;
+)
+zles = grid[&quot;grids&quot;][&quot;y&quot;][:]
+grid.close()
+zles = 0.5 * (zles[1:-1] + zles[2:])
+newz = xr.DataArray(
+    zles - zles.max() - 0.25, dims=&quot;z&quot;, name=&quot;z&quot;  # this is what dan does
+)
+newz  # prints out the grid
 </pre></div>
 </div>
 </div>
@@ -1336,100 +1337,100 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 <h3>Read all ocean model output<a class="headerlink" href="#read-all-ocean-model-output" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coords</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_mitgcm_coords</span><span class="p">(</span><span class="n">gcmdir</span><span class="p">)</span>
-<span class="n">grid</span> <span class="o">=</span> <span class="n">xgcm</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
-    <span class="n">coords</span><span class="p">,</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="s2">&quot;extend&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="s2">&quot;extend&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="s2">&quot;extend&quot;</span><span class="p">}</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>coords = pump.model.read_mitgcm_coords(gcmdir)
+grid = xgcm.Grid(
+    coords, periodic=False, boundary={&quot;X&quot;: &quot;extend&quot;, &quot;Y&quot;: &quot;extend&quot;, &quot;Z&quot;: &quot;extend&quot;}
+)
 
-<span class="c1"># ssh data</span>
-<span class="n">ssh</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-        <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;etan&quot;</span><span class="p">),</span>
-        <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
-        <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-        <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;YC&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;XC&quot;</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-<span class="p">)</span>
+# ssh data
+ssh = (
+    xr.open_mfdataset(
+        gen_file_list(suffix=&quot;etan&quot;),
+        chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500},
+        combine=&quot;by_coords&quot;,
+        parallel=True,
+    )
+    .rename({&quot;latitude&quot;: &quot;YC&quot;, &quot;longitude&quot;: &quot;XC&quot;})
+    .update(coords.coords)
+)
 
-<span class="c1"># momentum budget terms</span>
-<span class="n">budgets</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;ub&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;vb&quot;</span><span class="p">),</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">budgets</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">rename_mitgcm_budget_terms</span><span class="p">(</span><span class="n">budgets</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-    <span class="n">coords</span><span class="o">.</span><span class="n">coords</span>
-<span class="p">)</span>
+# momentum budget terms
+budgets = xr.open_mfdataset(
+    gen_file_list(suffix=&quot;ub&quot;) + gen_file_list(suffix=&quot;vb&quot;),
+    chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500},
+    combine=&quot;by_coords&quot;,
+    parallel=True,
+)
+budgets = pump.model.rename_mitgcm_budget_terms(budgets, coords).update(
+    coords.coords
+)
 
-<span class="c1"># surface data</span>
-<span class="n">surf</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-        <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;surf&quot;</span><span class="p">),</span>
-        <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
-        <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-        <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;YC&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;XC&quot;</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">surf</span><span class="p">[</span><span class="s2">&quot;oceQsw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">surf</span><span class="o">.</span><span class="n">oceQsw</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">surf</span><span class="p">[</span><span class="s2">&quot;taux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1035</span> <span class="o">*</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Um_Ext&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">surf</span><span class="p">[</span><span class="s2">&quot;tauy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1035</span> <span class="o">*</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Vm_Ext&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+# surface data
+surf = (
+    xr.open_mfdataset(
+        gen_file_list(suffix=&quot;surf&quot;),
+        chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500},
+        combine=&quot;by_coords&quot;,
+        parallel=True,
+    )
+    .rename({&quot;latitude&quot;: &quot;YC&quot;, &quot;longitude&quot;: &quot;XC&quot;})
+    .update(coords.coords)
+)
+surf[&quot;oceQsw&quot;] = surf.oceQsw.fillna(0)
+surf[&quot;taux&quot;] = 1035 * 2.5 * budgets[&quot;Um_Ext&quot;].isel(RC=0)
+surf[&quot;tauy&quot;] = 1035 * 2.5 * budgets[&quot;Vm_Ext&quot;].isel(RC=0)
 
-<span class="c1"># heat budget terms</span>
-<span class="n">hb</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;hb&quot;</span><span class="p">),</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">hb_ren</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">rename_mitgcm_budget_terms</span><span class="p">(</span><span class="n">hb</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+# heat budget terms
+hb = xr.open_mfdataset(
+    gen_file_list(suffix=&quot;hb&quot;),
+    chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500},
+    combine=&quot;by_coords&quot;,
+    parallel=True,
+)
+hb_ren = pump.model.rename_mitgcm_budget_terms(hb, coords).update(coords.coords)
 
-<span class="c1"># state variables</span>
-<span class="n">state</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;buoy&quot;</span><span class="p">),</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;YC&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;XC&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;RC&quot;</span><span class="p">})</span>
-<span class="n">state</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">state</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-<span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+# state variables
+state = xr.open_mfdataset(
+    gen_file_list(suffix=&quot;buoy&quot;),
+    chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500},
+    combine=&quot;by_coords&quot;,
+    parallel=True,
+).rename({&quot;latitude&quot;: &quot;YC&quot;, &quot;longitude&quot;: &quot;XC&quot;, &quot;depth&quot;: &quot;RC&quot;})
+state[&quot;u&quot;] = state.u.rename({&quot;XC&quot;: &quot;XG&quot;})
+state[&quot;v&quot;] = state.v.rename({&quot;YC&quot;: &quot;YG&quot;})
+state = state.update(coords.coords)
 
 
-<span class="c1"># grid metrics</span>
-<span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_metrics</span><span class="p">(</span><span class="n">gcmdir</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">40</span><span class="p">),</span> <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">40</span><span class="p">),</span> <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">136</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">])</span>
-    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;depth_left&quot;</span><span class="p">:</span> <span class="s2">&quot;RF&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;RC&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="s2">&quot;YC&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="s2">&quot;XC&quot;</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">set_coords</span><span class="p">(</span><span class="s2">&quot;RF&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RF</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">136</span><span class="p">))</span>
-<span class="p">)</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;rAw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;rAs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">rAs</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacS</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;DXG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXG</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;YC&quot;</span><span class="p">:</span> <span class="s2">&quot;YG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;DYG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYG</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;XC&quot;</span><span class="p">:</span> <span class="s2">&quot;XG&quot;</span><span class="p">})</span>
-<span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+# grid metrics
+metrics = (
+    pump.model.read_metrics(gcmdir)
+    .compute()
+    .isel(longitude=slice(40, -40), latitude=slice(40, -40), depth=slice(136))
+    .chunk({&quot;latitude&quot;: 120, &quot;longitude&quot;: 500})
+    .drop([&quot;latitude&quot;, &quot;longitude&quot;, &quot;depth&quot;])
+    .rename({&quot;depth_left&quot;: &quot;RF&quot;, &quot;depth&quot;: &quot;RC&quot;, &quot;latitude&quot;: &quot;YC&quot;, &quot;longitude&quot;: &quot;XC&quot;})
+    .set_coords(&quot;RF&quot;)
+    .isel(RF=slice(136))
+)
+metrics[&quot;rAw&quot;] = metrics.rAw.rename({&quot;XC&quot;: &quot;XG&quot;})
+metrics[&quot;rAs&quot;] = metrics.rAs.rename({&quot;YC&quot;: &quot;YG&quot;})
+metrics[&quot;hFacW&quot;] = metrics.hFacW.rename({&quot;XC&quot;: &quot;XG&quot;})
+metrics[&quot;hFacS&quot;] = metrics.hFacS.rename({&quot;YC&quot;: &quot;YG&quot;})
+metrics[&quot;DXG&quot;] = metrics.DXG.rename({&quot;YC&quot;: &quot;YG&quot;})
+metrics[&quot;DYG&quot;] = metrics.DYG.rename({&quot;XC&quot;: &quot;XG&quot;})
+metrics = metrics.update(coords.coords)
 
-<span class="c1"># penetrative shortwave radiation profile</span>
-<span class="n">swprofile</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-        <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mitgcm_sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-        <span class="o">-</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">mitgcm_sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
-        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;RC&quot;</span><span class="p">],</span>
-        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;SW radiation deposited in cell&quot;</span><span class="p">},</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;RC&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-    <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;RC&quot;</span><span class="p">])</span>
-<span class="p">)</span>
+# penetrative shortwave radiation profile
+swprofile = (
+    xr.DataArray(
+        pump.model.mitgcm_sw_prof(metrics.RF[:-1].values)
+        - pump.model.mitgcm_sw_prof(metrics.RF[1:].values),
+        dims=[&quot;RC&quot;],
+        attrs={&quot;long_name&quot;: &quot;SW radiation deposited in cell&quot;},
+    )
+    .assign_coords(RC=coords.coords[&quot;RC&quot;][:-1])
+    .reindex(RC=coords.coords[&quot;RC&quot;])
+)
 </pre></div>
 </div>
 </div>
@@ -1437,11 +1438,11 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 <p>Offset in time (I have not checked this).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;12H&quot;</span><span class="p">)</span>
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budgets</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;12H&quot;</span><span class="p">)</span>
-<span class="n">state</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;12h&quot;</span><span class="p">)</span>
-<span class="n">hb_ren</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hb_ren</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;12h&quot;</span><span class="p">)</span>
-<span class="n">surf</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">surf</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;12h&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ssh[&quot;time&quot;] = ssh.time + pd.Timedelta(&quot;12H&quot;)
+budgets[&quot;time&quot;] = budgets.time + pd.Timedelta(&quot;12H&quot;)
+state[&quot;time&quot;] = state.time + pd.Timedelta(&quot;12h&quot;)
+hb_ren[&quot;time&quot;] = hb_ren.time + pd.Timedelta(&quot;12h&quot;)
+surf[&quot;time&quot;] = surf.time + pd.Timedelta(&quot;12h&quot;)
 </pre></div>
 </div>
 </div>
@@ -1449,7 +1450,7 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 <p>Make sure that everything is on the same grid; just a check.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xr</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">budgets</span><span class="p">,</span> <span class="n">ssh</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">hb_ren</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span>  <span class="n">surf</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s2">&quot;exact&quot;</span><span class="p">);</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>xr.align(budgets, ssh, state, hb_ren, metrics,  surf, join=&quot;exact&quot;);
 </pre></div>
 </div>
 </div>
@@ -1459,90 +1460,90 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 <h3>Estimate flux divergences<a class="headerlink" href="#estimate-flux-divergences" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># constants taken from diagnostics.log (I think)</span>
-<span class="n">global_area</span> <span class="o">=</span> <span class="mf">2.196468634481708e13</span>
-<span class="n">rhoConst</span> <span class="o">=</span> <span class="mi">1035</span>
-<span class="n">Cp</span> <span class="o">=</span> <span class="mi">3994</span>
-<span class="n">f0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">86400</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">leslat</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># constants taken from diagnostics.log (I think)
+global_area = 2.196468634481708e13
+rhoConst = 1035
+Cp = 3994
+f0 = 2 * (2 * np.pi / 86400) * np.sin(leslat * np.pi / 180)
 
-<span class="c1"># This is WRONG! Because we have subset the output this won&#39;t recover the MITgcm correction exactly</span>
-<span class="c1"># seems to be particularly bad at t=0</span>
-<span class="n">surf_mass</span> <span class="o">=</span> <span class="p">(</span><span class="n">hb_ren</span><span class="o">.</span><span class="n">WTHMASS</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">RAC</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">TsurfCor</span> <span class="o">=</span> <span class="n">surf_mass</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="s2">&quot;XC&quot;</span><span class="p">,</span> <span class="s2">&quot;YC&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">global_area</span>
-
-
-<span class="k">def</span> <span class="nf">expand_depth</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s2">&quot;RC&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;RC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">RC</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
-    <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s2">&quot;RC&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="n">coords</span><span class="o">.</span><span class="n">RC</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+# This is WRONG! Because we have subset the output this won&#39;t recover the MITgcm correction exactly
+# seems to be particularly bad at t=0
+surf_mass = (hb_ren.WTHMASS * metrics.RAC).isel(RC=0)
+TsurfCor = surf_mass.sum([&quot;XC&quot;, &quot;YC&quot;]) / global_area
 
 
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;surf_corr_tend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span>
-    <span class="p">(</span><span class="n">TsurfCor</span> <span class="o">-</span> <span class="n">hb_ren</span><span class="o">.</span><span class="n">WTHMASS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">dRF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacC</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="p">)</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">expand_depth</span><span class="p">)</span>
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;TOTTTEND&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hb_ren</span><span class="o">.</span><span class="n">TOTTTEND</span>
+def expand_depth(ds):
+    if &quot;RC&quot; not in ds:
+        ds[&quot;RC&quot;] = coords.RC.isel(RC=0).data
+    return ds.expand_dims(&quot;RC&quot;).reindex(RC=coords.RC, fill_value=0)
 
 
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;ADV_TH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="o">-</span><span class="mi">1</span>
-    <span class="o">*</span> <span class="p">(</span>
-        <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hb_ren</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">)</span>
-        <span class="o">+</span> <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hb_ren</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
-        <span class="o">-</span> <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span>
-            <span class="n">hb_ren</span><span class="o">.</span><span class="n">ADVr_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;Z&quot;</span>
-        <span class="p">)</span>  <span class="c1"># negative because level 0 is surface</span>
-    <span class="p">)</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span>
-<span class="p">)</span>
+budgets[&quot;surf_corr_tend&quot;] = -1 * (
+    (TsurfCor - hb_ren.WTHMASS.isel(RC=0))
+    / metrics.dRF.isel(RC=0)
+    / metrics.hFacC.isel(RC=0)
+).pipe(expand_depth)
+budgets[&quot;TOTTTEND&quot;] = hb_ren.TOTTTEND
 
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;MIX_TH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hb_ren</span><span class="o">.</span><span class="n">DFrI_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">hb_ren</span><span class="o">.</span><span class="n">KPPg_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span>
-<span class="p">)</span>
 
-<span class="n">shfluxminusswrad</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="o">-</span><span class="mi">1</span>
-    <span class="o">*</span> <span class="p">(</span><span class="n">surf</span><span class="o">.</span><span class="n">TFLUX</span> <span class="o">-</span> <span class="n">surf</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">)</span>
-    <span class="o">/</span> <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">dRF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacC</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<span class="p">)</span>
+budgets[&quot;ADV_TH&quot;] = (
+    -1
+    * (
+        grid.diff(hb_ren.ADVx_TH, &quot;X&quot;)
+        + grid.diff(hb_ren.ADVy_TH, &quot;Y&quot;)
+        - grid.diff(
+            hb_ren.ADVr_TH.fillna(0), &quot;Z&quot;
+        )  # negative because level 0 is surface
+    )
+    / metrics.cellvol
+)
 
-<span class="n">SW</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">surf</span><span class="o">.</span><span class="n">oceQsw</span> <span class="o">/</span> <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">dRF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacC</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">swprofile</span>
-<span class="p">)</span>
+budgets[&quot;MIX_TH&quot;] = (
+    grid.diff(hb_ren.DFrI_TH.fillna(0) + hb_ren.KPPg_TH.fillna(0), &quot;Z&quot;)
+    / metrics.cellvol
+)
 
-<span class="c1"># residual is LHS - RHS</span>
-<span class="c1"># this is non-zero because of some global correction at the surface</span>
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;RESIDUAL_TH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">expand_depth</span><span class="p">(</span>
-    <span class="p">(</span>
-        <span class="n">shfluxminusswrad</span>
-        <span class="o">+</span> <span class="p">(</span><span class="n">budgets</span><span class="o">.</span><span class="n">surf_corr_tend</span> <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">MIX_TH</span> <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">ADV_TH</span> <span class="o">+</span> <span class="n">SW</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="o">-</span> <span class="n">budgets</span><span class="o">.</span><span class="n">TOTTTEND</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mi">86400</span>
-<span class="p">)</span>
+shfluxminusswrad = (
+    -1
+    * (surf.TFLUX - surf.oceQsw)
+    / (rhoConst * Cp * metrics.dRF.isel(RC=0) * metrics.hFacC.isel(RC=0))
+)
 
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;SSHx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">ssh</span><span class="o">.</span><span class="n">ETAN</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXC</span><span class="o">.</span><span class="n">data</span>
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;SSHy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">ssh</span><span class="o">.</span><span class="n">ETAN</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYC</span><span class="o">.</span><span class="n">data</span>
+SW = (
+    -1 * surf.oceQsw / (rhoConst * Cp) / (metrics.dRF[0] * metrics.hFacC[0]) * swprofile
+)
 
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Um_Impl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">budgets</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span>
-<span class="p">)</span>
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Vm_Impl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">grid</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">budgets</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">rAs</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span>
-    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacS</span>
-<span class="p">)</span>
+# residual is LHS - RHS
+# this is non-zero because of some global correction at the surface
+budgets[&quot;RESIDUAL_TH&quot;] = -1 * expand_depth(
+    (
+        shfluxminusswrad
+        + (budgets.surf_corr_tend + budgets.MIX_TH + budgets.ADV_TH + SW).isel(RC=0)
+    )
+    - budgets.TOTTTEND.isel(RC=0) / 86400
+)
 
-<span class="c1"># Has LHS sign because we want to subtract it from the Advective part</span>
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Um_cor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span> <span class="o">*</span> <span class="n">f0</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)))</span>
-<span class="n">budgets</span><span class="p">[</span><span class="s2">&quot;Vm_cor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">f0</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)))</span>
+budgets[&quot;SSHx&quot;] = -9.81 * grid.diff(ssh.ETAN, &quot;X&quot;) / metrics.DXC.data
+budgets[&quot;SSHy&quot;] = -9.81 * grid.diff(ssh.ETAN, &quot;Y&quot;) / metrics.DYC.data
 
-<span class="n">budgets</span> <span class="o">=</span> <span class="n">budgets</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">guess_coord_axis</span><span class="p">()</span>
+budgets[&quot;Um_Impl&quot;] = (
+    grid.diff(budgets.VISrI_Um.fillna(0), &quot;Z&quot;)
+    / metrics.rAw
+    / metrics.drF
+    / metrics.hFacW
+)
+budgets[&quot;Vm_Impl&quot;] = (
+    grid.diff(budgets.VISrI_Vm.fillna(0), &quot;Z&quot;)
+    / metrics.rAs
+    / metrics.drF
+    / metrics.hFacS
+)
+
+# Has LHS sign because we want to subtract it from the Advective part
+budgets[&quot;Um_cor&quot;] = -1 * (+1 * f0 * grid.interp(state.v, (&quot;X&quot;, &quot;Y&quot;)))
+budgets[&quot;Vm_cor&quot;] = -1 * (-1 * f0 * grid.interp(state.u, (&quot;X&quot;, &quot;Y&quot;)))
+
+budgets = budgets.cf.guess_coord_axis()
 </pre></div>
 </div>
 </div>
@@ -1562,21 +1563,21 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 <p>Stupidly, the temperature flux divergences in <code class="docutils literal notranslate"><span class="pre">budgets</span></code> are with LHS sign; so invert that at the end</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subrhs</span> <span class="o">=</span> <span class="n">subsetter</span><span class="p">(</span><span class="n">budgets</span><span class="p">)</span>
-<span class="n">rhs</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
-<span class="c1"># these are names of variables in budgets that are added together in the for loop</span>
-<span class="n">var_terms</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;u&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Um_dPHdx&quot;</span><span class="p">,</span> <span class="s2">&quot;Um_Advec&quot;</span><span class="p">,</span> <span class="s2">&quot;Um_Diss&quot;</span><span class="p">,</span> <span class="s2">&quot;AB_gU&quot;</span><span class="p">,</span> <span class="s2">&quot;SSHx&quot;</span><span class="p">,</span> <span class="s2">&quot;Um_cor&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Vm_dPHdy&quot;</span><span class="p">,</span> <span class="s2">&quot;Vm_Advec&quot;</span><span class="p">,</span> <span class="s2">&quot;Vm_Diss&quot;</span><span class="p">,</span> <span class="s2">&quot;AB_gV&quot;</span><span class="p">,</span> <span class="s2">&quot;SSHy&quot;</span><span class="p">,</span> <span class="s2">&quot;Vm_cor&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;temp&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ADV_TH&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_corr_tend&quot;</span><span class="p">,</span> <span class="s2">&quot;RESIDUAL_TH&quot;</span><span class="p">],</span>
-<span class="p">}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subrhs = subsetter(budgets)
+rhs = xr.Dataset()
+# these are names of variables in budgets that are added together in the for loop
+var_terms = {
+    &quot;u&quot;: [&quot;Um_dPHdx&quot;, &quot;Um_Advec&quot;, &quot;Um_Diss&quot;, &quot;AB_gU&quot;, &quot;SSHx&quot;, &quot;Um_cor&quot;],
+    &quot;v&quot;: [&quot;Vm_dPHdy&quot;, &quot;Vm_Advec&quot;, &quot;Vm_Diss&quot;, &quot;AB_gV&quot;, &quot;SSHy&quot;, &quot;Vm_cor&quot;],
+    &quot;temp&quot;: [&quot;ADV_TH&quot;, &quot;surf_corr_tend&quot;, &quot;RESIDUAL_TH&quot;],
+}
 
-<span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">varnames</span> <span class="ow">in</span> <span class="n">var_terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">rhs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">subrhs</span><span class="p">[</span><span class="n">varnames</span><span class="p">]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">interpolate</span><span class="p">,</span> <span class="n">newz</span><span class="p">)</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="s2">&quot;term&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;term&quot;</span><span class="p">)</span>
-    <span class="p">)</span> <span class="o">*</span> <span class="mi">86400</span>
-    <span class="n">rhs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sum over </span><span class="si">{</span><span class="n">varnames</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="n">rhs</span>
+for var, varnames in var_terms.items():
+    rhs[var] = (
+        subrhs[varnames].pipe(interpolate, newz).to_array(&quot;term&quot;).sum(&quot;term&quot;)
+    ) * 86400
+    rhs[var].attrs[&quot;description&quot;] = f&quot;sum over {varnames}&quot;
+rhs
 </pre></div>
 </div>
 </div>
@@ -1997,13 +1998,13 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">write_to_txt</span><span class="p">(</span>
-    <span class="n">rhs</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">renamer</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
-    <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span>
-    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_colpsh_&quot;</span><span class="p">,</span>
-    <span class="n">interleave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>write_to_txt(
+    rhs.rename(renamer).compute().sel(time=slice(t0, None)),
+    outdir=outdir,
+    prefix=&quot;ocean_colpsh_&quot;,
+    interleave=True,
+    t0=t0,
+)
 </pre></div>
 </div>
 </div>
@@ -2016,23 +2017,23 @@ Data variables:
 <h3>initial condition<a class="headerlink" href="#initial-condition" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subds</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">state</span><span class="p">[[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">]]</span>
-    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;theta&quot;</span><span class="p">:</span> <span class="s2">&quot;temp&quot;</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">interpolate</span><span class="p">,</span> <span class="n">newz</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">renamer</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subds = (
+    state[[&quot;u&quot;, &quot;v&quot;, &quot;theta&quot;]]
+    .rename({&quot;theta&quot;: &quot;temp&quot;})
+    .pipe(subsetter)
+    .pipe(interpolate, newz)
+    .rename(renamer)
+)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">substate</span> <span class="o">=</span> <span class="p">(</span><span class="n">subds</span><span class="p">[[</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">compute</span><span class="p">())</span> <span class="o">-</span> <span class="n">offset</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>substate = (subds[[&quot;U&quot;, &quot;W&quot;, &quot;T&quot;]].compute()) - offset
 
-<span class="n">ic</span> <span class="o">=</span> <span class="n">substate</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">t0</span><span class="p">))</span>
-<span class="n">write_to_txt</span><span class="p">(</span><span class="n">ic</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_ic_&quot;</span><span class="p">,</span> <span class="n">interleave</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+ic = substate.cf.interp(time=pd.Timestamp(t0))
+write_to_txt(ic.compute(), outdir=outdir, prefix=&quot;ocean_ic_&quot;, interleave=False)
 </pre></div>
 </div>
 </div>
@@ -2045,7 +2046,7 @@ Data variables:
 <h3>restoring<a class="headerlink" href="#restoring" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">write_to_txt</span><span class="p">(</span><span class="n">substate</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_colfrc_&quot;</span><span class="p">,</span> <span class="n">interleave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>write_to_txt(substate, outdir=outdir, prefix=&quot;ocean_colfrc_&quot;, interleave=True, t0=t0)
 </pre></div>
 </div>
 </div>
@@ -2058,38 +2059,38 @@ Data variables:
 <h3>Estimate surface forcing from JRA using coare3.6<a class="headerlink" href="#estimate-surface-forcing-from-jra-using-coare3-6" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jrafull</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_jra_20</span><span class="p">()</span>
-<span class="c1"># undo the local time correction for LES stuff</span>
-<span class="n">jrafull</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jrafull</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;7h&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>jrafull = pump.obs.read_jra_20()
+# undo the local time correction for LES stuff
+jrafull[&quot;time&quot;] = jrafull.time + pd.Timedelta(&quot;7h&quot;)
 
-<span class="c1"># interpolate to location + subset in time</span>
-<span class="n">jrai</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">jrafull</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-        <span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span>
-            <span class="n">t0</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;2D&quot;</span><span class="p">),</span>  <span class="c1"># something is buggy so start an extra day early</span>
-            <span class="n">substate</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;23H&quot;</span><span class="p">),</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">substate</span><span class="o">.</span><span class="n">YC</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">substate</span><span class="o">.</span><span class="n">XC</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">interpolate_na</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="p">)</span>
+# interpolate to location + subset in time
+jrai = (
+    jrafull.sel(
+        time=slice(
+            t0 - pd.Timedelta(&quot;2D&quot;),  # something is buggy so start an extra day early
+            substate.time[-1] + pd.Timedelta(&quot;23H&quot;),
+        )
+    )
+    .interp(latitude=substate.YC.data, longitude=substate.XC.data)
+    .compute()
+    .interpolate_na(&quot;time&quot;)
+)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">jrai</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;JRA Dataset does not overlap with simulation time period!&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>if jrai.sizes[&quot;time&quot;] == 0:
+    raise ValueError(&quot;JRA Dataset does not overlap with simulation time period!&quot;)
 
-<span class="c1"># calculate coare3.6 fluxes</span>
-<span class="n">coare</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">coare_fluxes_jra</span><span class="p">(</span>
-    <span class="n">subsetter</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;XG&quot;</span><span class="p">,</span> <span class="s2">&quot;YG&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">jrai</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
-    <span class="n">forcing</span><span class="o">=</span><span class="n">jrai</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">coare</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="n">daily_coare</span> <span class="o">=</span> <span class="n">coare</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">loffset</span><span class="o">=</span><span class="s2">&quot;12H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+# calculate coare3.6 fluxes
+coare, _ = pump.coare_fluxes_jra(
+    subsetter(state, time=False).drop([&quot;XG&quot;, &quot;YG&quot;]).interp(time=jrai.time.data),
+    forcing=jrai,
+)
+coare.load()
+daily_coare = coare.resample(time=&quot;D&quot;, loffset=&quot;12H&quot;).mean()
 </pre></div>
 </div>
 </div>
@@ -2097,22 +2098,22 @@ Data variables:
 <p>Estimate daily residuals</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_residuals</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
-<span class="n">flux_residuals</span><span class="p">[</span><span class="s2">&quot;short&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">daily_coare</span><span class="o">.</span><span class="n">short</span> <span class="o">-</span> <span class="n">surf</span><span class="p">[</span><span class="s2">&quot;oceQsw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">flux_residuals</span><span class="p">[</span><span class="s2">&quot;net&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">daily_coare</span><span class="o">.</span><span class="n">netflux</span> <span class="o">-</span> <span class="n">surf</span><span class="p">[</span><span class="s2">&quot;TFLUX&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">flux_residuals</span><span class="p">[</span><span class="s2">&quot;taux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">daily_coare</span><span class="o">.</span><span class="n">taux</span> <span class="o">-</span> <span class="n">surf</span><span class="o">.</span><span class="n">taux</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">flux_residuals</span><span class="p">[</span><span class="s2">&quot;tauy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">daily_coare</span><span class="o">.</span><span class="n">tauy</span> <span class="o">-</span> <span class="n">surf</span><span class="o">.</span><span class="n">tauy</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">flux_residuals</span> <span class="o">=</span> <span class="n">flux_residuals</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span>
-    <span class="n">time</span><span class="o">=</span><span class="n">coare</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-        <span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">t0</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;1D&quot;</span><span class="p">),</span> <span class="n">t0</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">les_time_length</span><span class="o">-</span><span class="mi">3</span><span class="si">}</span><span class="s2">D&quot;</span><span class="p">))</span>
-    <span class="p">),</span>
-    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">flux_residuals</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="k">assert</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;NaNs in flux_residuals&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>flux_residuals = xr.Dataset()
+flux_residuals[&quot;short&quot;] = daily_coare.short - surf[&quot;oceQsw&quot;].pipe(subsetter, time=False)
+flux_residuals[&quot;net&quot;] = daily_coare.netflux - surf[&quot;TFLUX&quot;].pipe(subsetter, time=False)
+flux_residuals[&quot;taux&quot;] = daily_coare.taux - surf.taux.pipe(subsetter, time=False)
+flux_residuals[&quot;tauy&quot;] = daily_coare.tauy - surf.tauy.pipe(subsetter, time=False)
+flux_residuals = flux_residuals.reindex(
+    time=coare.time.sel(
+        time=slice(t0 - pd.Timedelta(&quot;1D&quot;), t0 + pd.Timedelta(f&quot;{les_time_length-3}D&quot;))
+    ),
+    method=&quot;nearest&quot;,
+).load()
+for k, v in flux_residuals.isnull().sum().compute().items():
+    assert v == 0, &quot;NaNs in flux_residuals&quot;
 
-<span class="n">f</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">les</span><span class="o">.</span><span class="n">debug_plots</span><span class="p">(</span><span class="n">flux_residuals</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">outdir</span><span class="si">}</span><span class="s2">/coare_flux_residuals.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+f = pump.les.debug_plots(flux_residuals)
+f.savefig(f&quot;{outdir}/coare_flux_residuals.png&quot;, dpi=150)
 </pre></div>
 </div>
 </div>
@@ -2122,22 +2123,22 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">frc</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;sustr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coare</span><span class="o">.</span><span class="n">taux</span> <span class="o">-</span> <span class="n">flux_residuals</span><span class="o">.</span><span class="n">taux</span>  <span class="c1"># ρ * Δz * external forcing term</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;svstr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coare</span><span class="o">.</span><span class="n">tauy</span> <span class="o">-</span> <span class="n">flux_residuals</span><span class="o">.</span><span class="n">tauy</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;swrad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coare</span><span class="o">.</span><span class="n">short</span> <span class="o">-</span> <span class="n">flux_residuals</span><span class="o">.</span><span class="n">short</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;shfluxminusswrad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span><span class="n">coare</span><span class="o">.</span><span class="n">netflux</span> <span class="o">-</span> <span class="n">coare</span><span class="o">.</span><span class="n">short</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">flux_residuals</span><span class="o">.</span><span class="n">net</span> <span class="o">-</span> <span class="n">flux_residuals</span><span class="o">.</span><span class="n">short</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>frc = xr.Dataset()
+frc[&quot;sustr&quot;] = coare.taux - flux_residuals.taux  # ρ * Δz * external forcing term
+frc[&quot;svstr&quot;] = coare.tauy - flux_residuals.tauy
+frc[&quot;swrad&quot;] = coare.short - flux_residuals.short
+frc[&quot;shfluxminusswrad&quot;] = (
+    (coare.netflux - coare.short) - (flux_residuals.net - flux_residuals.short)
+)
 
-<span class="n">frc</span> <span class="o">=</span> <span class="n">frc</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">t0</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;1.5H&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">))</span>
-<span class="n">frc</span> <span class="o">=</span> <span class="n">frc</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;time_index&quot;</span><span class="p">})</span>
+frc = frc.sel(time=slice(t0 - pd.Timedelta(&quot;1.5H&quot;), None))
+frc = frc.rename({&quot;time&quot;: &quot;time_index&quot;})
 
-<span class="n">time</span> <span class="o">=</span> <span class="n">frc</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">indexes</span><span class="p">[</span><span class="s2">&quot;time_index&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;time_index&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;timedelta64[s]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">))</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;time_index&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;T&quot;</span>
-<span class="n">frc</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="n">write_to_txt</span><span class="p">(</span><span class="n">frc</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_frc_&quot;</span><span class="p">,</span> <span class="n">interleave</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+time = frc.cf.indexes[&quot;time_index&quot;].to_numpy()
+frc[&quot;time&quot;] = (&quot;time_index&quot;, (time - t0).astype(&quot;timedelta64[s]&quot;).astype(float))
+frc[&quot;time_index&quot;].attrs[&quot;axis&quot;] = &quot;T&quot;
+frc.load()
+write_to_txt(frc, outdir=outdir, prefix=&quot;ocean_frc_&quot;, interleave=False)
 </pre></div>
 </div>
 </div>
@@ -2150,11 +2151,11 @@ Data variables:
 <h3>Test: coare fluxes vs mitgcm<a class="headerlink" href="#test-coare-fluxes-vs-mitgcm" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">surf</span><span class="p">[</span><span class="s2">&quot;oceQsw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">daily_coare</span><span class="o">.</span><span class="n">short</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="p">(</span><span class="n">frc</span><span class="p">[</span><span class="s2">&quot;swrad&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">loffset</span><span class="o">=</span><span class="s2">&quot;12H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;MITgcm output&quot;</span><span class="p">,</span> <span class="s2">&quot;COARE 3.6 daily&quot;</span><span class="p">,</span> <span class="s2">&quot;corrected (ocean_frc*.txt)&quot;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="n">t0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(surf[&quot;oceQsw&quot;].pipe(subsetter)).plot()
+daily_coare.short.plot()
+(frc[&quot;swrad&quot;].cf.resample(T=&quot;D&quot;, loffset=&quot;12H&quot;).mean()[:-1]).plot(marker=&#39;o&#39;, ls=&#39;none&#39;)
+plt.legend([&quot;MITgcm output&quot;, &quot;COARE 3.6 daily&quot;, &quot;corrected (ocean_frc*.txt)&quot;])
+plt.xlim((t0, None))
 </pre></div>
 </div>
 </div>
@@ -2167,11 +2168,11 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">surf</span><span class="o">.</span><span class="n">taux</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">daily_coare</span><span class="o">.</span><span class="n">taux</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">frc</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">loffset</span><span class="o">=</span><span class="s2">&quot;12H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">sustr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;MITgcm output&quot;</span><span class="p">,</span> <span class="s2">&quot;COARE 3.6 daily&quot;</span><span class="p">,</span> <span class="s2">&quot;corrected (ocean_frc*.txt)&quot;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="n">t0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>surf.taux.pipe(subsetter).plot()
+daily_coare.taux.plot()
+frc.cf.resample(T=&quot;D&quot;, loffset=&quot;12H&quot;).mean().sustr.plot(marker=&#39;o&#39;, ls=&#39;none&#39;)
+plt.legend([&quot;MITgcm output&quot;, &quot;COARE 3.6 daily&quot;, &quot;corrected (ocean_frc*.txt)&quot;])
+plt.xlim((t0, None))
 </pre></div>
 </div>
 </div>
@@ -2184,10 +2185,10 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">surf</span><span class="o">.</span><span class="n">tauy</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">daily_coare</span><span class="o">.</span><span class="n">tauy</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">frc</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">loffset</span><span class="o">=</span><span class="s2">&quot;12H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">svstr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;MITgcm output&quot;</span><span class="p">,</span> <span class="s2">&quot;COARE 3.6 daily&quot;</span><span class="p">,</span> <span class="s2">&quot;corrected (ocean_frc*.txt)&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>surf.tauy.pipe(subsetter).plot()
+daily_coare.tauy.plot()
+frc.cf.resample(T=&quot;D&quot;, loffset=&quot;12H&quot;).mean().svstr.plot(marker=&#39;o&#39;, ls=&#39;none&#39;)
+plt.legend([&quot;MITgcm output&quot;, &quot;COARE 3.6 daily&quot;, &quot;corrected (ocean_frc*.txt)&quot;])
 </pre></div>
 </div>
 </div>
@@ -2200,10 +2201,10 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">surf</span><span class="o">.</span><span class="n">TFLUX</span> <span class="o">-</span> <span class="n">surf</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">)</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="p">(</span><span class="n">daily_coare</span><span class="o">.</span><span class="n">netflux</span> <span class="o">-</span> <span class="n">daily_coare</span><span class="o">.</span><span class="n">short</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">frc</span><span class="o">.</span><span class="n">shfluxminusswrad</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">loffset</span><span class="o">=</span><span class="s2">&quot;12H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;MITgcm output&quot;</span><span class="p">,</span> <span class="s2">&quot;COARE 3.6 daily&quot;</span><span class="p">,</span> <span class="s2">&quot;corrected (ocean_frc*.txt)&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(surf.TFLUX - surf.oceQsw).pipe(subsetter).plot()
+(daily_coare.netflux - daily_coare.short).plot()
+frc.shfluxminusswrad.cf.resample(T=&quot;D&quot;, loffset=&quot;12H&quot;).mean().plot(marker=&#39;o&#39;, ls=&#39;none&#39;)
+plt.legend([&quot;MITgcm output&quot;, &quot;COARE 3.6 daily&quot;, &quot;corrected (ocean_frc*.txt)&quot;])
 </pre></div>
 </div>
 </div>
@@ -2217,7 +2218,7 @@ Data variables:
 <p>Raise error here so you don’t go past if running every cell :)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stop</span> <span class="n">here</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>stop here
 </pre></div>
 </div>
 </div>
@@ -2240,18 +2241,18 @@ Data variables:
 <h3>Test: heat budget<a class="headerlink" href="#test-heat-budget" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LHS</span> <span class="o">=</span> <span class="n">budgets</span><span class="o">.</span><span class="n">TOTTTEND</span> <span class="o">/</span> <span class="mi">86400</span>
-<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">expand_depth</span><span class="p">(</span><span class="n">shfluxminusswrad</span><span class="p">)</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">surf_corr_tend</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">MIX_TH</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">ADV_TH</span>
-    <span class="o">+</span> <span class="n">SW</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">RESIDUAL_TH</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>LHS = budgets.TOTTTEND / 86400
+RHS = (
+    expand_depth(shfluxminusswrad)
+    + budgets.surf_corr_tend
+    + budgets.MIX_TH
+    + budgets.ADV_TH
+    + SW
+    + budgets.RESIDUAL_TH
+)
 
-<span class="c1"># t =0 heat budget is weird at the surface</span>
-<span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">RC</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;RC&quot;</span><span class="p">)</span>
+# t =0 heat budget is weird at the surface
+(LHS - RHS).isel(time=1, RC=[0, 10]).plot(robust=True, col=&quot;RC&quot;)
 </pre></div>
 </div>
 </div>
@@ -2268,35 +2269,35 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">residual</span> <span class="o">=</span> <span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">RC</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>residual = (LHS - RHS).isel(RC=0)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resmedian</span> <span class="o">=</span> <span class="n">residual</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">median</span><span class="p">([</span><span class="s2">&quot;XC&quot;</span><span class="p">,</span> <span class="s2">&quot;YC&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>resmedian = residual.chunk({&quot;time&quot;: 1}).median([&quot;XC&quot;, &quot;YC&quot;]).compute()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rest</span> <span class="o">=</span> <span class="n">residual</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="s2">&quot;XC&quot;</span><span class="p">,</span> <span class="s2">&quot;YC&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>rest = residual.mean([&quot;XC&quot;, &quot;YC&quot;]).compute()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import matplotlib.pyplot as plt
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">rest</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">resmedian</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;heat budget residual at surface | from global correction&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../images/heat-budget-residual.png&quot;</span><span class="p">)</span>
+plt.figure(constrained_layout=True)
+rest.plot()
+resmedian.plot()
+plt.legend([&quot;mean&quot;, &quot;median&quot;])
+plt.title(&quot;heat budget residual at surface | from global correction&quot;)
+plt.savefig(&quot;../images/heat-budget-residual.png&quot;)
 </pre></div>
 </div>
 </div>
@@ -2306,7 +2307,7 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">residual</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>residual.isel(time=[1, 10, 20, 30]).plot(col=&quot;time&quot;, robust=True)
 </pre></div>
 </div>
 </div>
@@ -2322,19 +2323,19 @@ Data variables:
 <h3>Test : U budget<a class="headerlink" href="#test-u-budget" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">budgets</span><span class="o">.</span><span class="n">SSHx</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Um_dPHdx</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Um_Advec</span>
-    <span class="c1">#+ budget.Um_Cori  # is in Um_Advec</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Um_Diss</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Um_Impl</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Um_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">AB_gU</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>RHS = (
+    budgets.SSHx
+    + budgets.Um_dPHdx
+    + budgets.Um_Advec
+    #+ budget.Um_Cori  # is in Um_Advec
+    + budgets.Um_Diss
+    + budgets.Um_Impl
+    + budgets.Um_Ext.fillna(0)
+    + budgets.AB_gU
+)
 
-<span class="n">LHS</span> <span class="o">=</span> <span class="n">budgets</span><span class="o">.</span><span class="n">TOTUTEND</span> <span class="o">/</span> <span class="mi">86400</span>
-<span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">RC</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;RC&quot;</span><span class="p">)</span>
+LHS = budgets.TOTUTEND / 86400
+(LHS - RHS).isel(time=0, RC=[0, 10]).plot(robust=True, col=&quot;RC&quot;)
 </pre></div>
 </div>
 </div>
@@ -2350,19 +2351,19 @@ Data variables:
 <h3>test: V budget<a class="headerlink" href="#test-v-budget" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">budgets</span><span class="o">.</span><span class="n">SSHy</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Vm_dPHdy</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Vm_Advec</span>
-    <span class="c1">#+ budget.Um_Cori  # is in Um_Advec</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Vm_Diss</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Vm_Impl</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">Vm_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="o">+</span> <span class="n">budgets</span><span class="o">.</span><span class="n">AB_gV</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>RHS = (
+    budgets.SSHy
+    + budgets.Vm_dPHdy
+    + budgets.Vm_Advec
+    #+ budget.Um_Cori  # is in Um_Advec
+    + budgets.Vm_Diss
+    + budgets.Vm_Impl
+    + budgets.Vm_Ext.fillna(0)
+    + budgets.AB_gV
+)
 
-<span class="n">LHS</span> <span class="o">=</span> <span class="n">budgets</span><span class="o">.</span><span class="n">TOTVTEND</span> <span class="o">/</span> <span class="mi">86400</span>
-<span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">RC</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;RC&quot;</span><span class="p">)</span>
+LHS = budgets.TOTVTEND / 86400
+(LHS - RHS).isel(time=0, RC=[0, 10]).plot(robust=True, col=&quot;RC&quot;)
 </pre></div>
 </div>
 </div>
@@ -2390,23 +2391,23 @@ Data variables:
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xroms</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import xroms
 
-<span class="n">outdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/work/dcherian/pump/les_forcing/roms_test/&quot;</span>
-<span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/glade/p/cgd/oce/people/dwhitt/TPOS/tpos20/OUT/&quot;</span>
-<span class="n">files</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/ocean_dia_tpos20_3_d2_2.nc&quot;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/ocean_avg_tpos20_3_d2_2.nc&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+outdir = &quot;/glade/work/dcherian/pump/les_forcing/roms_test/&quot;
+dirname = &quot;/glade/p/cgd/oce/people/dwhitt/TPOS/tpos20/OUT/&quot;
+files = [
+    f&quot;{dirname}/ocean_dia_tpos20_3_d2_2.nc&quot;,
+    f&quot;{dirname}/ocean_avg_tpos20_3_d2_2.nc&quot;,
+]
 
-<span class="n">chunk</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xi&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">}</span>
+chunk = {&quot;xi&quot;: 500, &quot;eta&quot;: 120}
 
-<span class="n">ds0</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_roms_dataset</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">xi</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ocean_time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-<span class="n">rds</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">xroms</span><span class="o">.</span><span class="n">roms_dataset</span><span class="p">(</span><span class="n">ds0</span><span class="p">)</span>
-<span class="n">rds</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">rds</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;extend&quot;</span><span class="p">)</span>
-<span class="n">rds</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">rds</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;extend&quot;</span><span class="p">)</span>
-<span class="n">romsds</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">make_cartesian</span><span class="p">(</span><span class="n">rds</span><span class="p">)</span>
-<span class="n">romsds</span>
+ds0 = pump.model.model.read_roms_dataset(files, xi=20, eta=500, ocean_time=50)
+rds, grid = xroms.roms_dataset(ds0)
+rds[&quot;u&quot;] = grid.interp(rds.u, axis=&quot;X&quot;, boundary=&quot;extend&quot;)
+rds[&quot;v&quot;] = grid.interp(rds.v, axis=&quot;Y&quot;, boundary=&quot;extend&quot;)
+romsds = pump.model.model.make_cartesian(rds)
+romsds
 </pre></div>
 </div>
 </div>
@@ -19618,7 +19619,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">romsds</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>romsds
 </pre></div>
 </div>
 </div>
@@ -36826,8 +36827,8 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="n">subsetter</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span><span class="o">.</span><span class="n">ocean_time</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># pd.Timestamp(&quot;1985-Oct-02 00:00:00&quot;).to_numpy()</span>
-<span class="n">subds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">)</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">interpolate</span><span class="p">,</span> <span class="n">newz</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">renamer</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>t0 = subsetter(ds).ocean_time[1].data  # pd.Timestamp(&quot;1985-Oct-02 00:00:00&quot;).to_numpy()
+subds = ds.pipe(subsetter).pipe(interpolate, newz).rename(renamer)
 </pre></div>
 </div>
 </div>
@@ -36836,18 +36837,18 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 <h3>RHS forcing<a class="headerlink" href="#rhs-forcing" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhs</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>rhs = xr.Dataset()
 
-<span class="n">rhs_tracer</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hadv&quot;</span><span class="p">,</span> <span class="s2">&quot;vadv&quot;</span><span class="p">,</span> <span class="s2">&quot;hdiff&quot;</span><span class="p">]</span>
-<span class="n">rhs_mom</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;prsgrd&quot;</span><span class="p">,</span> <span class="s2">&quot;hadv&quot;</span><span class="p">,</span> <span class="s2">&quot;vadv&quot;</span><span class="p">,</span> <span class="s2">&quot;hvisc&quot;</span><span class="p">]</span>
+rhs_tracer = [&quot;hadv&quot;, &quot;vadv&quot;, &quot;hdiff&quot;]
+rhs_mom = [&quot;prsgrd&quot;, &quot;hadv&quot;, &quot;vadv&quot;, &quot;hvisc&quot;]
     
-<span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">terms</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-    <span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">],</span> <span class="p">[</span><span class="n">rhs_mom</span><span class="p">,</span> <span class="n">rhs_mom</span><span class="p">,</span> <span class="n">rhs_tracer</span><span class="p">,</span> <span class="n">rhs_tracer</span><span class="p">]</span>
-<span class="p">):</span>
-    <span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">]</span>
-    <span class="n">rhs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">subds</span><span class="p">[</span><span class="n">varnames</span><span class="p">]</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="s2">&quot;term&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;term&quot;</span><span class="p">))</span> <span class="o">*</span> <span class="mi">86400</span>
-    <span class="n">rhs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sum over </span><span class="si">{</span><span class="n">varnames</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="n">rhs</span>
+for var, terms in zip(
+    [&quot;u&quot;, &quot;v&quot;, &quot;temp&quot;, &quot;salt&quot;], [rhs_mom, rhs_mom, rhs_tracer, rhs_tracer]
+):
+    varnames = [f&quot;{var}_{term}&quot; for term in terms]
+    rhs[var] = (subds[varnames].to_array(&quot;term&quot;).sum(&quot;term&quot;)) * 86400
+    rhs[var].attrs[&quot;description&quot;] = f&quot;sum over {varnames}&quot;
+rhs
 </pre></div>
 </div>
 </div>
@@ -37869,11 +37870,11 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">write_to_txt</span><span class="p">(</span>
-    <span class="n">rhs</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">renamer</span><span class="p">)</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">interleave_time</span><span class="p">,</span> <span class="n">t0</span><span class="p">),</span>
-    <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span>
-    <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_colpsh_&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>write_to_txt(
+    rhs.rename(renamer).pipe(interleave_time, t0),
+    outdir=outdir,
+    prefix=&quot;ocean_colpsh_&quot;,
+)
 </pre></div>
 </div>
 </div>
@@ -37883,10 +37884,10 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 <h3>initial condition<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">substate</span> <span class="o">=</span> <span class="p">(</span><span class="n">subds</span><span class="p">[[</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">compute</span><span class="p">())</span> <span class="o">-</span> <span class="n">offset</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>substate = (subds[[&quot;U&quot;, &quot;W&quot;, &quot;T&quot;, &quot;S&quot;]].compute()) - offset
 
-<span class="n">ic</span> <span class="o">=</span> <span class="n">substate</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t0</span><span class="p">)</span>
-<span class="n">write_to_txt</span><span class="p">(</span><span class="n">ic</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_ic_&quot;</span><span class="p">)</span>
+ic = substate.cf.sel(time=t0)
+write_to_txt(ic.compute(), outdir=outdir, prefix=&quot;ocean_ic_&quot;)
 </pre></div>
 </div>
 </div>
@@ -37896,7 +37897,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 <h3>restoring<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">write_to_txt</span><span class="p">(</span><span class="n">interleave_time</span><span class="p">(</span><span class="n">substate</span><span class="p">,</span> <span class="n">t0</span><span class="p">),</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_colfrc_&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>write_to_txt(interleave_time(substate, t0), outdir=outdir, prefix=&quot;ocean_colfrc_&quot;)
 </pre></div>
 </div>
 </div>
@@ -37906,27 +37907,27 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 <h3>surface forcing<a class="headerlink" href="#surface-forcing" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">frc</span> <span class="o">=</span> <span class="n">subds</span><span class="p">[[</span><span class="s2">&quot;sustr&quot;</span><span class="p">,</span> <span class="s2">&quot;svstr&quot;</span><span class="p">,</span> <span class="s2">&quot;swrad&quot;</span><span class="p">,</span> <span class="s2">&quot;ssflux&quot;</span><span class="p">]]</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;shfluxminusswrad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subds</span><span class="p">[</span><span class="s2">&quot;shflux&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">frc</span><span class="p">[</span><span class="s2">&quot;swrad&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>frc = subds[[&quot;sustr&quot;, &quot;svstr&quot;, &quot;swrad&quot;, &quot;ssflux&quot;]]
+frc[&quot;shfluxminusswrad&quot;] = subds[&quot;shflux&quot;] - frc[&quot;swrad&quot;]
 
-<span class="n">time</span> <span class="o">=</span> <span class="n">subds</span><span class="o">.</span><span class="n">indexes</span><span class="p">[</span><span class="s2">&quot;ocean_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<span class="n">frc</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ocean_time&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;timedelta64[s]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">))</span>
-<span class="n">frc</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+time = subds.indexes[&quot;ocean_time&quot;].to_numpy()
+frc[&quot;time&quot;] = (&quot;ocean_time&quot;, (time - t0).astype(&quot;timedelta64[s]&quot;).astype(float))
+frc.load()
 
-<span class="n">write_to_txt</span><span class="p">(</span><span class="n">frc</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_frc_&quot;</span><span class="p">)</span>
+write_to_txt(frc, outdir=outdir, prefix=&quot;ocean_frc_&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test flux calculations</span>
-<span class="n">shflux2</span> <span class="o">=</span> <span class="n">subds</span><span class="p">[[</span><span class="s2">&quot;lwrad&quot;</span><span class="p">,</span> <span class="s2">&quot;latent&quot;</span><span class="p">,</span> <span class="s2">&quot;sensible&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;variable&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Test flux calculations
+shflux2 = subds[[&quot;lwrad&quot;, &quot;latent&quot;, &quot;sensible&quot;]].to_array().sum(&quot;variable&quot;)
 
-<span class="n">subds</span><span class="o">.</span><span class="n">swrad</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">subds</span><span class="o">.</span><span class="n">shflux</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="p">(</span><span class="o">-</span><span class="n">subds</span><span class="o">.</span><span class="n">swrad</span> <span class="o">+</span> <span class="n">subds</span><span class="o">.</span><span class="n">shflux</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
-<span class="p">(</span><span class="n">shflux2</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+subds.swrad.plot()
+subds.shflux.plot()
+(-subds.swrad + subds.shflux).plot(marker=&#39;x&#39;)
+(shflux2).plot()
 </pre></div>
 </div>
 </div>

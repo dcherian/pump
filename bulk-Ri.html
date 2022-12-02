@@ -545,24 +545,24 @@ title="Print to PDF"
 <p>Consolidating code for bulk Ri paper</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%load_ext watermark
 
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+import dcpy
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import xarray as xr
 
-<span class="kn">import</span> <span class="nn">facetgrid</span>
-<span class="kn">import</span> <span class="nn">pump</span>
+import facetgrid
+import pump
 
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+mpl.rcParams[&quot;savefig.dpi&quot;] = 300
+mpl.rcParams[&quot;savefig.bbox&quot;] = &quot;tight&quot;
+mpl.rcParams[&quot;figure.dpi&quot;] = 140
 
-<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+xr.set_options(keep_attrs=True)
 
-<span class="o">%</span><span class="k">watermark</span> -iv
+%watermark -iv
 </pre></div>
 </div>
 </div>
@@ -578,14 +578,14 @@ numpy     : 1.20.1
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import dask
+import distributed
+import ncar_jobqueue
 
-<span class="n">cluster</span> <span class="o">=</span> <span class="n">ncar_jobqueue</span><span class="o">.</span><span class="n">NCARCluster</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="s2">&quot;ncgd0011&quot;</span><span class="p">)</span>
-<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
-<span class="n">client</span>
+cluster = ncar_jobqueue.NCARCluster(project=&quot;ncgd0011&quot;)
+cluster.scale(4)
+client = distributed.Client(cluster)
+client
 </pre></div>
 </div>
 </div>
@@ -618,17 +618,17 @@ numpy     : 1.20.1
 <h2>Read datasets<a class="headerlink" href="#read-datasets" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mimoc</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">oceans</span><span class="o">.</span><span class="n">read_mimoc</span><span class="p">(</span><span class="s2">&quot;/home/deepak/datasets/mimoc/&quot;</span><span class="p">)</span>
-<span class="n">mimoc</span><span class="p">[</span><span class="s2">&quot;longitude&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mimoc</span><span class="o">.</span><span class="n">longitude</span> <span class="o">-</span> <span class="mi">360</span>
-<span class="n">mimocmld</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">mimoc</span><span class="o">.</span><span class="n">DEPTH_MIXED_LAYER</span><span class="o">.</span><span class="n">coarsen</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;pad&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">220</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mimoc = dcpy.oceans.read_mimoc(&quot;/home/deepak/datasets/mimoc/&quot;)
+mimoc[&quot;longitude&quot;] = mimoc.longitude - 360
+mimocmld = (
+    mimoc.DEPTH_MIXED_LAYER.coarsen(longitude=5, boundary=&quot;pad&quot;)
+    .mean()
+    .sel(longitude=slice(-220, -80))
+    .sel(latitude=0, method=&quot;nearest&quot;)
+    .max(&quot;time&quot;)
+)
 
-<span class="n">mimocmld</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+mimocmld.plot()
 </pre></div>
 </div>
 </div>
@@ -645,12 +645,12 @@ numpy     : 1.20.1
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">johnson</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_johnson</span><span class="p">(</span><span class="s2">&quot;~/datasets/johnson.cdf&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">johnson</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
-<span class="n">johnson</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">johnson</span><span class="p">)</span>
-<span class="n">johnson</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Johnson&quot;</span>
-<span class="n">johnson</span><span class="p">[</span><span class="s2">&quot;mld&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mimocmld</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">johnson</span><span class="o">.</span><span class="n">longitude</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="n">johnson</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>johnson = pump.obs.read_johnson(&quot;~/datasets/johnson.cdf&quot;).sel(latitude=0)
+johnson[&quot;eucmax&quot;] = pump.get_euc_max(johnson.u)
+johnson = pump.calc.estimate_euc_depth_terms(johnson)
+johnson.attrs[&quot;name&quot;] = &quot;Johnson&quot;
+johnson[&quot;mld&quot;] = mimocmld.interp(longitude=johnson.longitude.values).load()
+johnson.load()
 </pre></div>
 </div>
 </div>
@@ -1337,8 +1337,8 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_zarr</span><span class="p">(</span><span class="s2">&quot;ancillary&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;Ri&quot;</span><span class="p">:</span> <span class="s2">&quot;Rig&quot;</span><span class="p">})</span>
-<span class="n">tao</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao = pump.obs.read_tao_zarr(&quot;ancillary&quot;).rename({&quot;Ri&quot;: &quot;Rig&quot;})
+tao
 </pre></div>
 </div>
 </div>
@@ -2720,12 +2720,12 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">median_Rig_z</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">tao</span><span class="p">[[</span><span class="s2">&quot;Rig&quot;</span><span class="p">,</span> <span class="s2">&quot;Rig_T&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;time.season&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DJF&quot;</span><span class="p">,</span> <span class="s2">&quot;MAM&quot;</span><span class="p">,</span> <span class="s2">&quot;JJA&quot;</span><span class="p">,</span> <span class="s2">&quot;SON&quot;</span><span class="p">])</span>
-<span class="p">)</span>
-<span class="n">median_Rig_z</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>median_Rig_z = (
+    tao[[&quot;Rig&quot;, &quot;Rig_T&quot;]].groupby(&quot;time.season&quot;)
+    .apply(lambda x: x.chunk({&quot;time&quot;: -1}).quantile(q=0.5, dim=&quot;time&quot;))
+    .reindex(season=[&quot;DJF&quot;, &quot;MAM&quot;, &quot;JJA&quot;, &quot;SON&quot;])
+)
+median_Rig_z.load()
 </pre></div>
 </div>
 </div>
@@ -3166,21 +3166,21 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_seasonal</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">tao</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;time.season&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;DJF&quot;</span><span class="p">,</span> <span class="s2">&quot;MAM&quot;</span><span class="p">,</span> <span class="s2">&quot;JJA&quot;</span><span class="p">,</span> <span class="s2">&quot;SON&quot;</span><span class="p">])</span>
-<span class="p">)</span>
-<span class="n">tao_seasonal</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">tao_seasonal</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
-<span class="n">tao_seasonal</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao_seasonal</span><span class="p">)</span>
-<span class="n">tao_seasonal</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TAO&quot;</span>
-<span class="n">tao_seasonal</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_seasonal = (
+    tao.groupby(&quot;time.season&quot;)
+    .mean()
+    .reindex(season=[&quot;DJF&quot;, &quot;MAM&quot;, &quot;JJA&quot;, &quot;SON&quot;])
+)
+tao_seasonal[&quot;eucmax&quot;] = pump.calc.get_euc_max(tao_seasonal.u)
+tao_seasonal = pump.calc.estimate_euc_depth_terms(tao_seasonal)
+tao_seasonal.attrs[&quot;name&quot;] = &quot;TAO&quot;
+tao_seasonal.load()
 
-<span class="c1"># is this useful?</span>
-<span class="c1">#tao_clim[&quot;Rig&quot;] = pump.calc.calc_tao_ri(</span>
-<span class="c1">#    tao_clim[[&quot;u&quot;, &quot;v&quot;]].expand_dims(time=1), </span>
-<span class="c1">#    tao_clim[&quot;T&quot;].expand_dims(time=1)</span>
-<span class="c1">#)</span>
+# is this useful?
+#tao_clim[&quot;Rig&quot;] = pump.calc.calc_tao_ri(
+#    tao_clim[[&quot;u&quot;, &quot;v&quot;]].expand_dims(time=1), 
+#    tao_clim[&quot;T&quot;].expand_dims(time=1)
+#)
 </pre></div>
 </div>
 </div>
@@ -3837,17 +3837,17 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_clim</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">tao_clim</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">tao_clim</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
-<span class="n">tao_clim</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao_clim</span><span class="p">)</span>
-<span class="n">tao_clim</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TAO&quot;</span>
-<span class="n">tao_clim</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_clim = tao.mean(&quot;time&quot;)
+tao_clim[&quot;eucmax&quot;] = pump.calc.get_euc_max(tao_clim.u)
+tao_clim = pump.calc.estimate_euc_depth_terms(tao_clim)
+tao_clim.attrs[&quot;name&quot;] = &quot;TAO&quot;
+tao_clim.load()
 
-<span class="c1"># is this useful?</span>
-<span class="n">tao_clim</span><span class="p">[</span><span class="s2">&quot;Rig&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">calc_tao_ri</span><span class="p">(</span>
-    <span class="n">tao_clim</span><span class="p">[[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> 
-    <span class="n">tao_clim</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">)</span>
+# is this useful?
+tao_clim[&quot;Rig&quot;] = pump.calc.calc_tao_ri(
+    tao_clim[[&quot;u&quot;, &quot;v&quot;]].expand_dims(time=1), 
+    tao_clim[&quot;T&quot;].expand_dims(time=1)
+)
 </pre></div>
 </div>
 </div>
@@ -3862,8 +3862,8 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_zeuc</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="s2">&quot;tao-zeuc.zarr&quot;</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">tao_zeuc</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_zeuc = xr.open_zarr(&quot;tao-zeuc.zarr&quot;, consolidated=True)
+tao_zeuc
 </pre></div>
 </div>
 </div>
@@ -4956,9 +4956,9 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_q</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataarray</span><span class="p">(</span><span class="s2">&quot;tao-hourly-Ri-seasonal-percentiles.nc&quot;</span><span class="p">)</span>
-<span class="n">Ri_q</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ri_g$&quot;</span>
-<span class="n">Ri_q</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>Ri_q = xr.load_dataarray(&quot;tao-hourly-Ri-seasonal-percentiles.nc&quot;)
+Ri_q.attrs[&quot;long_name&quot;] = &quot;$Ri_g$&quot;
+Ri_q
 </pre></div>
 </div>
 </div>
@@ -5435,13 +5435,13 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">median_Rig</span> <span class="o">=</span> <span class="n">Ri_q</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zeuc</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-<span class="n">median_Rig</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z_above_euc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">median_Rig</span><span class="o">.</span><span class="n">zeuc</span> <span class="o">+</span> <span class="n">johnson</span><span class="o">.</span><span class="n">eucmax</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span>
-    <span class="n">longitude</span><span class="o">=</span><span class="n">median_Rig</span><span class="o">.</span><span class="n">longitude</span><span class="o">.</span><span class="n">values</span>
-<span class="p">)</span>
-<span class="n">median_Rig</span><span class="o">.</span><span class="n">z_above_euc</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Height above mean EUC max&quot;</span>
-<span class="n">median_Rig</span><span class="o">.</span><span class="n">z_above_euc</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
-<span class="n">median_Rig</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>median_Rig = Ri_q.sel(quantile=0.5, zeuc=slice(0, None))
+median_Rig.coords[&quot;z_above_euc&quot;] = median_Rig.zeuc + johnson.eucmax.interp(
+    longitude=median_Rig.longitude.values
+)
+median_Rig.z_above_euc.attrs[&quot;long_name&quot;] = &quot;Height above mean EUC max&quot;
+median_Rig.z_above_euc.attrs[&quot;units&quot;] = &quot;m&quot;
+median_Rig
 </pre></div>
 </div>
 </div>
@@ -5981,15 +5981,15 @@ Attributes:
 <p>Looks like the linear velocity profile is a decent assumption east of 195W, though 170W &amp; 155W are just OK.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(1, 2, sharey=True)
 
-<span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">u</span> <span class="o">+</span> <span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">longitude</span><span class="o">/</span><span class="mi">50</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="n">add_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">longitude</span><span class="o">/</span><span class="mi">1000</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="n">add_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">johnson</span><span class="o">.</span><span class="n">longitude</span><span class="o">.</span><span class="n">values</span><span class="p">)),</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;u (displaced)&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;$u_z$ (displaced)&#39;</span><span class="p">)</span>
+(johnson.u + (johnson.longitude/50)).plot.line(hue=&#39;longitude&#39;, y=&#39;depth&#39;, add_legend=False, ax=ax[0])
+(johnson.u.differentiate(&#39;depth&#39;) + (johnson.longitude/1000)).plot.line(hue=&#39;longitude&#39;, y=&#39;depth&#39;, add_legend=False, ax=ax[1])
+plt.gcf().legend(list(map(str, johnson.longitude.values)), title=&#39;longitude&#39;, loc=&#39;right&#39;)
+plt.gcf().set_size_inches((8, 4))
+plt.tight_layout()
+ax[0].set_title(&#39;u (displaced)&#39;)
+ax[1].set_title(&#39;$u_z$ (displaced)&#39;)
 </pre></div>
 </div>
 </div>
@@ -6002,38 +6002,38 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mld_interp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">mimocmld</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">johnson</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="n">mld_interp</span><span class="o">.</span><span class="n">loc</span><span class="p">[{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">195</span><span class="p">}]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">70</span>
-<span class="n">mld_interp</span><span class="o">.</span><span class="n">loc</span><span class="p">[{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">180</span><span class="p">}]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">60</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mld_interp = -1 * mimocmld.interp(longitude=johnson.longitude).load()
+mld_interp.loc[{&quot;longitude&quot;: -195}] = -70
+mld_interp.loc[{&quot;longitude&quot;: -180}] = -60
 
 
-<span class="k">def</span> <span class="nf">plot_mld_eucmax</span><span class="p">(</span><span class="n">fg</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">warnings</span>
+def plot_mld_eucmax(fg):
+    import warnings
 
-    <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fg</span><span class="o">.</span><span class="n">name_dicts</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
-        <span class="n">mld</span> <span class="o">=</span> <span class="n">mld_interp</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
-        <span class="n">eucmax</span> <span class="o">=</span> <span class="n">johnson</span><span class="o">.</span><span class="n">eucmax</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">loc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-            <span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">([</span><span class="n">mld</span><span class="p">,</span> <span class="n">eucmax</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">fg</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="n">mld</span><span class="p">,</span> <span class="n">eucmax</span><span class="p">])</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">mld</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">eucmax</span><span class="o">.</span><span class="n">data</span><span class="p">],</span>
-                <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
-                <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-
-<span class="n">subset</span> <span class="o">=</span> <span class="n">johnson</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">95</span><span class="p">),</span> <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">))</span>
-<span class="n">fg</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">fg</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-<span class="n">plot_mld_eucmax</span><span class="p">(</span><span class="n">fg</span><span class="p">)</span>
+    for loc, ax in zip(fg.name_dicts.flat, fg.axes.flat):
+        mld = mld_interp.sel(loc)
+        eucmax = johnson.eucmax.sel(loc)
+        if loc is None:
+            continue
+        with warnings.catch_warnings():
+            warnings.simplefilter(&quot;ignore&quot;)
+            dcpy.plots.liney([mld, eucmax], ax=ax)
+            ax.plot(
+                fg.data.sel(loc).interp(depth=[mld, eucmax]).data,
+                [mld.data, eucmax.data],
+                color=&quot;k&quot;,
+                ls=&quot;--&quot;,
+            )
 
 
-<span class="n">fg</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">dens</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">plot_mld_eucmax</span><span class="p">(</span><span class="n">fg</span><span class="p">)</span>
+subset = johnson.sel(longitude=slice(-200, -95), depth=slice(-200))
+fg = subset.u.plot.line(col=&quot;longitude&quot;, y=&quot;depth&quot;, col_wrap=4)
+fg.map(lambda: plt.axvline(0))
+plot_mld_eucmax(fg)
+
+
+fg = subset.dens.plot.line(col=&quot;longitude&quot;, y=&quot;depth&quot;, col_wrap=4)
+plot_mld_eucmax(fg)
 </pre></div>
 </div>
 </div>
@@ -6051,35 +6051,35 @@ Attributes:
 <h2>median Ri_g profiles in depth &amp; euc space<a class="headerlink" href="#median-ri-g-profiles-in-depth-euc-space" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">sm13_cycler</span><span class="p">):</span>
-    <span class="n">fg</span> <span class="o">=</span> <span class="n">facetgrid</span><span class="o">.</span><span class="n">facetgrid</span><span class="p">(</span>
-        <span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;euc&quot;</span><span class="p">],</span>
-        <span class="n">median_Rig_z</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">xr</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
-        <span class="n">plot_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
-            <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">],</span>
-            <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-            <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;season&quot;</span><span class="p">,</span>
-            <span class="n">add_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">),</span>
-    <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with mpl.rc_context(pump.plot.sm13_cycler):
+    fg = facetgrid.facetgrid(
+        [&quot;depth&quot;, &quot;euc&quot;],
+        median_Rig_z.longitude,
+        func=xr.plot.line,
+        plot_kwargs=dict(
+            ylim=[-150, 20],
+            xlim=[0.1, 3.5],
+            xscale=&quot;log&quot;,
+            _labels=False,
+            hue=&quot;season&quot;,
+            add_legend=False,
+        ),
+    )
 
-<span class="n">fg</span><span class="o">.</span><span class="n">map_row</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">median_Rig_z</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="n">fg</span><span class="o">.</span><span class="n">map_row</span><span class="p">(</span><span class="s2">&quot;euc&quot;</span><span class="p">,</span> <span class="n">median_Rig</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">median_Rig</span><span class="o">.</span><span class="n">num_obs</span> <span class="o">&gt;</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">24</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;z_above_euc&quot;</span><span class="p">)</span>
+fg.map_row(&quot;depth&quot;, median_Rig_z, y=&quot;depth&quot;)
+fg.map_row(&quot;euc&quot;, median_Rig.where(median_Rig.num_obs &gt; 30 * 24), y=&quot;z_above_euc&quot;)
 
-<span class="n">fg</span><span class="o">.</span><span class="n">set_xlabels</span><span class="p">(</span><span class="s2">&quot;$Ri_g$&quot;</span><span class="p">)</span>
-<span class="n">fg</span><span class="o">.</span><span class="n">set_ylabels</span><span class="p">([</span><span class="s2">&quot;depth [m]&quot;</span><span class="p">,</span> <span class="s2">&quot;Height above $z_</span><span class="si">{EUC}</span><span class="s2">$ [m]&quot;</span><span class="p">])</span>
-<span class="n">fg</span><span class="o">.</span><span class="n">set_col_labels</span><span class="p">([</span><span class="s2">&quot;156°E&quot;</span><span class="p">,</span> <span class="s2">&quot;165°E&quot;</span><span class="p">,</span> <span class="s2">&quot;170°W&quot;</span><span class="p">,</span> <span class="s2">&quot;140°W&quot;</span><span class="p">,</span> <span class="s2">&quot;110°W&quot;</span><span class="p">])</span>
-<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fg</span><span class="o">.</span><span class="n">handles</span><span class="p">[</span><span class="s2">&quot;euc&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">median_Rig</span><span class="o">.</span><span class="n">season</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+fg.set_xlabels(&quot;$Ri_g$&quot;)
+fg.set_ylabels([&quot;depth [m]&quot;, &quot;Height above $z_{EUC}$ [m]&quot;])
+fg.set_col_labels([&quot;156°E&quot;, &quot;165°E&quot;, &quot;170°W&quot;, &quot;140°W&quot;, &quot;110°W&quot;])
+fg.axes[-1, -1].legend(fg.handles[&quot;euc&quot;][-1], median_Rig.season.values)
 
-<span class="p">[</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">linex</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
-<span class="p">[</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
+[dcpy.plots.linex(0.25, lw=0.5, ax=ax) for ax in fg.axes.flat]
+[dcpy.plots.liney(0, lw=0.5, ax=ax) for ax in fg.axes.flat]
 
-<span class="n">fg</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">pub_fig_width</span><span class="p">(</span><span class="s2">&quot;jpo&quot;</span><span class="p">,</span> <span class="s2">&quot;two column&quot;</span><span class="p">),</span> <span class="mi">5</span><span class="p">))</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">label_subplots</span><span class="p">(</span><span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
-<span class="c1"># fg.fig.savefig(&quot;../images/rig-profiles-depth-zeuc.png&quot;)</span>
+fg.fig.set_size_inches((dcpy.plots.pub_fig_width(&quot;jpo&quot;, &quot;two column&quot;), 5))
+dcpy.plots.label_subplots(fg.axes.flat, fontsize=&quot;small&quot;)
+# fg.fig.savefig(&quot;../images/rig-profiles-depth-zeuc.png&quot;)
 </pre></div>
 </div>
 </div>
@@ -6101,9 +6101,9 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">(</span><span class="n">sm13_colors</span><span class="p">):</span>
-    <span class="n">tao_seasonal</span><span class="o">.</span><span class="n">Rib</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;season&quot;</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with mpl.rc_context(sm13_colors):
+    tao_seasonal.Rib.plot.line(hue=&quot;season&quot;, yscale=&quot;log&quot;, marker=&quot;o&quot;)
+dcpy.plots.liney(1)
 </pre></div>
 </div>
 </div>
@@ -6116,8 +6116,8 @@ Attributes:
 <h2>TAO seasonal variations<a class="headerlink" href="#tao-seasonal-variations" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">(</span><span class="n">sm13_colors</span><span class="p">):</span>
-    <span class="n">tao_seasonal</span><span class="o">.</span><span class="n">eucmax</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;season&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with mpl.rc_context(sm13_colors):
+    tao_seasonal.eucmax.plot.line(hue=&quot;season&quot;, marker=&#39;o&#39;)
 </pre></div>
 </div>
 </div>
@@ -6127,7 +6127,7 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span><span class="n">tao_seasonal</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s2">&quot;JJA&quot;</span><span class="p">),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = pump.plot.plot_bulk_Ri_diagnosis(tao_seasonal.sel(season=&quot;JJA&quot;), ls=&quot;none&quot;, marker=&quot;s&quot;, **kwargs)
 </pre></div>
 </div>
 </div>
@@ -6137,7 +6137,7 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span><span class="n">tao_seasonal</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">season</span><span class="o">=</span><span class="s2">&quot;MAM&quot;</span><span class="p">),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = pump.plot.plot_bulk_Ri_diagnosis(tao_seasonal.sel(season=&quot;MAM&quot;), ls=&quot;none&quot;, marker=&quot;s&quot;, **kwargs)
 </pre></div>
 </div>
 </div>
@@ -6150,13 +6150,13 @@ Attributes:
 <h2>fractional contributions<a class="headerlink" href="#fractional-contributions" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_zeuc</span> <span class="o">=</span> <span class="n">tao_zeuc</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tao_zeuc</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span>
-<span class="n">Ri_q_annual</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">tao_zeuc</span><span class="o">.</span><span class="n">Rig</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">zeuc</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;zeuc&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span>
-    <span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;zeuc&quot;</span><span class="p">])</span>
-<span class="p">)</span>
-<span class="n">Ri_q_annual</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_zeuc = tao_zeuc.where(tao_zeuc.count(&quot;time&quot;) &gt; 30 * 24)
+Ri_q_annual = (
+    tao_zeuc.Rig.sel(zeuc=slice(0, None))
+    .chunk({&quot;time&quot;: -1, &quot;zeuc&quot;: -1})
+    .quantile(q=[0.25, 0.5, 0.75], dim=[&quot;time&quot;, &quot;zeuc&quot;])
+)
+Ri_q_annual.load()
 </pre></div>
 </div>
 </div>
@@ -6524,37 +6524,37 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;buoy&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>kwargs = {&quot;buoy&quot;: False}
 
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span><span class="n">tao_clim</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="c1"># pump.plot.plot_bulk_Ri_diagnosis(tao_daily, ls=&quot;none&quot;, marker= &#39;o&#39;, f=f, ax=ax)</span>
+f, ax = pump.plot.plot_bulk_Ri_diagnosis(tao_clim.isel(longitude=slice(1, None)), ls=&quot;none&quot;, marker=&quot;s&quot;, **kwargs)
+# pump.plot.plot_bulk_Ri_diagnosis(tao_daily, ls=&quot;none&quot;, marker= &#39;o&#39;, f=f, ax=ax)
 
-<span class="c1"># take out 2 westernmost points</span>
-<span class="n">johnson_proc</span> <span class="o">=</span> <span class="n">johnson</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-<span class="n">johnson_proc</span><span class="p">[</span><span class="s2">&quot;longitude&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">johnson_proc</span><span class="o">.</span><span class="n">longitude</span> <span class="o">+</span> <span class="mf">2.05</span>
+# take out 2 westernmost points
+johnson_proc = johnson.sel(longitude=slice(-200, None))
+johnson_proc[&quot;longitude&quot;] = johnson_proc.longitude + 2.05
 
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span>
-    <span class="n">johnson_proc</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">)</span>
-<span class="c1"># ri.sel(zeuc=slice(0,None)).mean(&quot;zeuc&quot;).plot(ax=ax[&quot;Rib&quot;], color=&#39;k&#39;)</span>
+pump.plot.plot_bulk_Ri_diagnosis(
+    johnson_proc, ls=&quot;none&quot;, marker=&quot;o&quot;, f=f, ax=ax, **kwargs
+)
+# ri.sel(zeuc=slice(0,None)).mean(&quot;zeuc&quot;).plot(ax=ax[&quot;Rib&quot;], color=&#39;k&#39;)
 
-<span class="c1"># dcpy.plots.fill_between(</span>
-<span class="c1">#    Ri_q_annual.sel(quantile=[0.25, 0.75]),</span>
-<span class="c1">#    axis=&quot;y&quot;,</span>
-<span class="c1">#    y=&quot;quantile&quot;,</span>
-<span class="c1">#    x=&quot;longitude&quot;,</span>
-<span class="c1">#    alpha=0.1,</span>
-<span class="c1">#    ax=ax[&quot;Rib&quot;],</span>
-<span class="c1">#    color=&quot;k&quot;,</span>
-<span class="c1"># )</span>
-<span class="c1"># Ri_q_annual.sel(quantile=0.5).plot(color=&quot;k&quot;, ax=ax[&quot;Rib&quot;], _labels=False)</span>
+# dcpy.plots.fill_between(
+#    Ri_q_annual.sel(quantile=[0.25, 0.75]),
+#    axis=&quot;y&quot;,
+#    y=&quot;quantile&quot;,
+#    x=&quot;longitude&quot;,
+#    alpha=0.1,
+#    ax=ax[&quot;Rib&quot;],
+#    color=&quot;k&quot;,
+# )
+# Ri_q_annual.sel(quantile=0.5).plot(color=&quot;k&quot;, ax=ax[&quot;Rib&quot;], _labels=False)
 
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;contrib&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;Rib&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+ax[&quot;contrib&quot;].set_xlim((-200, None))
+ax[&quot;Rib&quot;].set_title(&quot;&quot;)
 
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;Rib&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;TAO&quot;</span><span class="p">,</span> <span class="s2">&quot;Johnson&quot;</span><span class="p">],</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">pub_fig_width</span><span class="p">(</span><span class="s2">&quot;jpo&quot;</span><span class="p">,</span> <span class="s2">&quot;two column&quot;</span><span class="p">),</span> <span class="mi">7</span><span class="p">)</span>
-<span class="c1"># f.savefig(&quot;../images/bulk-ri-fractional-contrib.png&quot;)</span>
+ax[&quot;Rib&quot;].legend([&quot;TAO&quot;, &quot;Johnson&quot;], ncol=2)
+f.set_size_inches(dcpy.plots.pub_fig_width(&quot;jpo&quot;, &quot;two column&quot;), 7)
+# f.savefig(&quot;../images/bulk-ri-fractional-contrib.png&quot;)
 </pre></div>
 </div>
 </div>
@@ -6572,17 +6572,17 @@ Coordinates:
 <h3>Ri profiles<a class="headerlink" href="#ri-profiles" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">(</span><span class="n">sm13_colors</span><span class="p">):</span>
-    <span class="n">fg</span> <span class="o">=</span> <span class="n">median_Rig_z</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-        <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span>
-        <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;season&quot;</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-        <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">],</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="n">fg</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">linex</span><span class="p">([</span><span class="mf">0.25</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with mpl.rc_context(sm13_colors):
+    fg = median_Rig_z.squeeze().plot.line(
+        col=&quot;longitude&quot;,
+        hue=&quot;season&quot;,
+        y=&quot;depth&quot;,
+        ylim=[-150, 0],
+        xlim=[0.1, 3.5],
+        xscale=&quot;log&quot;,
+    )
+fg.map(lambda: dcpy.plots.linex([0.25], lw=0.75))
+plt.gcf().set_size_inches((8, 4))
 </pre></div>
 </div>
 </div>
@@ -6592,19 +6592,19 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rc_context</span><span class="p">(</span><span class="n">sm13_colors</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with mpl.rc_context(sm13_colors):
 
-    <span class="n">fg</span> <span class="o">=</span> <span class="n">median_Rig</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">median_Rig</span><span class="o">.</span><span class="n">num_obs</span> <span class="o">&gt;</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-        <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span>
-        <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;season&quot;</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;z_above_euc&quot;</span><span class="p">,</span>
-        <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">],</span>
-        <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    fg = median_Rig.where(median_Rig.num_obs &gt; 30 * 24).plot.line(
+        col=&quot;longitude&quot;,
+        hue=&quot;season&quot;,
+        y=&quot;z_above_euc&quot;,
+        xlim=[1e-1, 3.5],
+        ylim=[-150, 5],
+        xscale=&quot;log&quot;,
+    )
 
-<span class="n">fg</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">linex</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.75</span><span class="p">))</span>
-<span class="n">fg</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+fg.map(lambda: dcpy.plots.linex(0.25, lw=0.75))
+fg.fig.set_size_inches((10, 4))
 </pre></div>
 </div>
 </div>
@@ -6622,11 +6622,11 @@ Coordinates:
 <p>Also not bad!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_clim</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">estimate_bulk_Ri_terms</span><span class="p">(</span><span class="n">tao_clim</span><span class="p">)</span>
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span><span class="n">tao_clim</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_clim = pump.calc.estimate_bulk_Ri_terms(tao_clim)
+f, ax = pump.plot.plot_bulk_Ri_diagnosis(tao_clim, ls=&quot;none&quot;, marker=&quot;^&quot;)
 
-<span class="n">tao_clim</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">estimate_bulk_Ri_terms</span><span class="p">(</span><span class="n">tao_clim</span><span class="p">,</span> <span class="n">use_mld</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span><span class="n">tao_clim</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
+tao_clim = pump.calc.estimate_bulk_Ri_terms(tao_clim, use_mld=False)
+pump.plot.plot_bulk_Ri_diagnosis(tao_clim, ls=&quot;none&quot;, marker=&quot;o&quot;, f=f, ax=ax);
 </pre></div>
 </div>
 </div>
@@ -6645,11 +6645,11 @@ Coordinates:
 <p>Triangles and circles agree pretty closely so this is not bad</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">johnson</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">estimate_bulk_Ri_terms</span><span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="kc">None</span><span class="p">)))</span>
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span><span class="n">johnson</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>johnson = pump.calc.estimate_bulk_Ri_terms(johnson.isel(longitude=slice(2,None)))
+f, ax = pump.plot.plot_bulk_Ri_diagnosis(johnson, ls=&quot;none&quot;, marker=&quot;^&quot;)
 
-<span class="n">johnson</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">estimate_bulk_Ri_terms</span><span class="p">(</span><span class="n">johnson</span><span class="p">,</span> <span class="n">use_mld</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_bulk_Ri_diagnosis</span><span class="p">(</span><span class="n">johnson</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
+johnson = pump.calc.estimate_bulk_Ri_terms(johnson, use_mld=False)
+pump.plot.plot_bulk_Ri_diagnosis(johnson, ls=&quot;none&quot;, marker=&quot;o&quot;, f=f, ax=ax);
 </pre></div>
 </div>
 </div>

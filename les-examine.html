@@ -536,30 +536,30 @@ title="Print to PDF"
 <h1>LES first look<a class="headerlink" href="#les-first-look" title="Permalink to this headline">#</a></h1>
 <div class="cell tag_hide-cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">load_ext</span> snakeviz
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%load_ext watermark
+%load_ext snakeviz
+%matplotlib inline
 
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
+import glob
+import os
 
-<span class="kn">import</span> <span class="nn">cf_xarray</span> <span class="k">as</span> <span class="nn">cfxr</span>
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">flox.xarray</span>
-<span class="kn">import</span> <span class="nn">hvplot.xarray</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
+import cf_xarray as cfxr
+import dcpy
+import distributed
+import flox.xarray
+import hvplot.xarray
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import xarray as xr
+from IPython.display import Image
 
-<span class="kn">import</span> <span class="nn">pump</span>
+import pump
 
-<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+xr.set_options(keep_attrs=True)
+mpl.rcParams[&quot;figure.dpi&quot;] = 140
 
-<span class="o">%</span><span class="k">watermark</span> -iv
+%watermark -iv
 </pre></div>
 </div>
 </div>
@@ -2456,12 +2456,12 @@ matplotlib : 3.5.1
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># horizontally averaged file</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">les</span><span class="o">.</span><span class="n">read_les_file</span><span class="p">(</span>
-    <span class="s2">&quot;../datasets/les/ROMS_PSH_6HRLIN_0N140W_360x360x216_22OCT2020.nc&quot;</span>
-<span class="p">)</span>
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;-tempw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">ds</span><span class="o">.</span><span class="n">tempw</span>
-<span class="n">ds</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># horizontally averaged file
+ds = pump.les.read_les_file(
+    &quot;../datasets/les/ROMS_PSH_6HRLIN_0N140W_360x360x216_22OCT2020.nc&quot;
+)
+ds[&quot;-tempw&quot;] = -ds.tempw
+ds
 </pre></div>
 </div>
 </div>
@@ -3531,10 +3531,10 @@ Ri_f &amp;= \frac{F_b}{F_b + ε}<br />
 \end{align*}</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">Rif</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">levels</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">)</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">Reb</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e2</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(2, 1, sharex=True, sharey=True, constrained_layout=True)
+ds.Rif.cf.plot(vmin=0, vmax=0.35, ax=ax[0], levels=21, cmap=mpl.cm.Spectral_r)
+ds.Reb.cf.plot(ax=ax[1], norm=mpl.colors.LogNorm(1e2, 1e5), cmap=mpl.cm.Spectral_r)
+f.set_size_inches((8, 5))
 </pre></div>
 </div>
 </div>
@@ -3544,7 +3544,7 @@ Ri_f &amp;= \frac{F_b}{F_b + ε}<br />
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">1025</span> <span class="o">*</span>  <span class="mi">4200</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">KT</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(1025 *  4200 * ds.KT * ds.dTdz).mean(&quot;time&quot;).cf.plot()
 </pre></div>
 </div>
 </div>
@@ -3618,12 +3618,12 @@ F_T = \overline{κ_{sgs}T_z} - \overline{wT}
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">1025</span> <span class="o">*</span> <span class="mi">4200</span> <span class="o">*</span> <span class="n">ds</span><span class="p">[[</span><span class="s2">&quot;kappadtdz&quot;</span><span class="p">,</span> <span class="s2">&quot;-tempw&quot;</span><span class="p">,</span> <span class="s2">&quot;FT&quot;</span><span class="p">]])</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="s2">&quot;variable&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">row</span><span class="o">=</span><span class="s2">&quot;variable&quot;</span><span class="p">,</span>
-    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;aspect&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
-    <span class="n">aspect</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(1025 * 4200 * ds[[&quot;kappadtdz&quot;, &quot;-tempw&quot;, &quot;FT&quot;]]).to_array(&quot;variable&quot;).cf.plot(
+    row=&quot;variable&quot;,
+    robust=True,
+    cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;, &quot;shrink&quot;: 0.8, &quot;aspect&quot;: 30},
+    aspect=1.6,
+)
 </pre></div>
 </div>
 </div>
@@ -3642,14 +3642,14 @@ for some averaging timescale <span class="math notranslate nohighlight">\(\widet
 <p>Which makes sense because then <span class="math notranslate nohighlight">\(F_T=0\)</span> and the eddies are damped.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
-    <span class="n">ds</span><span class="p">[[</span><span class="s2">&quot;kappadtdz&quot;</span><span class="p">,</span> <span class="s2">&quot;-tempw&quot;</span><span class="p">]]</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;3H&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;kappadtdz&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;-tempw&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">line45</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(
+    ds[[&quot;kappadtdz&quot;, &quot;-tempw&quot;]]
+    .mean(&quot;z&quot;)
+    .resample(time=&quot;3H&quot;)
+    .mean()
+    .plot.scatter(x=&quot;kappadtdz&quot;, y=&quot;-tempw&quot;, marker=&quot;.&quot;, alpha=0.1)
+)
+dcpy.plots.line45()
 </pre></div>
 </div>
 </div>
@@ -3667,10 +3667,10 @@ for some averaging timescale <span class="math notranslate nohighlight">\(\widet
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">)</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">KT</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">KT</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
-<span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">KT</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">KT</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;$K_T &gt; 0$&quot;</span><span class="p">,</span> <span class="s2">&quot;$K_T &lt; 0$&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>kwargs = dict(bins=np.logspace(-7, -1, 100), histtype=&quot;step&quot;)
+ds.KT.where(ds.KT &gt; 0).plot.hist(**kwargs, color=&#39;red&#39;)
+(-1 * ds.KT.where(ds.KT &lt; 0)).plot.hist(**kwargs, color=&#39;blue&#39;);
+plt.legend([&quot;$K_T &gt; 0$&quot;, &quot;$K_T &lt; 0$&quot;])
 </pre></div>
 </div>
 </div>
@@ -3683,9 +3683,9 @@ for some averaging timescale <span class="math notranslate nohighlight">\(\widet
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;chi_sgs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">kappadtdz</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">dTdz</span><span class="p">))</span>
-<span class="n">ds</span><span class="p">[</span><span class="s2">&quot;chi_sgs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$χ_</span><span class="si">{sgs}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;C^2/s&quot;</span><span class="p">}</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">chi_sgs</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e-12</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ds[&quot;chi_sgs&quot;] = (ds.kappadtdz * np.abs(ds.dTdz))
+ds[&quot;chi_sgs&quot;].attrs = {&quot;long_name&quot;: &quot;$χ_{sgs}$&quot;, &quot;units&quot;: &quot;C^2/s&quot;}
+ds.chi_sgs.cf.plot(robust=True, norm=mpl.colors.LogNorm(1e-12, 1e-6))
 </pre></div>
 </div>
 </div>
@@ -3726,12 +3726,12 @@ and you need to scale up the product by some scaling factor “C” e.g. assumin
 <p>Estimated using χ, and using <span class="math notranslate nohighlight">\(F_b\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">chi</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">N2</span> <span class="o">/</span> <span class="n">ds</span><span class="o">.</span><span class="n">dTdz</span><span class="o">**</span><span class="mi">2</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">chi</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">N2</span> <span class="o">/</span> <span class="n">ds</span><span class="o">.</span><span class="n">dTdz</span><span class="o">**</span><span class="mi">2</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ds[&quot;B&quot;] = ds.chi / 2 * ds.N2 / ds.dTdz**2
+B = chi / 2 * ds.N2 / ds.dTdz**2
 
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">B</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+f, ax = plt.subplots(2, 1, sharex=True, sharey=True)
+np.abs(ds.B).cf.plot(robust=True, ax=ax[0])
+B.cf.plot(robust=True, ax=ax[1])
 </pre></div>
 </div>
 </div>
@@ -3748,11 +3748,11 @@ and you need to scale up the product by some scaling factor “C” e.g. assumin
 <h2>Mooring LES<a class="headerlink" href="#mooring-les" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># horizontally averaged file</span>
-<span class="n">moor</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span>
-    <span class="s2">&quot;../datasets/les/ROMS_PSH_6HRLIN_0N140W_360x360x216_22OCT2020_mooring.nc&quot;</span>
-<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">moor</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># horizontally averaged file
+moor = xr.load_dataset(
+    &quot;../datasets/les/ROMS_PSH_6HRLIN_0N140W_360x360x216_22OCT2020_mooring.nc&quot;
+).isel(z=slice(-1))
+moor
 </pre></div>
 </div>
 </div>
@@ -4219,36 +4219,36 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moor</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;dz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">moor</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">moor</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">moor</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moor.coords[&quot;dz&quot;] = 0.5
+moor[&quot;z&quot;] = moor.z.copy(data=np.abs(moor.z.data))
 
-<span class="n">moor</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">pump</span><span class="o">.</span><span class="n">les</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">moor</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
-<span class="n">moor</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">moor</span><span class="o">.</span><span class="n">kappa_sgs</span> <span class="o">*</span> <span class="n">moor</span><span class="o">.</span><span class="n">dTdz</span><span class="o">**</span><span class="mi">2</span>
-<span class="n">moor</span> <span class="o">=</span> <span class="n">moor</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">guess_coord_axis</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+moor[&quot;dTdz&quot;] = -1 * pump.les.derivative(moor.temp)
+moor[&quot;chi&quot;] = 6 * moor.kappa_sgs * moor.dTdz**2
+moor = moor.cf.guess_coord_axis(verbose=True)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/equix.nc&quot;</span><span class="p">))</span>
-<span class="n">equix</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;EQUIX&quot;</span>
-<span class="n">tiwe</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/tiwe.nc&quot;</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">drop_vars</span><span class="p">([</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">])</span>
-    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">200</span><span class="p">))</span>
-<span class="p">)</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TIWE&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix = xr.load_dataset(os.path.expanduser(&quot;~/datasets/microstructure/osu/equix.nc&quot;))
+equix.attrs[&quot;name&quot;] = &quot;EQUIX&quot;
+tiwe = (
+    xr.load_dataset(os.path.expanduser(&quot;~/datasets/microstructure/osu/tiwe.nc&quot;))
+    .drop_vars([&quot;latitude&quot;, &quot;longitude&quot;])
+    .sel(depth=slice(200))
+)
+tiwe.attrs[&quot;name&quot;] = &quot;TIWE&quot;
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moor</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="n">equix</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;LES moor&quot;</span><span class="p">,</span> <span class="s2">&quot;EQUIX&quot;</span><span class="p">,</span> <span class="s2">&quot;TIWE&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moor.chi.mean(&quot;time&quot;).cf.plot(xscale=&quot;log&quot;)
+equix.chi.mean(&quot;time&quot;).cf.plot(xscale=&quot;log&quot;)
+tiwe.chi.mean(&quot;time&quot;).cf.plot(xscale=&quot;log&quot;)
+plt.legend([&quot;LES moor&quot;, &quot;EQUIX&quot;, &quot;TIWE&quot;])
 </pre></div>
 </div>
 </div>

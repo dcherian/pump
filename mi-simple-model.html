@@ -506,28 +506,28 @@ title="Print to PDF"
 <h1>Simple model analysis<a class="headerlink" href="#simple-model-analysis" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> autoreload
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+%load_ext autoreload
 
-<span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">import</span> <span class="nn">pop_tools</span>
-<span class="c1"># %aimport xgcm</span>
+import dask
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import seawater as sw
+import xarray as xr
+import pop_tools
+# %aimport xgcm
 
-<span class="c1"># import hvplot.xarray</span>
+# import hvplot.xarray
 
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">pump</span>
+import dcpy
+import pump
 
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;savefig.bbox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tight&#39;</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+mpl.rcParams[&#39;savefig.dpi&#39;] = 300
+mpl.rcParams[&#39;savefig.bbox&#39;] = &#39;tight&#39;
+mpl.rcParams[&#39;figure.dpi&#39;] = 140
 
-<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">display_style</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span>
+xr.set_options(keep_attrs=True, display_style=&quot;html&quot;)
 </pre></div>
 </div>
 </div>
@@ -552,20 +552,20 @@ title="Print to PDF"
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import distributed
+import ncar_jobqueue
 
-<span class="k">if</span> <span class="s1">&#39;client&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">();</span> <span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+if &#39;client&#39; in locals():
+    client.close(); cluster.close()
 
-<span class="n">cluster</span> <span class="o">=</span> <span class="n">ncar_jobqueue</span><span class="o">.</span><span class="n">NCARCluster</span><span class="p">(</span>
-    <span class="n">cores</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;109GB&#39;</span><span class="p">,</span>
-    <span class="n">walltime</span><span class="o">=</span><span class="s1">&#39;02:00:00&#39;</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="s1">&#39;NCGD0043&#39;</span><span class="p">)</span>
+cluster = ncar_jobqueue.NCARCluster(
+    cores=9, processes=4, memory=&#39;109GB&#39;,
+    walltime=&#39;02:00:00&#39;, project=&#39;NCGD0043&#39;)
 
-<span class="n">client</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+client = dask.distributed.Client(cluster)
 
-<span class="n">cluster</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">wait_count</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
-<span class="n">cluster</span>
+cluster.adapt(minimum=4, maximum=24, wait_count=600)
+cluster
 </pre></div>
 </div>
 </div>
@@ -578,95 +578,95 @@ title="Print to PDF"
 <h2>Read data<a class="headerlink" href="#read-data" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def estimate_euc_depth_terms(ds):
 
-    <span class="n">ds</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    ds.load()
 
-    <span class="n">surface</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;depth&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;nearest&#39;</span><span class="p">}</span>
+    surface = {&#39;depth&#39;: -20, &#39;method&#39;: &#39;nearest&#39;}
 
-    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span> <span class="o">-</span> <span class="n">surface</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">])</span>
-    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$h$&#39;</span>
+    ds[&#39;h&#39;] = (ds.eucmax - surface[&#39;depth&#39;])
+    ds[&#39;h&#39;].attrs[&#39;long_name&#39;] = &#39;$h$&#39;
 
-    <span class="k">if</span> <span class="s1">&#39;u&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;us&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">surface</span><span class="p">)</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;ueuc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;du&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">us</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">ueuc</span>
-        <span class="n">ds</span><span class="o">.</span><span class="n">du</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$\Delta$u&#39;</span>
+    if &#39;u&#39; in ds:
+        ds[&#39;us&#39;] = ds.u.sel(**surface)
+        ds[&#39;ueuc&#39;] = ds.u.interp(depth=ds.eucmax, longitude=ds.longitude, method=&#39;linear&#39;)
+        ds[&#39;du&#39;] = ds.us - ds.ueuc
+        ds.du.attrs[&#39;long_name&#39;] = &#39;$\Delta$u&#39;
 
-    <span class="k">if</span> <span class="s1">&#39;dens&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;dens_euc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dens</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span><span class="p">,</span>
-                                        <span class="n">longitude</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
-                                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> <span class="o">-</span><span class="mf">9.81</span><span class="o">/</span><span class="n">ds</span><span class="o">.</span><span class="n">dens_euc</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;bs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="o">**</span><span class="n">surface</span><span class="p">)</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;beuc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">bs</span><span class="p">)</span>
+    if &#39;dens&#39; in ds:
+        ds[&#39;dens_euc&#39;] = ds.dens.interp(depth=ds.eucmax,
+                                        longitude=ds.longitude,
+                                        method=&#39;linear&#39;)
+        ds[&#39;b&#39;] = ds.dens * -9.81/ds.dens_euc
+        ds[&#39;bs&#39;] = ds.b.sel(**surface)
+        ds[&#39;beuc&#39;] = -9.81 * xr.ones_like(ds.bs)
 
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">bs</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">beuc</span>
-        <span class="n">ds</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$\Delta$b&#39;</span>
+        ds[&#39;db&#39;] = ds.bs - ds.beuc
+        ds.db.attrs[&#39;long_name&#39;] = &#39;$\Delta$b&#39;
 
-    <span class="k">if</span> <span class="s1">&#39;db&#39;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="ow">and</span> <span class="s1">&#39;du&#39;</span> <span class="ow">in</span> <span class="n">ds</span> <span class="ow">and</span> <span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;Ri&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">db</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">du</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    if &#39;db&#39; in ds and &#39;du&#39; in ds and &#39;h&#39; in ds:
+        with xr.set_options(keep_attrs=False):
+            ds[&#39;Ri&#39;] = ds.db * np.abs(ds.h) / (ds.du**2)
 
-    <span class="k">return</span> <span class="n">ds</span>
+    return ds
 
-<span class="k">if</span> <span class="s1">&#39;gcm1&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-    <span class="kn">import</span> <span class="nn">airsea</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;skipping gcm1, jra, ssh&#39;</span><span class="p">)</span>
-    <span class="n">subset</span> <span class="o">=</span> <span class="p">(</span><span class="n">gcm1</span><span class="o">.</span><span class="n">annual</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
-              <span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-              <span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-              <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">250</span><span class="p">)))</span>
-    <span class="n">subset</span><span class="p">[</span><span class="s1">&#39;dens&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">salt</span><span class="p">,</span> <span class="n">subset</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">subset</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
-    <span class="n">subset</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+if &#39;gcm1&#39; in locals():
+    import airsea
+    print(&#39;skipping gcm1, jra, ssh&#39;)
+    subset = (gcm1.annual.sel(latitude=0, method=&#39;nearest&#39;)
+              .assign_coords(latitude=0)
+              .squeeze()
+              .sel(depth=slice(0, -250)))
+    subset[&#39;dens&#39;] = pump.mdjwf.dens(subset.salt, subset.theta, subset.depth)
+    subset[&#39;eucmax&#39;] = pump.calc.get_euc_max(subset.u)
 
-    <span class="n">subset</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
-    <span class="n">subset</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gcm 1m 1996 mean&#39;</span>
+    subset = estimate_euc_depth_terms(subset)
+    subset.attrs[&#39;name&#39;] = &#39;gcm 1m 1996 mean&#39;
 
-    <span class="n">jra</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_jra</span><span class="p">()</span>
-           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
-           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s1">&#39;1996&#39;</span><span class="p">)</span>
-           <span class="o">.</span><span class="n">load</span><span class="p">())</span>
-    <span class="n">jra</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jra</span><span class="o">.</span><span class="n">Uwind</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">airsea</span><span class="o">.</span><span class="n">windstress</span><span class="o">.</span><span class="n">stress</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">jra</span><span class="o">.</span><span class="n">Uwind</span><span class="p">,</span> <span class="n">jra</span><span class="o">.</span><span class="n">Vwind</span><span class="p">)))</span>
+    jra = (pump.obs.read_jra()
+           .sel(latitude=0, method=&#39;nearest&#39;)
+           .sel(time=&#39;1996&#39;)
+           .load())
+    jra[&#39;tau&#39;] = jra.Uwind.copy(
+        data=airsea.windstress.stress(np.hypot(jra.Uwind, jra.Vwind)))
 
-    <span class="n">mean_jra</span> <span class="o">=</span> <span class="n">jra</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-    <span class="n">ssh</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">root</span> <span class="o">+</span> <span class="s1">&#39;make_TPOS_MITgcm/1996/SSH*.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">zos</span>
+    mean_jra = jra.mean(&#39;time&#39;)
+    ssh = xr.open_mfdataset(pump.obs.root + &#39;make_TPOS_MITgcm/1996/SSH*.nc&#39;).zos
 
-<span class="n">johnson</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_johnson</span><span class="p">()</span>
-           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<span class="n">johnson</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">johnson</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
-<span class="n">johnson</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">johnson</span><span class="p">)</span>
-<span class="n">johnson</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Johnson&#39;</span>
+johnson = (pump.obs.read_johnson()
+           .sel(latitude=0))
+johnson[&#39;eucmax&#39;] = pump.get_euc_max(johnson.u)
+johnson = estimate_euc_depth_terms(johnson)
+johnson.attrs[&#39;name&#39;] = &#39;Johnson&#39;
 
-<span class="c1"># need to fill to the surface</span>
-<span class="n">tao_adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_adcp</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
-<span class="n">tao_adcp</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">tao_adcp</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+# need to fill to the surface
+tao_adcp = pump.obs.read_tao_adcp().mean(&#39;time&#39;).bfill(&#39;depth&#39;)
+tao_adcp[&#39;eucmax&#39;] = pump.get_euc_max(tao_adcp.u)
 
-<span class="n">tao_ctd</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao</span><span class="p">()</span>
-           <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">tao_adcp</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
-           <span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">])</span>
-           <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-           <span class="o">.</span><span class="n">compute</span><span class="p">())</span>
-<span class="n">tao_ctd</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tao_adcp</span><span class="o">.</span><span class="n">eucmax</span>
-<span class="n">tao_ctd</span><span class="p">[</span><span class="s1">&#39;dens&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">mdjwf</span><span class="o">.</span><span class="n">dens</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">35.0</span><span class="p">),</span> <span class="n">tao_ctd</span><span class="o">.</span><span class="n">temp</span><span class="p">,</span> <span class="n">tao_ctd</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
-<span class="n">tao_ctd_raw</span> <span class="o">=</span> <span class="n">tao_ctd</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">tao_ctd</span> <span class="o">=</span> <span class="p">(</span><span class="n">tao_ctd</span>
-           <span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
-           <span class="o">.</span><span class="n">interpolate_na</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
-           <span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-           <span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">))</span>
+tao_ctd = (pump.obs.read_tao()
+           .sel(latitude=0, longitude=tao_adcp.longitude)
+           .drop([&#39;u&#39;, &#39;v&#39;])
+           .mean(&#39;time&#39;)
+           .compute())
+tao_ctd[&#39;eucmax&#39;] = tao_adcp.eucmax
+tao_ctd[&#39;dens&#39;] = pump.mdjwf.dens(np.array(35.0), tao_ctd.temp, tao_ctd.depth)
+tao_ctd_raw = tao_ctd.copy(deep=True)
+tao_ctd = (tao_ctd
+           .sortby(&#39;depth&#39;)
+           .interpolate_na(&#39;depth&#39;)
+           .sortby(&#39;depth&#39;, ascending=False)
+           .bfill(&#39;depth&#39;))
 
-<span class="n">tao</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao_adcp</span><span class="p">)[[</span><span class="s1">&#39;us&#39;</span><span class="p">,</span> <span class="s1">&#39;ueuc&#39;</span><span class="p">,</span> <span class="s1">&#39;du&#39;</span><span class="p">,</span> <span class="s1">&#39;eucmax&#39;</span><span class="p">]],</span>
-                <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao_ctd</span><span class="p">)[[</span><span class="s1">&#39;bs&#39;</span><span class="p">,</span> <span class="s1">&#39;beuc&#39;</span><span class="p">,</span> <span class="s1">&#39;db&#39;</span><span class="p">]]])</span>
-<span class="n">tao</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">tao</span><span class="p">)</span>
-<span class="n">tao</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TAO&#39;</span>
+tao = xr.merge([estimate_euc_depth_terms(tao_adcp)[[&#39;us&#39;, &#39;ueuc&#39;, &#39;du&#39;, &#39;eucmax&#39;]],
+                estimate_euc_depth_terms(tao_ctd)[[&#39;bs&#39;, &#39;beuc&#39;, &#39;db&#39;]]])
+tao = estimate_euc_depth_terms(tao)
+tao.attrs[&#39;name&#39;] = &#39;TAO&#39;
 
-<span class="n">hires</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;~/pump/glade/small-eq-mean.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">221</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-<span class="n">hires</span><span class="p">[</span><span class="s1">&#39;eucmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">hires</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
-                   <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                   <span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-<span class="n">hires</span> <span class="o">=</span> <span class="n">estimate_euc_depth_terms</span><span class="p">(</span><span class="n">hires</span><span class="p">)</span>
+hires = xr.load_dataset(&#39;~/pump/glade/small-eq-mean.nc&#39;).sel(longitude=slice(-221, None))
+hires[&#39;eucmax&#39;] = (pump.calc.get_euc_max(hires.u)
+                   .rolling(longitude=200, center=True, min_periods=1)
+                   .mean())
+hires = estimate_euc_depth_terms(hires)
 </pre></div>
 </div>
 </div>
@@ -739,14 +739,14 @@ function.
 <h2>Heat flux<a class="headerlink" href="#heat-flux" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qnet</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;../glade/obs/tao/qnet_xyt_dy.cdf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span>
-    <span class="s1">&#39;QT_210&#39;</span><span class="p">:</span> <span class="s1">&#39;qnet&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span>
-<span class="p">})[</span><span class="s1">&#39;qnet&#39;</span><span class="p">])</span>
-<span class="n">qnet</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
-<span class="n">qnet</span> <span class="o">=</span> <span class="n">qnet</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">qnet</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e5</span><span class="p">)</span>
-<span class="n">qnet</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>qnet = (xr.open_dataset(&#39;../glade/obs/tao/qnet_xyt_dy.cdf&#39;).rename({
+    &#39;QT_210&#39;: &#39;qnet&#39;,
+    &#39;lat&#39;: &#39;latitude&#39;,
+    &#39;lon&#39;: &#39;longitude&#39;
+})[&#39;qnet&#39;])
+qnet[&#39;longitude&#39;] -= 360
+qnet = qnet.where(np.abs(qnet) &lt; 1e5)
+qnet
 </pre></div>
 </div>
 </div>
@@ -864,12 +864,12 @@ Attributes:
 <h2>SSH<a class="headerlink" href="#ssh" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">([</span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">root</span> <span class="o">+</span> <span class="s1">&#39;obs/aviso/zos_AVISO_L4_199210-201012.nc&#39;</span><span class="p">])</span>
-      <span class="o">.</span><span class="n">zos</span>
-      <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">}))</span>
-<span class="n">ssh</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
-<span class="n">ssh</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="p">),</span> <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="n">ssh</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ssh = (xr.open_mfdataset([pump.obs.root + &#39;obs/aviso/zos_AVISO_L4_199210-201012.nc&#39;])
+      .zos
+      .rename({&#39;lat&#39;: &#39;latitude&#39;, &#39;lon&#39;: &#39;longitude&#39;}))
+ssh[&#39;longitude&#39;] -= 360
+ssh = ssh.sel(longitude=slice(-200, -80), latitude=slice(-25, 25)).mean(&#39;time&#39;).compute()
+ssh
 </pre></div>
 </div>
 </div>
@@ -924,9 +924,9 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SSH&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(ssh).plot(robust=True, cmap=mpl.cm.Spectral_r)
+plt.gcf().set_size_inches((8, 3))
+plt.gca().set_title(&#39;SSH&#39;)
 </pre></div>
 </div>
 </div>
@@ -939,9 +939,9 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">ssh</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">110e3</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;$∂/∂_x$ SSH&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(ssh.differentiate(&#39;longitude&#39;)/110e3).plot(robust=True)
+plt.gcf().set_size_inches((8, 3))
+plt.gca().set_title(&#39;$∂/∂_x$ SSH&#39;)
 </pre></div>
 </div>
 </div>
@@ -957,26 +957,26 @@ Attributes:
 <h2>TAO wind<a class="headerlink" href="#tao-wind" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tau</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="s1">&#39;../glade/obs/tao/tau[x-y]_*_dy.cdf&#39;</span><span class="p">)</span>
-      <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;TX_442&#39;</span><span class="p">:</span> <span class="s1">&#39;taux&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;TY_443&#39;</span><span class="p">:</span> <span class="s1">&#39;tauy&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">}))</span>
-<span class="n">tau</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
-<span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">tau</span><span class="o">.</span><span class="n">taux</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">tau</span><span class="o">.</span><span class="n">tauy</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tau = (xr.open_mfdataset(&#39;../glade/obs/tao/tau[x-y]_*_dy.cdf&#39;)
+      .rename({&#39;TX_442&#39;: &#39;taux&#39;,
+               &#39;TY_443&#39;: &#39;tauy&#39;,
+               &#39;lat&#39;: &#39;latitude&#39;,
+               &#39;lon&#39;: &#39;longitude&#39;}))
+tau[&#39;longitude&#39;] -= 360
+tau = tau.where((tau.taux &lt; 5) &amp; (tau.tauy &lt; 5))
 
-<span class="n">tao</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span>
-    <span class="n">tao</span><span class="p">,</span>
-    <span class="n">tau</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-        <span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">tao</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()[[</span><span class="s1">&#39;taux&#39;</span><span class="p">,</span> <span class="s1">&#39;tauy&#39;</span><span class="p">]],</span>
-    <span class="n">qnet</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">tao</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;depth&#39;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-<span class="p">])</span>
-<span class="n">tao</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">tao</span><span class="o">.</span><span class="n">taux</span><span class="p">,</span> <span class="n">tao</span><span class="o">.</span><span class="n">tauy</span><span class="p">)</span>
-<span class="n">tao</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-<span class="n">tao</span>
+tao = xr.merge([
+    tao,
+    tau.mean(&#39;time&#39;).sel(
+        latitude=0, longitude=tao.longitude).squeeze().drop(&#39;depth&#39;).load()[[&#39;taux&#39;, &#39;tauy&#39;]],
+    qnet.sel(latitude=0)
+    .reindex(longitude=tao.longitude)
+    .squeeze().drop(&#39;depth&#39;)
+    .mean(&#39;time&#39;)
+])
+tao[&#39;tau&#39;] = np.hypot(tao.taux, tao.tauy)
+tao = tao.squeeze()
+tao
 </pre></div>
 </div>
 </div>
@@ -1031,9 +1031,9 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tau</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">taux</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Time averaged TAO wind stress&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tau.mean(&#39;time&#39;).taux.plot(edgecolor=&#39;w&#39;)
+plt.gcf().set_size_inches((8, 2))
+plt.gca().set_title(&#39;Time averaged TAO wind stress&#39;)
 </pre></div>
 </div>
 </div>
@@ -1046,17 +1046,17 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster.scale(24)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 37 seconds</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># 37 seconds
 
-<span class="o">%%time</span> 
-<span class="n">ds0</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="s2">&quot;/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly/*UVEL*.nc&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concat_dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s1">&#39;nested&#39;</span><span class="p">)</span>
+%%time 
+ds0 = xr.open_mfdataset(&quot;/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly/*UVEL*.nc&quot;, parallel=True, concat_dim=&quot;time&quot;, combine=&#39;nested&#39;)
 </pre></div>
 </div>
 </div>
@@ -1166,9 +1166,9 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span> 
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="s2">&quot;/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly/*.nc&quot;</span><span class="p">,</span> 
-                       <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concat_dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span> <span class="n">data_vars</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span> <span class="n">compat</span><span class="o">=</span><span class="s1">&#39;override&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%%time 
+ds = xr.open_mfdataset(&quot;/glade/p/cesm/community/ASD-HIGH-RES-CESM1/hybrid_v5_rel04_BC5_ne120_t12_pop62/ocn/proc/tseries/monthly/*.nc&quot;, 
+                       parallel=True, concat_dim=&#39;time&#39;, coords=&quot;minimal&quot;, data_vars=&quot;minimal&quot;, compat=&#39;override&#39;)
 </pre></div>
 </div>
 </div>
@@ -1204,49 +1204,49 @@ Ri &amp;= \frac{2 \bar{w} h Q}{\left(b_{euc}hη_x + Δb/2 h h_x + τ_w \right)²
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>xr.set_options(keep_attrs=False)
 
-<span class="c1"># interpolate to SSH longitudes</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
-<span class="c1"># Fill qnet using linear interpolation</span>
-<span class="n">ds</span><span class="p">[</span><span class="s1">&#39;qnet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tao</span><span class="o">.</span><span class="n">qnet</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span>
-              <span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fill_value&#39;</span><span class="p">:</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">}))</span>
+# interpolate to SSH longitudes
+ds = tao.interp(longitude=ssh.longitude)
+# Fill qnet using linear interpolation
+ds[&#39;qnet&#39;] = (tao.qnet.dropna(&#39;longitude&#39;)
+              .interp(longitude=ssh.longitude, kwargs={&#39;fill_value&#39;: &quot;extrapolate&quot;}))
 
-<span class="n">db</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">db</span>
-<span class="n">beuc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.81</span>  <span class="c1"># b = -gρ/ρ_{euc}</span>
-<span class="n">Q</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">qnet</span> <span class="o">*</span> <span class="mf">9.81</span> <span class="o">*</span> <span class="mf">2e-4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1025</span> <span class="o">*</span> <span class="mi">4200</span><span class="p">)</span>  <span class="c1"># g α Q / (ρ c_p): heat flux in W/m² → m²/s³</span>
-<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span>  <span class="c1"># derivation integrates from z=-h to z=η, so h is positive</span>
-<span class="n">hx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">110e3</span>
-<span class="n">sshx</span> <span class="o">=</span> <span class="p">(</span><span class="n">ssh</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">))</span><span class="o">/</span><span class="mf">110e3</span>
+db = ds.db
+beuc = -9.81  # b = -gρ/ρ_{euc}
+Q = ds.qnet * 9.81 * 2e-4 / (1025 * 4200)  # g α Q / (ρ c_p): heat flux in W/m² → m²/s³
+h = np.abs(ds.eucmax)  # derivation integrates from z=-h to z=η, so h is positive
+hx = h.differentiate(&#39;longitude&#39;)/110e3
+sshx = (ssh.sel(latitude=0, method=&#39;nearest&#39;)
+        .rolling(longitude=20, center=True, min_periods=5)
+        .mean()
+        .differentiate(&#39;longitude&#39;))/110e3
 
-<span class="n">num</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span>  <span class="n">Q</span>
-<span class="n">den</span> <span class="o">=</span> <span class="p">(</span><span class="n">beuc</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">sshx</span> <span class="o">+</span> <span class="n">db</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">hx</span> <span class="o">+</span> <span class="n">ds</span><span class="o">.</span><span class="n">tau</span><span class="o">/</span><span class="mi">1025</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+num = 2 * h *  Q
+den = (beuc * h * sshx + db/2 * h * hx + ds.tau/1025)**2
 
-<span class="n">Riow</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="n">den</span>
-<span class="n">Riow</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$Ri/w$&#39;</span>
-<span class="n">Riow</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;s/m&#39;</span>
+Riow = num / den
+Riow.attrs[&#39;long_name&#39;] = &#39;$Ri/w$&#39;
+Riow.attrs[&#39;units&#39;] = &#39;s/m&#39;
 
-<span class="n">num</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m³/s³&#39;</span>
-<span class="n">den</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m⁴/s⁴&#39;</span>
+num.attrs[&#39;units&#39;] = &#39;m³/s³&#39;
+den.attrs[&#39;units&#39;] = &#39;m⁴/s⁴&#39;
 
 
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">Riow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mf">1e2</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">],</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">225</span><span class="p">,</span> <span class="o">-</span><span class="mi">95</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simple model&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">tao</span><span class="o">.</span><span class="n">Ri</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$Ri_b^</span><span class="si">{tao}</span><span class="s1">/10^{-3}$&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">johnson</span><span class="o">.</span><span class="n">Ri</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$Ri_b^</span><span class="si">{johnson}</span><span class="s1">/10^{-3}$&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Ri/w [s/m]&#39;</span><span class="p">)</span>
-<span class="n">num</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">den</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+f, ax = plt.subplots(3, 1, sharex=True, sharey=False, constrained_layout=True)
+Riow.plot(ax=ax[0], yscale=&#39;log&#39;, ylim=[1e2, 1e6], xlim=[-225, -95], label=&#39;Simple model&#39;, _labels=False)
+(10**3 * tao.Ri).plot(ax=ax[0], label=&#39;$Ri_b^{tao}/10^{-3}$&#39;, _labels=False)
+(10**3 * johnson.Ri).plot(ax=ax[0], label=&#39;$Ri_b^{johnson}/10^{-3}$&#39;, _labels=False)
+ax[0].legend(loc=&#39;upper right&#39;)
+ax[0].set_ylabel(&#39;Ri/w [s/m]&#39;)
+num.plot(ax=ax[1], _labels=False)
+den.plot(ax=ax[2], _labels=False)
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mf">1e2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+ax[0].set_yticks([1e2, 1e3, 1e4, 1e5, 1e6])
+ax[0].grid(True)
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;numerator = $2 h Q$&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;denominator = $(-ghη_x + Δb/2 h h_x + τ/ρ_0)²$&#39;</span><span class="p">)</span>
+ax[1].set_title(&#39;numerator = $2 h Q$&#39;)
+ax[2].set_title(&#39;denominator = $(-ghη_x + Δb/2 h h_x + τ/ρ_0)²$&#39;)
 </pre></div>
 </div>
 </div>
@@ -1259,7 +1259,7 @@ Ri &amp;= \frac{2 \bar{w} h Q}{\left(b_{euc}hη_x + Δb/2 h h_x + τ_w \right)²
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster.scale(0)
 </pre></div>
 </div>
 </div>
@@ -1269,11 +1269,11 @@ Ri &amp;= \frac{2 \bar{w} h Q}{\left(b_{euc}hη_x + Δb/2 h h_x + τ_w \right)²
 <h2>Numerator terms<a class="headerlink" href="#numerator-terms" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;eucmax&#39;</span><span class="p">)</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">qnet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;qnet&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>h.plot(label=&#39;eucmax&#39;)
+ds.qnet.plot(label=&#39;qnet&#39;)
+plt.gca().legend()
+plt.gca().set_ylabel(&#39;&#39;)
+plt.gcf().set_size_inches((8, 3))
 </pre></div>
 </div>
 </div>
@@ -1286,15 +1286,15 @@ Ri &amp;= \frac{2 \bar{w} h Q}{\left(b_{euc}hη_x + Δb/2 h h_x + τ_w \right)²
 <h2>Denominator terms<a class="headerlink" href="#denominator-terms" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># den = (beuc * h * sshx + db/2 * h * hx + ds.tau/1025)**2</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># den = (beuc * h * sshx + db/2 * h * hx + ds.tau/1025)**2
 
-<span class="p">(</span><span class="n">beuc</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">sshx</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$-gh η_x$&#39;</span><span class="p">)</span>
-<span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">tau</span><span class="o">/</span><span class="mi">1025</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$τ/ρ_0$&#39;</span><span class="p">)</span>
-<span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">db</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">hx</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;$Δb/2 hh_x$&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.5e-4</span><span class="p">,</span> <span class="mf">1.5e-4</span><span class="p">])</span>
-<span class="p">(</span><span class="n">beuc</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">sshx</span> <span class="o">+</span> <span class="n">db</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">hx</span> <span class="o">+</span> <span class="n">ds</span><span class="o">.</span><span class="n">tau</span><span class="o">/</span><span class="mi">1025</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;denom&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+(beuc * h * sshx).plot(label=&#39;$-gh η_x$&#39;)
+(ds.tau/1025).plot(label=&#39;$τ/ρ_0$&#39;)
+(ds.db/2 * h * hx).plot(label=&#39;$Δb/2 hh_x$&#39;, ylim=[-1.5e-4, 1.5e-4])
+(beuc * h * sshx + db/2 * h * hx + ds.tau/1025).plot(label=&#39;denom&#39;, color=&#39;k&#39;)
+plt.gca().legend()
+dcpy.plots.liney(0)
+plt.gcf().set_size_inches((8, 3))
 </pre></div>
 </div>
 </div>
@@ -1307,9 +1307,9 @@ Ri &amp;= \frac{2 \bar{w} h Q}{\left(b_{euc}hη_x + Δb/2 h h_x + τ_w \right)²
 <h2>Medians as approx.<a class="headerlink" href="#medians-as-approx" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;η_x = </span><span class="si">{</span><span class="n">sshx</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;h_x = </span><span class="si">{</span><span class="n">hx</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Δb/2 = </span><span class="si">{</span><span class="n">ds</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">/</span><span class="mi">2</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(f&quot;η_x = {sshx.median().values:.1e}&quot;)
+print(f&quot;h_x = {hx.median().values:.1e}&quot;)
+print(f&quot;Δb/2 = {ds.db.median().values/2:.1e}&quot;)
 </pre></div>
 </div>
 </div>

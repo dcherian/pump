@@ -413,36 +413,36 @@ title="Print to PDF"
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> watermark
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+%load_ext watermark
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+from datetime import timedelta
 
-<span class="kn">import</span> <span class="nn">cf_xarray</span>
-<span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib.units</span> <span class="k">as</span> <span class="nn">munits</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">parcels</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">parcels</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AdvectionRK4</span><span class="p">,</span>
-    <span class="n">ErrorCode</span><span class="p">,</span>
-    <span class="n">FieldSet</span><span class="p">,</span>
-    <span class="n">JITParticle</span><span class="p">,</span>
-    <span class="n">ParticleSet</span><span class="p">,</span>
-    <span class="n">StateCode</span><span class="p">,</span>
-    <span class="n">Variable</span><span class="p">,</span>
-<span class="p">)</span>
+import cf_xarray
+import dask
+import dcpy
+import distributed
+import matplotlib as mpl
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import matplotlib.units as munits
+import numpy as np
+import pandas as pd
+import parcels
+import xarray as xr
+from parcels import (
+    AdvectionRK4,
+    ErrorCode,
+    FieldSet,
+    JITParticle,
+    ParticleSet,
+    StateCode,
+    Variable,
+)
 
-<span class="kn">import</span> <span class="nn">pump</span>
+import pump
 
-<span class="o">%</span><span class="k">watermark</span> -iv
+%watermark -iv
 </pre></div>
 </div>
 </div>
@@ -466,143 +466,143 @@ dask       : 2.30.0
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/Day_2000.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ds = xr.open_dataset(&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/Day_2000.nc&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/tiw&quot;</span>
-<span class="n">filenames</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/File*buoy.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dirname = &quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/tiw&quot;
+filenames = dict.fromkeys((&quot;U&quot;, &quot;V&quot;, &quot;temp&quot;, &quot;salt&quot;), f&quot;{dirname}/File*buoy.nc&quot;)
 
-<span class="n">dirname</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/&quot;</span>
-<span class="p">)</span>
-<span class="n">filenames</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/Day_[0-9][0-9][0-9][0-9].nc&quot;</span><span class="p">)</span>
+dirname = (
+    &quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/&quot;
+)
+filenames = dict.fromkeys((&quot;U&quot;, &quot;V&quot;), f&quot;{dirname}/Day_[0-9][0-9][0-9][0-9].nc&quot;)
 
 
-<span class="n">variables</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;U&quot;</span><span class="p">:</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;V&quot;</span><span class="p">:</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span>
-    <span class="c1"># &quot;temp&quot;: &quot;theta&quot;, &quot;salt&quot;: &quot;salt&quot;</span>
-<span class="p">}</span>
+variables = {
+    &quot;U&quot;: &quot;u&quot;,
+    &quot;V&quot;: &quot;v&quot;,
+    # &quot;temp&quot;: &quot;theta&quot;, &quot;salt&quot;: &quot;salt&quot;
+}
 
-<span class="n">dimensions</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">}</span>
+dimensions = {&quot;lat&quot;: &quot;latitude&quot;, &quot;lon&quot;: &quot;longitude&quot;, &quot;depth&quot;: &quot;depth&quot;, &quot;time&quot;: &quot;time&quot;}
 
-<span class="c1"># from_netcdf assumes A-grid</span>
-<span class="c1"># from _mitgcm specialized from_c_grid_dataset to MITgcm conventions</span>
-<span class="c1"># I think it&#39;s handling the &quot;inner&quot;/&quot;outer&quot;/&quot;left&quot;/&quot;right&quot; stuff from xgcm</span>
-<span class="c1"># https://nbviewer.jupyter.org/github/OceanParcels/parcels/blob/master/parcels/examples/documentation_indexing.ipynb</span>
-<span class="n">fieldset</span> <span class="o">=</span> <span class="n">FieldSet</span><span class="o">.</span><span class="n">from_mitgcm</span><span class="p">(</span>
-    <span class="n">filenames</span><span class="p">,</span>
-    <span class="n">variables</span><span class="p">,</span>
-    <span class="n">dimensions</span><span class="p">,</span>
-    <span class="n">chunksize</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
-        <span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
-        <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-<span class="n">fieldset</span><span class="o">.</span><span class="n">mindepth</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># fieldset.U.depth[0]  # uppermost layer in the hydrodynamic data</span>
+# from_netcdf assumes A-grid
+# from _mitgcm specialized from_c_grid_dataset to MITgcm conventions
+# I think it&#39;s handling the &quot;inner&quot;/&quot;outer&quot;/&quot;left&quot;/&quot;right&quot; stuff from xgcm
+# https://nbviewer.jupyter.org/github/OceanParcels/parcels/blob/master/parcels/examples/documentation_indexing.ipynb
+fieldset = FieldSet.from_mitgcm(
+    filenames,
+    variables,
+    dimensions,
+    chunksize={
+        &quot;depth&quot;: (&quot;depth&quot;, 150),
+        &quot;lat&quot;: (&quot;latitude&quot;, 60),
+        &quot;lon&quot;: (&quot;longitude&quot;, 250),
+    },
+)
+fieldset.mindepth = 0  # fieldset.U.depth[0]  # uppermost layer in the hydrodynamic data
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the new Kernel that mimics Argo vertical movement</span>
-<span class="k">def</span> <span class="nf">EMApexVerticalMovement</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">fieldset</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Define the new Kernel that mimics Argo vertical movement
+def EMApexVerticalMovement(particle, fieldset, time):
 
-    <span class="c1"># if all(fieldset.U.depth &gt;= 0):</span>
-    <span class="c1">#    sign = 1</span>
-    <span class="c1"># else:</span>
-    <span class="c1">#    sign = -1</span>
+    # if all(fieldset.U.depth &gt;= 0):
+    #    sign = 1
+    # else:
+    #    sign = -1
 
-    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># vertical coord is negative; positive upward</span>
+    sign = -1  # vertical coord is negative; positive upward
 
-    <span class="c1"># driftdepth = 100  # maximum depth in m</span>
-    <span class="n">maxdepth</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># maximum depth in m</span>
-    <span class="n">vertical_speed</span> <span class="o">=</span> <span class="mf">0.15</span>  <span class="c1"># sink and rise speed in m/s</span>
+    # driftdepth = 100  # maximum depth in m
+    maxdepth = 100  # maximum depth in m
+    vertical_speed = 0.15  # sink and rise speed in m/s
 
-    <span class="n">surfacetime</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># time spent at surface</span>
-    <span class="n">mindepth</span> <span class="o">=</span> <span class="mf">0.6</span>  <span class="c1"># TODO: why</span>
-    <span class="c1"># drifttime = 10 * 86400  # time of deep drift in seconds</span>
+    surfacetime = 10 * 60  # time spent at surface
+    mindepth = 0.6  # TODO: why
+    # drifttime = 10 * 86400  # time of deep drift in seconds
 
-    <span class="c1"># debugstr = f&quot;in: phase: {particle.cycle_phase}, depth={particle.depth} || &quot;</span>
-    <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># Phase 0: Sinking with vertical_speed until depth is driftdepth</span>
-        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">maxdepth</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">1</span>
+    # debugstr = f&quot;in: phase: {particle.cycle_phase}, depth={particle.depth} || &quot;
+    if particle.cycle_phase == 0:
+        # Phase 0: Sinking with vertical_speed until depth is driftdepth
+        particle.depth += sign * vertical_speed * particle.dt
+        if abs(particle.depth) &gt;= maxdepth:
+            particle.cycle_phase = 1
 
-    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># Phase 3: Rising with vertical_speed until at surface</span>
-        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">-=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
+    elif particle.cycle_phase == 1:
+        # Phase 3: Rising with vertical_speed until at surface
+        particle.depth -= sign * vertical_speed * particle.dt
 
-        <span class="c1"># Sample fields</span>
-        <span class="c1"># particle.temp = fieldset.temp[particle]</span>
-        <span class="c1"># particle.salt = fieldset.salt[particle]</span>
+        # Sample fields
+        # particle.temp = fieldset.temp[particle]
+        # particle.salt = fieldset.salt[particle]
 
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">mindepth</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">mindepth</span>
-            <span class="c1"># particle.temp = 0./0.  # reset temperature to NaN at end of sampling cycle</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">4</span>
+        if abs(particle.depth) &lt;= mindepth:
+            particle.depth = sign * mindepth
+            # particle.temp = 0./0.  # reset temperature to NaN at end of sampling cycle
+            particle.cycle_phase = 4
 
-    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-        <span class="c1"># Phase 4: Transmitting at surface until cycletime is reached</span>
-        <span class="n">particle</span><span class="o">.</span><span class="n">transmit_age</span> <span class="o">+=</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
-        <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">transmit_age</span> <span class="o">&gt;</span> <span class="n">surfacetime</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">transmit_age</span> <span class="o">=</span> <span class="mi">0</span>
+    elif particle.cycle_phase == 4:
+        # Phase 4: Transmitting at surface until cycletime is reached
+        particle.transmit_age += particle.dt
+        if particle.transmit_age &gt; surfacetime:
+            particle.cycle_phase = 0
+            particle.transmit_age = 0
 
-    <span class="c1"># if particle.state == StateCode.Evaluate:</span>
-    <span class="c1">#    particle.cycle_age += particle.dt  # update cycle_age</span>
+    # if particle.state == StateCode.Evaluate:
+    #    particle.cycle_age += particle.dt  # update cycle_age
 
-    <span class="c1"># debugstr += f&quot;, final: phase: {particle.cycle_phase}, depth = {particle.depth}, state: {particle.state}&quot;</span>
-    <span class="c1"># print(debugstr)</span>
-
-
-<span class="c1"># Define a new Particle type including extra Variables</span>
-<span class="k">class</span> <span class="nc">EMApexParticle</span><span class="p">(</span><span class="n">parcels</span><span class="o">.</span><span class="n">JITParticle</span><span class="p">):</span>
-    <span class="c1"># Phase of cycle: init_descend=0, drift=1, profile_descend=2, profile_ascend=3, transmit=4</span>
-    <span class="n">cycle_phase</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s2">&quot;cycle_phase&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-    <span class="n">transmit_age</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="s2">&quot;transmit_age&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-    <span class="c1"># drift_age = Variable(&#39;drift_age&#39;, dtype=np.float32, initial=0.)</span>
-
-    <span class="c1"># temp = Variable(&quot;temp&quot;, dtype=np.float32, initial=np.nan)</span>
-    <span class="c1"># salt = Variable(&quot;salt&quot;, dtype=np.float32, initial=np.nan)</span>
+    # debugstr += f&quot;, final: phase: {particle.cycle_phase}, depth = {particle.depth}, state: {particle.state}&quot;
+    # print(debugstr)
 
 
-<span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">3.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-<span class="n">lons</span> <span class="o">=</span> <span class="o">-</span><span class="mi">140</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">lats</span><span class="p">)</span>
-<span class="n">depths</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">lats</span><span class="p">)</span>
+# Define a new Particle type including extra Variables
+class EMApexParticle(parcels.JITParticle):
+    # Phase of cycle: init_descend=0, drift=1, profile_descend=2, profile_ascend=3, transmit=4
+    cycle_phase = Variable(&quot;cycle_phase&quot;, dtype=np.int32, initial=0.0)
+    transmit_age = Variable(&quot;transmit_age&quot;, dtype=np.float32, initial=0.0)
+    # drift_age = Variable(&#39;drift_age&#39;, dtype=np.float32, initial=0.)
 
-<span class="n">pset</span> <span class="o">=</span> <span class="n">ParticleSet</span><span class="p">(</span>
-    <span class="n">fieldset</span><span class="o">=</span><span class="n">fieldset</span><span class="p">,</span>
-    <span class="n">pclass</span><span class="o">=</span><span class="n">EMApexParticle</span><span class="p">,</span>
-    <span class="n">lon</span><span class="o">=</span><span class="n">lons</span><span class="p">,</span>
-    <span class="n">lat</span><span class="o">=</span><span class="n">lats</span><span class="p">,</span>
-    <span class="n">depth</span><span class="o">=</span><span class="n">depths</span><span class="p">,</span>
-<span class="p">)</span>
+    # temp = Variable(&quot;temp&quot;, dtype=np.float32, initial=np.nan)
+    # salt = Variable(&quot;salt&quot;, dtype=np.float32, initial=np.nan)
 
-<span class="c1"># combine Argo vertical movement kernel with built-in Advection kernel</span>
-<span class="n">kernels</span> <span class="o">=</span> <span class="n">EMApexVerticalMovement</span> <span class="o">+</span> <span class="n">pset</span><span class="o">.</span><span class="n">Kernel</span><span class="p">(</span><span class="n">parcels</span><span class="o">.</span><span class="n">AdvectionRK4</span><span class="p">)</span>
 
-<span class="c1"># Create a ParticleFile object to store the output</span>
-<span class="n">output_file</span> <span class="o">=</span> <span class="n">pset</span><span class="o">.</span><span class="n">ParticleFile</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;../trajectories/emapex_float&quot;</span><span class="p">,</span> <span class="n">outputdt</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">)</span>
+lats = np.arange(-3, 3.01, 0.05)
+lons = -140 * np.ones_like(lats)
+depths = -0.5 * np.ones_like(lats)
 
-<span class="c1"># Now execute the kernels for 30 days, saving data every 30 minutes</span>
-<span class="n">pset</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-    <span class="n">kernels</span><span class="p">,</span>
-    <span class="n">runtime</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">180</span><span class="p">),</span>
-    <span class="n">dt</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
-<span class="p">)</span>
+pset = ParticleSet(
+    fieldset=fieldset,
+    pclass=EMApexParticle,
+    lon=lons,
+    lat=lats,
+    depth=depths,
+)
 
-<span class="n">output_file</span><span class="o">.</span><span class="n">export</span><span class="p">()</span>  <span class="c1"># export the trajectory data to a netcdf file</span>
+# combine Argo vertical movement kernel with built-in Advection kernel
+kernels = EMApexVerticalMovement + pset.Kernel(parcels.AdvectionRK4)
+
+# Create a ParticleFile object to store the output
+output_file = pset.ParticleFile(
+    name=&quot;../trajectories/emapex_float&quot;, outputdt=timedelta(hours=1)
+)
+
+# Now execute the kernels for 30 days, saving data every 30 minutes
+pset.execute(
+    kernels,
+    runtime=timedelta(days=180),
+    dt=timedelta(minutes=3),
+    output_file=output_file,
+)
+
+output_file.export()  # export the trajectory data to a netcdf file
 </pre></div>
 </div>
 </div>
@@ -654,14 +654,14 @@ INFO: You can use &quot;parcels_convert_npydir_to_netcdf ../trajectories/out-SVI
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_file</span><span class="o">.</span><span class="n">export</span><span class="p">()</span> 
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>output_file.export() 
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">traj</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;ilat&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>traj.plot.scatter(x=&quot;lon&quot;, y=&quot;lat&quot;, hue=&quot;ilat&quot;, s=2)
 </pre></div>
 </div>
 </div>
@@ -674,17 +674,17 @@ INFO: You can use &quot;parcels_convert_npydir_to_netcdf ../trajectories/out-SVI
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">traj</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;../trajectories/emapex_float.nc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_coords</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">traj</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;ilat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">obs</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>traj = xr.open_dataset(&quot;../trajectories/emapex_float.nc&quot;).set_coords(&quot;time&quot;)
+traj.coords[&quot;ilat&quot;] = traj.lat.sel(obs=0)
 
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">cb</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;lon&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Longitude&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;Depth (m)&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+fig = plt.figure(figsize=(13, 10))
+ax = plt.axes(projection=&quot;3d&quot;)
+cb = traj.plot.scatter(x=&quot;lon&quot;, y=&quot;lat&quot;, hue=&quot;z&quot;, s=20, marker=&quot;o&quot;)
+ax.set_xlabel(&quot;Longitude&quot;)
+ax.set_ylabel(&quot;Latitude&quot;)
+ax.set_zlabel(&quot;Depth (m)&quot;)
+plt.show()
 </pre></div>
 </div>
 </div>
@@ -694,57 +694,57 @@ INFO: You can use &quot;parcels_convert_npydir_to_netcdf ../trajectories/out-SVI
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the new Kernel that mimics Argo vertical movement</span>
-<span class="k">def</span> <span class="nf">ArgoVerticalMovement</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">fieldset</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Define the new Kernel that mimics Argo vertical movement
+def ArgoVerticalMovement(particle, fieldset, time):
 
-    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">fieldset</span><span class="o">.</span><span class="n">U</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    if all(fieldset.U.depth &gt;= 0):
+        sign = 1
+    else:
+        sign = -1
 
-    <span class="n">driftdepth</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># maximum depth in m</span>
-    <span class="n">maxdepth</span> <span class="o">=</span> <span class="mi">2000</span>  <span class="c1"># maximum depth in m</span>
-    <span class="n">vertical_speed</span> <span class="o">=</span> <span class="mf">0.10</span>  <span class="c1"># sink and xrise speed in m/s</span>
-    <span class="n">cycletime</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">86400</span>  <span class="c1"># total time of cycle in seconds</span>
-    <span class="n">drifttime</span> <span class="o">=</span> <span class="mi">9</span> <span class="o">*</span> <span class="mi">86400</span>  <span class="c1"># time of deep drift in seconds</span>
+    driftdepth = 1000  # maximum depth in m
+    maxdepth = 2000  # maximum depth in m
+    vertical_speed = 0.10  # sink and xrise speed in m/s
+    cycletime = 10 * 86400  # total time of cycle in seconds
+    drifttime = 9 * 86400  # time of deep drift in seconds
 
-    <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># Phase 0: Sinking with vertical_speed until depth is driftdepth</span>
-        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">driftdepth</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">1</span>
+    if particle.cycle_phase == 0:
+        # Phase 0: Sinking with vertical_speed until depth is driftdepth
+        particle.depth += sign * vertical_speed * particle.dt
+        print(particle.depth)
+        if abs(particle.depth) &gt;= driftdepth:
+            particle.cycle_phase = 1
 
-    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># Phase 1: Drifting at depth for drifttime seconds</span>
-        <span class="n">particle</span><span class="o">.</span><span class="n">drift_age</span> <span class="o">+=</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
-        <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">drift_age</span> <span class="o">&gt;=</span> <span class="n">drifttime</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">drift_age</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset drift_age for next cycle</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">2</span>
+    elif particle.cycle_phase == 1:
+        # Phase 1: Drifting at depth for drifttime seconds
+        particle.drift_age += particle.dt
+        if particle.drift_age &gt;= drifttime:
+            particle.drift_age = 0  # reset drift_age for next cycle
+            particle.cycle_phase = 2
 
-    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="c1"># Phase 2: Sinking further to maxdepth</span>
-        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">maxdepth</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">3</span>
+    elif particle.cycle_phase == 2:
+        # Phase 2: Sinking further to maxdepth
+        particle.depth += sign * vertical_speed * particle.dt
+        if abs(particle.depth) &gt;= maxdepth:
+            particle.cycle_phase = 3
 
-    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="c1"># Phase 3: Rising with vertical_speed until at surface</span>
-        <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">-=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">vertical_speed</span> <span class="o">*</span> <span class="n">particle</span><span class="o">.</span><span class="n">dt</span>
-        <span class="c1"># particle.temp = fieldset.temp[time, particle.depth, particle.lat, particle.lon]  # if fieldset has temperature</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">fieldset</span><span class="o">.</span><span class="n">mindepth</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">fieldset</span><span class="o">.</span><span class="n">mindepth</span>
-            <span class="c1"># particle.temp = 0./0.  # reset temperature to NaN at end of sampling cycle</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">4</span>
+    elif particle.cycle_phase == 3:
+        # Phase 3: Rising with vertical_speed until at surface
+        particle.depth -= sign * vertical_speed * particle.dt
+        # particle.temp = fieldset.temp[time, particle.depth, particle.lat, particle.lon]  # if fieldset has temperature
+        if abs(particle.depth) &lt;= fieldset.mindepth:
+            particle.depth = sign * fieldset.mindepth
+            # particle.temp = 0./0.  # reset temperature to NaN at end of sampling cycle
+            particle.cycle_phase = 4
 
-    <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-        <span class="c1"># Phase 4: Transmitting at surface until cycletime is reached</span>
-        <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">cycle_age</span> <span class="o">&gt;</span> <span class="n">cycletime</span><span class="p">:</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_phase</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">particle</span><span class="o">.</span><span class="n">cycle_age</span> <span class="o">=</span> <span class="mi">0</span>
+    elif particle.cycle_phase == 4:
+        # Phase 4: Transmitting at surface until cycletime is reached
+        if particle.cycle_age &gt; cycletime:
+            particle.cycle_phase = 0
+            particle.cycle_age = 0
 
-    <span class="c1"># if particle.state == ErrorCode.Evaluate:</span>
-    <span class="c1">#    particle.cycle_age += particle.dt  # update cycle_age</span>
+    # if particle.state == ErrorCode.Evaluate:
+    #    particle.cycle_age += particle.dt  # update cycle_age
 </pre></div>
 </div>
 </div>

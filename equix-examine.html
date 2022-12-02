@@ -715,34 +715,34 @@ title="Print to PDF"
 </ol>
 <div class="cell tag_hide-cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">load_ext</span> snakeviz
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%load_ext watermark
+%load_ext snakeviz
+%matplotlib inline
 
 
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
+import glob
+import os
 
-<span class="kn">import</span> <span class="nn">cf_xarray</span> <span class="k">as</span> <span class="nn">cfxr</span>
-<span class="kn">import</span> <span class="nn">datatree</span>
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">flox.xarray</span>
-<span class="kn">import</span> <span class="nn">hvplot.xarray</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">dcpy.oceans</span> <span class="kn">import</span> <span class="n">read_osu_microstructure_mat</span><span class="p">,</span> <span class="n">thorpesort</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
+import cf_xarray as cfxr
+import datatree
+import dcpy
+import distributed
+import flox.xarray
+import hvplot.xarray
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import xarray as xr
+from dcpy.oceans import read_osu_microstructure_mat, thorpesort
+from IPython.display import Image
 
-<span class="c1"># import eddydiff as ed</span>
-<span class="kn">import</span> <span class="nn">pump</span>
+# import eddydiff as ed
+import pump
 
-<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+xr.set_options(keep_attrs=True)
+mpl.rcParams[&quot;figure.dpi&quot;] = 140
 
-<span class="o">%</span><span class="k">watermark</span> -iv
+%watermark -iv
 </pre></div>
 </div>
 </div>
@@ -2640,22 +2640,22 @@ numpy      : 1.21.5
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Jq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">min_dTdz</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def Jq(x, *, min_dTdz):
 
-    <span class="n">j</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span>
-            <span class="mi">1025</span>
-            <span class="o">*</span> <span class="mi">4000</span>
-            <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">chi</span> <span class="o">&lt;</span> <span class="mf">2e-2</span><span class="p">)</span>
-            <span class="o">/</span> <span class="mi">2</span>
-            <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_dTdz</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="p">)</span>
-    <span class="n">j</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$J_q^χ$&quot;</span>
-    <span class="n">j</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;W/m^2&quot;</span>
-    <span class="k">return</span> <span class="n">j</span>
+    j = (
+        (
+            1025
+            * 4000
+            * x.chi.where(x.chi &lt; 2e-2)
+            / 2
+            / x.dTdz.where(np.abs(x.dTdz) &gt; min_dTdz)
+        )
+        .rolling(depth=5, center=True)
+        .mean()
+    )
+    j.attrs[&quot;long_name&quot;] = &quot;$J_q^χ$&quot;
+    j.attrs[&quot;units&quot;] = &quot;W/m^2&quot;
+    return j
 </pre></div>
 </div>
 </div>
@@ -2706,51 +2706,51 @@ numpy      : 1.21.5
 <p>Some deglitching of N2 happens in <code class="docutils literal notranslate"><span class="pre">sum_eq08.m</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cham</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/equix.nc&quot;</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cham = xr.load_dataset(os.path.expanduser(&quot;~/datasets/microstructure/osu/equix.nc&quot;))
 
-<span class="n">cham</span><span class="p">[</span><span class="s2">&quot;rhoav&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="mi">1000</span>
-<span class="n">cham</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+cham[&quot;rhoav&quot;] = cham.pden.mean().data + 1000
+cham[&quot;dTdz&quot;] *= -1
 
-<span class="n">theta_old</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">cham</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">depth</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-<span class="n">cham</span><span class="p">[</span><span class="s2">&quot;sortTbyT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thorpesort</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">cham</span><span class="p">[</span><span class="s2">&quot;sortT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thorpesort</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">cham</span><span class="o">.</span><span class="n">pden</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">cham</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="o">-</span><span class="mf">9.81</span>
-    <span class="o">*</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span>
-        <span class="mi">34</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="p">),</span> <span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">cham</span><span class="o">.</span><span class="n">pres</span><span class="o">.</span><span class="n">broadcast_like</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="o">*</span> <span class="n">cham</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="p">)</span>
+theta_old = cham.theta.copy(deep=True)
+cham[&quot;depth&quot;] = cham.depth.astype(float)
+cham[&quot;sortTbyT&quot;] = thorpesort(cham.theta, cham.theta, ascending=False)
+cham[&quot;sortT&quot;] = thorpesort(cham.theta, cham.pden, ascending=True)
+cham[&quot;NT2&quot;] = (
+    -9.81
+    * dcpy.eos.alpha(
+        34 * xr.ones_like(cham.theta), cham.theta, cham.pres.broadcast_like(cham.theta)
+    )
+    * cham.dTdz
+)
 
-<span class="n">chamρ</span> <span class="o">=</span> <span class="n">thorpesort</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;pres&quot;</span><span class="p">),</span> <span class="s2">&quot;pden&quot;</span><span class="p">,</span> <span class="n">core_dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="n">chamρ</span><span class="p">[</span><span class="s2">&quot;pres&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">pres</span>
-<span class="n">chamρ</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">chamρ</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-<span class="n">chamρ</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">rhoav</span> <span class="o">*</span> <span class="n">chamρ</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-<span class="n">chamρ</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">9.81</span>
-    <span class="o">*</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span>
-        <span class="mi">34</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">chamρ</span><span class="o">.</span><span class="n">theta</span><span class="p">),</span>
-        <span class="n">chamρ</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
-        <span class="n">chamρ</span><span class="o">.</span><span class="n">pres</span><span class="o">.</span><span class="n">broadcast_like</span><span class="p">(</span><span class="n">chamρ</span><span class="o">.</span><span class="n">theta</span><span class="p">),</span>
-    <span class="p">)</span>
-    <span class="o">*</span> <span class="n">chamρ</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="p">)</span>
+chamρ = thorpesort(cham.drop(&quot;pres&quot;), &quot;pden&quot;, core_dim=&quot;depth&quot;)
+chamρ[&quot;pres&quot;] = cham.pres
+chamρ[&quot;dTdz&quot;] = -chamρ.theta.diff(&quot;depth&quot;, label=&quot;lower&quot;)
+chamρ[&quot;N2&quot;] = 9.81 / cham.rhoav * chamρ.pden.diff(&quot;depth&quot;, label=&quot;lower&quot;)
+chamρ[&quot;NT2&quot;] = (
+    9.81
+    * dcpy.eos.alpha(
+        34 * xr.ones_like(chamρ.theta),
+        chamρ.theta,
+        chamρ.pres.broadcast_like(chamρ.theta),
+    )
+    * chamρ.dTdz
+)
 
-<span class="n">chamT</span> <span class="o">=</span> <span class="n">thorpesort</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;pres&quot;</span><span class="p">),</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">core_dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">chamT</span><span class="p">[</span><span class="s2">&quot;pres&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">pres</span>
-<span class="n">chamT</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">chamT</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-<span class="n">chamT</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">rhoav</span> <span class="o">*</span> <span class="n">chamT</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-<span class="n">chamT</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">9.81</span>
-    <span class="o">*</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span>
-        <span class="mi">34</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">chamT</span><span class="o">.</span><span class="n">theta</span><span class="p">),</span>
-        <span class="n">chamT</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
-        <span class="n">chamT</span><span class="o">.</span><span class="n">pres</span><span class="o">.</span><span class="n">broadcast_like</span><span class="p">(</span><span class="n">chamT</span><span class="o">.</span><span class="n">theta</span><span class="p">),</span>
-    <span class="p">)</span>
-    <span class="o">*</span> <span class="n">chamT</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="p">)</span>
-<span class="n">cham</span>
+chamT = thorpesort(cham.drop(&quot;pres&quot;), &quot;theta&quot;, core_dim=&quot;depth&quot;, ascending=False)
+chamT[&quot;pres&quot;] = cham.pres
+chamT[&quot;dTdz&quot;] = -chamT.theta.diff(&quot;depth&quot;, label=&quot;lower&quot;)
+chamT[&quot;N2&quot;] = 9.81 / cham.rhoav * chamT.pden.diff(&quot;depth&quot;, label=&quot;lower&quot;)
+chamT[&quot;NT2&quot;] = (
+    9.81
+    * dcpy.eos.alpha(
+        34 * xr.ones_like(chamT.theta),
+        chamT.theta,
+        chamT.pres.broadcast_like(chamT.theta),
+    )
+    * chamT.dTdz
+)
+cham
 </pre></div>
 </div>
 </div>
@@ -3637,15 +3637,15 @@ Attributes:
 <h4>Comparing gradients<a class="headerlink" href="#comparing-gradients" title="Permalink to this headline">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
-<span class="c1"># 1m spacing so a simple diff is the gradient...</span>
-<span class="n">profile</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">aspect</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;dtheta/dz&quot;</span><span class="p">)</span>
-<span class="n">profile</span><span class="o">.</span><span class="n">sortT</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;d/dz sorted by ρ&quot;</span><span class="p">)</span>
-<span class="n">profile</span><span class="o">.</span><span class="n">sortTbyT</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;d/dz sorted by T&quot;</span><span class="p">)</span>
-<span class="c1"># cham5m.T.isel(time=150).diff(&quot;depth&quot;).plot()</span>
-<span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">profile</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sasha&quot;</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>profile = cham.isel(time=200)
+# 1m spacing so a simple diff is the gradient...
+profile.theta.diff(&quot;depth&quot;, label=&quot;lower&quot;).plot(aspect=4, size=5, label=&quot;dtheta/dz&quot;)
+profile.sortT.diff(&quot;depth&quot;, label=&quot;lower&quot;).plot(label=&quot;d/dz sorted by ρ&quot;)
+profile.sortTbyT.diff(&quot;depth&quot;, label=&quot;lower&quot;).plot(label=&quot;d/dz sorted by T&quot;)
+# cham5m.T.isel(time=150).diff(&quot;depth&quot;).plot()
+(-1 * profile.dTdz).plot(color=&quot;k&quot;, label=&quot;Sasha&quot;)
+dcpy.plots.liney(0)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -3658,14 +3658,14 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
-<span class="c1"># 1m spacing so a simple diff is the gradient...</span>
-<span class="n">profile</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">aspect</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;dpden/dz&quot;</span><span class="p">)</span>
-<span class="n">chamρ</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;d/dz sorted by ρ&quot;</span><span class="p">)</span>
-<span class="c1"># cham5m.T.isel(time=150).diff(&quot;depth&quot;).plot()</span>
-<span class="n">profile</span><span class="o">.</span><span class="n">DRHODZ</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sasha&quot;</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>profile = cham.isel(time=200)
+# 1m spacing so a simple diff is the gradient...
+profile.pden.diff(&quot;depth&quot;, label=&quot;lower&quot;).plot(aspect=4, size=5, label=&quot;dpden/dz&quot;)
+chamρ.isel(time=200).pden.diff(&quot;depth&quot;, label=&quot;lower&quot;).plot(label=&quot;d/dz sorted by ρ&quot;)
+# cham5m.T.isel(time=150).diff(&quot;depth&quot;).plot()
+profile.DRHODZ.plot(color=&quot;k&quot;, label=&quot;Sasha&quot;)
+dcpy.plots.liney(0)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -3678,16 +3678,16 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">da</span> <span class="ow">in</span> <span class="p">[</span>
-    <span class="n">cham</span><span class="o">.</span><span class="n">N2</span><span class="p">,</span>
-    <span class="p">(</span><span class="mf">9.81</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">rhoav</span> <span class="o">*</span> <span class="n">cham</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">pres</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)),</span>
-    <span class="p">(</span><span class="mf">9.81</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">rhoav</span> <span class="o">*</span> <span class="n">chamρ</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">pres</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)),</span>
-<span class="p">]:</span>
-    <span class="n">da</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-        <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span>
-    <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>for da in [
+    cham.N2,
+    (9.81 / cham.rhoav * cham.pden.diff(&quot;depth&quot;) / cham.pres.diff(&quot;depth&quot;)),
+    (9.81 / cham.rhoav * chamρ.pden.diff(&quot;depth&quot;) / cham.pres.diff(&quot;depth&quot;)),
+]:
+    da.plot.hist(
+        yscale=&quot;linear&quot;, bins=np.logspace(-8, -1, 100), xscale=&quot;log&quot;, histtype=&quot;step&quot;
+    )
 
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;sasha&quot;</span><span class="p">,</span> <span class="s2">&quot;pden&quot;</span><span class="p">,</span> <span class="s2">&quot;pden sorted&quot;</span><span class="p">])</span>
+plt.legend([&quot;sasha&quot;, &quot;pden&quot;, &quot;pden sorted&quot;])
 </pre></div>
 </div>
 </div>
@@ -3700,10 +3700,10 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cham</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sasha&quot;</span><span class="p">)</span>
-<span class="n">chamρ</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;ρ sort&quot;</span><span class="p">)</span>
-<span class="n">chamT</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;T sort&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cham.dTdz.mean(&quot;time&quot;).plot(label=&quot;Sasha&quot;)
+chamρ.dTdz.mean(&quot;time&quot;).plot(label=&quot;ρ sort&quot;)
+chamT.dTdz.mean(&quot;time&quot;).plot(label=&quot;T sort&quot;)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -3720,65 +3720,65 @@ Attributes:
 <h3>EQUIX χpods<a class="headerlink" href="#equix-pods" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/work/datasets/microstructure/osu/equix/hourly_tao.nc&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">iop</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/equix/hourly_iop.nc&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">eop</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/equix/hourly_eop.nc&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">tao_iop</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/equix/hourly_tao_iop.nc&quot;</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao = xr.open_dataset(
+    os.path.expanduser(&quot;~/work/datasets/microstructure/osu/equix/hourly_tao.nc&quot;)
+)
+iop = xr.open_dataset(
+    os.path.expanduser(&quot;~/datasets/microstructure/osu/equix/hourly_iop.nc&quot;)
+)
+eop = xr.open_dataset(
+    os.path.expanduser(&quot;~/datasets/microstructure/osu/equix/hourly_eop.nc&quot;)
+)
+tao_iop = xr.open_dataset(
+    os.path.expanduser(&quot;~/datasets/microstructure/osu/equix/hourly_tao_iop.nc&quot;)
+)
 
-<span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">]:</span>
-    <span class="n">tao_iop</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="mf">9.81</span>
-        <span class="o">*</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span>
-            <span class="mi">34</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">tao_iop</span><span class="p">[</span><span class="s2">&quot;T1&quot;</span><span class="p">]),</span>
-            <span class="n">tao_iop</span><span class="p">[</span><span class="s2">&quot;T&quot;</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">],</span>
-            <span class="n">tao_iop</span><span class="o">.</span><span class="n">depth</span><span class="o">.</span><span class="n">broadcast_like</span><span class="p">(</span><span class="n">tao_iop</span><span class="o">.</span><span class="n">T1</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="o">*</span> <span class="n">tao_iop</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;dT</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">dz&quot;</span><span class="p">]</span>
-    <span class="p">)</span>
-<span class="n">tao_iop</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">9.81</span>
-    <span class="o">*</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span><span class="mi">34</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">tao_iop</span><span class="o">.</span><span class="n">T1</span><span class="p">),</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">T1</span><span class="p">,</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
-    <span class="o">*</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="p">)</span>
-<span class="n">iop</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mf">9.81</span> <span class="o">*</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">alpha</span><span class="p">(</span><span class="mi">34</span> <span class="o">*</span> <span class="n">xr</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">iop</span><span class="o">.</span><span class="n">theta</span><span class="p">),</span> <span class="n">iop</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">iop</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span> <span class="o">*</span> <span class="n">iop</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="p">)</span>
+for suffix in [&quot;1&quot;, &quot;2&quot;]:
+    tao_iop[&quot;NT2&quot; + suffix] = (
+        9.81
+        * dcpy.eos.alpha(
+            34 * np.ones_like(tao_iop[&quot;T1&quot;]),
+            tao_iop[&quot;T&quot; + suffix],
+            tao_iop.depth.broadcast_like(tao_iop.T1),
+        )
+        * tao_iop[f&quot;dT{suffix}dz&quot;]
+    )
+tao_iop[&quot;NT2&quot;] = (
+    9.81
+    * dcpy.eos.alpha(34 * xr.ones_like(tao_iop.T1), tao_iop.T1, tao_iop.depth)
+    * tao_iop.dTdz
+)
+iop[&quot;NT2&quot;] = (
+    9.81 * dcpy.eos.alpha(34 * xr.ones_like(iop.theta), iop.theta, iop.depth) * iop.dTdz
+)
 
-<span class="n">iop</span><span class="p">[</span><span class="s2">&quot;Jq_eps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4200</span> <span class="o">*</span> <span class="mi">1025</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">iop</span><span class="o">.</span><span class="n">eps</span> <span class="o">/</span> <span class="n">iop</span><span class="o">.</span><span class="n">NT2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">iop</span><span class="o">.</span><span class="n">NT2</span> <span class="o">&gt;</span> <span class="mf">5e-6</span><span class="p">)</span> <span class="o">*</span> <span class="n">iop</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="n">tao_iop</span><span class="p">[</span><span class="s2">&quot;Jq_eps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mi">4200</span>
-    <span class="o">*</span> <span class="mi">1025</span>
-    <span class="o">*</span> <span class="mf">0.2</span>
-    <span class="o">*</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">eps</span>
-    <span class="o">/</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">NT2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tao_iop</span><span class="o">.</span><span class="n">NT2</span> <span class="o">&gt;</span> <span class="mf">5e-6</span><span class="p">)</span>
-    <span class="o">*</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="p">)</span>
+iop[&quot;Jq_eps&quot;] = 4200 * 1025 * 0.2 * iop.eps / iop.NT2.where(iop.NT2 &gt; 5e-6) * iop.dTdz
+tao_iop[&quot;Jq_eps&quot;] = (
+    4200
+    * 1025
+    * 0.2
+    * tao_iop.eps
+    / tao_iop.NT2.where(tao_iop.NT2 &gt; 5e-6)
+    * tao_iop.dTdz
+)
 
-<span class="n">Tbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mf">26.1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)]</span>
-<span class="p">)</span>
+Tbins = np.hstack(
+    [np.arange(18, 22, 1), np.arange(22, 25, 0.5), np.arange(25, 26.1, 0.25)]
+)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># mask = np.ones_like(cham.dTdz, dtype=bool)</span>
-<span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">N2</span> <span class="o">&gt;</span> <span class="mf">1e-5</span><span class="p">)</span>
-<span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">chi</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
-<span class="p">(</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">cham</span><span class="o">.</span><span class="n">eps</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># mask = np.ones_like(cham.dTdz, dtype=bool)
+mask = (np.abs(cham.dTdz) &gt; 1e-3) &amp; (cham.N2 &gt; 1e-5)
+(cham.chi / 2 / cham.dTdz.where(mask) ** 2).mean(&quot;time&quot;).plot(
+    y=&quot;depth&quot;, xscale=&quot;log&quot;, yincrease=False
+)
+(0.2 * cham.eps / cham.N2.where(mask)).mean(&quot;time&quot;).plot(
+    y=&quot;depth&quot;, xscale=&quot;log&quot;, yincrease=False, ylim=(100, 25)
+)
 </pre></div>
 </div>
 </div>
@@ -3794,15 +3794,15 @@ Attributes:
 <h3>TIWE chameleon<a class="headerlink" href="#tiwe-chameleon" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiwe</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/tiwe.nc&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-    <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">tiwe</span><span class="p">[</span><span class="s2">&quot;rhoav&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tiwe</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1000</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tiwe = xr.load_dataset(os.path.expanduser(&quot;~/datasets/microstructure/osu/tiwe.nc&quot;)).sel(
+    depth=slice(200)
+)
+tiwe[&quot;rhoav&quot;] = tiwe.pden.mean() + 1000
 
-<span class="n">tiweρ</span> <span class="o">=</span> <span class="n">thorpesort</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;pres&quot;</span><span class="p">),</span> <span class="s2">&quot;pden&quot;</span><span class="p">,</span> <span class="n">core_dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="n">tiweρ</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">tiweρ</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-<span class="n">tiweρ</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="n">tiweρ</span><span class="o">.</span><span class="n">rhoav</span> <span class="o">*</span> <span class="n">tiweρ</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-<span class="n">tiweρ</span><span class="p">[</span><span class="s2">&quot;pres&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tiwe</span><span class="o">.</span><span class="n">pres</span>
+tiweρ = thorpesort(tiwe.drop(&quot;pres&quot;), &quot;pden&quot;, core_dim=&quot;depth&quot;)
+tiweρ[&quot;dTdz&quot;] = -1 * tiweρ.theta.diff(&quot;depth&quot;, label=&quot;lower&quot;)
+tiweρ[&quot;N2&quot;] = 9.81 / tiweρ.rhoav * tiweρ.pden.diff(&quot;depth&quot;, label=&quot;lower&quot;)
+tiweρ[&quot;pres&quot;] = tiwe.pres
 </pre></div>
 </div>
 </div>
@@ -3813,56 +3813,56 @@ Attributes:
 <h2>Different Jq calculations<a class="headerlink" href="#different-jq-calculations" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(1, 3)
+f.set_size_inches((12, 3))
 
-<span class="n">cham</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">chamρ</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">chamT</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+cham.dTdz.sel(depth=slice(125)).mean(&quot;time&quot;).cf.plot(ax=ax[0])
+chamρ.dTdz.sel(depth=slice(125)).mean(&quot;time&quot;).cf.plot(ax=ax[0])
+chamT.dTdz.sel(depth=slice(125)).mean(&quot;time&quot;).cf.plot(ax=ax[0])
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$∂T/∂z$&quot;</span><span class="p">)</span>
+ax[0].set_xlabel(&quot;$∂T/∂z$&quot;)
 
-<span class="n">_</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sasha&quot;</span>
-<span class="p">)</span>
-<span class="n">chamρ</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;T sorted by ρ&quot;</span>
-<span class="p">)</span>
-<span class="n">chamT</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span>
-    <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
-    <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;T sorted by T&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$∂T/∂z$&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">Jq_</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Tname</span><span class="p">):</span>
-    <span class="n">dTdz</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">Tname</span><span class="p">]</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">rhoav</span> <span class="o">*</span> <span class="mi">4000</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">chi</span> <span class="o">&lt;</span> <span class="mf">1e-2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">dTdz</span>
+_, bins, _ = cham.dTdz.sel(depth=slice(125)).plot.hist(
+    histtype=&quot;step&quot;, bins=np.linspace(-0.1, 0.1, 1000), ax=ax[1], label=&quot;Sasha&quot;
+)
+chamρ.dTdz.sel(depth=slice(125)).plot.hist(
+    histtype=&quot;step&quot;, bins=bins, yscale=&quot;log&quot;, ax=ax[1], label=&quot;T sorted by ρ&quot;
+)
+chamT.dTdz.sel(depth=slice(125)).plot.hist(
+    histtype=&quot;step&quot;,
+    bins=bins,
+    yscale=&quot;log&quot;,
+    ax=ax[1],
+    label=&quot;T sorted by T&quot;,
+)
+ax[1].set_xlabel(&quot;$∂T/∂z$&quot;)
 
 
-<span class="n">_</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">Jq_</span><span class="p">(</span><span class="n">cham</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-        <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sasha&quot;</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="n">Jq_</span><span class="p">(</span><span class="n">cham</span><span class="p">,</span> <span class="s2">&quot;sortT&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;T sorted by ρ&quot;</span>
-<span class="p">)</span>
-<span class="n">Jq_</span><span class="p">(</span><span class="n">cham</span><span class="p">,</span> <span class="s2">&quot;sortTbyT&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span>
-    <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
-    <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;T sorted by T&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+def Jq_(x, Tname):
+    dTdz = x[Tname].differentiate(&quot;depth&quot;)
+    return x.rhoav * 4000 * x.chi.where(x.chi &lt; 1e-2) / 2 / dTdz
 
-<span class="n">ax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$J_q^χ$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+
+_, bins, _ = (
+    Jq_(cham, &quot;T&quot;)
+    .sel(depth=slice(125))
+    .plot.hist(
+        histtype=&quot;step&quot;, bins=np.linspace(-0.1, 0.1, 1000), ax=ax[2], label=&quot;Sasha&quot;
+    )
+)
+Jq_(cham, &quot;sortT&quot;).sel(depth=slice(125)).plot.hist(
+    histtype=&quot;step&quot;, bins=bins, yscale=&quot;log&quot;, ax=ax[2], label=&quot;T sorted by ρ&quot;
+)
+Jq_(cham, &quot;sortTbyT&quot;).sel(depth=slice(125)).plot.hist(
+    histtype=&quot;step&quot;,
+    bins=bins,
+    yscale=&quot;log&quot;,
+    ax=ax[2],
+    label=&quot;T sorted by T&quot;,
+)
+
+ax[-1].set_xlabel(&quot;$J_q^χ$&quot;)
+ax[-1].legend(bbox_to_anchor=(1.0, 0.5))
 </pre></div>
 </div>
 </div>
@@ -3875,10 +3875,10 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
-<span class="c1"># profile.N2.plot()</span>
-<span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">DRHODZ</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="p">(</span><span class="n">thorpesort</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">pden</span><span class="p">,</span> <span class="n">profile</span><span class="o">.</span><span class="n">pden</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>profile = cham.isel(time=200)
+# profile.N2.plot()
+(profile.DRHODZ).plot()
+(thorpesort(profile.pden, profile.pden).diff(&quot;depth&quot;)).plot()
 </pre></div>
 </div>
 </div>
@@ -3891,21 +3891,21 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="n">j</span> <span class="o">=</span> <span class="n">Jq</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">min_dTdz</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
-    <span class="n">hdl</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">j</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">j</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">color</span><span class="o">=</span><span class="n">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span>
-    <span class="n">j</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def plot(c, name):
+    j = Jq(c, min_dTdz=1e-3)
+    hdl = j.where(j &lt; 0).mean(&quot;time&quot;).plot(y=&quot;depth&quot;, label=name)
+    j.where(j &gt; 0).mean(&quot;time&quot;).plot(
+        color=hdl[0].get_color(), y=&quot;depth&quot;, yincrease=False
+    )
+    j.mean(&quot;time&quot;).plot(
+        marker=&quot;.&quot;, color=hdl[0].get_color(), y=&quot;depth&quot;, yincrease=False
+    )
 
 
-<span class="n">plot</span><span class="p">(</span><span class="n">chamρ</span><span class="p">,</span> <span class="s2">&quot;sorted by ρ&quot;</span><span class="p">)</span>
-<span class="n">plot</span><span class="p">(</span><span class="n">chamT</span><span class="p">,</span> <span class="s2">&quot;sorted by T&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$J_q^χ$&quot;</span><span class="p">)</span>
+plot(chamρ, &quot;sorted by ρ&quot;)
+plot(chamT, &quot;sorted by T&quot;)
+plt.legend()
+plt.xlabel(&quot;$J_q^χ$&quot;)
 </pre></div>
 </div>
 </div>
@@ -3921,66 +3921,66 @@ Attributes:
 <h2>Averaging in temperature space<a class="headerlink" href="#averaging-in-temperature-space" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># xr.set_options(use_numpy_groupies=False)</span>
-<span class="c1"># cham_legacy = pump.tspace.regrid_chameleon(</span>
-<span class="c1"># These thresholds make a big difference! but really it&#39;s a very small number of points</span>
-<span class="c1">#    cham.where((cham.chi &lt; 1e-2) &amp; (cham.eps &lt; 1e-5))</span>
-<span class="c1">#    .sel(depth=slice(156))</span>
-<span class="c1">#    .where(cham.depth &gt; cham.mld + 5)</span>
-<span class="c1">#    .isel(time=slice(24 * 6)),</span>
-<span class="c1">#    time_freq=&quot;3H&quot;,</span>
-<span class="c1">#    bins=bins,</span>
-<span class="c1">#    trim_mld=False,</span>
-<span class="c1"># )</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># xr.set_options(use_numpy_groupies=False)
+# cham_legacy = pump.tspace.regrid_chameleon(
+# These thresholds make a big difference! but really it&#39;s a very small number of points
+#    cham.where((cham.chi &lt; 1e-2) &amp; (cham.eps &lt; 1e-5))
+#    .sel(depth=slice(156))
+#    .where(cham.depth &gt; cham.mld + 5)
+#    .isel(time=slice(24 * 6)),
+#    time_freq=&quot;3H&quot;,
+#    bins=bins,
+#    trim_mld=False,
+# )
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">cham_legacy</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;theta_c&quot;</span><span class="p">)</span>
-<span class="n">cham_npg</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;theta_c&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(1, 2, sharey=True)
+cham_legacy.chi.mean(&quot;time&quot;).plot(ax=ax[0], y=&quot;theta_c&quot;)
+cham_npg.chi.mean(&quot;time&quot;).plot(ax=ax[0], y=&quot;theta_c&quot;)
 
-<span class="p">(</span><span class="n">cham_legacy</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">cham_npg</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;theta_bins&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Reds</span><span class="p">)</span>
+(cham_legacy.nobs - cham_npg.nobs).plot(ax=ax[1], y=&quot;theta_bins&quot;, cmap=mpl.cm.Reds)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># xr.set_options(use_flox=True)</span>
-<span class="n">cham_npg</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">tspace</span><span class="o">.</span><span class="n">regrid_chameleon</span><span class="p">(</span>
-    <span class="c1"># These thresholds make a big difference! but really it&#39;s a very small number of points</span>
-    <span class="n">cham</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">cham</span><span class="o">.</span><span class="n">chi</span> <span class="o">&lt;</span> <span class="mf">1e-2</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">156</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">cham</span><span class="o">.</span><span class="n">mld</span> <span class="o">+</span> <span class="mi">5</span><span class="p">),</span>
-    <span class="c1"># .isel(time=slice(24 * 6)),</span>
-    <span class="n">time_freq</span><span class="o">=</span><span class="s2">&quot;3H&quot;</span><span class="p">,</span>
-    <span class="n">bins</span><span class="o">=</span><span class="n">Tbins</span><span class="p">,</span>
-    <span class="n">trim_mld</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># xr.set_options(use_flox=True)
+cham_npg = pump.tspace.regrid_chameleon(
+    # These thresholds make a big difference! but really it&#39;s a very small number of points
+    cham.where((cham.chi &lt; 1e-2))
+    .sel(depth=slice(156))
+    .where(cham.depth &gt; cham.mld + 5),
+    # .isel(time=slice(24 * 6)),
+    time_freq=&quot;3H&quot;,
+    bins=Tbins,
+    trim_mld=False,
+)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cham_Tspace</span> <span class="o">=</span> <span class="n">cham_npg</span>
-<span class="n">cham_Tmean</span> <span class="o">=</span> <span class="n">cham_Tspace</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">cham_Tmean</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;z_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cham_Tspace</span><span class="o">.</span><span class="n">z_c</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cham_Tspace = cham_npg
+cham_Tmean = cham_Tspace.mean(&quot;time&quot;)
+cham_Tmean.coords[&quot;z_c&quot;] = cham_Tspace.z_c.mean(&quot;time&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+mpl.rcParams[&quot;figure.dpi&quot;] = 140
 
-<span class="n">cham_Tspace</span><span class="o">.</span><span class="n">nobs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">cham_Tmean</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;z_c&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+cham_Tspace.nobs.plot(x=&quot;time&quot;)
+plt.figure()
+cham_Tmean.Jq.plot(y=&quot;z_c&quot;, marker=&quot;s&quot;, yincrease=True)
 </pre></div>
 </div>
 </div>
@@ -4003,114 +4003,114 @@ J_q^ε &amp;= ρ c_p K_ρ T_z = ρ c_p \frac{Γε}{N²} T_z
 <p>Compare many Jq estimates: <span class="math notranslate nohighlight">\(J_q^χ\)</span> and <span class="math notranslate nohighlight">\(J_q^ε\)</span> from χpod, chameleon</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(1, 3, sharex=True, sharey=True, constrained_layout=True)
+f.set_size_inches((10, 5))
 
-<span class="n">N2rho</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="mi">1025</span> <span class="o">*</span> <span class="n">cham</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="n">N2sort</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="mi">1025</span> <span class="o">*</span> <span class="n">thorpesort</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">pden</span><span class="p">,</span> <span class="n">cham</span><span class="o">.</span><span class="n">pden</span><span class="p">)</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">cham_</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">cham</span><span class="p">,</span> <span class="n">chamρ</span><span class="p">,</span> <span class="n">chamT</span><span class="p">],</span>
-    <span class="p">[</span><span class="s2">&quot;2009 paper&quot;</span><span class="p">,</span> <span class="s2">&quot;$T_z$ with T sorted by ρ&quot;</span><span class="p">,</span> <span class="s2">&quot;$T_z$ with T sorted by T&quot;</span><span class="p">],</span>
-<span class="p">):</span>
-    <span class="p">(</span><span class="mi">1025</span> <span class="o">*</span> <span class="mi">4000</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">cham</span><span class="o">.</span><span class="n">eps</span> <span class="o">/</span> <span class="n">cham</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">N2</span> <span class="o">&gt;</span> <span class="mf">5e-6</span><span class="p">)</span> <span class="o">*</span> <span class="n">cham_</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
-        <span class="s2">&quot;time&quot;</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-        <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="c1"># color=&quot;k&quot;,</span>
-        <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$J_q^ε = ρ c_p K_ρ T_z$&quot;</span><span class="p">)</span>
-
-
-<span class="k">for</span> <span class="n">cham_</span><span class="p">,</span> <span class="n">axx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">chamρ</span><span class="p">,</span> <span class="n">chamT</span><span class="p">],</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-    <span class="n">Jq</span><span class="p">(</span><span class="n">cham</span><span class="p">,</span> <span class="n">min_dTdz</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-        <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^χ$ (2009 paper)&quot;</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">for</span> <span class="n">min_dTdz</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">]:</span>
-        <span class="n">Jq</span><span class="p">(</span><span class="n">cham_</span><span class="p">,</span> <span class="n">min_dTdz</span><span class="o">=</span><span class="n">min_dTdz</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-            <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;$T_z$ &gt; </span><span class="si">{</span><span class="n">min_dTdz</span><span class="si">:</span><span class="s2">.0e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="n">axx</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$J_q^χ = ρ c_p K_T T_z$&quot;</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">axx</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">cham_Tmean</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;z_c&quot;</span><span class="p">,</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^χ$ Tspace&quot;</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span>
-        <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">iop</span><span class="o">.</span><span class="n">Jq</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span>
-        <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^χ$ EQUIX IOP&quot;</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
-        <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">Jq</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">,</span>
-        <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^χ$ TAO IOP&quot;</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
-        <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">iop</span><span class="o">.</span><span class="n">Jq_eps</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span>
-        <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^ε$ IOP&quot;</span><span class="p">,</span>
-        <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">Jq_eps</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
-        <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span>
-        <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^ε$ TAO IOP&quot;</span><span class="p">,</span>
-        <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+N2rho = 9.81 / 1025 * cham.pden.differentiate(&quot;depth&quot;)
+N2sort = 9.81 / 1025 * thorpesort(cham.pden, cham.pden).differentiate(&quot;depth&quot;)
+for cham_, label in zip(
+    [cham, chamρ, chamT],
+    [&quot;2009 paper&quot;, &quot;$T_z$ with T sorted by ρ&quot;, &quot;$T_z$ with T sorted by T&quot;],
+):
+    (1025 * 4000 * 0.2 * cham.eps / cham.N2.where(cham.N2 &gt; 5e-6) * cham_.dTdz).mean(
+        &quot;time&quot;
+    ).plot(
+        y=&quot;depth&quot;,
+        yincrease=False,
+        # color=&quot;k&quot;,
+        label=label,
+        ax=ax[0],
+    )
+ax[0].set_xlabel(&quot;$J_q^ε = ρ c_p K_ρ T_z$&quot;)
 
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;T sorted by ρ&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;T sorted by T&quot;</span><span class="p">)</span>
-<span class="c1"># (4e6 * 0.2 * cham.eps / cham.N2.where(mask) * cham.dTdz).mean(&quot;time&quot;).plot(</span>
-<span class="c1">#    y=&quot;depth&quot;, yincrease=False, ylim=[150, 20], xlim=[-1000, 1000]</span>
-<span class="c1"># )</span>
+for cham_, axx in zip([chamρ, chamT], ax[1:]):
+    Jq(cham, min_dTdz=1e-10).mean(&quot;time&quot;).plot(
+        y=&quot;depth&quot;,
+        yincrease=False,
+        label=&quot;$J_q^χ$ (2009 paper)&quot;,
+        ax=axx,
+    )
+    for min_dTdz in [1e-3, 5e-3]:
+        Jq(cham_, min_dTdz=min_dTdz).mean(&quot;time&quot;).plot(
+            y=&quot;depth&quot;,
+            yincrease=False,
+            label=f&quot;$T_z$ &gt; {min_dTdz:.0e}&quot;,
+            ax=axx,
+        )
+    axx.set_xlabel(&quot;$J_q^χ = ρ c_p K_T T_z$&quot;)
 
-<span class="c1"># (Jq(cham5m)).mean(&quot;time&quot;).plot(y=&quot;depth&quot;, yincrease=False)</span>
-<span class="c1"># (4e6 * 0.2 * cham5m.eps / cham5m.N2.where(mask) * cham5m.dTdz).mean(&quot;time&quot;).plot(</span>
-<span class="c1">#    y=&quot;depth&quot;, yincrease=False, ylim=[150, 20], xlim=[-1000, 1000]</span>
-<span class="c1"># )</span>
+for axx in ax:
+    cham_Tmean.Jq.plot(
+        y=&quot;z_c&quot;,
+        marker=&quot;s&quot;,
+        color=&quot;k&quot;,
+        label=&quot;$J_q^χ$ Tspace&quot;,
+        ax=axx,
+        _labels=False,
+    )
+    (-1 * iop.Jq).mean(&quot;time&quot;).plot(
+        y=&quot;depth&quot;,
+        marker=&quot;v&quot;,
+        ls=&quot;none&quot;,
+        label=&quot;$J_q^χ$ EQUIX IOP&quot;,
+        ax=axx,
+        color=&quot;r&quot;,
+        _labels=False,
+    )
+    (-1 * tao_iop.Jq).mean(&quot;time&quot;).plot(
+        y=&quot;depth&quot;,
+        marker=&quot;^&quot;,
+        ls=&quot;none&quot;,
+        label=&quot;$J_q^χ$ TAO IOP&quot;,
+        ax=axx,
+        color=&quot;b&quot;,
+        _labels=False,
+    )
 
-<span class="c1"># cham5m.Jq_χ.mean(&quot;time&quot;).plot(y=&quot;depth&quot;, yincrease=False, color=&quot;k&quot;, ls=&quot;--&quot;)</span>
+    (-1 * iop.Jq_eps).mean(&quot;time&quot;).plot(
+        ls=&quot;none&quot;,
+        markerfacecolor=&quot;none&quot;,
+        y=&quot;depth&quot;,
+        marker=&quot;o&quot;,
+        color=&quot;r&quot;,
+        ax=axx,
+        ms=5,
+        label=&quot;$J_q^ε$ IOP&quot;,
+        _labels=False,
+    )
+    (-1 * tao_iop.Jq_eps).mean(&quot;time&quot;).plot(
+        ls=&quot;none&quot;,
+        y=&quot;depth&quot;,
+        marker=&quot;o&quot;,
+        markerfacecolor=&quot;none&quot;,
+        color=&quot;b&quot;,
+        ax=axx,
+        ms=5,
+        label=&quot;$J_q^ε$ TAO IOP&quot;,
+        _labels=False,
+    )
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">600</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">160</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
-<span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">]</span>
-<span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">]</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">clean_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;../images/equix-jq-iop-cham-vs-chipod.png&quot;</span><span class="p">)</span>
+
+ax[1].set_title(&quot;T sorted by ρ&quot;)
+ax[2].set_title(&quot;T sorted by T&quot;)
+# (4e6 * 0.2 * cham.eps / cham.N2.where(mask) * cham.dTdz).mean(&quot;time&quot;).plot(
+#    y=&quot;depth&quot;, yincrease=False, ylim=[150, 20], xlim=[-1000, 1000]
+# )
+
+# (Jq(cham5m)).mean(&quot;time&quot;).plot(y=&quot;depth&quot;, yincrease=False)
+# (4e6 * 0.2 * cham5m.eps / cham5m.N2.where(mask) * cham5m.dTdz).mean(&quot;time&quot;).plot(
+#    y=&quot;depth&quot;, yincrease=False, ylim=[150, 20], xlim=[-1000, 1000]
+# )
+
+# cham5m.Jq_χ.mean(&quot;time&quot;).plot(y=&quot;depth&quot;, yincrease=False, color=&quot;k&quot;, ls=&quot;--&quot;)
+
+plt.xlim(-600, 10)
+plt.ylim(160, 15)
+[ax.grid(True) for ax in ax]
+[ax.legend() for ax in ax]
+dcpy.plots.clean_axes(ax)
+plt.savefig(&quot;../images/equix-jq-iop-cham-vs-chipod.png&quot;)
 </pre></div>
 </div>
 </div>
@@ -4133,38 +4133,38 @@ J_q^ε &amp;= ρ c_p K_ρ T_z = ρ c_p \frac{Γε}{N²} T_z
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">],</span> <span class="n">axx</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, axx = plt.subplots(1, 2, sharey=True, constrained_layout=True)
+ax = dict(zip([&quot;chi&quot;, &quot;eps&quot;], axx))
 
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="n">cham</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cham</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cham&quot;</span>
-    <span class="p">)</span>
-    <span class="n">iop</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;EQUIX&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">tao_iop</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;TAO&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-    <span class="p">)</span>
-    <span class="c1"># iop[var + &quot;2&quot;].mean(&quot;time&quot;).cf.plot(marker=&quot;.&quot;, ls=&quot;none&quot;, label=&quot;IOP&quot;, color=&#39;r&#39;, ax=ax[var])</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-    <span class="n">tao_iop</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
-        <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
-        <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;TAO&quot;</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">],</span>
-    <span class="p">)</span>
+for var in ax:
+    cham[var].where(cham[var] &lt; 1e-3).mean(&quot;time&quot;).cf.plot(
+        xscale=&quot;log&quot;, color=&quot;k&quot;, ax=ax[var], label=&quot;cham&quot;
+    )
+    iop[var].mean(&quot;time&quot;).cf.plot(
+        marker=&quot;.&quot;, ls=&quot;none&quot;, label=&quot;EQUIX&quot;, color=&quot;r&quot;, ax=ax[var]
+    )
+    tao_iop[var + &quot;1&quot;].mean(&quot;time&quot;).cf.plot(
+        marker=&quot;.&quot;, color=&quot;b&quot;, ls=&quot;none&quot;, label=&quot;TAO&quot;, ax=ax[var]
+    )
+    # iop[var + &quot;2&quot;].mean(&quot;time&quot;).cf.plot(marker=&quot;.&quot;, ls=&quot;none&quot;, label=&quot;IOP&quot;, color=&#39;r&#39;, ax=ax[var])
+    ax[var].legend()
+    tao_iop[var + &quot;2&quot;].mean(&quot;time&quot;).cf.plot(
+        marker=&quot;o&quot;,
+        markerfacecolor=&quot;none&quot;,
+        ms=4,
+        color=&quot;b&quot;,
+        ls=&quot;none&quot;,
+        label=&quot;TAO&quot;,
+        ax=ax[var],
+    )
 
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">145</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">125</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">linex</span><span class="p">([</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">6e-6</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">])</span>
+ax[&quot;chi&quot;].set_xlim([1e-7, 1e-5])
+ax[&quot;chi&quot;].set_ylim([145, 5])
+ax[&quot;chi&quot;].set_yticks([125, 100, 75, 50, 25])
+dcpy.plots.linex([1e-6, 6e-6], ax=ax[&quot;chi&quot;])
 
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mf">2e-9</span><span class="p">,</span> <span class="mf">2e-5</span><span class="p">])</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">linex</span><span class="p">([</span><span class="mf">5e-7</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">2e-6</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">])</span>
+ax[&quot;eps&quot;].set_xlim([2e-9, 2e-5])
+dcpy.plots.linex([5e-7, 1e-6, 2e-6], ax=ax[&quot;eps&quot;])
 </pre></div>
 </div>
 </div>
@@ -4175,8 +4175,8 @@ J_q^ε &amp;= ρ c_p K_ρ T_z = ρ c_p \frac{Γε}{N²} T_z
 <p>59m χpod sensor 2 is low, does not match Perlin &amp; Moum.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_iop</span><span class="o">.</span><span class="n">chi1</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">58</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">tao_iop</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">58</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_iop.chi1.sel(depth=58).plot(size=5, aspect=4)
+tao_iop.chi2.sel(depth=58).plot(yscale=&quot;log&quot;)
 </pre></div>
 </div>
 </div>
@@ -4202,17 +4202,17 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 <p>I’ll look at EQUIX and TIWE.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equixρ</span> <span class="o">=</span> <span class="n">chamρ</span>
-<span class="n">equixρ</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;EQUIX&quot;</span>
-<span class="n">tiweρ</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TIWE&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equixρ = chamρ
+equixρ.attrs[&quot;name&quot;] = &quot;EQUIX&quot;
+tiweρ.attrs[&quot;name&quot;] = &quot;TIWE&quot;
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">add_mixing_diagnostics</span><span class="p">(</span><span class="n">equixρ</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">add_mixing_diagnostics</span><span class="p">(</span><span class="n">tiweρ</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pump.calc.add_mixing_diagnostics(equixρ)
+pump.calc.add_mixing_diagnostics(tiweρ)
 </pre></div>
 </div>
 </div>
@@ -4220,21 +4220,21 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 <p>Simple <span class="math notranslate nohighlight">\(Re_b\)</span> vs <span class="math notranslate nohighlight">\(Ri_f\)</span> scatter plot suggest two parameter regimes. More clearly in EQUIX</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">figs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ds</span><span class="p">[[</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span> <span class="s2">&quot;Rif&quot;</span><span class="p">]])</span><span class="o">.</span><span class="n">hvplot</span><span class="o">.</span><span class="n">hexbin</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span>
-        <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">],</span>
-        <span class="n">cnorm</span><span class="o">=</span><span class="s2">&quot;eq_hist&quot;</span><span class="p">,</span>
-        <span class="n">logz</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;fire_r&quot;</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
-        <span class="n">frame_width</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="p">[</span><span class="n">equixρ</span><span class="p">,</span> <span class="n">tiweρ</span><span class="p">]</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>figs = tuple(
+    np.log10(ds[[&quot;Reb&quot;, &quot;Rif&quot;]]).hvplot.hexbin(
+        x=&quot;Reb&quot;,
+        y=&quot;Rif&quot;,
+        by=[&quot;depth&quot;, &quot;time&quot;],
+        cnorm=&quot;eq_hist&quot;,
+        logz=True,
+        cmap=&quot;fire_r&quot;,
+        title=ds.attrs[&quot;name&quot;],
+        frame_width=300,
+    )
+    for ds in [equixρ, tiweρ]
+)
 
-<span class="n">figs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">figs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+figs[0] + figs[1]
 </pre></div>
 </div>
 </div>
@@ -4274,10 +4274,10 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">chamρ</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">chamρ</span><span class="o">.</span><span class="n">depth</span> <span class="o">&lt;</span> <span class="n">chamρ</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="n">chamρ</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">chamρ</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">chamρ</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>chamρ.where(chamρ.depth &lt; chamρ.eucmax).plot.scatter(y=&quot;Rif&quot;, x=&quot;Reb&quot;, s=1, alpha=0.05)
+chamρ.where(chamρ.depth &gt; chamρ.eucmax).plot.scatter(y=&quot;Rif&quot;, x=&quot;Reb&quot;, s=1, alpha=0.05)
+plt.gca().set_xscale(&quot;log&quot;)
+plt.gca().set_yscale(&quot;log&quot;)
 </pre></div>
 </div>
 </div>
@@ -4287,10 +4287,10 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiweρ</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tiweρ</span><span class="o">.</span><span class="n">depth</span> <span class="o">&lt;</span> <span class="n">tiweρ</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="n">tiweρ</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tiweρ</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">tiweρ</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tiweρ.where(tiweρ.depth &lt; tiweρ.eucmax).plot.scatter(y=&quot;Rif&quot;, x=&quot;Reb&quot;, s=1, alpha=0.05)
+tiweρ.where(tiweρ.depth &gt; tiweρ.eucmax).plot.scatter(y=&quot;Rif&quot;, x=&quot;Reb&quot;, s=1, alpha=0.05)
+plt.gca().set_xscale(&quot;log&quot;)
+plt.gca().set_yscale(&quot;log&quot;)
 </pre></div>
 </div>
 </div>
@@ -4312,11 +4312,11 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_reb_rif</span><span class="p">(</span><span class="n">equixρ</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_reb_rif</span><span class="p">(</span><span class="n">tiweρ</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">clean_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(1, 2, sharex=True, sharey=True, constrained_layout=True)
+pump.plot.plot_reb_rif(equixρ, ax=ax[0])
+pump.plot.plot_reb_rif(tiweρ, ax=ax[1])
+f.set_size_inches((6, 3.5))
+dcpy.plots.clean_axes(ax)
 </pre></div>
 </div>
 </div>
@@ -4326,7 +4326,7 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equixρ</span><span class="o">.</span><span class="n">mean_Rif</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equixρ.mean_Rif
 </pre></div>
 </div>
 </div>
@@ -4708,7 +4708,7 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiweρ</span><span class="o">.</span><span class="n">mean_Rif</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tiweρ.mean_Rif
 </pre></div>
 </div>
 </div>
@@ -5095,27 +5095,27 @@ Attributes:
 <h2>TIWE<a class="headerlink" href="#tiwe" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiwe</span><span class="p">[</span><span class="s2">&quot;Jq_ε&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mi">1025</span>
-    <span class="o">*</span> <span class="mi">4000</span>
-    <span class="o">*</span> <span class="mf">0.2</span>
-    <span class="o">*</span> <span class="n">tiwe</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">eps</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">)</span>
-    <span class="o">/</span> <span class="n">tiwe</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">N2</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">)</span>
-    <span class="o">*</span> <span class="n">tiwe</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">dTdz</span> <span class="o">&gt;</span> <span class="mf">1e-4</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">tiwe</span><span class="p">[</span><span class="s2">&quot;Jq_χ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="mi">1025</span>
-    <span class="o">*</span> <span class="mi">4000</span>
-    <span class="o">*</span> <span class="n">tiwe</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">eps</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">)</span>
-    <span class="o">/</span> <span class="mi">2</span>
-    <span class="o">/</span> <span class="n">tiwe</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">sortT</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tiwe[&quot;Jq_ε&quot;] = (
+    1025
+    * 4000
+    * 0.2
+    * tiwe.eps.where(tiwe.eps &lt; 1e-5)
+    / tiwe.N2.where(tiwe.N2 &gt; 1e-6)
+    * tiwe.dTdz.where(tiwe.dTdz &gt; 1e-4)
+)
+tiwe[&quot;Jq_χ&quot;] = (
+    1025
+    * 4000
+    * tiwe.chi.where(tiwe.eps &lt; 1e-5)
+    / 2
+    / tiwe.dTdz.where(np.abs(tiwe.sortT.diff(&quot;depth&quot;)) &gt; 1e-3)
+)
 
-<span class="n">tiwe</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">Jq_ε</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">Jq_χ</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="p">)</span>
+tiwe.Jq.sel(depth=slice(11, None)).mean(&quot;time&quot;).cf.plot(y=&quot;depth&quot;)
+tiwe.Jq_ε.mean(&quot;time&quot;).cf.plot(y=&quot;depth&quot;)
+tiwe.Jq_χ.mean(&quot;time&quot;).cf.plot(
+    y=&quot;depth&quot;, yincrease=False, xscale=&quot;linear&quot;, xlim=(0, 120), ylim=(200, 0)
+)
 </pre></div>
 </div>
 </div>
@@ -5128,8 +5128,8 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_mixing_diagnostics_timeseries</span><span class="p">(</span><span class="n">equixρ</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_mixing_diagnostics_timeseries</span><span class="p">(</span><span class="n">tiweρ</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pump.plot.plot_mixing_diagnostics_timeseries(equixρ)
+pump.plot.plot_mixing_diagnostics_timeseries(tiweρ)
 </pre></div>
 </div>
 </div>
@@ -5140,7 +5140,7 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equixρ</span><span class="o">.</span><span class="n">Sh2</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equixρ.Sh2.cf.plot(x=&quot;time&quot;, robust=True)
 </pre></div>
 </div>
 </div>
@@ -5167,27 +5167,27 @@ Attributes:
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(1, 2, sharey=True)
 
-<span class="k">for</span> <span class="n">axx</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">]):</span>
-    <span class="n">cham</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">cham</span><span class="o">.</span><span class="n">chi</span> <span class="o">&lt;</span> <span class="mf">1e-2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cham</span><span class="o">.</span><span class="n">eps</span> <span class="o">&lt;</span> <span class="mf">6e-5</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">140</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axx</span>
-    <span class="p">)</span>
-    <span class="n">iop</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axx</span>
-    <span class="p">)</span>
-    <span class="n">tao_iop</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axx</span>
-    <span class="p">)</span>
-    <span class="n">tao_iop</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">,</span> <span class="n">fillstyle</span><span class="o">=</span><span class="s2">&quot;none&quot;</span>
-    <span class="p">)</span>
+for axx, var in zip(ax.flat, [&quot;chi&quot;, &quot;eps&quot;]):
+    cham[var].where((cham.chi &lt; 1e-2) &amp; (cham.eps &lt; 6e-5)).mean(&quot;time&quot;).cf.plot(
+        xscale=&quot;log&quot;, xlim=(1e-7, 1e-5), ylim=(140, 10), color=&quot;k&quot;, ax=axx
+    )
+    iop[var].mean(&quot;time&quot;).plot(
+        y=&quot;depth&quot;, marker=&quot;.&quot;, color=&quot;r&quot;, ls=&quot;none&quot;, ms=8, ax=axx
+    )
+    tao_iop[var].mean(&quot;time&quot;).plot(
+        y=&quot;depth&quot;, marker=&quot;.&quot;, color=&quot;b&quot;, ls=&quot;none&quot;, ms=8, ax=axx
+    )
+    tao_iop[var + &quot;2&quot;].mean(&quot;time&quot;).plot(
+        y=&quot;depth&quot;, marker=&quot;o&quot;, color=&quot;b&quot;, ls=&quot;none&quot;, ms=8, ax=axx, fillstyle=&quot;none&quot;
+    )
 
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">125</span><span class="p">])</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">liney</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">linex</span><span class="p">([</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">5e-6</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">linex</span><span class="p">([</span><span class="mf">5e-7</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">2e-6</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+ax[0].set_yticks([25, 50, 75, 100, 125])
+dcpy.plots.liney(25, ax=ax[0])
+dcpy.plots.linex([1e-6, 5e-6], ax=ax[0])
+dcpy.plots.linex([5e-7, 1e-6, 2e-6], ax=ax[1])
 </pre></div>
 </div>
 </div>
@@ -5199,45 +5199,45 @@ Attributes:
 <h3>Tz, N2<a class="headerlink" href="#tz-n2" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;dTdz&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">],</span> <span class="n">axx</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, axx = plt.subplots(1, 2, sharey=True, constrained_layout=True)
+ax = dict(zip([&quot;dTdz&quot;, &quot;N2&quot;], axx))
 
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s2">&quot;dTdz&quot;</span><span class="p">:</span>
-        <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">cham</span><span class="p">[</span><span class="n">var</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cham&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s2">&quot;N2&quot;</span><span class="p">:</span>
-        <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">cham</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cham&quot;</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">var</span> <span class="o">!=</span> <span class="s2">&quot;N2&quot;</span><span class="p">:</span>
-        <span class="n">iop</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;IOP&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">tao_iop</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;TAO&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s2">&quot;N2&quot;</span><span class="p">:</span>
-        <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">cham</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cham $N_T^2$&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">iop</span><span class="p">[</span><span class="s2">&quot;NT2&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;IOP $N_T^2$&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">tao_iop</span><span class="p">[</span><span class="s2">&quot;NT21&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;TAO $N_T^2$&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">tao_iop</span><span class="p">[</span><span class="s2">&quot;NT22&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-        <span class="p">)</span>
+for var in ax:
+    if var == &quot;dTdz&quot;:
+        (-1 * cham[var]).mean(&quot;time&quot;).cf.plot(
+            ls=&quot;--&quot;, xscale=&quot;log&quot;, color=&quot;k&quot;, ax=ax[var], label=&quot;cham&quot;
+        )
+    if var == &quot;N2&quot;:
+        (4 * cham[&quot;N2&quot;]).mean(&quot;time&quot;).cf.plot(
+            ls=&quot;--&quot;, xscale=&quot;log&quot;, color=&quot;k&quot;, ax=ax[var], label=&quot;cham&quot;
+        )
+    if var != &quot;N2&quot;:
+        iop[var].mean(&quot;time&quot;).cf.plot(
+            marker=&quot;.&quot;, ls=&quot;none&quot;, label=&quot;IOP&quot;, color=&quot;r&quot;, ax=ax[var]
+        )
+        tao_iop[var].mean(&quot;time&quot;).cf.plot(
+            marker=&quot;.&quot;, color=&quot;b&quot;, ls=&quot;none&quot;, label=&quot;TAO&quot;, ax=ax[var]
+        )
+    if var == &quot;N2&quot;:
+        (4 * cham[&quot;NT2&quot;]).mean(&quot;time&quot;).cf.plot(
+            ls=&quot;-&quot;, label=&quot;cham $N_T^2$&quot;, color=&quot;k&quot;, ax=ax[var]
+        )
+        (4 * iop[&quot;NT2&quot;]).mean(&quot;time&quot;).cf.plot(
+            marker=&quot;.&quot;, ls=&quot;none&quot;, label=&quot;IOP $N_T^2$&quot;, color=&quot;r&quot;, ax=ax[var]
+        )
+        (4 * tao_iop[&quot;NT21&quot;]).mean(&quot;time&quot;).cf.plot(
+            marker=&quot;.&quot;, color=&quot;b&quot;, ls=&quot;none&quot;, label=&quot;TAO $N_T^2$&quot;, ax=ax[var]
+        )
+        (4 * tao_iop[&quot;NT22&quot;]).mean(&quot;time&quot;).cf.plot(
+            marker=&quot;.&quot;, color=&quot;b&quot;, ls=&quot;none&quot;, ax=ax[var]
+        )
 
-    <span class="n">ax</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$4N^2$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">145</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">125</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
-<span class="c1"># ax[&quot;dTdz&quot;].set_xlim([7.5e-4, 2e-3])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mf">7.5e-5</span><span class="p">,</span> <span class="mf">2e-3</span><span class="p">])</span>
+    ax[var].legend()
+ax[&quot;N2&quot;].set_xlabel(&quot;$4N^2$&quot;)
+ax[&quot;N2&quot;].set_ylim([145, 15])
+ax[&quot;dTdz&quot;].set_yticks([125, 100, 75, 50, 25])
+# ax[&quot;dTdz&quot;].set_xlim([7.5e-4, 2e-3])
+ax[&quot;N2&quot;].set_xlim([7.5e-5, 2e-3])
 </pre></div>
 </div>
 </div>
@@ -5254,48 +5254,48 @@ Attributes:
 <h2>Explorations<a class="headerlink" href="#explorations" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cham5m</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">cham5m</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">sortT</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-<span class="c1"># cham5m[&quot;dTdz&quot;] = cham5m.theta.diff(&quot;depth&quot;)# / cham5m.depth.diff(&quot;depth&quot;)</span>
-<span class="c1"># cham5m[&quot;dTdz&quot;] = cham5m.dTdz.where(np.abs(cham5m.dTdz) &gt; 5e-3)</span>
-<span class="n">cham5m</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="o">/</span> <span class="mi">1025</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">pden</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cham5m = cham.copy(deep=True)
+cham5m[&quot;dTdz&quot;] = cham5m.sortT.differentiate(&quot;depth&quot;)
+# cham5m[&quot;dTdz&quot;] = cham5m.theta.diff(&quot;depth&quot;)# / cham5m.depth.diff(&quot;depth&quot;)
+# cham5m[&quot;dTdz&quot;] = cham5m.dTdz.where(np.abs(cham5m.dTdz) &gt; 5e-3)
+cham5m[&quot;N2&quot;] = 9.81 / 1025 * cham5m.pden.differentiate(&quot;depth&quot;)
 
-<span class="n">cham5m</span> <span class="o">=</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">cham5m</span><span class="o">.</span><span class="n">N2</span> <span class="o">&gt;</span> <span class="mf">5e-6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">))</span>
-<span class="c1"># cham5m[&quot;N2&quot;] = np.abs(cham5m.N2.where(cham5m.N2 &gt; 5e-6))</span>
+cham5m = cham5m.where((cham5m.N2 &gt; 5e-6) &amp; (np.abs(cham5m.dTdz) &gt; 1e-3))
+# cham5m[&quot;N2&quot;] = np.abs(cham5m.N2.where(cham5m.N2 &gt; 5e-6))
 
-<span class="n">cham5m</span><span class="p">[</span><span class="s2">&quot;KT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">cham5m</span><span class="o">.</span><span class="n">chi</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span><span class="o">**</span><span class="mi">2</span>
-<span class="p">)</span>  <span class="c1"># .where(np.abs(cham5m.dTdz) &gt; 1e-3) ** 2</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">KT</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$K_T$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m²/s&quot;</span><span class="p">}</span>
-<span class="n">cham5m</span><span class="p">[</span><span class="s2">&quot;Kρ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">eps</span> <span class="o">/</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">N2</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">Kρ</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$K_ρ$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m²/s&quot;</span><span class="p">}</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cham5m</span><span class="o">.</span><span class="n">chi</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">)</span>
+cham5m[&quot;KT&quot;] = (
+    cham5m.chi / 2 / cham5m.dTdz**2
+)  # .where(np.abs(cham5m.dTdz) &gt; 1e-3) ** 2
+cham5m.KT.attrs = {&quot;long_name&quot;: &quot;$K_T$&quot;, &quot;units&quot;: &quot;m²/s&quot;}
+cham5m[&quot;Kρ&quot;] = 0.2 * cham5m.eps / cham5m.N2
+cham5m.Kρ.attrs = {&quot;long_name&quot;: &quot;$K_ρ$&quot;, &quot;units&quot;: &quot;m²/s&quot;}
+cham5m.chi.where(cham5m.chi &lt; 1e-3)
 
-<span class="n">cham5m</span><span class="p">[</span><span class="s2">&quot;Jq_χ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1025</span> <span class="o">*</span> <span class="mi">4000</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">KT</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">Jq_χ</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$J_q^χ$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W/m²&quot;</span><span class="p">}</span>
-<span class="n">cham5m</span><span class="p">[</span><span class="s2">&quot;Jq_ε&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1025</span> <span class="o">*</span> <span class="mi">4000</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">Kρ</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">Jq_ε</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;$J_q^ε$&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W/m²&quot;</span><span class="p">}</span>
+cham5m[&quot;Jq_χ&quot;] = 1025 * 4000 * cham5m.KT * cham5m.dTdz
+cham5m.Jq_χ.attrs = {&quot;long_name&quot;: &quot;$J_q^χ$&quot;, &quot;units&quot;: &quot;W/m²&quot;}
+cham5m[&quot;Jq_ε&quot;] = 1025 * 4000 * cham5m.Kρ * cham5m.dTdz
+cham5m.Jq_ε.attrs = {&quot;long_name&quot;: &quot;$J_q^ε$&quot;, &quot;units&quot;: &quot;W/m²&quot;}
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cham5m</span><span class="o">.</span><span class="n">KT</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>
-    <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span>
-    <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$K_T$&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">Kρ</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>
-    <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span>
-    <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$K_ρ$&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cham5m.KT.plot.hist(
+    bins=np.logspace(-7, -1, 35),
+    xscale=&quot;log&quot;,
+    histtype=&quot;step&quot;,
+    density=True,
+    label=&quot;$K_T$&quot;,
+)
+cham5m.Kρ.plot.hist(
+    bins=np.logspace(-7, -1, 35),
+    histtype=&quot;step&quot;,
+    xscale=&quot;log&quot;,
+    density=True,
+    label=&quot;$K_ρ$&quot;,
+)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -5308,13 +5308,13 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mf">4e6</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">KT</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^χ$&quot;</span>
-<span class="p">)</span>
-<span class="p">(</span><span class="mf">4e6</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">Kρ</span> <span class="o">*</span> <span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
-    <span class="n">yscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^ε$&quot;</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(4e6 * cham5m.KT * cham5m.dTdz).plot.hist(
+    yscale=&quot;log&quot;, bins=np.linspace(-1500, 1500, 100), histtype=&quot;step&quot;, label=&quot;$J_q^χ$&quot;
+)
+(4e6 * cham5m.Kρ * cham5m.dTdz).plot.hist(
+    yscale=&quot;log&quot;, bins=np.linspace(-1500, 1500, 100), histtype=&quot;step&quot;, label=&quot;$J_q^ε$&quot;
+)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -5327,17 +5327,17 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, axx = plt.subplots(1, 2, sharey=True, constrained_layout=True)
 
-<span class="n">cham5m</span><span class="o">.</span><span class="n">KT</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$K_T$&quot;</span><span class="p">)</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">Kρ</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$K_ρ$&quot;</span><span class="p">)</span>
+cham5m.KT.mean(&quot;time&quot;).cf.plot(ax=axx[0], label=&quot;$K_T$&quot;)
+cham5m.Kρ.mean(&quot;time&quot;).cf.plot(xscale=&quot;log&quot;, ax=axx[0], label=&quot;$K_ρ$&quot;)
 
-<span class="n">cham5m</span><span class="o">.</span><span class="n">Jq_χ</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^χ$&quot;</span><span class="p">)</span>
-<span class="n">cham5m</span><span class="o">.</span><span class="n">Jq_ε</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cham5m</span><span class="o">.</span><span class="n">dTdz</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">700</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$J_q^ε$&quot;</span>
-<span class="p">)</span>
+cham5m.Jq_χ.where(cham5m.dTdz &lt; 0).mean(&quot;time&quot;).cf.plot(ax=axx[1], label=&quot;$J_q^χ$&quot;)
+cham5m.Jq_ε.where(cham5m.dTdz &lt; 0).mean(&quot;time&quot;).cf.plot(
+    xlim=(-700, 0), ax=axx[1], label=&quot;$J_q^ε$&quot;
+)
 
-<span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axx</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
+[ax.legend() for ax in axx.flat]
 </pre></div>
 </div>
 </div>
@@ -5356,14 +5356,14 @@ Attributes:
 <h3>Test thorpe sorting<a class="headerlink" href="#test-thorpe-sorting" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
 
-<span class="n">time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2008-11-03 04:00:00&quot;</span><span class="p">)</span>
+time = pd.Timestamp(&quot;2008-11-03 04:00:00&quot;)
 
-<span class="n">profile</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
-<span class="n">profile</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">thorpesort</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">profile</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-<span class="n">thorpesort</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">profile</span><span class="o">.</span><span class="n">pden</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+profile = cham.sel(time=[time], method=&quot;nearest&quot;)
+profile.theta.plot(hue=&quot;time&quot;)
+thorpesort(profile.theta, profile.theta, ascending=False).plot(hue=&quot;time&quot;, marker=&quot;.&quot;)
+thorpesort(profile.theta, profile.pden, ascending=True).plot(hue=&quot;time&quot;, marker=&quot;x&quot;)
 </pre></div>
 </div>
 </div>
@@ -5376,13 +5376,13 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2008-11-03 04:00:00&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>time = pd.Timestamp(&quot;2008-11-03 04:00:00&quot;)
 
-<span class="n">theta_old</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">theta_old</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-<span class="n">cham</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">)</span>
-<span class="n">cham</span><span class="o">.</span><span class="n">sortT</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">cham</span><span class="o">.</span><span class="n">sortTbyT</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+theta_old.sel(time=time, method=&quot;nearest&quot;).plot()
+theta_old.sel(time=time, method=&quot;nearest&quot;).plot(color=&quot;k&quot;, marker=&quot;.&quot;)
+cham.theta.sel(time=time, method=&quot;nearest&quot;).plot(color=&quot;blue&quot;, marker=&quot;^&quot;)
+cham.sortT.sel(time=time, method=&quot;nearest&quot;).plot()
+cham.sortTbyT.sel(time=time, method=&quot;nearest&quot;).plot(color=&quot;r&quot;)
 </pre></div>
 </div>
 </div>
@@ -5416,7 +5416,7 @@ Attributes:
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_iop</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_iop.Jq.resample(time=&quot;D&quot;).mean()
 </pre></div>
 </div>
 </div>
@@ -5838,7 +5838,7 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iop</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>iop.Jq.resample(time=&quot;H&quot;).mean().plot(row=&quot;depth&quot;)
 </pre></div>
 </div>
 </div>
@@ -5851,7 +5851,7 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_zarr</span><span class="p">(</span><span class="s2">&quot;ancillary&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;Ri&quot;</span><span class="p">:</span> <span class="s2">&quot;Rig&quot;</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao = pump.obs.read_tao_zarr(&quot;ancillary&quot;).rename({&quot;Ri&quot;: &quot;Rig&quot;})
 </pre></div>
 </div>
 </div>
@@ -6002,7 +6002,7 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix.Ri.cf.plot(robust=True, vmin=0, vmax=0.4)
 </pre></div>
 </div>
 </div>
@@ -6015,9 +6015,9 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">micro</span><span class="o">.</span><span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">cham</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-    <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2008-10-25&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix = pump.micro.make_clean_dataset(cham).sel(
+    depth=slice(10, None), time=slice(&quot;2008-10-25&quot;, None)
+)
 </pre></div>
 </div>
 </div>
@@ -6040,7 +6040,7 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">));</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix.Jq.resample(time=&quot;D&quot;).mean().cf.plot.line(col=&quot;time&quot;, col_wrap=4, xlim=(0, 500));
 </pre></div>
 </div>
 </div>
@@ -6050,30 +6050,30 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plt.rcParams[&quot;figure.dpi&quot;] = 140
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2008-10-27&quot;</span><span class="p">,</span> <span class="s2">&quot;2008-10-30&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">),</span>
-    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">,</span>
-    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix.eps.sel(time=slice(&quot;2008-10-27&quot;, &quot;2008-10-30&quot;)).cf.plot(
+    robust=True,
+    norm=mpl.colors.LogNorm(1e-10, 1e-5),
+    cmap=mpl.cm.Spectral_r,
+    cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;},
+)
 
-<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">iop</span><span class="o">.</span><span class="n">depth</span><span class="p">:</span>
-    <span class="n">j</span> <span class="o">=</span> <span class="n">iop</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
-    <span class="n">scaled</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)</span>
-    <span class="n">scaled</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+for z in iop.depth:
+    j = iop.Jq.sel(depth=z)
+    scaled = z + (j / 50)
+    scaled.plot(x=&quot;time&quot;)
 
 
-<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">depth</span><span class="p">:</span>
-    <span class="n">j</span> <span class="o">=</span> <span class="n">tao_iop</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
-    <span class="n">scaled</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)</span>
-    <span class="n">scaled</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+for z in tao_iop.depth:
+    j = tao_iop.Jq.sel(depth=z)
+    scaled = z + (j / 50)
+    scaled.plot(x=&quot;time&quot;)
 </pre></div>
 </div>
 </div>
@@ -6083,13 +6083,13 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
-    <span class="n">equix</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2008-10-23&quot;</span><span class="p">,</span> <span class="s2">&quot;2008-11-02&quot;</span><span class="p">),</span> <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">125</span><span class="p">))</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">,</span>
-        <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
-    <span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(
+    equix.Jq.sel(time=slice(&quot;2008-10-23&quot;, &quot;2008-11-02&quot;), depth=slice(125)).cf.plot(
+        robust=True,
+        cmap=mpl.cm.Spectral_r,
+        cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;},
+    )
+)
 </pre></div>
 </div>
 </div>
@@ -6102,12 +6102,12 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
-    <span class="n">j</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;2008-11-10&quot;</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;time.day&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(
+    j.sel(time=slice(None, &quot;2008-11-10&quot;))
+    .groupby(&quot;time.day&quot;)
+    .mean()
+    .cf.plot.line(col=&quot;day&quot;, aspect=1)
+)
 </pre></div>
 </div>
 </div>

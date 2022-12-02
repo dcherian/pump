@@ -562,44 +562,44 @@ title="Print to PDF"
 <h1>Long-term tubulence in 20-year simulation<a class="headerlink" href="#long-term-tubulence-in-20-year-simulation" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">autoreload</span> 2
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> watermark
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%autoreload 2
+%matplotlib inline
+%load_ext watermark
 
-<span class="kn">import</span> <span class="nn">cf_xarray</span>
-<span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib.units</span> <span class="k">as</span> <span class="nn">munits</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">holoviews</span> <span class="kn">import</span> <span class="n">opts</span>
+import cf_xarray
+import dask
+import dcpy
+import distributed
+import matplotlib as mpl
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import matplotlib.units as munits
+import numpy as np
+import pandas as pd
+import seawater as sw
+import xarray as xr
+from holoviews import opts
 
-<span class="kn">import</span> <span class="nn">pump</span>
+import pump
 
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
-<span class="n">munits</span><span class="o">.</span><span class="n">registry</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">ConciseDateConverter</span><span class="p">()</span>
+mpl.rcParams[&quot;savefig.dpi&quot;] = 300
+mpl.rcParams[&quot;savefig.bbox&quot;] = &quot;tight&quot;
+mpl.rcParams[&quot;figure.dpi&quot;] = 140
+munits.registry[np.datetime64] = mdates.ConciseDateConverter()
 
-<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-
-<span class="c1"># hv.extension(&quot;bokeh&quot;)</span>
-<span class="c1"># hv.opts.defaults(opts.Image(fontscale=1.5), opts.Curve(fontscale=1.5))</span>
+xr.set_options(keep_attrs=True)
 
 
-<span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+# hv.extension(&quot;bokeh&quot;)
+# hv.opts.defaults(opts.Image(fontscale=1.5), opts.Curve(fontscale=1.5))
 
-<span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/&quot;</span>  <span class="c1"># MITgcm output directory</span>
-<span class="n">stationdirname</span> <span class="o">=</span> <span class="n">gcmdir</span>
 
-<span class="o">%</span><span class="k">watermark</span> -iv
+xr.DataArray([1.0])
+
+gcmdir = &quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/&quot;  # MITgcm output directory
+stationdirname = gcmdir
+
+%watermark -iv
 </pre></div>
 </div>
 </div>
@@ -620,47 +620,47 @@ distributed: 2.30.0
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import ncar_jobqueue
 
-<span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">del</span> <span class="n">client</span>
-<span class="c1">#if &quot;cluster&quot; in locals():</span>
-<span class="c1">#    cluster.close()</span>
+if &quot;client&quot; in locals():
+    client.close()
+    del client
+#if &quot;cluster&quot; in locals():
+#    cluster.close()
 
-<span class="c1">#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}</span>
+#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}
 
-<span class="c1"># cluster = distributed.LocalCluster(</span>
-<span class="c1">#    n_workers=8,</span>
-<span class="c1">#    threads_per_worker=1,</span>
-<span class="c1">#    env=env</span>
-<span class="c1"># )</span>
+# cluster = distributed.LocalCluster(
+#    n_workers=8,
+#    threads_per_worker=1,
+#    env=env
+# )
 
-<span class="k">if</span> <span class="s2">&quot;cluster&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-    <span class="k">del</span> <span class="n">cluster</span>
+if &quot;cluster&quot; in locals():
+    del cluster
 
-<span class="c1">#cluster = ncar_jobqueue.NCARCluster(</span>
-<span class="c1">#    project=&quot;NCGD0011&quot;,</span>
-<span class="c1">#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),</span>
-<span class="c1">#)</span>
-<span class="c1"># cluster = dask_jobqueue.PBSCluster(</span>
-<span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
-<span class="c1">#    env_extra=env,</span>
-<span class="c1"># )</span>
+#cluster = ncar_jobqueue.NCARCluster(
+#    project=&quot;NCGD0011&quot;,
+#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),
+#)
+# cluster = dask_jobqueue.PBSCluster(
+#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,
+#    env_extra=env,
+# )
 
-<span class="kn">import</span> <span class="nn">dask_jobqueue</span>
-<span class="n">cluster</span> <span class="o">=</span> <span class="n">dask_jobqueue</span><span class="o">.</span><span class="n">PBSCluster</span><span class="p">(</span>
-    <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># The number of cores you want</span>
-    <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;23GB&#39;</span><span class="p">,</span> <span class="c1"># Amount of memory</span>
-    <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># How many processes</span>
-    <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;casper&#39;</span><span class="p">,</span> <span class="c1"># The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)</span>
-    <span class="n">local_directory</span><span class="o">=</span><span class="s1">&#39;$TMPDIR&#39;</span><span class="p">,</span> <span class="c1"># Use your local directory</span>
-    <span class="n">resource_spec</span><span class="o">=</span><span class="s1">&#39;select=1:ncpus=1:mem=23GB&#39;</span><span class="p">,</span> <span class="c1"># Specify resources</span>
-    <span class="n">project</span><span class="o">=</span><span class="s1">&#39;ncgd0011&#39;</span><span class="p">,</span> <span class="c1"># Input your project ID here</span>
-    <span class="n">walltime</span><span class="o">=</span><span class="s1">&#39;02:00:00&#39;</span><span class="p">,</span> <span class="c1"># Amount of wall time</span>
-    <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ib0&#39;</span><span class="p">,</span> <span class="c1"># Interface to use</span>
-<span class="p">)</span>
-<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+import dask_jobqueue
+cluster = dask_jobqueue.PBSCluster(
+    cores=1, # The number of cores you want
+    memory=&#39;23GB&#39;, # Amount of memory
+    processes=1, # How many processes
+    queue=&#39;casper&#39;, # The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)
+    local_directory=&#39;$TMPDIR&#39;, # Use your local directory
+    resource_spec=&#39;select=1:ncpus=1:mem=23GB&#39;, # Specify resources
+    project=&#39;ncgd0011&#39;, # Input your project ID here
+    walltime=&#39;02:00:00&#39;, # Amount of wall time
+    interface=&#39;ib0&#39;, # Interface to use
+)
+cluster.scale(jobs=4)
 </pre></div>
 </div>
 </div>
@@ -675,7 +675,7 @@ Hosting the HTTP server on port 41672 instead
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster
 </pre></div>
 </div>
 </div>
@@ -686,11 +686,11 @@ Hosting the HTTP server on port 41672 instead
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-    <span class="k">del</span> <span class="n">client</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>if &quot;client&quot; in locals():
+    del client
     
-<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
-<span class="n">client</span>
+client = distributed.Client(cluster)
+client
 </pre></div>
 </div>
 </div>
@@ -721,40 +721,40 @@ Hosting the HTTP server on port 41672 instead
 <h3>Full dataset<a class="headerlink" href="#full-dataset" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># start date for les; noon is a good time (it is before sunrise)</span>
-<span class="n">sim_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2015-09-20 12:00:00&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># start date for les; noon is a good time (it is before sunrise)
+sim_time = pd.Timestamp(&quot;2015-09-20 12:00:00&quot;)
 
-<span class="c1"># ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)</span>
-<span class="n">les_time_length</span> <span class="o">=</span> <span class="mi">180</span>  <span class="c1"># (days); length of time for forcing/pushing files</span>
+# ADD a 5 day buffer here (:] all kinds of bugs at the beginning and end)
+les_time_length = 180  # (days); length of time for forcing/pushing files
 
-<span class="c1"># don&#39;t change anything here</span>
-<span class="n">output_start_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;1999-01-01&quot;</span><span class="p">)</span>  <span class="c1"># don&#39;t change</span>
-<span class="n">firstfilenum</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span>
-        <span class="n">sim_time</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s2">&quot;1D&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">output_start_time</span>
-    <span class="p">)</span>  <span class="c1"># add one day offset to avoid bugs</span>
-    <span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;timedelta64[D]&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">lastfilenum</span> <span class="o">=</span> <span class="n">firstfilenum</span> <span class="o">+</span> <span class="n">les_time_length</span>
+# don&#39;t change anything here
+output_start_time = pd.Timestamp(&quot;1999-01-01&quot;)  # don&#39;t change
+firstfilenum = (
+    (
+        sim_time - pd.Timedelta(&quot;1D&quot;) - output_start_time
+    )  # add one day offset to avoid bugs
+    .to_numpy()
+    .astype(&quot;timedelta64[D]&quot;)
+    .astype(&quot;int&quot;)
+)
+lastfilenum = firstfilenum + les_time_length
 
 
-<span class="k">def</span> <span class="nf">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="p">):</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gcmdir</span><span class="si">}</span><span class="s2">/File_</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.nc&quot;</span>
-        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">firstfilenum</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lastfilenum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">]</span>
+def gen_file_list(suffix):
+    files = [
+        f&quot;{gcmdir}/File_{num}_{suffix}.nc&quot;
+        for num in range(firstfilenum - 1, lastfilenum + 1)
+    ]
 
-    <span class="k">return</span> <span class="n">files</span>
+    return files
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coords</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_mitgcm_coords</span><span class="p">(</span><span class="n">gcmdir</span><span class="p">)</span>
-<span class="n">coords</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>coords = pump.model.read_mitgcm_coords(gcmdir)
+coords
 </pre></div>
 </div>
 </div>
@@ -1180,14 +1180,14 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># heat budget terms</span>
-<span class="n">hb</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">gen_file_list</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;hb&quot;</span><span class="p">),</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
-    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">hb_ren</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">rename_mitgcm_budget_terms</span><span class="p">(</span><span class="n">hb</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># heat budget terms
+hb = xr.open_mfdataset(
+    gen_file_list(suffix=&quot;hb&quot;),
+    chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500},
+    combine=&quot;by_coords&quot;,
+    parallel=True,
+)
+hb_ren = pump.model.rename_mitgcm_budget_terms(hb, coords).update(coords.coords)
 </pre></div>
 </div>
 </div>
@@ -1207,14 +1207,14 @@ To avoid creating the large chunks, set the option
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_jq</span> <span class="o">=</span> <span class="n">hb</span><span class="o">.</span><span class="n">DFrI_TH</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">300</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mean_jq = hb.DFrI_TH.sel(longitude=[-110, -125, -140], method=&quot;nearest&quot;).sel(depth=slice(-300)).mean(&quot;time&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_jq</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mean_jq.load()
 </pre></div>
 </div>
 </div>
@@ -1678,7 +1678,7 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_jq</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mean_jq.plot(row=&quot;longitude&quot;, y=&quot;depth&quot;, robust=True)
 </pre></div>
 </div>
 </div>
@@ -1694,21 +1694,21 @@ Coordinates:
 <h3>Stations<a class="headerlink" href="#stations" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_metrics</span><span class="p">(</span><span class="n">stationdirname</span><span class="p">)</span>
-<span class="n">stations</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_stations_20</span><span class="p">(</span><span class="n">stationdirname</span><span class="p">)</span>
-<span class="n">enso</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">make_enso_mask</span><span class="p">()</span>
-<span class="n">stations</span><span class="p">[</span><span class="s2">&quot;enso&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">enso</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">stations</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>metrics = pump.model.read_metrics(stationdirname)
+stations = pump.model.read_stations_20(stationdirname)
+enso = pump.obs.make_enso_mask()
+stations[&quot;enso&quot;] = enso.reindex(time=stations.time.data, method=&quot;nearest&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">dask</span><span class="o">.</span><span class="n">map_copy</span><span class="p">(</span>
-    <span class="n">stations</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="p">)</span>
-<span class="n">sections</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">calc_reduced_shear</span><span class="p">(</span><span class="n">sections</span><span class="p">)</span>
-<span class="n">sections</span><span class="p">[</span><span class="s2">&quot;dcl_base&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_dcl_base_Ri</span><span class="p">(</span><span class="n">sections</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections = dcpy.dask.map_copy(
+    stations.isel(latitude=slice(1, None, 3), longitude=slice(1, None, 3))
+)
+sections = pump.calc.calc_reduced_shear(sections)
+sections[&quot;dcl_base&quot;] = pump.calc.get_dcl_base_Ri(sections)
 </pre></div>
 </div>
 </div>
@@ -1725,8 +1725,8 @@ Calc Ri
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mld_dcl</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="s2">&quot;/glade/work/dcherian/pump/zarrs/temp_mld_sections.zarr&quot;</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">mld_dcl</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mld_dcl = xr.open_zarr(&quot;/glade/work/dcherian/pump/zarrs/temp_mld_sections.zarr&quot;, consolidated=True)
+mld_dcl
 </pre></div>
 </div>
 </div>
@@ -2410,15 +2410,15 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mld_dcl</span><span class="p">)</span>
-<span class="n">sections</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">guess_coord_axis</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections.update(mld_dcl)
+sections = sections.cf.guess_coord_axis()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="p">[</span><span class="s2">&quot;Jq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections[&quot;Jq&quot;] = sections.Jq.persist()
 </pre></div>
 </div>
 </div>
@@ -2429,56 +2429,56 @@ Attributes:
 <h2>Exploring 2 box idealization<a class="headerlink" href="#exploring-2-box-idealization" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moor</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=-</span><span class="mi">140</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">500</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moor = sections.sel(latitude=0, longitude=-140, method=&quot;nearest&quot;).sel(depth=slice(-500))
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moor</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">dask</span><span class="o">.</span><span class="n">map_copy</span><span class="p">(</span><span class="n">moor</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moor = dcpy.dask.map_copy(moor)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moor</span> <span class="o">=</span> <span class="n">moor</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moor = moor.persist()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moordaily</span> <span class="o">=</span> <span class="n">moor</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moordaily = moor.resample(time=&quot;D&quot;).mean()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moordaily</span><span class="p">[</span><span class="s2">&quot;zeuc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">moordaily</span><span class="o">.</span><span class="n">u</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moordaily[&quot;zeuc&quot;] = pump.get_euc_max(moordaily.u)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moordaily</span><span class="p">[</span><span class="s2">&quot;zjmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">moordaily</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">moordaily</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">moordaily</span><span class="o">.</span><span class="n">zeuc</span><span class="p">)</span><span class="o">.</span><span class="n">idxmin</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moordaily[&quot;zjmax&quot;] = moordaily.Jq.where(moordaily.depth &gt; moordaily.zeuc).idxmin(&quot;depth&quot;).persist()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moordaily</span><span class="p">[</span><span class="s2">&quot;zwmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">moordaily</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">moordaily</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">moordaily</span><span class="o">.</span><span class="n">zeuc</span><span class="p">)</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moordaily[&quot;zwmax&quot;] = moordaily.w.where(moordaily.depth &gt; moordaily.zeuc).idxmax(&quot;depth&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moordaily</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;2008&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moordaily.w.sel(time=&quot;2008&quot;).resample(time=&quot;M&quot;).mean().plot(x=&quot;time&quot;, robust=True, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;})
 </pre></div>
 </div>
 </div>
@@ -2491,10 +2491,10 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">moordaily</span><span class="o">.</span><span class="n">zjmax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">moordaily</span><span class="o">.</span><span class="n">zwmax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">moordaily</span><span class="o">.</span><span class="n">zeuc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">moordaily</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mf">21.5</span><span class="p">,</span> <span class="mi">22</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>moordaily.zjmax.plot(x=&quot;time&quot;)
+moordaily.zwmax.plot(x=&quot;time&quot;)
+moordaily.zeuc.plot(x=&quot;time&quot;)
+moordaily.theta.plot.contour(x=&quot;time&quot;, levels=[21.5, 22], colors=&#39;k&#39;)
 </pre></div>
 </div>
 </div>
@@ -2510,15 +2510,15 @@ Attributes:
 <h2>DCL variation with ENSO phase<a class="headerlink" href="#dcl-variation-with-enso-phase" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="p">[</span><span class="s2">&quot;dcl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">mld</span> <span class="o">-</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl_base</span>
-<span class="n">sections</span><span class="p">[</span><span class="s2">&quot;dcl_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">depth</span> <span class="o">&lt;</span> <span class="n">sections</span><span class="o">.</span><span class="n">mld</span><span class="p">)</span>
-    <span class="o">&amp;</span> <span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl_base</span><span class="p">)</span>
-    <span class="o">&amp;</span> <span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">dcl</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections[&quot;dcl&quot;] = sections.mld - sections.dcl_base
+sections[&quot;dcl_mask&quot;] = (
+    (sections.depth &lt; sections.mld)
+    &amp; (sections.depth &gt; sections.dcl_base)
+    &amp; (sections.dcl &gt; 10)
+)
 
-<span class="n">sections</span><span class="p">[</span><span class="s2">&quot;dcl_Jq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">dcl_mask</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">30</span>
-<span class="n">sections</span>
+sections[&quot;dcl_Jq&quot;] = sections.Jq.where(sections.dcl_mask).sum(&quot;depth&quot;) / 30
+sections
 </pre></div>
 </div>
 </div>
@@ -8469,14 +8469,14 @@ Attributes:
 <p>At least 10m DCL; at each hour, mean <span class="math notranslate nohighlight">\(J_q\)</span> in deep cycle layer is calcualted as <span class="math notranslate nohighlight">\(1/(30m)∫ J_q dz\)</span> integrated in depth between <span class="math notranslate nohighlight">\(z_{MLD}\)</span> and <span class="math notranslate nohighlight">\(z_{Ri}\)</span> assuming a mean deep-cycle layer width of 30m</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;ggplot&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plt.style.use(&quot;ggplot&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">enso_mean_Jq</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl_Jq</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>enso_mean_Jq = sections.dcl_Jq.groupby(sections.enso).mean().compute()
 </pre></div>
 </div>
 </div>
@@ -8484,7 +8484,7 @@ Attributes:
 <p>At least 10m DCL width</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">enso_mean_Jq</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>enso_mean_Jq.plot(hue=&quot;enso&quot;, col=&quot;longitude&quot;, y=&quot;latitude&quot;)
 </pre></div>
 </div>
 </div>
@@ -8497,21 +8497,21 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">enso_sum_Jq</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl_Jq</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>enso_sum_Jq = sections.dcl_Jq.groupby(sections.enso).sum().compute()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">enso_count_Jq</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl_Jq</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>enso_count_Jq = sections.dcl_Jq.groupby(sections.enso).count().compute()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">enso_count_Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">140</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>enso_count_Jq.sel(longitude=-140, method=&quot;nearest&quot;).plot(hue=&quot;enso&quot;)
 </pre></div>
 </div>
 </div>
@@ -8526,22 +8526,22 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">enso_mean_Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">140</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Latitude [°N]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;140°W&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(enso_mean_Jq.sel(longitude=-140, method=&quot;nearest&quot;)).plot(
+    y=&quot;latitude&quot;, hue=&quot;enso&quot;, size=4, aspect=1, ylim=(-3, 5)
+)
+ax = plt.gca()
+ax.get_legend().set_title(&quot;&quot;)
+ax.set_xlabel(&quot;&quot;)
+ax.set_ylabel(&quot;Latitude [°N]&quot;)
+ax.set_title(&quot;140°W&quot;)
+ax.set_xlim([-200, 0])
+plt.gcf().set_size_inches((2,6))
 
-<span class="k">for</span> <span class="n">aa</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ax</span><span class="p">]:</span>
-    <span class="n">aa</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">aa</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">AutoMinorLocator</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-    <span class="n">aa</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
-    <span class="n">aa</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+for aa in [ax]:
+    aa.set_title(&quot;&quot;)
+    aa.xaxis.set_minor_locator(mpl.ticker.AutoMinorLocator(2))
+    aa.grid(True, which=&quot;both&quot;)
+    aa.set_ylim((-3, 5))
 </pre></div>
 </div>
 </div>
@@ -8552,7 +8552,7 @@ Attributes:
 <p>At least 30m DCL</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="o">.</span><span class="n">dcl_Jq</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections.dcl_Jq.groupby(sections.enso).mean().plot(hue=&quot;enso&quot;, col=&quot;longitude&quot;, y=&quot;latitude&quot;)
 </pre></div>
 </div>
 </div>
@@ -8568,17 +8568,17 @@ Attributes:
 <h2>DCL width histograms<a class="headerlink" href="#dcl-width-histograms" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="o">.</span><span class="n">dcl</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DCL width&quot;</span>
-<span class="n">hdl</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-<span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">lon</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">],</span> <span class="n">axx</span><span class="p">):</span>
-    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">111</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
-    <span class="n">hdl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">hdl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lon</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">])</span>
-<span class="n">f</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">hdl</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;2S→ 2N&quot;</span><span class="p">,</span> <span class="s2">&quot;2N→ 5N&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections.dcl.attrs[&quot;long_name&quot;] = &quot;DCL width&quot;
+hdl = [None, None]
+f, axx = plt.subplots(1, 4, sharex=True, sharey=True, constrained_layout=True)
+for lon, ax in zip([-155, -140, -125, -110], axx):
+    kwargs = dict(ax=ax, bins=range(0, 111, 10), histtype=&quot;bar&quot;)
+    hdl[0] = sections.dcl.sel(longitude=lon, method=&quot;nearest&quot;).sel(latitude=slice(-2, 2)).plot.hist(**kwargs)[2]
+    hdl[1] = sections.dcl.sel(longitude=lon, method=&quot;nearest&quot;).sel(latitude=slice(2, 5)).plot.hist(**kwargs)[2]
+    ax.set_title(f&quot;{lon}&quot;)
+    ax.set_xlim([0, 120])
+f.legend(handles=hdl, labels=[&quot;2S→ 2N&quot;, &quot;2N→ 5N&quot;], loc=&quot;right&quot;)
+f.set_size_inches((8, 3))
 </pre></div>
 </div>
 </div>
@@ -8588,7 +8588,7 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections.v.sel(latitude=0, method=&quot;nearest&quot;).sel(depth=slice(-80, 0))
 </pre></div>
 </div>
 </div>
@@ -8976,43 +8976,43 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calc_tiw_ke</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">interp_gaps</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">xfilter</span>
-    <span class="n">vmean</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">v</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">80</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def calc_tiw_ke(v, interp_gaps=False):
+    import xfilter
+    vmean = (
+    v.sel(depth=slice(0, -80))
+    .mean(&quot;depth&quot;)
+    )
 
-    <span class="k">if</span> <span class="n">interp_gaps</span><span class="p">:</span>
-        <span class="n">vmean</span> <span class="o">=</span> <span class="n">vmean</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">interpolate_na</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">max_gap</span><span class="o">=</span><span class="s2">&quot;10D&quot;</span><span class="p">)</span>
-    <span class="c1"># Moum et al. 2009 metric</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="n">xfilter</span><span class="o">.</span><span class="n">bandpass</span><span class="p">(</span>
-        <span class="n">vmean</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span>
-        <span class="s2">&quot;time&quot;</span><span class="p">,</span>
-        <span class="n">freq</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">33</span><span class="p">],</span>
-        <span class="n">cycles_per</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span>
-        <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">num_discard</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">tiwke</span> <span class="o">=</span> <span class="n">xfilter</span><span class="o">.</span><span class="n">lowpass</span><span class="p">(</span>
-        <span class="n">v</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="s2">&quot;time&quot;</span><span class="p">,</span>
-        <span class="n">freq</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">20</span><span class="p">,</span>
-        <span class="n">cycles_per</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">tiwke</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;TIW KE&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m²/s²&quot;</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">tiwke</span>
+    if interp_gaps:
+        vmean = vmean.chunk({&quot;time&quot;: -1}).interpolate_na(&quot;time&quot;, max_gap=&quot;10D&quot;)
+    # Moum et al. 2009 metric
+    v = xfilter.bandpass(
+        vmean.compute(),
+        &quot;time&quot;,
+        freq=[1 / 12, 1 / 33],
+        cycles_per=&quot;D&quot;,
+        debug=False,
+        num_discard=120,
+    )
+    tiwke = xfilter.lowpass(
+        v ** 2 / 2,
+        &quot;time&quot;,
+        freq=1 / 20,
+        cycles_per=&quot;D&quot;,
+    )
+    tiwke.attrs = {&quot;long_name&quot;: &quot;TIW KE&quot;, &quot;units&quot;: &quot;m²/s²&quot;}
+    return tiwke
     
     
-<span class="n">tiwke</span> <span class="o">=</span> <span class="n">calc_tiw_ke</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">))</span>
+tiwke = calc_tiw_ke(sections.v.sel(latitude=0, method=&quot;nearest&quot;))
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">highlight_enso</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plt.plot(sections.time, sections.enso)
+pump.plot.highlight_enso(plt.gca(), sections.enso)
 </pre></div>
 </div>
 </div>
@@ -9025,8 +9025,8 @@ Coordinates:
 <h2>Check ENSO definition vs TIWKE<a class="headerlink" href="#check-enso-definition-vs-tiwke" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">tiwke</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="p">[</span><span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">highlight_enso</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fg = tiwke.plot(col=&quot;longitude&quot;, size=4, aspect=3, col_wrap=2)
+[pump.plot.highlight_enso(ax,sections.enso) for ax in fg.axes.flat]
 </pre></div>
 </div>
 </div>
@@ -9043,17 +9043,17 @@ Coordinates:
 <h1>Lat binned Jq_dcl with enso phase, TIW KE<a class="headerlink" href="#lat-binned-jq-dcl-with-enso-phase-tiw-ke" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lat_binned_Jq</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">dcl_Jq</span><span class="o">.</span><span class="n">groupby_bins</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>lat_binned_Jq = sections.dcl_Jq.groupby_bins(&quot;latitude&quot;, (-2, 2, 5)).mean().compute()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">lat_binned_Jq</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;M&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;latitude_bins&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span>
-<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">loc</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">fg</span><span class="o">.</span><span class="n">name_dicts</span><span class="o">.</span><span class="n">flat</span><span class="p">):</span>
-    <span class="p">(</span><span class="mf">1e4</span><span class="o">*</span><span class="n">tiwke</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">[</span><span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">highlight_enso</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fg = lat_binned_Jq.resample(time=&quot;M&quot;).mean().plot(hue=&quot;latitude_bins&quot;, col=&quot;longitude&quot;, col_wrap=2, size=4, aspect=2, ylim=(-200,200))
+for ax, loc in zip(fg.axes.flat, fg.name_dicts.flat):
+    (1e4*tiwke).sel(loc).plot(x=&quot;time&quot;, ax=ax, color=&#39;k&#39;, _labels=False, lw=1)
+[pump.plot.highlight_enso(ax,sections.enso) for ax in fg.axes.flat]
 </pre></div>
 </div>
 </div>
@@ -9069,12 +9069,12 @@ Coordinates:
 <p>inconclusive AFAIR</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># period4 = xr.open_dataset(&quot;/glade/scratch/dcherian/TPOS_MITgcm_1_hb/110w-period-4-with-jq.nc&quot;)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># period4 = xr.open_dataset(&quot;/glade/scratch/dcherian/TPOS_MITgcm_1_hb/110w-period-4-with-jq.nc&quot;)
 
-<span class="n">period4</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span>
-    <span class="s2">&quot;/glade/work/dcherian/pump/zarrs/110w-period-4-4.zarr&quot;</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">})</span>
-<span class="n">period4</span>
+period4 = xr.open_zarr(
+    &quot;/glade/work/dcherian/pump/zarrs/110w-period-4-4.zarr&quot;, consolidated=True
+).chunk({&quot;time&quot;: 50})
+period4
 </pre></div>
 </div>
 </div>
@@ -12219,12 +12219,12 @@ Attributes:
 <h3>Heat flux &amp; divergence<a class="headerlink" href="#heat-flux-divergence" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span> <span class="o">=</span> <span class="n">period4</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset = period4.isel(longitude=1).sel(latitude=0, method=&quot;nearest&quot;)
 
-<span class="p">(</span><span class="n">subset</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">())</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">mld</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">dcl_base</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">eucmax</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+(subset.Jq.rolling(depth=2).mean().compute()).plot(x=&quot;time&quot;, robust=True)
+subset.mld.plot()
+subset.dcl_base.plot()
+subset.eucmax.plot()
 </pre></div>
 </div>
 </div>
@@ -12237,9 +12237,9 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span> <span class="o">=</span> <span class="n">period4</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">subset</span><span class="o">.</span><span class="n">mld</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">subset</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset = period4.isel(longitude=1)
+subset.Jq.sel(depth=subset.mld).mean(&quot;time&quot;).plot(y=&quot;latitude&quot;)
+subset.Jq.sel(depth=subset.eucmax).mean(&quot;time&quot;).plot(y=&quot;latitude&quot;)
 </pre></div>
 </div>
 </div>
@@ -12252,14 +12252,14 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span> <span class="o">=</span> <span class="n">period4</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset = period4.isel(longitude=1).sel(latitude=0, method=&quot;nearest&quot;)
 
-<span class="n">dJdz</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">subset</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span>
+dJdz = -1 * subset.Jq.rolling(depth=2).mean().compute().differentiate(&quot;depth&quot;)
 
-<span class="n">dJdz</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">mld</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">dcl_base</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">eucmax</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+dJdz.plot(x=&quot;time&quot;, robust=True)
+subset.mld.plot()
+subset.dcl_base.plot()
+subset.eucmax.plot()
 </pre></div>
 </div>
 </div>
@@ -12272,9 +12272,9 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">mld</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="c1"># subset.Jq.sel(depth = subset.dcl_base).plot()</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">eucmax</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset.Jq.sel(depth = subset.mld).plot()
+# subset.Jq.sel(depth = subset.dcl_base).plot()
+subset.Jq.sel(depth = subset.eucmax).plot()
 </pre></div>
 </div>
 </div>
@@ -12287,21 +12287,21 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="p">[</span><span class="s2">&quot;Jq_mld&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections</span><span class="o">.</span><span class="n">Jq</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">sections</span><span class="o">.</span><span class="n">mld</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections[&quot;Jq_mld&quot;] = sections.Jq.sel(depth=sections.mld)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="p">[</span><span class="s2">&quot;Jq_mld&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s2">&quot;Jq_mld_sections.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections[&quot;Jq_mld&quot;].to_netcdf(&quot;Jq_mld_sections.nc&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="p">[</span><span class="s2">&quot;Jq_mld&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections[&quot;Jq_mld&quot;].groupby(sections.enso).mean(&quot;time&quot;).plot(hue=&quot;enso&quot;, col=&quot;longitude&quot;, y=&quot;latitude&quot;)
 </pre></div>
 </div>
 </div>
@@ -12315,7 +12315,7 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="p">[</span><span class="s2">&quot;Jq_mld&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections[&quot;Jq_mld&quot;].load()
 </pre></div>
 </div>
 </div>
@@ -12767,20 +12767,20 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span> 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plt.figure(); 
+plt.plot(sections.time, sections.enso)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
-    <span class="n">sections</span><span class="o">.</span><span class="n">Jq_mld</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">enso</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;ENSO&quot;</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(
+    sections.Jq_mld.sel(longitude=[-125, -110], method=&quot;nearest&quot;)
+    .groupby(enso)
+    .mean(&quot;time&quot;)
+    .plot(y=&quot;latitude&quot;, col=&quot;longitude&quot;, hue=&quot;ENSO&quot;)
+)
 </pre></div>
 </div>
 </div>
@@ -12793,16 +12793,16 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="o">.</span><span class="n">dcl_Jq</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections.dcl_Jq.load()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sections</span><span class="p">[</span><span class="s2">&quot;dcl_Jq&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">enso</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
-    <span class="n">longitude</span><span class="o">=-</span><span class="mi">110</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span>
-<span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sections[&quot;dcl_Jq&quot;].groupby(sections.enso).mean(&quot;time&quot;).sel(
+    longitude=-110, method=&quot;nearest&quot;
+).plot(hue=&quot;enso&quot;, y=&quot;latitude&quot;)
 </pre></div>
 </div>
 </div>

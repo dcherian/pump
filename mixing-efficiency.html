@@ -547,34 +547,34 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2}  = K_Tb_z \
 </div></blockquote>
 <div class="cell tag_hide-cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">load_ext</span> snakeviz
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%load_ext watermark
+%load_ext snakeviz
+%matplotlib inline
 
 
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
+import glob
+import os
 
-<span class="kn">import</span> <span class="nn">cf_xarray</span> <span class="k">as</span> <span class="nn">cfxr</span>
-<span class="kn">import</span> <span class="nn">datatree</span>
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">flox.xarray</span>
-<span class="kn">import</span> <span class="nn">hvplot.xarray</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">from</span> <span class="nn">dcpy.oceans</span> <span class="kn">import</span> <span class="n">read_osu_microstructure_mat</span><span class="p">,</span> <span class="n">thorpesort</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span>
+import cf_xarray as cfxr
+import datatree
+import dcpy
+import distributed
+import flox.xarray
+import hvplot.xarray
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import xarray as xr
+from dcpy.oceans import read_osu_microstructure_mat, thorpesort
+from IPython.display import Image
 
-<span class="c1"># import eddydiff as ed</span>
-<span class="kn">import</span> <span class="nn">pump</span>
+# import eddydiff as ed
+import pump
 
-<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+xr.set_options(keep_attrs=True)
+mpl.rcParams[&quot;figure.dpi&quot;] = 140
 
-<span class="o">%</span><span class="k">watermark</span> -iv
+%watermark -iv
 </pre></div>
 </div>
 </div>
@@ -2472,26 +2472,26 @@ hvplot     : 0.7.3
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix_</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/equix.nc&quot;</span><span class="p">))</span>
-<span class="n">equix_</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;EQUIX&quot;</span>
-<span class="n">tiwe_</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/tiwe.nc&quot;</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">drop_vars</span><span class="p">([</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">])</span>
-    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">200</span><span class="p">))</span>
-<span class="p">)</span>
-<span class="n">tiwe_</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TIWE&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix_ = xr.load_dataset(os.path.expanduser(&quot;~/datasets/microstructure/osu/equix.nc&quot;))
+equix_.attrs[&quot;name&quot;] = &quot;EQUIX&quot;
+tiwe_ = (
+    xr.load_dataset(os.path.expanduser(&quot;~/datasets/microstructure/osu/tiwe.nc&quot;))
+    .drop_vars([&quot;latitude&quot;, &quot;longitude&quot;])
+    .sel(depth=slice(200))
+)
+tiwe_.attrs[&quot;name&quot;] = &quot;TIWE&quot;
 
-<span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">add_mixing_diagnostics</span><span class="p">(</span><span class="n">equix_</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">add_mixing_diagnostics</span><span class="p">(</span><span class="n">tiwe_</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
+pump.calc.add_mixing_diagnostics(equix_, nbins=51)
+pump.calc.add_mixing_diagnostics(tiwe_, nbins=51)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pump.calc.add_mixing_diagnostics(tiwe_, nbins=51)</span>
-<span class="n">equix</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">micro</span><span class="o">.</span><span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">equix_</span><span class="p">)</span>
-<span class="n">tiwe</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">micro</span><span class="o">.</span><span class="n">make_clean_dataset</span><span class="p">(</span><span class="n">tiwe_</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># pump.calc.add_mixing_diagnostics(tiwe_, nbins=51)
+equix = pump.micro.make_clean_dataset(equix_)
+tiwe = pump.micro.make_clean_dataset(tiwe_)
 </pre></div>
 </div>
 </div>
@@ -2534,19 +2534,19 @@ hvplot     : 0.7.3
 <p>Note that calculating <span class="math notranslate nohighlight">\(Ri_f\)</span>  with averaged quantities makes some  difference for TIWE.</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_reb_rif_euc_bins</span><span class="p">(</span><span class="n">equix_</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_reb_rif_euc_bins</span><span class="p">(</span><span class="n">tiwe_</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">clean_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;No averaging in quantities&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(1, 2, sharex=True, sharey=True, constrained_layout=True)
+pump.plot.plot_reb_rif_euc_bins(equix_, ax=ax[0])
+pump.plot.plot_reb_rif_euc_bins(tiwe_, ax=ax[1])
+f.set_size_inches((6, 3.5))
+dcpy.plots.clean_axes(ax)
+f.suptitle(&quot;No averaging in quantities&quot;)
 
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_reb_rif_euc_bins</span><span class="p">(</span><span class="n">equix</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_reb_rif_euc_bins</span><span class="p">(</span><span class="n">tiwe</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">clean_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Using averaging&quot;</span><span class="p">)</span>
+f, ax = plt.subplots(1, 2, sharex=True, sharey=True, constrained_layout=True)
+pump.plot.plot_reb_rif_euc_bins(equix, ax=ax[0])
+pump.plot.plot_reb_rif_euc_bins(tiwe, ax=ax[1])
+f.set_size_inches((6, 3.5))
+dcpy.plots.clean_axes(ax)
+f.suptitle(&quot;Using averaging&quot;)
 </pre></div>
 </div>
 </div>
@@ -2566,47 +2566,47 @@ hvplot     : 0.7.3
 <p>The errorbars are too small to be seen in log-space in the first plot</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">combined_average</span><span class="p">(</span><span class="o">*</span><span class="n">datasets</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">bins</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">functools</span>
-    <span class="kn">import</span> <span class="nn">operator</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def combined_average(*datasets, by, bins):
+    import functools
+    import operator
 
-    <span class="n">combined</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
+    combined = xr.Dataset()
 
-    <span class="n">concat</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ds</span><span class="p">[[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="n">by</span><span class="p">]]</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-    <span class="n">flox_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">expected_groups</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">,),</span> <span class="n">isbin</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    concat = xr.concat([ds[[&quot;Rif&quot;, by]] for ds in datasets], dim=&quot;time&quot;)
+    flox_kwargs = dict(expected_groups=(bins,), isbin=(True,), fill_value=np.nan)
 
-    <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">]:</span>
-        <span class="n">combined</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="si">}</span><span class="s2">_Rif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">xarray_reduce</span><span class="p">(</span>
-            <span class="n">concat</span><span class="p">,</span> <span class="n">by</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">flox_kwargs</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">Rif</span>
+    for func in [&quot;mean&quot;, &quot;std&quot;, &quot;count&quot;]:
+        combined[f&quot;{func}_Rif&quot;] = flox.xarray.xarray_reduce(
+            concat, by, func=func, **flox_kwargs
+        ).Rif
 
-    <span class="k">if</span> <span class="n">by</span> <span class="o">==</span> <span class="s2">&quot;Reb&quot;</span><span class="p">:</span>
-        <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;Rif_Reb_counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
-            <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">Rif_Reb_counts</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;euc_bin&quot;</span><span class="p">)</span>
-        <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_rif_counts</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">Rif_Reb_counts</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Reb_bin&quot;</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">combined</span><span class="p">[</span><span class="s2">&quot;Rif_Ri_counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
-            <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">Rif_Ri_counts</span> <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;euc_bin&quot;</span><span class="p">)</span>
-        <span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_rif_counts</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">Rif_Ri_counts</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Ri_bin&quot;</span><span class="p">)</span>
+    if by == &quot;Reb&quot;:
+        combined[&quot;Rif_Reb_counts&quot;] = functools.reduce(
+            operator.add, (ds.Rif_Reb_counts for ds in datasets)
+        ).sum(&quot;euc_bin&quot;)
+        pump.plot.plot_rif_counts(combined.Rif_Reb_counts, x=&quot;Reb_bin&quot;, xscale=&quot;log&quot;)
+    else:
+        combined[&quot;Rif_Ri_counts&quot;] = functools.reduce(
+            operator.add, (ds.Rif_Ri_counts for ds in datasets)
+        ).sum(&quot;euc_bin&quot;)
+        pump.plot.plot_rif_counts(combined.Rif_Ri_counts, x=&quot;Ri_bin&quot;)
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">mid</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">by</span><span class="si">}</span><span class="s2">_bins&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">],</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">combined</span><span class="o">.</span><span class="n">mean_Rif</span><span class="p">,</span>
-        <span class="n">yerr</span><span class="o">=</span><span class="mf">1.96</span> <span class="o">*</span> <span class="n">combined</span><span class="o">.</span><span class="n">std_Rif</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">count_Rif</span><span class="p">),</span>
-        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;mean $Ri_f$&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Combined TIWE + EQUIX&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    plt.errorbar(
+        x=[a.mid for a in combined[f&quot;{by}_bins&quot;].values],
+        y=combined.mean_Rif,
+        yerr=1.96 * combined.std_Rif / np.sqrt(combined.count_Rif),
+        marker=&quot;.&quot;,
+        label=&quot;mean $Ri_f$&quot;,
+    )
+    plt.suptitle(&quot;Combined TIWE + EQUIX&quot;)
+    plt.legend()
 
 
-<span class="n">combined_average</span><span class="p">(</span><span class="n">tiwe</span><span class="p">,</span> <span class="n">equix</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;Reb&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">tiwe</span><span class="o">.</span><span class="n">Reb_bins_2</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">combined_average</span><span class="p">(</span><span class="n">tiwe</span><span class="p">,</span> <span class="n">equix</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">&quot;Ri&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="c1">#plt.yscale(&quot;linear&quot;)</span>
-<span class="c1">#plt.ylim([0, 1])</span>
+combined_average(tiwe, equix, by=&quot;Reb&quot;, bins=tiwe.Reb_bins_2.data)
+plt.figure()
+combined_average(tiwe, equix, by=&quot;Ri&quot;, bins=[0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.5, 0.6, 0.7, 1])
+#plt.yscale(&quot;linear&quot;)
+#plt.ylim([0, 1])
 </pre></div>
 </div>
 </div>
@@ -2623,18 +2623,18 @@ hvplot     : 0.7.3
 <h1>Distributions of  <span class="math notranslate nohighlight">\(Re_b\)</span> and  <span class="math notranslate nohighlight">\(Ri_f\)</span><a class="headerlink" href="#distributions-of-re-b-and-ri-f" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">equix</span><span class="o">.</span><span class="n">Rif</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;equix&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">Rif</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;tiwe&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$Ri_f$&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f, ax = plt.subplots(2, 1, sharex=False, sharey=False)
+kwargs = dict(bins=np.arange(0, 0.7, 0.01), histtype=&quot;step&quot;, density=True)
+equix.Rif.plot.hist(**kwargs, label=&quot;equix&quot;, ax=ax[0])
+tiwe.Rif.plot.hist(**kwargs, label=&quot;tiwe&quot;, ax=ax[0])
+ax[0].legend()
+ax[0].set_xlabel(&quot;$Ri_f$&quot;)
 
-<span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">equix</span><span class="o">.</span><span class="n">Reb</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;equix&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">Reb</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;tiwe&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;log($Re_b$)&quot;</span><span class="p">)</span>
+kwargs = dict(bins=np.linspace(-1, 7, 100), histtype=&quot;step&quot;, density=True)
+np.log10(equix.Reb).plot.hist(**kwargs, label=&quot;equix&quot;, ax=ax[1])
+np.log10(tiwe.Reb).plot.hist(**kwargs, label=&quot;tiwe&quot;, ax=ax[1])
+ax[1].legend()
+ax[1].set_xlabel(&quot;log($Re_b$)&quot;)
 </pre></div>
 </div>
 </div>
@@ -2661,8 +2661,8 @@ hvplot     : 0.7.3
 </ol>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_mixing_diagnostics_timeseries</span><span class="p">(</span><span class="n">equix</span><span class="p">,</span> <span class="n">coarsen</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">pump</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">plot_mixing_diagnostics_timeseries</span><span class="p">(</span><span class="n">tiwe</span><span class="p">,</span> <span class="n">coarsen</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pump.plot.plot_mixing_diagnostics_timeseries(equix, coarsen=False)
+pump.plot.plot_mixing_diagnostics_timeseries(tiwe, coarsen=False)
 </pre></div>
 </div>
 </div>
@@ -2682,31 +2682,31 @@ posx and posy should be finite values
 <p>It turns out this is slightly misleading.</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">section</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">tiwe</span><span class="o">.</span><span class="n">eucmax</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-<span class="n">section</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-<span class="n">section</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Period label&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>section = xr.full_like(tiwe.eucmax, fill_value=np.nan)
+section.attrs.clear()
+section.attrs[&quot;long_name&quot;] = &quot;Period label&quot;
 
-<span class="n">breaks</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="kc">None</span><span class="p">,</span>
-    <span class="s2">&quot;1991-11-07 04:00&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;1991-11-08 06:00&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;1991-11-11 06:00&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;1991-11-17 09:00&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;1991-11-19 09:00&quot;</span><span class="p">,</span>
-    <span class="kc">None</span><span class="p">,</span>
-<span class="p">]</span>
-<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+breaks = [
+    None,
+    &quot;1991-11-07 04:00&quot;,
+    &quot;1991-11-08 06:00&quot;,
+    &quot;1991-11-11 06:00&quot;,
+    &quot;1991-11-17 09:00&quot;,
+    &quot;1991-11-19 09:00&quot;,
+    None,
+]
+labels = [1, -1, 1, 2, 3, 4]
 
-<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">breaks</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">breaks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-    <span class="n">section</span><span class="o">.</span><span class="n">loc</span><span class="p">[{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="nb">slice</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)}]</span> <span class="o">=</span> <span class="n">label</span>
+for label, left, right in zip(labels, breaks[:-1], breaks[1:]):
+    section.loc[{&quot;time&quot;: slice(left, right)}] = label
 
-<span class="n">tiwe</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;section&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">Rif</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">magma</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.17</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+tiwe.coords[&quot;section&quot;] = section
+tiwe.Rif.cf.plot(x=&quot;time&quot;, robust=True, cmap=mpl.cm.magma, vmax=0.17, size=5, aspect=4)
 
-<span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
-<span class="n">section</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">section</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">set_axes_color</span><span class="p">(</span><span class="n">ax2</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+ax2 = plt.gca().twinx()
+section.plot(ax=ax2, color=&quot;w&quot;, lw=5)
+section.plot(ax=ax2, color=&quot;r&quot;, lw=2)
+dcpy.plots.set_axes_color(ax2, &quot;r&quot;)
 </pre></div>
 </div>
 </div>
@@ -2731,34 +2731,34 @@ posx and posy should be finite values
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grouped</span> <span class="o">=</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">xarray_reduce</span><span class="p">(</span>
-    <span class="n">tiwe</span><span class="p">,</span> <span class="s2">&quot;section&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">expected_groups</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>grouped = flox.xarray.xarray_reduce(
+    tiwe, &quot;section&quot;, func=&quot;mean&quot;, expected_groups=[1, -1]
+)
 
-<span class="n">grouped</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$θ$&quot;</span>
-<span class="n">grouped</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">chi</span> <span class="o">&gt;</span> <span class="mf">1e-9</span><span class="p">)</span>
-<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">,</span> <span class="s2">&quot;shred2&quot;</span><span class="p">,</span> <span class="s2">&quot;dTdz&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">,</span> <span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]</span>
-<span class="n">logx</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]</span>
-<span class="n">linearx</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;dTdz&quot;</span><span class="p">,</span> <span class="s2">&quot;shred2&quot;</span><span class="p">]</span>
-<span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">axx</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()))</span>
-<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="p">(</span><span class="n">grouped</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
-        <span class="n">add_legend</span><span class="o">=</span><span class="n">name</span> <span class="o">==</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">linearx</span> <span class="k">else</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">clean_axes</span><span class="p">(</span><span class="n">axx</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">1e-9</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;shred2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;Reb&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">1e2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">]);</span>
+grouped.theta.attrs[&quot;long_name&quot;] = &quot;$θ$&quot;
+grouped[&quot;chi&quot;] = grouped.chi.where(grouped.chi &gt; 1e-9)
+names = [&quot;salt&quot;, &quot;N2&quot;, &quot;shred2&quot;, &quot;dTdz&quot;, &quot;chi&quot;, &quot;eps&quot;, &quot;Rif&quot;, &quot;Reb&quot;]
+logx = [&quot;chi&quot;, &quot;eps&quot;, &quot;Reb&quot;]
+linearx = [&quot;Rif&quot;, &quot;theta&quot;, &quot;salt&quot;, &quot;dTdz&quot;, &quot;shred2&quot;]
+f, axx = plt.subplots(
+    1, len(names), sharey=True, constrained_layout=True, squeeze=False
+)
+ax = dict(zip(names, axx.squeeze()))
+for name, axis in ax.items():
+    (grouped[name]).cf.plot.line(
+        ax=axis,
+        add_legend=name == names[0],
+        xscale=&quot;linear&quot; if name in linearx else &quot;log&quot;,
+    )
+    axis.grid(True)
+f.set_size_inches((10, 5))
+dcpy.plots.clean_axes(axx)
+ax[&quot;chi&quot;].set_xticks([1e-9, 1e-8, 1e-7, 1e-6])
+ax[&quot;eps&quot;].set_xticks([1e-8, 1e-7, 1e-6, 1e-5])
+ax[&quot;dTdz&quot;].set_xlim([-1e-2, 1e-1])
+ax[&quot;shred2&quot;].set_xlim([-1e-3, 1e-4])
+ax[&quot;N2&quot;].set_xlim([-1e-5, 1e-3])
+ax[&quot;Reb&quot;].set_xticks([1e2, 1e3, 1e4, 1e5]);
 </pre></div>
 </div>
 </div>
@@ -2775,34 +2775,34 @@ Invalid limit will be ignored.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grouped</span> <span class="o">=</span> <span class="n">flox</span><span class="o">.</span><span class="n">xarray</span><span class="o">.</span><span class="n">xarray_reduce</span><span class="p">(</span>
-    <span class="n">tiwe</span><span class="p">,</span> <span class="s2">&quot;section&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">expected_groups</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>grouped = flox.xarray.xarray_reduce(
+    tiwe, &quot;section&quot;, func=&quot;mean&quot;, expected_groups=[1, 3, 4]
+)
 
-<span class="n">grouped</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$θ$&quot;</span>
-<span class="n">grouped</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">chi</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">chi</span> <span class="o">&gt;</span> <span class="mf">1e-9</span><span class="p">)</span>
-<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">,</span> <span class="s2">&quot;shred2&quot;</span><span class="p">,</span> <span class="s2">&quot;dTdz&quot;</span><span class="p">,</span> <span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">,</span> <span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]</span>
-<span class="n">logx</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">,</span> <span class="s2">&quot;eps&quot;</span><span class="p">,</span> <span class="s2">&quot;Reb&quot;</span><span class="p">]</span>
-<span class="n">linearx</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Rif&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;dTdz&quot;</span><span class="p">,</span> <span class="s2">&quot;shred2&quot;</span><span class="p">]</span>
-<span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">axx</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()))</span>
-<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="p">(</span><span class="n">grouped</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span>
-        <span class="n">add_legend</span><span class="o">=</span><span class="n">name</span> <span class="o">==</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">linearx</span> <span class="k">else</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">clean_axes</span><span class="p">(</span><span class="n">axx</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">1e-9</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;eps&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;dTdz&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;shred2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="o">-</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="s2">&quot;Reb&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">1e2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">]);</span>
+grouped.theta.attrs[&quot;long_name&quot;] = &quot;$θ$&quot;
+grouped[&quot;chi&quot;] = grouped.chi.where(grouped.chi &gt; 1e-9)
+names = [&quot;salt&quot;, &quot;N2&quot;, &quot;shred2&quot;, &quot;dTdz&quot;, &quot;chi&quot;, &quot;eps&quot;, &quot;Rif&quot;, &quot;Reb&quot;]
+logx = [&quot;chi&quot;, &quot;eps&quot;, &quot;Reb&quot;]
+linearx = [&quot;Rif&quot;, &quot;theta&quot;, &quot;salt&quot;, &quot;dTdz&quot;, &quot;shred2&quot;]
+f, axx = plt.subplots(
+    1, len(names), sharey=True, constrained_layout=True, squeeze=False
+)
+ax = dict(zip(names, axx.squeeze()))
+for name, axis in ax.items():
+    (grouped[name]).cf.plot.line(
+        ax=axis,
+        add_legend=name == names[0],
+        xscale=&quot;linear&quot; if name in linearx else &quot;log&quot;,
+    )
+    axis.grid(True)
+f.set_size_inches((10, 5))
+dcpy.plots.clean_axes(axx)
+ax[&quot;chi&quot;].set_xticks([1e-9, 1e-8, 1e-7, 1e-6])
+ax[&quot;eps&quot;].set_xticks([1e-8, 1e-7, 1e-6, 1e-5])
+ax[&quot;dTdz&quot;].set_xlim([-1e-2, 1e-1])
+ax[&quot;shred2&quot;].set_xlim([-1e-3, 1e-4])
+ax[&quot;N2&quot;].set_xlim([1e-6, 1e-3])
+ax[&quot;Reb&quot;].set_xticks([1e2, 1e3, 1e4, 1e5]);
 </pre></div>
 </div>
 </div>
@@ -2817,12 +2817,12 @@ Invalid limit will be ignored.
 <p>TIWE dTdz is low, so it makes sense that salinity field is influencing DCL depth.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiwe</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;tiwe $T_z$&quot;</span><span class="p">)</span>
-<span class="n">equix</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;equix $T_z$&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tiwe.dTdz.mean(&quot;time&quot;).cf.plot.line(label=&quot;tiwe $T_z$&quot;)
+equix.dTdz.mean(&quot;time&quot;).cf.plot.line(label=&quot;equix $T_z$&quot;)
 
-<span class="n">tiwe</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-<span class="n">equix</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+tiwe.N2.mean(&quot;time&quot;).cf.plot.line(ls=&quot;--&quot;)
+equix.N2.mean(&quot;time&quot;).cf.plot.line(xscale=&quot;log&quot;, ls=&quot;--&quot;)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -2838,9 +2838,9 @@ Invalid limit will be ignored.
 <h1>A bunch of fields<a class="headerlink" href="#a-bunch-of-fields" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">dTdz</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix.dTdz.cf.plot(norm=mpl.colors.LogNorm(1e-3, 1e-1))
+plt.figure()
+tiwe.dTdz.cf.plot(norm=mpl.colors.LogNorm(1e-3, 1e-1))
 </pre></div>
 </div>
 </div>
@@ -2854,9 +2854,9 @@ Invalid limit will be ignored.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix.N2.cf.plot(norm=mpl.colors.LogNorm(1e-6, 1e-3))
+plt.figure()
+tiwe.N2.cf.plot(norm=mpl.colors.LogNorm(1e-6, 1e-3))
 </pre></div>
 </div>
 </div>
@@ -2870,9 +2870,9 @@ Invalid limit will be ignored.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">equix</span><span class="o">.</span><span class="n">shred2</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span><span class="mf">4e-3</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">tiwe</span><span class="o">.</span><span class="n">shred2</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span><span class="mf">4e-3</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>equix.shred2.cf.plot(norm=mpl.colors.TwoSlopeNorm(vmin=-4e-3, vcenter=0, vmax=5e-4))
+plt.figure()
+tiwe.shred2.cf.plot(norm=mpl.colors.TwoSlopeNorm(vmin=-4e-3, vcenter=0, vmax=5e-4))
 </pre></div>
 </div>
 </div>

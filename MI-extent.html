@@ -464,42 +464,42 @@ title="Print to PDF"
 <h1>Extent of marginal stability<a class="headerlink" href="#extent-of-marginal-stability" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">autoreload</span> 2
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> watermark
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%autoreload 2
+%matplotlib inline
+%load_ext watermark
 
-<span class="kn">import</span> <span class="nn">cf_xarray</span>
-<span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">dcpy</span>
-<span class="kn">import</span> <span class="nn">distributed</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib.units</span> <span class="k">as</span> <span class="nn">munits</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">import</span> <span class="nn">xgcm</span>
-<span class="kn">from</span> <span class="nn">holoviews</span> <span class="kn">import</span> <span class="n">opts</span>
-<span class="kn">import</span> <span class="nn">hvplot.xarray</span>
+import cf_xarray
+import dask
+import dcpy
+import distributed
+import matplotlib as mpl
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import matplotlib.units as munits
+import numpy as np
+import pandas as pd
+import seawater as sw
+import xarray as xr
+import xgcm
+from holoviews import opts
+import hvplot.xarray
 
-<span class="kn">import</span> <span class="nn">pump</span>
+import pump
 
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
-<span class="n">munits</span><span class="o">.</span><span class="n">registry</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdates</span><span class="o">.</span><span class="n">ConciseDateConverter</span><span class="p">()</span>
+mpl.rcParams[&quot;savefig.dpi&quot;] = 300
+mpl.rcParams[&quot;savefig.bbox&quot;] = &quot;tight&quot;
+mpl.rcParams[&quot;figure.dpi&quot;] = 140
+munits.registry[np.datetime64] = mdates.ConciseDateConverter()
 
-<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+xr.set_options(keep_attrs=True)
 
 
-<span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+xr.DataArray([1.0])
 
-<span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/&quot;</span>  <span class="c1"># MITgcm output directory</span>
-<span class="n">stationdirname</span> <span class="o">=</span> <span class="n">gcmdir</span>
+gcmdir = &quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/&quot;  # MITgcm output directory
+stationdirname = gcmdir
 
-<span class="o">%</span><span class="k">watermark</span> -iv
+%watermark -iv
 </pre></div>
 </div>
 </div>
@@ -1972,47 +1972,47 @@ xarray     : 0.19.0
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import ncar_jobqueue
 
-<span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">del</span> <span class="n">client</span>
-<span class="c1">#if &quot;cluster&quot; in locals():</span>
-<span class="c1">#    cluster.close()</span>
+if &quot;client&quot; in locals():
+    client.close()
+    del client
+#if &quot;cluster&quot; in locals():
+#    cluster.close()
 
-<span class="c1">#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}</span>
+#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}
 
-<span class="c1"># cluster = distributed.LocalCluster(</span>
-<span class="c1">#    n_workers=8,</span>
-<span class="c1">#    threads_per_worker=1,</span>
-<span class="c1">#    env=env</span>
-<span class="c1"># )</span>
+# cluster = distributed.LocalCluster(
+#    n_workers=8,
+#    threads_per_worker=1,
+#    env=env
+# )
 
-<span class="k">if</span> <span class="s2">&quot;cluster&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
-    <span class="k">del</span> <span class="n">cluster</span>
+if &quot;cluster&quot; in locals():
+    del cluster
 
-<span class="c1">#cluster = ncar_jobqueue.NCARCluster(</span>
-<span class="c1">#    project=&quot;NCGD0011&quot;,</span>
-<span class="c1">#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),</span>
-<span class="c1">#)</span>
-<span class="c1"># cluster = dask_jobqueue.PBSCluster(</span>
-<span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
-<span class="c1">#    env_extra=env,</span>
-<span class="c1"># )</span>
+#cluster = ncar_jobqueue.NCARCluster(
+#    project=&quot;NCGD0011&quot;,
+#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),
+#)
+# cluster = dask_jobqueue.PBSCluster(
+#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,
+#    env_extra=env,
+# )
 
-<span class="kn">import</span> <span class="nn">dask_jobqueue</span>
-<span class="n">cluster</span> <span class="o">=</span> <span class="n">dask_jobqueue</span><span class="o">.</span><span class="n">PBSCluster</span><span class="p">(</span>
-    <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># The number of cores you want</span>
-    <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;23GB&#39;</span><span class="p">,</span> <span class="c1"># Amount of memory</span>
-    <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># How many processes</span>
-    <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;casper&#39;</span><span class="p">,</span> <span class="c1"># The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)</span>
-    <span class="n">local_directory</span><span class="o">=</span><span class="s1">&#39;$TMPDIR&#39;</span><span class="p">,</span> <span class="c1"># Use your local directory</span>
-    <span class="n">resource_spec</span><span class="o">=</span><span class="s1">&#39;select=1:ncpus=1:mem=23GB&#39;</span><span class="p">,</span> <span class="c1"># Specify resources</span>
-    <span class="n">project</span><span class="o">=</span><span class="s1">&#39;ncgd0011&#39;</span><span class="p">,</span> <span class="c1"># Input your project ID here</span>
-    <span class="n">walltime</span><span class="o">=</span><span class="s1">&#39;02:00:00&#39;</span><span class="p">,</span> <span class="c1"># Amount of wall time</span>
-    <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ib0&#39;</span><span class="p">,</span> <span class="c1"># Interface to use</span>
-<span class="p">)</span>
-<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+import dask_jobqueue
+cluster = dask_jobqueue.PBSCluster(
+    cores=1, # The number of cores you want
+    memory=&#39;23GB&#39;, # Amount of memory
+    processes=1, # How many processes
+    queue=&#39;casper&#39;, # The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)
+    local_directory=&#39;$TMPDIR&#39;, # Use your local directory
+    resource_spec=&#39;select=1:ncpus=1:mem=23GB&#39;, # Specify resources
+    project=&#39;ncgd0011&#39;, # Input your project ID here
+    walltime=&#39;02:00:00&#39;, # Amount of wall time
+    interface=&#39;ib0&#39;, # Interface to use
+)
+cluster.scale(jobs=1)
 </pre></div>
 </div>
 </div>
@@ -2027,8 +2027,8 @@ Hosting the HTTP server on port 46243 instead
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
-<span class="n">client</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>client = distributed.Client(cluster)
+client
 </pre></div>
 </div>
 </div>
@@ -2158,7 +2158,7 @@ Hosting the HTTP server on port 46243 instead
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster.scale(6)
 </pre></div>
 </div>
 </div>
@@ -2167,12 +2167,12 @@ Hosting the HTTP server on port 46243 instead
 <h2>MITgcm 25 year<a class="headerlink" href="#mitgcm-25-year" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">print_metrics</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">metricvars</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> at </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">dims</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">v</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="si">!s}</span><span class="s2">: </span><span class="si">{</span><span class="n">metricvars</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def print_metrics(grid):
+    for k, v in grid._metrics.items():
+        metricvars = &#39;\n\t&#39;.join(f&#39;{var.name} at {var.dims}&#39; for var in v)
+        print(f&quot;{sorted(tuple(k))!s}: {metricvars}&quot;)
         
-<span class="n">print_metrics</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+print_metrics(grid)
 </pre></div>
 </div>
 </div>
@@ -2191,32 +2191,32 @@ Hosting the HTTP server on port 46243 instead
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_mitgcm_20_year</span><span class="p">(</span>
-    <span class="n">state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;2008-05-01&quot;</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="s2">&quot;2009-05-31&quot;</span>
-<span class="p">)</span>
-<span class="n">ds</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ds, metrics = pump.model.read_mitgcm_20_year(
+    state=True, start=&quot;2008-05-01&quot;, stop=&quot;2009-05-31&quot;
+)
+ds
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">dcl</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset = ds.dcl.persist()
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tsmoothed</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="n">extents</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">find_mi_extent</span><span class="p">(</span><span class="n">tsmoothed</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tsmoothed = subset.rolling(time=5, center=True).mean()
+extents = pump.calc.find_mi_extent(tsmoothed, &quot;Y&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s2">&quot;mi-zone-extents.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>extents.load().to_netcdf(&quot;mi-zone-extents.nc&quot;)
 </pre></div>
 </div>
 </div>
@@ -2226,8 +2226,8 @@ Hosting the HTTP server on port 46243 instead
 <h2>Study extents<a class="headerlink" href="#study-extents" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;mi-zone-extents.nc&quot;</span><span class="p">)</span>
-<span class="n">extents</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>extents = xr.load_dataset(&quot;mi-zone-extents.nc&quot;)
+extents
 </pre></div>
 </div>
 </div>
@@ -2720,7 +2720,7 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">XC</span><span class="o">=-</span><span class="mi">140</span><span class="p">)</span><span class="o">.</span><span class="n">hvplot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>extents.Y.sel(peak=&quot;eq&quot;, XC=-140).hvplot.line(by=&quot;point&quot;)
 </pre></div>
 </div>
 </div>
@@ -2760,7 +2760,7 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;north&quot;</span><span class="p">,</span> <span class="n">XC</span><span class="o">=-</span><span class="mi">140</span><span class="p">)</span><span class="o">.</span><span class="n">hvplot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>extents.Y.sel(peak=&quot;north&quot;, XC=-140).hvplot.line(by=&quot;point&quot;)
 </pre></div>
 </div>
 </div>
@@ -2800,38 +2800,38 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y0</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">yp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">yne</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">yn</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="s2">&quot;2013-11-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2015-11-01&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>y0.plot()
+yp.plot()
+yne.plot()
+yn.plot()
+plt.xlim([&quot;2013-11-01&quot;, &quot;2015-11-01&quot;])
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yne</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq-north&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
-<span class="n">yn</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;north&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
-<span class="n">ytop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">yne</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="n">yn</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
-<span class="n">yp_merged</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ytop</span><span class="p">),</span> <span class="n">yp</span><span class="p">,</span> <span class="n">ytop</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>yne = cen.sel(peak=&quot;eq-north&quot;, point=&quot;right&quot;)
+yn = cen.sel(peak=&quot;north&quot;, point=&quot;right&quot;)
+ytop = np.minimum(yne.fillna(np.inf), yn.fillna(np.inf))
+yp_merged = xr.where(~np.isfinite(ytop), yp, ytop)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cen</span> <span class="o">=</span> <span class="n">extents</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">XC</span><span class="o">=-</span><span class="mi">125</span><span class="p">)</span>
-<span class="n">y0</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;mid&quot;</span><span class="p">)</span>
-<span class="n">y0</span> <span class="o">=</span> <span class="n">y0</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y0</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cen = extents.Y.sel(XC=-125)
+y0 = cen.sel(peak=&quot;eq&quot;, point=&quot;mid&quot;)
+y0 = y0.where(y0 &gt; -2).ffill(&quot;time&quot;)
 
-<span class="n">yp</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">ym</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+yp = cen.sel(peak=&quot;eq&quot;, point=&quot;right&quot;).ffill(&quot;time&quot;)
+ym = cen.sel(peak=&quot;eq&quot;, point=&quot;left&quot;).ffill(&quot;time&quot;)
 
-<span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">y0</span><span class="p">,</span> <span class="n">nsmooth</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">yp</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">nsmooth</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">ym</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">nsmooth</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="s2">&quot;north&quot;</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">])</span>
+_, ax = dcpy.ts.PlotSpectrum(y0, nsmooth=10)
+dcpy.ts.PlotSpectrum(yp, ax=ax, nsmooth=10)
+dcpy.ts.PlotSpectrum(ym, ax=ax, nsmooth=10)
+ax.legend([&quot;center&quot;, &quot;north&quot;, &quot;south&quot;])
 </pre></div>
 </div>
 </div>
@@ -2844,9 +2844,9 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> widget
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib widget
 
-<span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">yp</span> <span class="o">-</span> <span class="n">ym</span><span class="p">)</span>
+dcpy.ts.PlotSpectrum(yp - ym)
 </pre></div>
 </div>
 </div>
@@ -2861,17 +2861,17 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cen</span> <span class="o">=</span> <span class="n">extents</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">XC</span><span class="o">=-</span><span class="mi">140</span><span class="p">)</span>
-<span class="n">y0</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;mid&quot;</span><span class="p">)</span>
-<span class="n">y0</span> <span class="o">=</span> <span class="n">y0</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y0</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cen = extents.Y.sel(XC=-140)
+y0 = cen.sel(peak=&quot;eq&quot;, point=&quot;mid&quot;)
+y0 = y0.where(y0 &gt; -2).ffill(&quot;time&quot;)
 
-<span class="n">yp</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">ym</span> <span class="o">=</span> <span class="n">cen</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ffill</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+yp = cen.sel(peak=&quot;eq&quot;, point=&quot;right&quot;).ffill(&quot;time&quot;)
+ym = cen.sel(peak=&quot;eq&quot;, point=&quot;left&quot;).ffill(&quot;time&quot;)
 
-<span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">y0</span><span class="p">,</span> <span class="n">nsmooth</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">yp</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">nsmooth</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotSpectrum</span><span class="p">(</span><span class="n">ym</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">nsmooth</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="s2">&quot;north&quot;</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">])</span>
+_, ax = dcpy.ts.PlotSpectrum(y0, nsmooth=10)
+dcpy.ts.PlotSpectrum(yp, ax=ax, nsmooth=10)
+dcpy.ts.PlotSpectrum(ym, ax=ax, nsmooth=10)
+ax.legend([&quot;center&quot;, &quot;north&quot;, &quot;south&quot;])
 </pre></div>
 </div>
 </div>
@@ -2884,9 +2884,9 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mask</span> <span class="o">=</span> <span class="n">yp</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">ym</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mask = yp.notnull() &amp; ym.notnull()
 
-<span class="n">cxy</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">PlotCoherence</span><span class="p">(</span><span class="n">yp</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">mask</span><span class="p">),</span> <span class="n">ym</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">mask</span><span class="p">),</span> <span class="n">nsmooth</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+cxy = dcpy.ts.PlotCoherence(yp.isel(time=mask), ym.isel(time=mask), nsmooth=21)
 </pre></div>
 </div>
 </div>
@@ -2896,8 +2896,8 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">XC</span><span class="o">=-</span><span class="mi">140</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">extents</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">XC</span><span class="o">=-</span><span class="mi">140</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq-north&quot;</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>extents.Y.sel(XC=-140).sel(peak=&quot;eq&quot;).plot.line(x=&quot;time&quot;, lw=1)
+extents.Y.sel(XC=-140).sel(peak=&quot;eq-north&quot;, point=&quot;right&quot;).plot.line(x=&quot;time&quot;, lw=1)
 </pre></div>
 </div>
 </div>
@@ -2910,30 +2910,30 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-<span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>idx = [0, 20, 10, -5, -2]
+idx = [-5]
 
 
-<span class="n">lon</span> <span class="o">=</span> <span class="o">-</span><span class="mi">140</span>
-<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
-    <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width_ratios&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}</span>
-<span class="p">)</span>
-<span class="n">subset</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">lon</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">extents</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">lon</span><span class="p">)</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">stack</span><span class="p">({</span><span class="s2">&quot;stacked&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">,</span> <span class="s2">&quot;point&quot;</span><span class="p">]})</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">add_legend</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
+lon = -140
+f, ax = plt.subplots(
+    1, 2, sharey=False, constrained_layout=True, gridspec_kw={&quot;width_ratios&quot;: [3, 1]}
+)
+subset.cf.sel(X=lon).cf.plot(ax=ax[0], robust=True)
+extents.cf.sel(X=lon).Y.stack({&quot;stacked&quot;: [&quot;peak&quot;, &quot;point&quot;]}).plot.line(
+    x=&quot;time&quot;, ax=ax[0], add_legend=False
+)
 
-<span class="c1">#for i in idx:</span>
-<span class="c1">#    ax[0].plot([subset.time.data[i]] * 2, [-10, 10])</span>
-<span class="c1">#    extent = find_extent(</span>
-<span class="c1">#        tsmoothed.isel(time=i).compute(),</span>
-<span class="c1">#        dim=&quot;Y&quot;,</span>
-<span class="c1">#        debug=True,</span>
-<span class="c1">#        ax=ax[1],</span>
-<span class="c1">#    )</span>
+#for i in idx:
+#    ax[0].plot([subset.time.data[i]] * 2, [-10, 10])
+#    extent = find_extent(
+#        tsmoothed.isel(time=i).compute(),
+#        dim=&quot;Y&quot;,
+#        debug=True,
+#        ax=ax[1],
+#    )
 
-<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="c1">#extents.isel(time=i).compute()</span>
+f.set_size_inches((8, 4))
+#extents.isel(time=i).compute()
 </pre></div>
 </div>
 </div>
@@ -2943,14 +2943,14 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s2">&quot;mi-zone-lat-extents-2008.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>extents.to_netcdf(&quot;mi-zone-lat-extents-2008.nc&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">peak</span><span class="o">=</span><span class="s2">&quot;eq&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s2">&quot;XC&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>extents.Y.sel(peak=&quot;eq&quot;).plot.line(row=&quot;XC&quot;, x=&quot;time&quot;)
 </pre></div>
 </div>
 </div>
@@ -2963,12 +2963,12 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">dcl</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">260</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="p">(</span>
-    <span class="n">ds</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">260</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mi">26</span><span class="p">,</span> <span class="mf">26.25</span><span class="p">,</span> <span class="mf">26.5</span><span class="p">,</span> <span class="mi">27</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ds.dcl.isel(time=260).cf.plot(robust=True)
+(
+    ds.theta.cf.sel(Z=0, method=&quot;nearest&quot;)
+    .isel(time=260)
+    .cf.plot.contour(levels=[26, 26.25, 26.5, 27], colors=&quot;w&quot;)
+)
 </pre></div>
 </div>
 </div>
@@ -2981,7 +2981,7 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">Z</span><span class="o">=-</span><span class="mi">80</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>Ri.cf.sel(Z=-80, method=&quot;nearest&quot;).plot(vmin=0.1, vmax=1)
 </pre></div>
 </div>
 </div>
@@ -2997,15 +2997,15 @@ Data variables:
 <h2>POP2: Andre<a class="headerlink" href="#pop2-andre" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span>
-    <span class="n">n_workers</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
-    <span class="n">processes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">local_directory</span><span class="o">=</span><span class="s2">&quot;/home/dcherian/.dask_worker/&quot;</span><span class="p">,</span>
-    <span class="n">dashboard_address</span><span class="o">=</span><span class="s2">&quot;:9999&quot;</span><span class="p">,</span>
-    <span class="n">memory_limit</span><span class="o">=</span><span class="s2">&quot;12GB&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">cluster</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster = distributed.LocalCluster(
+    n_workers=36,
+    processes=True,
+    threads_per_worker=1,
+    local_directory=&quot;/home/dcherian/.dask_worker/&quot;,
+    dashboard_address=&quot;:9999&quot;,
+    memory_limit=&quot;12GB&quot;,
+)
+cluster
 </pre></div>
 </div>
 </div>
@@ -3016,17 +3016,17 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>client = distributed.Client(cluster)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import glob
 
-<span class="n">pacificdir</span> <span class="o">=</span> <span class="s2">&quot;/project/oce/deppenme/process-dat/more_years/*_19[9]*-*.nc&quot;</span>
-<span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pacificdir</span><span class="p">))</span>
+pacificdir = &quot;/project/oce/deppenme/process-dat/more_years/*_19[9]*-*.nc&quot;
+sorted(glob.glob(pacificdir))
 </pre></div>
 </div>
 </div>
@@ -3772,40 +3772,40 @@ distributed.utils_perf - WARNING - full garbage collections took 56% CPU time re
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">ds</span><span class="p">[</span>
-        <span class="p">[</span>
-            <span class="s2">&quot;UVEL&quot;</span><span class="p">,</span> <span class="s2">&quot;VVEL&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;ULONG&quot;</span><span class="p">,</span> <span class="s2">&quot;TLONG&quot;</span><span class="p">,</span> <span class="s2">&quot;ULAT&quot;</span><span class="p">,</span> <span class="s2">&quot;TLAT&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;DXU&quot;</span><span class="p">,</span> <span class="s2">&quot;DYU&quot;</span><span class="p">,</span> <span class="s2">&quot;DXT&quot;</span><span class="p">,</span> <span class="s2">&quot;DYT&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;grav&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="s2">&quot;rho_sw&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;z_t&quot;</span><span class="p">,</span> <span class="s2">&quot;z_w&quot;</span><span class="p">,</span> <span class="s2">&quot;z_w_bot&quot;</span><span class="p">,</span> <span class="s2">&quot;z_w_top&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;XMXL&quot;</span><span class="p">,</span> <span class="s2">&quot;TMXL&quot;</span><span class="p">,</span> <span class="s2">&quot;HMXL&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
-    <span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def subset(ds):
+    return ds[
+        [
+            &quot;UVEL&quot;, &quot;VVEL&quot;, &quot;TAREA&quot;, &quot;UAREA&quot;, 
+            &quot;ULONG&quot;, &quot;TLONG&quot;, &quot;ULAT&quot;, &quot;TLAT&quot;, 
+            &quot;DXU&quot;, &quot;DYU&quot;, &quot;DXT&quot;, &quot;DYT&quot;,
+            &quot;grav&quot;, &quot;Q&quot;, &quot;rho_sw&quot;,
+            &quot;z_t&quot;, &quot;z_w&quot;, &quot;z_w_bot&quot;, &quot;z_w_top&quot;,
+            &quot;XMXL&quot;, &quot;TMXL&quot;, &quot;HMXL&quot;,
+        ]
+    ]
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gridvars</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/project/oce/deppenme/helpdir/Pac_DZU_t13.nc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;z_t&quot;</span><span class="p">}),</span> 
-        <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/project/oce/deppenme/helpdir/Pac_dzt_t13.nc&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>gridvars = xr.merge(
+    [
+        xr.open_dataset(&quot;/project/oce/deppenme/helpdir/Pac_DZU_t13.nc&quot;).rename({&quot;depth&quot;: &quot;z_t&quot;}), 
+        xr.open_dataset(&quot;/project/oce/deppenme/helpdir/Pac_dzt_t13.nc&quot;),
+    ]
+)
 
-<span class="n">pacific</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
-    <span class="n">pacificdir</span><span class="p">,</span>
-    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">data_vars</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
-    <span class="n">coords</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
-    <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">,</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nlon&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nlat&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;z_w&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
-    <span class="n">preprocess</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
-<span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">gridvars</span><span class="p">)</span>
-<span class="n">pacific</span>
+pacific = xr.open_mfdataset(
+    pacificdir,
+    parallel=True,
+    data_vars=&quot;minimal&quot;,
+    coords=&quot;minimal&quot;,
+    compat=&quot;override&quot;,
+    chunks={&quot;nlon&quot;: -1, &quot;nlat&quot;: 10, &quot;z_w&quot;: 30},
+    preprocess=subset,
+).update(gridvars)
+pacific
 </pre></div>
 </div>
 </div>
@@ -5670,35 +5670,35 @@ Attributes:
 <p>Doing this twice so I can use <code class="docutils literal notranslate"><span class="pre">grid.interp</span></code> to generate <code class="docutils literal notranslate"><span class="pre">DZUW</span></code> and <code class="docutils literal notranslate"><span class="pre">DZTW</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DXU&#39;</span><span class="p">,</span> <span class="s1">&#39;DXT&#39;</span><span class="p">],</span> <span class="c1"># X distances </span>
-    <span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DYU&#39;</span><span class="p">,</span> <span class="s1">&#39;DYT&#39;</span><span class="p">],</span> <span class="c1"># Y distances </span>
-    <span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DZU&#39;</span><span class="p">,</span> <span class="s1">&#39;DZT&#39;</span><span class="p">],</span> <span class="c1"># Z distances </span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">):</span> <span class="p">[</span><span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">],</span> <span class="c1"># Areas (unnecessary)</span>
-<span class="p">}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>metrics = {
+    (&#39;X&#39;,): [&#39;DXU&#39;, &#39;DXT&#39;], # X distances 
+    (&#39;Y&#39;,): [&#39;DYU&#39;, &#39;DYT&#39;], # Y distances 
+    (&#39;Z&#39;,): [&#39;DZU&#39;, &#39;DZT&#39;], # Z distances 
+    (&#39;X&#39;, &#39;Y&#39;): [&quot;UAREA&quot;, &quot;TAREA&quot;], # Areas (unnecessary)
+}
 
-<span class="n">grid</span><span class="p">,</span> <span class="n">xpac</span> <span class="o">=</span> <span class="n">pop_tools</span><span class="o">.</span><span class="n">to_xgcm_grid_dataset</span><span class="p">(</span>
-    <span class="n">pacific</span><span class="p">,</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span>
-<span class="p">)</span>
+grid, xpac = pop_tools.to_xgcm_grid_dataset(
+    pacific, periodic=False, metrics=metrics, boundary=&quot;extrapolate&quot;
+)
 
-<span class="n">pacific</span><span class="p">[</span><span class="s2">&quot;DZUW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">pacific</span><span class="o">.</span><span class="n">DZU</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span>
-<span class="n">pacific</span><span class="o">.</span><span class="n">DZUW</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;grid_loc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;3222&quot;</span>
-<span class="n">pacific</span><span class="p">[</span><span class="s2">&quot;DZTW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">pacific</span><span class="o">.</span><span class="n">DZT</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span>
-<span class="n">pacific</span><span class="o">.</span><span class="n">DZTW</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;grid_loc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;3112&quot;</span>
+pacific[&quot;DZUW&quot;] = grid.interp(pacific.DZU, &quot;Z&quot;)
+pacific.DZUW.attrs[&quot;grid_loc&quot;] = &quot;3222&quot;
+pacific[&quot;DZTW&quot;] = grid.interp(pacific.DZT, &quot;Z&quot;)
+pacific.DZTW.attrs[&quot;grid_loc&quot;] = &quot;3112&quot;
 
-<span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DXU&#39;</span><span class="p">,</span> <span class="s1">&#39;DXT&#39;</span><span class="p">],</span> <span class="c1"># X distances </span>
-    <span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DYU&#39;</span><span class="p">,</span> <span class="s1">&#39;DYT&#39;</span><span class="p">],</span> <span class="c1"># Y distances </span>
-    <span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DZU&#39;</span><span class="p">,</span> <span class="s1">&#39;DZT&#39;</span><span class="p">,</span> <span class="s1">&#39;DZUW&#39;</span><span class="p">,</span> <span class="s1">&#39;DZTW&#39;</span><span class="p">],</span> <span class="c1"># Z distances </span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">):</span> <span class="p">[</span><span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">],</span> <span class="c1"># Areas (unnecessary)</span>
-<span class="p">}</span>
+metrics = {
+    (&#39;X&#39;,): [&#39;DXU&#39;, &#39;DXT&#39;], # X distances 
+    (&#39;Y&#39;,): [&#39;DYU&#39;, &#39;DYT&#39;], # Y distances 
+    (&#39;Z&#39;,): [&#39;DZU&#39;, &#39;DZT&#39;, &#39;DZUW&#39;, &#39;DZTW&#39;], # Z distances 
+    (&#39;X&#39;, &#39;Y&#39;): [&quot;UAREA&quot;, &quot;TAREA&quot;], # Areas (unnecessary)
+}
 
-<span class="n">grid</span><span class="p">,</span> <span class="n">xpac</span> <span class="o">=</span> <span class="n">pop_tools</span><span class="o">.</span><span class="n">to_xgcm_grid_dataset</span><span class="p">(</span>
-    <span class="n">pacific</span><span class="p">,</span> <span class="n">periodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span>
-<span class="p">)</span>
-<span class="n">xpac</span><span class="o">.</span><span class="n">ULONG</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-<span class="n">xpac</span><span class="o">.</span><span class="n">ULONG</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">xpac</span><span class="o">.</span><span class="n">ULONG</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xpac</span><span class="o">.</span><span class="n">ULONG</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">xpac</span><span class="o">.</span><span class="n">ULONG</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
-<span class="n">xpac</span>
+grid, xpac = pop_tools.to_xgcm_grid_dataset(
+    pacific, periodic=False, metrics=metrics, boundary=&quot;extrapolate&quot;
+)
+xpac.ULONG.load()
+xpac.ULONG.data[xpac.ULONG.data &gt; 0] = xpac.ULONG.data[xpac.ULONG.data &gt; 0] - 360
+xpac
 </pre></div>
 </div>
 </div>
@@ -7631,10 +7631,10 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#xpac[&quot;pden&quot;] = pop_tools.eos(xpac.SALT, xpac.TEMP, depth=xpac.z_t)</span>
-<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">UVEL</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">VVEL</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">xpac</span><span class="o">.</span><span class="n">grav</span> <span class="o">/</span> <span class="n">xpac</span><span class="o">.</span><span class="n">rho_sw</span> <span class="o">*</span> <span class="n">xpac</span><span class="o">.</span><span class="n">Q</span>  <span class="c1">#9.81/1025 * grid.derivative(xpac.pden, &quot;Z&quot;)</span>
-<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;Ri&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xpac</span><span class="o">.</span><span class="n">N2</span><span class="o">/</span><span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">S2</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#xpac[&quot;pden&quot;] = pop_tools.eos(xpac.SALT, xpac.TEMP, depth=xpac.z_t)
+xpac[&quot;S2&quot;] = grid.derivative(xpac.UVEL, &quot;Z&quot;)**2 + grid.derivative(xpac.VVEL, &quot;Z&quot;)**2
+xpac[&quot;N2&quot;] = -1 * xpac.grav / xpac.rho_sw * xpac.Q  #9.81/1025 * grid.derivative(xpac.pden, &quot;Z&quot;)
+xpac[&quot;Ri&quot;] = xpac.N2/grid.interp(xpac.S2, [&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;])
 </pre></div>
 </div>
 </div>
@@ -7646,16 +7646,16 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eq</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xpac</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="mi">151</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">500</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
-    <span class="c1">#.chunk({&quot;time&quot;: -1,})</span>
-<span class="p">)</span>
-<span class="n">eq</span><span class="p">[</span><span class="s2">&quot;TLONG&quot;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
-<span class="n">eq</span><span class="p">[</span><span class="s2">&quot;TLONG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">TLONG</span><span class="o">.</span><span class="n">interpolate_na</span><span class="p">(</span><span class="s2">&quot;nlon_t&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
-<span class="n">eq</span><span class="p">[</span><span class="s2">&quot;ULONG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">ULONG</span><span class="o">.</span><span class="n">interpolate_na</span><span class="p">(</span><span class="s2">&quot;nlon_u&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
-<span class="n">eq</span><span class="o">.</span><span class="n">Ri</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>eq = (
+    xpac
+    .cf.isel(Y=151)
+    .cf.sel(Z=slice(500*100))
+    #.chunk({&quot;time&quot;: -1,})
+)
+eq[&quot;TLONG&quot;] -= 360
+eq[&quot;TLONG&quot;] = eq.TLONG.interpolate_na(&quot;nlon_t&quot;, fill_value=&quot;extrapolate&quot;)
+eq[&quot;ULONG&quot;] = eq.ULONG.interpolate_na(&quot;nlon_u&quot;, fill_value=&quot;extrapolate&quot;)
+eq.Ri
 </pre></div>
 </div>
 </div>
@@ -8206,19 +8206,19 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-    <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span> 
-    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">,</span> 
-    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;aspect&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">}</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>Ri_kwargs = dict(
+    robust=True, 
+    levels=[0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95], 
+    cmap=mpl.cm.Spectral_r, 
+    cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;, &quot;shrink&quot;: 1, &quot;aspect&quot;: 25}
+)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>eq.Ri.isel(time=10).cf.plot(x=&quot;longitude&quot;, y=&quot;Z&quot;, robust=True, vmax=1, cmap=mpl.cm.Spectral_r)
 </pre></div>
 </div>
 </div>
@@ -8234,15 +8234,15 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
 
-<span class="n">t</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="p">(</span>
-    <span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">Ri_kwargs</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">eq</span><span class="o">.</span><span class="n">HMXL</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">eq</span><span class="o">.</span><span class="n">XMXL</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+t = 100
+(
+    eq.Ri.isel(time=t)
+    .cf.plot(x=&quot;longitude&quot;, y=&quot;Z&quot;, **Ri_kwargs)
+)
+eq.HMXL.isel(time=t).cf.plot(x=&quot;longitude&quot;, color=&#39;k&#39;, zorder=2)
+eq.XMXL.isel(time=t).cf.plot(x=&quot;longitude&quot;, color=&#39;w&#39;, zorder=2)
 </pre></div>
 </div>
 </div>
@@ -8264,7 +8264,7 @@ distributed.utils_perf - WARNING - full garbage collections took 92% CPU time re
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eq</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>eq.cf.describe()
 </pre></div>
 </div>
 </div>
@@ -8296,10 +8296,10 @@ Standard Names:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">medianRi</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
-<span class="n">medianRi</span><span class="p">[</span><span class="s2">&quot;xmxl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">cf</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">eq</span><span class="o">.</span><span class="n">XMXL</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">medianRi</span><span class="p">[</span><span class="s2">&quot;hmxl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">cf</span><span class="p">[</span><span class="s2">&quot;vertical&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">eq</span><span class="o">.</span><span class="n">HMXL</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
-<span class="n">medianRi</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>medianRi = xr.Dataset()
+medianRi[&quot;xmxl&quot;] = eq.Ri.where(eq.Ri.cf[&quot;vertical&quot;] &gt; eq.XMXL).median(&quot;time&quot;)
+medianRi[&quot;hmxl&quot;] = eq.Ri.where(eq.Ri.cf[&quot;vertical&quot;] &gt; eq.HMXL).median(&quot;time&quot;)
+medianRi.load()
 </pre></div>
 </div>
 </div>
@@ -8722,14 +8722,14 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">medianRi</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s2">&quot;~/pump/notebooks/median-Ri-POP2.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>medianRi.to_netcdf(&quot;~/pump/notebooks/median-Ri-POP2.nc&quot;)
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">medianRi</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">250</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">**</span><span class="n">Ri_kwargs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>medianRi.to_array(&quot;mask&quot;).cf.plot(y=&quot;Z&quot;, x=&quot;longitude&quot;, row=&quot;mask&quot;, ylim=(250*100, 0), **Ri_kwargs)
 </pre></div>
 </div>
 </div>
@@ -8739,48 +8739,48 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import dask.array as da
 
 
-<span class="c1"># Use a custom array type to know when data is being evaluated</span>
-<span class="k">class</span> <span class="nc">Array</span><span class="p">():</span>
+# Use a custom array type to know when data is being evaluated
+class Array():
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;bool&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+    def __init__(self, x):
+        self.shape = (x.shape[0],)
+        self.ndim = x.ndim
+        self.dtype = &#39;bool&#39;
+        self.x = x
         
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stop</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evaluating&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mf">.5</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+    def __getitem__(self, idx):
+        if idx[0].stop &gt; 0:
+            print(&#39;Evaluating&#39;)
+        return (self.x &gt; .5).__getitem__(idx)
 
-<span class="c1"># Control case -- this shows that the print statement is only reached once</span>
-<span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span><span class="o">.</span><span class="n">compute</span><span class="p">();</span>
-<span class="c1"># Evaluating</span>
+# Control case -- this shows that the print statement is only reached once
+da.from_array(Array(np.random.rand(100))).compute();
+# Evaluating
 
-<span class="c1"># This usage somehow results in two evaluations of this one array?</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-    <span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">))))</span>
-<span class="p">))</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
-<span class="c1"># Evaluating</span>
-<span class="c1"># Evaluating</span>
-<span class="c1"># &lt;xarray.Dataset&gt;</span>
-<span class="c1"># Dimensions:  (x: 51)</span>
-<span class="c1"># Dimensions without coordinates: x</span>
-<span class="c1"># Data variables:</span>
-<span class="c1">#     a        (x) bool dask.array&lt;chunksize=(51,), meta=np.ndarray&gt;</span>
+# This usage somehow results in two evaluations of this one array?
+ds = xr.Dataset(dict(
+    a=(&#39;x&#39;, da.from_array(Array(np.random.rand(100))))
+))
+ds.sel(x=ds.a)
+# Evaluating
+# Evaluating
+# &lt;xarray.Dataset&gt;
+# Dimensions:  (x: 51)
+# Dimensions without coordinates: x
+# Data variables:
+#     a        (x) bool dask.array&lt;chunksize=(51,), meta=np.ndarray&gt;
 
-<span class="c1"># The array is evaluated an extra time for each new variable</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-    <span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)))),</span>
-    <span class="n">b</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-    <span class="n">c</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-    <span class="n">d</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-<span class="p">))</span>
-<span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+# The array is evaluated an extra time for each new variable
+ds = xr.Dataset(dict(
+    a=(&#39;x&#39;, da.from_array(Array(np.random.rand(100)))),
+    b=((&#39;x&#39;, &#39;y&#39;), da.random.random((100, 10))),
+    c=((&#39;x&#39;, &#39;y&#39;), da.random.random((100, 10))),
+    d=((&#39;x&#39;, &#39;y&#39;), da.random.random((100, 10))),
+))
+ds.sel(x=ds.a)
 </pre></div>
 </div>
 </div>
@@ -9287,19 +9287,19 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import dask.array as da
+import numpy as np
 
-<span class="kn">from</span> <span class="nn">xarray.tests</span> <span class="kn">import</span> <span class="n">raise_if_dask_computes</span>
+from xarray.tests import raise_if_dask_computes
 
-<span class="k">with</span> <span class="n">raise_if_dask_computes</span><span class="p">(</span><span class="n">max_computes</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">,))),</span>
-        <span class="n">b</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-        <span class="n">c</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-        <span class="n">d</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-    <span class="p">))</span>
-    <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">))</span>
+with raise_if_dask_computes(max_computes=1):
+    ds = xr.Dataset(dict(
+        a=(&#39;x&#39;, da.from_array(np.random.rand(100,))),
+        b=((&#39;x&#39;, &#39;y&#39;), da.random.random((100, 10))),
+        c=((&#39;x&#39;, &#39;y&#39;), da.random.random((100, 10))),
+        d=((&#39;x&#39;, &#39;y&#39;), da.random.random((100, 10))),
+    ))
+    ds.sel(x=(ds.a &gt; 0.5))
 </pre></div>
 </div>
 </div>
