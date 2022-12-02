@@ -688,19 +688,21 @@ def plot_profile_fill(da, label):
 
     assert_z_is_normalized(da.to_dataset())
 
+    prefix = da.name
+
     Zname = da.cf.axes["Z"][0]
     da = da.copy(deep=True)
     mean = da.mean("time")
     std = da.std("time")
 
     df_ = (
-        xr.Dataset({"low": mean - std, "high": mean + std})
+        xr.Dataset({f"{prefix}_low": mean - std, f"{prefix}_high": mean + std})
         .reset_coords(drop=True)
         .to_dataframe()
     )
     return df_.hvplot.area(
-        x=Zname, y="low", y2="high", group_label=label, hover=False
-    ).opts(alpha=0.5) * mean.hvplot.line(label=label, group_label=label)
+        x=Zname, y=f"{prefix}_low", y2=f"{prefix}_high", group_label=label, hover=False
+    ).opts(alpha=0.1) * mean.hvplot.line(label=label, group_label=label)
 
 
 def cfplot(da, label):
