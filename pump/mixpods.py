@@ -651,17 +651,26 @@ def sel_like(da, other, dims):
 
 def plot_timeseries(tree, var, obs="TAO"):
     """Line hvplot of time series. Selects to match obs."""
-    obsts = tree[obs].ds.reset_coords()[var]
+    if obs is not None:
+        obsts = tree[obs].ds.reset_coords().cf[var]
+        title = obsts.attrs["long_name"]
+    else:
+        title = var
     handles = []
     for name, tree in tree.children.items():
         ds = tree.ds
         kwargs = dict(label=name)
-        if var not in ds.variables:
-            raise ValueError(f"Dataset {name!r} is missing {var!r}")
         if name != obs:
-            toplot = ds.reset_coords()[var].pipe(sel_like, obsts, "time")
+            try:
+                toplot = ds.reset_coords().cf[var]
+                if obs is not None:
+                    toplot = toplot.pipe(sel_like, obsts, "time")
+            except KeyError:
+                raise KeyError(f"Dataset {name!r} is missing {var!r}")
             kwargs.pop("color", None)
         else:
+            if obs is None:
+                continue
             toplot = obsts
             kwargs["color"] = "darkgray"
         handles.append(toplot.hvplot.line(**kwargs))
@@ -669,7 +678,7 @@ def plot_timeseries(tree, var, obs="TAO"):
     return hv.Overlay(handles).opts(
         legend_position="right",
         frame_width=700,
-        title=obsts.attrs["long_name"],
+        title=title,
         xlabel="",
     )
 
