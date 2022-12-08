@@ -971,6 +971,10 @@ def load_mom6_sections(casename):
     # Unfortunately have to do this here so that Grid is right.
     mom6tao = normalize_z(mom6tao, sort=True)
 
+    mom6tao.Kv_u.attrs["standard_name"] = "ocean_vertical_x_viscosity"
+    mom6tao.Kv_v.attrs["standard_name"] = "ocean_vertical_y_viscosity"
+    mom6tao.Kd_heat.attrs["standard_name"] = "ocean_vertical_heat_diffusivity"
+
     grid = xgcm.Grid(
         mom6tao,
         coords={
