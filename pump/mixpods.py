@@ -393,11 +393,11 @@ def plot_stability_diagram(
     assert hue in ds.dims
 
     # Note this groupby sorts the hue labels...
-    for label, group in ds.n2s2pdf.groupby(hue):
+    for label, group in ds["n2s2pdf"].groupby(hue):
         group["N2T_bins"] = group["N2T_bins"].copy(
-            data=pd.IntervalIndex(group.N2T_bins.data).mid
+            data=pd.IntervalIndex(group["N2T_bins"].data).mid
         )
-        group["S2_bins"] = group["S2_bins"].copy(data=group.N2T_bins.data)
+        group["S2_bins"] = group["S2_bins"].copy(data=group["N2T_bins"].data)
 
         default_color = (
             ENSO_COLORS[label]
@@ -837,6 +837,23 @@ def load(ds):
         "eps_n2s2",
     ]
     return ds.update(ds.cf[varnames].load())
+
+
+def load_tree(dt):
+    varnames = [
+        "sea_water_x_velocity",
+        # TODO fix cf-xarray bug, after selection, vars dont remain as coordinates
+        # "eucmax",
+        # "mldT",
+        "n2s2pdf",
+        "S2",
+        "N2T",
+        "eps_ri",
+        "eps_n2s2",
+    ]
+    for name, node in dt.children.items():
+        dt[name].update(node.ds.cf[varnames].load())
+    return dt
 
 
 def plot_enso_transition(oni, enso_transition):
