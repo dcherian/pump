@@ -332,7 +332,7 @@ def calc_tao_ri(tao, dim="depth", fillna=False):
 
     V = tao[["u", "v"]].sortby(dim).interpolate_na(dim)
     S2 = V["u"].differentiate(dim) ** 2 + V["v"].differentiate(dim) ** 2
-    S2.attrs["long_name"] = "$S²$"
+    S2.attrs["long_name"] = "$S^2$"
 
     if fillna:
         T = tao.T.sortby(dim).interpolate_na(dim, "linear")
@@ -348,8 +348,8 @@ def calc_tao_ri(tao, dim="depth", fillna=False):
     # the calculation is sensitive to using sw.alpha! can't just do 1.7e-4
     N2T = -9.81 / 1025 * tao.densT.differentiate("depth")
     N2 = -9.81 / 1025 * tao.dens.differentiate("depth")
-    N2.attrs["long_name"] = "$N²$"
-    N2T.attrs["long_name"] = "$N_T²$"
+    N2.attrs["long_name"] = "$N^2$"
+    N2T.attrs["long_name"] = "$N^2_T$"
 
     Rig_T = (N2T / S2).where((N2T > 1e-5) & (S2 > 1e-10))
     Rig_T.attrs["long_name"] = "$Ri_g^T$"

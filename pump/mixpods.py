@@ -20,6 +20,21 @@ ENSO_COLORS_RGB = {
 }
 ENSO_COLORS = {k: np.array(v) / 255 for k, v in ENSO_COLORS_RGB.items()}
 ENSO_TRANSITION_PHASES = ENSO_COLORS.keys()
+LOAD_VARNAMES = [
+    "sea_water_x_velocity",
+    # TODO fix cf-xarray bug, after selection, vars dont remain as coordinates
+    # "eucmax",
+    # "mldT",
+    "n2s2pdf",
+    "S2",
+    "N2T",
+    "ocean_vertical_heat_diffusivity",
+    "eps",
+    "chi",
+    "eps_ri",
+    "eps_n2s2",
+    "Rig_T",
+]
 
 
 # TODO: delete
@@ -221,8 +236,7 @@ def pdf_N2S2(data, coord_is_center=False):
     Calculate pdf of data in S2-4N2 space.
     """
 
-    original = data
-    data = data.copy()
+    data = data.copy().reset_coords()
     bins = np.arange(-5, -2.01, 0.1)
     index = pd.IntervalIndex.from_breaks(bins, closed="left")
 
@@ -302,8 +316,8 @@ def pdf_N2S2(data, coord_is_center=False):
         epsZ = data.eps.cf["Z"].cf.sel(Z=slice(-69, -29))
         # χpod data are available at a subset of depths
         newby = [
-            np.log10(4 * reindex_Z_to(original["N2"], epsZ)),
-            np.log10(reindex_Z_to(original["S2"], epsZ)),
+            np.log10(4 * reindex_Z_to(data["N2"], epsZ)),
+            np.log10(reindex_Z_to(data["S2"], epsZ)),
         ]
         newby.extend(by[2:])
         eps = data.eps.cf.sel(Z=epsZ)
@@ -825,34 +839,12 @@ def xgcm_interp_to(grid, da, *, axis, to):
 
 
 def load(ds):
-    varnames = [
-        "sea_water_x_velocity",
-        # TODO fix cf-xarray bug, after selection, vars dont remain as coordinates
-        # "eucmax",
-        # "mldT",
-        "n2s2pdf",
-        "S2",
-        "N2T",
-        "eps_ri",
-        "eps_n2s2",
-    ]
-    return ds.update(ds.cf[varnames].load())
+    return ds.update(ds.cf[LOAD_VARNAMES].load())
 
 
 def load_tree(dt):
-    varnames = [
-        "sea_water_x_velocity",
-        # TODO fix cf-xarray bug, after selection, vars dont remain as coordinates
-        # "eucmax",
-        # "mldT",
-        "n2s2pdf",
-        "S2",
-        "N2T",
-        "eps_ri",
-        "eps_n2s2",
-    ]
     for name, node in dt.children.items():
-        dt[name].update(node.ds.cf[varnames].load())
+        dt[name].update(node.ds.cf[LOAD_VARNAMES].load())
     return dt
 
 
@@ -1020,6 +1012,7 @@ def load_mom6_sections(casename):
 
     mom6140 = mom6tao.cf.sel(longitude=-140, latitude=0, method="nearest")
     mom6140 = mom6140.cf.sel(Z=slice(-250, 0))
-    mom6140 = mom6140.update(pdf_N2S2(mom6140))
+
+    # mom6140 = mom6140.update(pdf_N2S2(mom6140))
 
     return mom6140
