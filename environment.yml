@@ -23,6 +23,7 @@ dependencies:
   - flox
   - ecgtools
   - fsspec
+  - geoviews
   - h5netcdf
   - pydantic
   - intake-esm
