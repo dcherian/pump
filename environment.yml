@@ -12,6 +12,7 @@ dependencies:
   - colorcet
   - dask
   - dask_labextension
+  - prometheus_client
   - xarray-datatree
   - distributed
   - flox
@@ -42,6 +43,7 @@ dependencies:
   - pandas
   - pep8
   - pip
+  - rich
   - seaborn
   - seawater
   - scipy
