@@ -140,8 +140,8 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         out.Rig_T.attrs.pop("units", None)
 
         out["Rig"] = out.N2 / out.S2
-        out.Rig_T.attrs["long_name"] = "$Ri^g$"
-        out.Rig_T.attrs.pop("units", None)
+        out.Rig.attrs["long_name"] = "$Ri^g$"
+        out.Rig.attrs.pop("units", None)
 
     ueq = u.cf.sel(Z=slice(-350, -10))
     if "Y" in ueq.cf.axes:
