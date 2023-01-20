@@ -930,7 +930,9 @@ def read_mom6_sections(casename):
 
     mom6tao = interp_to_center(combined).cf.chunk({"Y": -1})
 
-    mom6tao["time"] = mom6tao.indexes["time"].to_datetimeindex()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        mom6tao["time"] = mom6tao.indexes["time"].to_datetimeindex()
 
     mom6tao["dens"] = wright_eos.wright_eos(mom6tao.thetao, mom6tao.so, 0)
     mom6tao["dens"].attrs.update(
