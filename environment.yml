@@ -50,7 +50,7 @@ dependencies:
   - tqdm
   - xarray
   - xarray-datatree
-  - xgcm
+  - xgcm<0.7
   - xhistogram
   - xmitgcm
   - watermark
