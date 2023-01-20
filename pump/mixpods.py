@@ -31,6 +31,7 @@ LOAD_VARNAMES = [
     "ocean_vertical_heat_diffusivity",
     "eps",
     "chi",
+    "Jq",
     "eps_ri",
     "eps_n2s2",
     "Rig_T",
@@ -151,6 +152,10 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         out.cf["sea_water_potential_temperature"].reset_coords(drop=True)
     )
 
+    Z = out.S2.reset_coords().cf["Z"]
+    out.coords["dcl_mask"] = (Z > (out.eucmax + 5)) & (Z < (out.mldT - 5))
+    out.dcl_mask.attrs = {"description": "True when 5m below mldT and above eucmax."}
+
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
     if sst_nino34 is not None and oni is None:
@@ -242,9 +247,7 @@ def pdf_N2S2(data, coord_is_center=False):
 
     assert_z_is_normalized(data)
 
-    data["S2"] = data.S2.where(
-        (data.S2.cf["Z"] > (data.eucmax + 5)) & (data.S2.cf["Z"] < (data.mldT - 5))
-    )
+    data["S2"] = data.S2.where(data.dcl_mask)
 
     by = [np.log10(4 * data.N2T), np.log10(data.S2)]
     expected_groups = [index, index]
@@ -711,7 +714,7 @@ def plot_timeseries(tree, var, obs="TAO"):
     )
 
 
-def plot_profile_fill(da, label):
+def plot_profile_fill(da, label, **kwargs):
     import hvplot.pandas  # noqa
 
     assert_z_is_normalized(da.to_dataset())
@@ -728,20 +731,35 @@ def plot_profile_fill(da, label):
         .reset_coords(drop=True)
         .to_dataframe()
     )
-    return df_.hvplot.area(
-        x=Zname, y=f"{prefix}_low", y2=f"{prefix}_high", group_label=label, hover=False
-    ).opts(alpha=0.1) * mean.hvplot.line(label=label, group_label=label)
+
+    area = df_.hvplot.area(
+        x=Zname,
+        y=f"{prefix}_low",
+        y2=f"{prefix}_high",
+        label=label,
+        hover=False,
+        **kwargs,
+    ).opts(alpha=0.1, muted_fill_alpha=0, muted_line_alpha=0)
+    line = mean.hvplot.line(
+        label=label, muted_line_alpha=0, group_label=label, **kwargs
+    ).opts(xrotation=30, xaxis="top")
+
+    return area * line
 
 
-def cfplot(da, label):
+def cfplot(da, label, **kwargs):
     Zname = da.cf.axes["Z"][0]
     da = da.load().copy(deep=True)
     da[Zname] = normalize_z(da[Zname])
-    return da.hvplot.line(label=label)
+    return da.hvplot.line(label=label, **kwargs)
 
 
-def map_hvplot(func, datasets):
-    return hv.Overlay([func(ds, name=name) for name, ds in datasets.items()])
+def map_hvplot(func, datasets, visible=None):
+    if visible is None:
+        visible = []
+    return hv.Overlay(
+        [func(ds, name=name, muted=name in visible) for name, ds in datasets.items()]
+    )
 
 
 def get_mld_tao_theta(theta):
@@ -848,6 +866,12 @@ def load_tree(dt):
     return dt
 
 
+def persist_tree(dt):
+    for name, node in dt.children.items():
+        dt[name].update(node.ds.cf[LOAD_VARNAMES].persist())
+    return dt
+
+
 def plot_enso_transition(oni, enso_transition):
     import hvplot.pandas  # noqa
 
@@ -891,7 +915,7 @@ def read_mom6_sections(casename):
     from mom6_tools.sections import combine_variables_by_coords, read_raw_files
 
     dirname = f"/glade/scratch/dcherian/{casename}/run/"
-    globstr = f"{dirname}/*TAO*140W*.nc.*"
+    globstr = f"{dirname}/*TAO*140W*00[4-9]*.nc.*"
     files = sorted(glob.glob(globstr))
 
     if not files:
@@ -935,6 +959,7 @@ def read_mom6_sections(casename):
     mom6tao.Kv_u.attrs["standard_name"] = "ocean_vertical_x_viscosity"
     mom6tao.Kv_v.attrs["standard_name"] = "ocean_vertical_y_viscosity"
     mom6tao.Kd_heat.attrs["standard_name"] = "ocean_vertical_heat_diffusivity"
+    mom6tao.Tflx_dia_diff.attrs["standard_name"] = "ocean_vertical_diffusive_heat_flux"
 
     return mom6tao
 
@@ -966,6 +991,7 @@ def load_mom6_sections(casename):
     mom6tao.Kv_u.attrs["standard_name"] = "ocean_vertical_x_viscosity"
     mom6tao.Kv_v.attrs["standard_name"] = "ocean_vertical_y_viscosity"
     mom6tao.Kd_heat.attrs["standard_name"] = "ocean_vertical_heat_diffusivity"
+    mom6tao.Tflx_dia_diff.attrs["standard_name"] = "ocean_vertical_diffusive_heat_flux"
 
     grid = xgcm.Grid(
         mom6tao,
@@ -983,7 +1009,7 @@ def load_mom6_sections(casename):
     dirname = f"/glade/scratch/dcherian/archive/{casename}/ocn/hist"
     static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
     sfc = xr.open_mfdataset(
-        sorted(glob.glob(f"{dirname}/*sfc*")),
+        sorted(glob.glob(f"{dirname}/*sfc*00[4-9]*")),
         coords="minimal",
         data_vars="minimal",
         compat="override",
