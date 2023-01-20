@@ -615,32 +615,32 @@ title="Print to PDF"
 <p>Look at CCHDO CTD sections and plot over OISST to see if some of these sections can be used to estimate Ri during a TIW in 2N-5N range</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pump
-import dcpy
-import glob
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-import pandas as pd
-import tqdm
-import xarray as xr
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pump</span>
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import distributed
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
 
-client = distributed.Client()
+<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>client.cluster
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">cluster</span>
 </pre></div>
 </div>
 </div>
@@ -654,7 +654,7 @@ client = distributed.Client()
 <h2>Read all data<a class="headerlink" href="#read-all-data" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%ls ../datasets/ctd
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">ls</span> ../datasets/ctd
 </pre></div>
 </div>
 </div>
@@ -678,23 +678,23 @@ client = distributed.Client()
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import glob
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
 
-dirname = &quot;../datasets/ctd/*ctd&quot;
-cruises = pump.sections.read_cruise_folders(dirname)
+<span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;../datasets/ctd/*ctd&quot;</span>
+<span class="n">cruises</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">read_cruise_folders</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
 
-oisst = xr.open_mfdataset(
-    &quot;../glade/obs/oisst/*.nc&quot;, combine=&quot;nested&quot;, concat_dim=&quot;time&quot;, parallel=True
-)
-oisst = (
-    oisst
-    .assign(lon=oisst.lon - 360)
-    .sel(lat=slice(-8, 8), lon=slice(-155, -90))
-    .sst
-)
+<span class="n">oisst</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="s2">&quot;../glade/obs/oisst/*.nc&quot;</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;nested&quot;</span><span class="p">,</span> <span class="n">concat_dim</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">oisst</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">oisst</span>
+    <span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="n">oisst</span><span class="o">.</span><span class="n">lon</span> <span class="o">-</span> <span class="mi">360</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">lon</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">sst</span>
+<span class="p">)</span>
 
-adcp_files = sorted(glob.glob(&quot;../datasets/adcp/*.nc&quot;))
-adcp_files
+<span class="n">adcp_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;../datasets/adcp/*.nc&quot;</span><span class="p">))</span>
+<span class="n">adcp_files</span>
 </pre></div>
 </div>
 </div>
@@ -711,7 +711,7 @@ adcp_files
 <h3>MLD computation<a class="headerlink" href="#mld-computation" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cruises[0].density.load()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cruises</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -738,12 +738,12 @@ Coordinates:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>rho = cruises[0].density
-drho = rho - rho.bfill(&quot;pressure&quot;).isel(pressure=0)
-mld = xr.where(drho &gt; 0.015, drho.pressure, np.nan).min(&quot;pressure&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="n">cruises</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">density</span>
+<span class="n">drho</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">-</span> <span class="n">rho</span><span class="o">.</span><span class="n">bfill</span><span class="p">(</span><span class="s2">&quot;pressure&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">pressure</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">mld</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">drho</span> <span class="o">&gt;</span> <span class="mf">0.015</span><span class="p">,</span> <span class="n">drho</span><span class="o">.</span><span class="n">pressure</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s2">&quot;pressure&quot;</span><span class="p">)</span>
 
-drho.sortby(&quot;latitude&quot;).plot(x=&quot;latitude&quot;, ylim=(100, 0))
-mld.plot(x=&quot;latitude&quot;)
+<span class="n">drho</span><span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">mld</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -756,9 +756,9 @@ mld.plot(x=&quot;latitude&quot;)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
-drho.isel(latitude=0).plot(ylim=(150, 0), y=&quot;pressure&quot;, yincrease=False)
+<span class="n">drho</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -775,9 +775,9 @@ drho.isel(latitude=0).plot(ylim=(150, 0), y=&quot;pressure&quot;, yincrease=Fals
 <h2>ADCP<a class="headerlink" href="#adcp" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctd = pump.sections.find_cruise(cruises, &quot;31DSEP393&quot;)
-# ctd[&quot;latitude&quot;] = np.round(ctd.latitude, 1)
-ctd
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ctd</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">find_cruise</span><span class="p">(</span><span class="n">cruises</span><span class="p">,</span> <span class="s2">&quot;31DSEP393&quot;</span><span class="p">)</span>
+<span class="c1"># ctd[&quot;latitude&quot;] = np.round(ctd.latitude, 1)</span>
+<span class="n">ctd</span>
 </pre></div>
 </div>
 </div>
@@ -1758,12 +1758,12 @@ dl.xr-attrs {
 <h3>processing<a class="headerlink" href="#processing" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adcp = pump.sections.read_adcp(&quot;../datasets/adcp/31DSEP393_1_00210_short.nc&quot;, -110, debug=True)
-ctd = pump.sections.find_cruise(cruises, &quot;31DSEP393&quot;)
-# ctd[&quot;density&quot;] = dcpy.eos.pden(ctd.salinity, ctd.temperature, ctd.pressure)
-ctd, adcp = pump.sections.trim_ctd_adcp(ctd, adcp)
-binned = pump.sections.grid_ctd_adcp(ctd, adcp)
-# ctd[&quot;latitude&quot;] = np.round(ctd.latitude, 1)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">read_adcp</span><span class="p">(</span><span class="s2">&quot;../datasets/adcp/31DSEP393_1_00210_short.nc&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ctd</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">find_cruise</span><span class="p">(</span><span class="n">cruises</span><span class="p">,</span> <span class="s2">&quot;31DSEP393&quot;</span><span class="p">)</span>
+<span class="c1"># ctd[&quot;density&quot;] = dcpy.eos.pden(ctd.salinity, ctd.temperature, ctd.pressure)</span>
+<span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">trim_ctd_adcp</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">)</span>
+<span class="n">binned</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">grid_ctd_adcp</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">)</span>
+<span class="c1"># ctd[&quot;latitude&quot;] = np.round(ctd.latitude, 1)</span>
 </pre></div>
 </div>
 </div>
@@ -1776,8 +1776,8 @@ binned = pump.sections.grid_ctd_adcp(ctd, adcp)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adcp.latitude.plot(x=&quot;time&quot;)
-ctd.latitude.plot(x=&quot;time&quot;, marker=&#39;x&#39;, xlim=(&quot;1993-09-11&quot;, &quot;1993-09-13&quot;))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp</span><span class="o">.</span><span class="n">latitude</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="n">ctd</span><span class="o">.</span><span class="n">latitude</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;1993-09-11&quot;</span><span class="p">,</span> <span class="s2">&quot;1993-09-13&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1790,7 +1790,7 @@ ctd.latitude.plot(x=&quot;time&quot;, marker=&#39;x&#39;, xlim=(&quot;1993-09-11
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binned.density.plot(y=&quot;depth&quot;, yincrease=False, robust=True)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binned</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1803,7 +1803,7 @@ ctd.latitude.plot(x=&quot;time&quot;, marker=&#39;x&#39;, xlim=(&quot;1993-09-11
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctd.density.sel(latitude=slice(0, 6)).plot(hue=&quot;latitude&quot;, y=&quot;pressure&quot;, ylim=(100, 0))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ctd</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;pressure&quot;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1823,7 +1823,7 @@ ctd.latitude.plot(x=&quot;time&quot;, marker=&#39;x&#39;, xlim=(&quot;1993-09-11
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binned.S2.plot(x=&quot;latitude&quot;, yincrease=False)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binned</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1836,7 +1836,7 @@ ctd.latitude.plot(x=&quot;time&quot;, marker=&#39;x&#39;, xlim=(&quot;1993-09-11
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binned.S2.sel(latitude=4, method=&quot;nearest&quot;).plot(y=&quot;depth&quot;, yincrease=False)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binned</span><span class="o">.</span><span class="n">S2</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1853,9 +1853,9 @@ ctd.latitude.plot(x=&quot;time&quot;, marker=&#39;x&#39;, xlim=(&quot;1993-09-11
 <h2>summary plot for section<a class="headerlink" href="#summary-plot-for-section" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
-pump.sections.plot_section(ctd, adcp, binned, oisst)
+<span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1898,7 +1898,7 @@ distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp:/
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pump.sections.plot_section(ctd, adcp, binned, oisst)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1916,9 +1916,9 @@ distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp:/
 <p>Test out using SADCP instead of LADCP. Probably not a good diea since LADCP seems to be too smooth</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ladcp[&quot;EXTRA.PROFILE.v_shear_method&quot;].differentiate(&quot;depth&quot;).sel(depth=slice(150)).plot(
-    x=&quot;lat&quot;, y=&quot;depth&quot;, robust=True, yincrease=False
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ladcp</span><span class="p">[</span><span class="s2">&quot;EXTRA.PROFILE.v_shear_method&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">150</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1931,22 +1931,22 @@ distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp:/
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ladcp = (
-    xr.open_mfdataset(&quot;../datasets/ladcp/33RO20071215_clivar_p18/*.nc&quot;)
-    .rename({&quot;z&quot;: &quot;depth&quot;, &quot;tim&quot;: &quot;time&quot;, &quot;lat&quot;: &quot;latitude&quot;, &quot;lon&quot;: &quot;longitude&quot;})
-    .set_coords([&quot;latitude&quot;, &quot;longitude&quot;])
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ladcp</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="s2">&quot;../datasets/ladcp/33RO20071215_clivar_p18/*.nc&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;tim&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;lat&quot;</span><span class="p">:</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;lon&quot;</span><span class="p">:</span> <span class="s2">&quot;longitude&quot;</span><span class="p">})</span>
+    <span class="o">.</span><span class="n">set_coords</span><span class="p">([</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">])</span>
+<span class="p">)</span>
 
-dates = [&quot;-&quot;.join(dd) for dd in ladcp.date.values[:, :3].astype(&quot;int&quot;).astype(&quot;U&quot;).tolist()]
-times = [&quot;:&quot;.join(tt) for tt in ladcp.date.values[:, 3:].astype(&quot;int&quot;).astype(&quot;U2&quot;).tolist()]
-newtime = pd.DatetimeIndex([pd.to_datetime(dd + &quot; &quot; + tt) for dd, tt in zip(dates, times)])
-ladcp = ladcp.rename({&quot;time&quot;: &quot;weird_time&quot;}).assign_coords(time=(&quot;cast&quot;, newtime)).swap_dims(
-    {&quot;cast&quot;: &quot;time&quot;}
-)
+<span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span> <span class="k">for</span> <span class="n">dd</span> <span class="ow">in</span> <span class="n">ladcp</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span> <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="n">ladcp</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;U2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+<span class="n">newtime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dd</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">tt</span><span class="p">)</span> <span class="k">for</span> <span class="n">dd</span><span class="p">,</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">times</span><span class="p">)])</span>
+<span class="n">ladcp</span> <span class="o">=</span> <span class="n">ladcp</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;weird_time&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;cast&quot;</span><span class="p">,</span> <span class="n">newtime</span><span class="p">))</span><span class="o">.</span><span class="n">swap_dims</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;cast&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">}</span>
+<span class="p">)</span>
 
-ladcp.u.differentiate(&quot;depth&quot;).sel(depth=slice(150)).plot(
-    robust=True, x=&quot;latitude&quot;, y=&quot;depth&quot;, yincrease=False
-)
+<span class="n">ladcp</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">150</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1978,7 +1978,7 @@ Invalid limit will be ignored.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f = pump.sections.plot_section(ctd, ladcp, ladcp_binned, oisst)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">ladcp</span><span class="p">,</span> <span class="n">ladcp_binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1992,8 +1992,8 @@ Invalid limit will be ignored.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctd, ladcp = pump.sections.trim_ctd_adcp(ctd, ladcp)
-ladcp_binned = pump.sections.grid_ctd_adcp(ctd, ladcp[[&quot;u&quot;, &quot;v&quot;]])
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ctd</span><span class="p">,</span> <span class="n">ladcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">trim_ctd_adcp</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">ladcp</span><span class="p">)</span>
+<span class="n">ladcp_binned</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">grid_ctd_adcp</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">ladcp</span><span class="p">[[</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">]])</span>
 </pre></div>
 </div>
 </div>
@@ -2006,9 +2006,9 @@ ladcp_binned = pump.sections.grid_ctd_adcp(ctd, ladcp[[&quot;u&quot;, &quot;v&qu
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
-binned_l = pump.sections.grid_ctd_adcp(ctd, ladcp)
-f, ax = pump.sections.plot_section(ctd, ladcp, binned_l, oisst)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">binned_l</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">grid_ctd_adcp</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">ladcp</span><span class="p">)</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">ladcp</span><span class="p">,</span> <span class="n">binned_l</span><span class="p">,</span> <span class="n">oisst</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2024,9 +2024,9 @@ f, ax = pump.sections.plot_section(ctd, ladcp, binned_l, oisst)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ladcp.sel(latitude=slice(-1)).sel(latitude=4, method=&quot;nearest&quot;).v.plot(y=&quot;depth&quot;, yincrease=False)
-adcp.sel(latitude=4, method=&quot;nearest&quot;).v.plot(y=&quot;depth&quot;, yincrease=False, ylim=(140,0))
-plt.legend([&quot;ladcp&quot;, &quot;sadcp&quot;])
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ladcp</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">adcp</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">140</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;ladcp&quot;</span><span class="p">,</span> <span class="s2">&quot;sadcp&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -2043,7 +2043,7 @@ plt.legend([&quot;ladcp&quot;, &quot;sadcp&quot;])
 <h2>Save section images<a class="headerlink" href="#save-section-images" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adcp_files
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp_files</span>
 </pre></div>
 </div>
 </div>
@@ -2064,10 +2064,10 @@ plt.legend([&quot;ladcp&quot;, &quot;sadcp&quot;])
 <p>Test image</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>for file in [adcp_files[2]]:
-    expocode, ctd, adcp, binned = pump.sections.process_adcp_file(file)
-    if expocode is not None:
-        f, _ = pump.sections.plot_section(ctd, adcp, binned, oisst)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="p">[</span><span class="n">adcp_files</span><span class="p">[</span><span class="mi">2</span><span class="p">]]:</span>
+    <span class="n">expocode</span><span class="p">,</span> <span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">process_adcp_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expocode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2093,15 +2093,15 @@ skipping 4.5
 <p>Loop through and save images</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
 
-adcp_files = sorted(glob.glob(&quot;../datasets/adcp/*.nc&quot;))
-for file in adcp_files: # [adcp_files[1]]:
-    expocode, ctd, adcp, binned = pump.sections.process_adcp_file(file)
-    if expocode is not None:
-        f, _ = pump.sections.plot_section(ctd, adcp, binned, oisst)
-        f.savefig(f&quot;../images/cruise-sections/{expocode}.png&quot;, bbox_inches=&quot;tight&quot;, dpi=200)
+<span class="n">adcp_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;../datasets/adcp/*.nc&quot;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">adcp_files</span><span class="p">:</span> <span class="c1"># [adcp_files[1]]:</span>
+    <span class="n">expocode</span><span class="p">,</span> <span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">process_adcp_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expocode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;../images/cruise-sections/</span><span class="si">{</span><span class="n">expocode</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2226,17 +2226,17 @@ Found 33RO20161119 at index 15.
 <h2>TIW DCL Paper figure<a class="headerlink" href="#tiw-dcl-paper-figure" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from IPython import display
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">display</span>
 
-chosen_adcps = np.array(adcp_files)[[2, 1, 7]]
+<span class="n">chosen_adcps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">adcp_files</span><span class="p">)[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">]]</span>
 
-for file in chosen_adcps:
-    ds = (xr.open_dataset(file))
-    if &quot;cruise_sonar_summary&quot; in ds.attrs:
-        print(ds.attrs[&quot;cruise_sonar_summary&quot;])
-    else:
-        display.display(ds.attrs)
-    print(&quot;\n=======================================\n&quot;)
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">chosen_adcps</span><span class="p">:</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s2">&quot;cruise_sonar_summary&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;cruise_sonar_summary&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">display</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=======================================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2778,7 +2778,7 @@ REFERENCES (DATA REPORTS,ETC)   :
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>oisst.sel(time=slice(&quot;1992-10-15&quot;, &quot;1992-11-19&quot;)).isel(time=slice(None, None, 3)).plot(col=&quot;time&quot;, col_wrap=6, robust=True)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oisst</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;1992-10-15&quot;</span><span class="p">,</span> <span class="s2">&quot;1992-11-19&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2791,7 +2791,7 @@ REFERENCES (DATA REPORTS,ETC)   :
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pump.sections.process_adcp_file?
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pump.sections.process_adcp_file<span class="o">?</span>
 </pre></div>
 </div>
 </div>
@@ -2806,41 +2806,41 @@ REFERENCES (DATA REPORTS,ETC)   :
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
-import dask
-import os
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 
-plt.rcParams[&quot;font.size&quot;] = 11
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">11</span>
 
-f, ax = plt.subplots(
-    3,
-    3,
-    gridspec_kw=dict(width_ratios=[2, 1, 1]),
-    # sharex=&quot;col&quot;,
-    sharey=&quot;col&quot;,
-    constrained_layout=True,
-)
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">3</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">,</span>
+    <span class="n">gridspec_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="c1"># sharex=&quot;col&quot;,</span>
+    <span class="n">sharey</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">,</span>
+    <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 
-expected_lat = [0, 1, 3, 4]
-axrho = []
-for index, (file, lats) in enumerate(zip(chosen_adcps, [[0, 4], [0, 4], [0, 5],])):
-    print(file)
-    expocode, ctd, adcp, binned = dask.compute(*pump.sections.process_adcp_file(file, cruises))
-    axx = dict()
-    axx[&quot;sst&quot;] = ax[index, 0]
-    axx[&quot;lats&quot;] = ax[index, 1:]
+<span class="n">expected_lat</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">axrho</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">lats</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">chosen_adcps</span><span class="p">,</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">],])):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">expocode</span><span class="p">,</span> <span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">process_adcp_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">cruises</span><span class="p">))</span>
+    <span class="n">axx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">axx</span><span class="p">[</span><span class="s2">&quot;sst&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">axx</span><span class="p">[</span><span class="s2">&quot;lats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
 
-    axrho.append(pump.sections.plot_row(ctd, adcp, binned, oisst, axx, lats))
+    <span class="n">axrho</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_row</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">,</span> <span class="n">axx</span><span class="p">,</span> <span class="n">lats</span><span class="p">))</span>
 
-[axx.set_xlabel(&quot;&quot;) for axx in ax[:-1, :].flat]
-[aa.set_yticks([-2, 0, 2, 4, 6]) for aa in ax[:, 0]]
-[dcpy.plots.lat_lon_ticks(aa) for aa in ax[:,0]]
+<span class="p">[</span><span class="n">axx</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">axx</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
+<span class="p">[</span><span class="n">aa</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span> <span class="k">for</span> <span class="n">aa</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="p">[</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">lat_lon_ticks</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="k">for</span> <span class="n">aa</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]]</span>
     
-dcpy.plots.label_subplots(ax.flat, labels=[&quot;EP692&quot;, &quot;&quot;, &quot;&quot;, &quot;EP393&quot;, &quot;&quot;, &quot;&quot;, &quot;RB0711&quot;, &quot;&quot;, &quot;&quot;])
-ax[0, 0].set_title(&quot;SST&quot;)
-f.set_size_inches((7, 9))
-f.savefig(&quot;images/cruise-Ri-summary.png&quot;)
+<span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">label_subplots</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EP692&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;EP393&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;RB0711&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;SST&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;images/cruise-Ri-summary.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2903,7 +2903,7 @@ Found 33RO20071215 at index 29.
 <h2>OSM20 figure<a class="headerlink" href="#osm20-figure" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>expocode, ctd, adcp, binned = process_file(adcp_files[1])
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">expocode</span><span class="p">,</span> <span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span> <span class="o">=</span> <span class="n">process_file</span><span class="p">(</span><span class="n">adcp_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -2916,7 +2916,7 @@ Found 31DSEP393 at index 24.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>oisst.sel(time=&quot;1993-&quot;).plot(robust=True, cmap=mpl.cm.RdYlBu_r)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oisst</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="s2">&quot;1993-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2929,9 +2929,9 @@ Found 31DSEP393 at index 24.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>oisst.sel(time=ctd.time.sel(latitude=0, method=&quot;nearest&quot;).time.values, method=&quot;nearest&quot;).plot(
-    cmap=mpl.cm.RdYlBu_r, robust=True
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oisst</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">ctd</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdYlBu_r</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2944,41 +2944,41 @@ Found 31DSEP393 at index 24.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
-plt.rcParams[&quot;font.size&quot;] = 14
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">14</span>
 
-f, ax = plt.subplots(
-    3, 
-    3, 
-    gridspec_kw=dict(width_ratios=[2, 1, 1]), 
-    # sharex=&quot;col&quot;, 
-    sharey=&quot;col&quot;, 
-    constrained_layout=True
-)
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+    <span class="mi">3</span><span class="p">,</span> 
+    <span class="mi">3</span><span class="p">,</span> 
+    <span class="n">gridspec_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> 
+    <span class="c1"># sharex=&quot;col&quot;, </span>
+    <span class="n">sharey</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">,</span> 
+    <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 
-expected_lat = [0, 1, 3, 4]
+<span class="n">expected_lat</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
 
-for index, (file, lats) in enumerate(
-    zip(
-        np.array(adcp_files)[[2, 1, 7]],
-        [[0, 4], 
-         [0, 4],
-         [0, 5],
-        ]
-        )
-    ):
-    print(file)
-    expocode, ctd, adcp, binned = process_file(file)
-    axx = dict()
-    axx[&quot;sst&quot;] = ax[index, 0]                                                                                                                                    
-    axx[&quot;lats&quot;] = ax[index, 1:]
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">lats</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+    <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">adcp_files</span><span class="p">)[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">]],</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> 
+         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+        <span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">expocode</span><span class="p">,</span> <span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span> <span class="o">=</span> <span class="n">process_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">axx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">axx</span><span class="p">[</span><span class="s2">&quot;sst&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>                                                                                                                                    
+    <span class="n">axx</span><span class="p">[</span><span class="s2">&quot;lats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
     
-    pump.sections.plot_row(ctd, adcp, binned, oisst, axx, lats)
+    <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_row</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">,</span> <span class="n">axx</span><span class="p">,</span> <span class="n">lats</span><span class="p">)</span>
 
-[axx.set_xlabel(&quot;&quot;) for axx in ax[:-1, :].flat]
-f.set_size_inches((7, 9))
-# f.savefig(&quot;cruise-Ri-summary.png&quot;)
+<span class="p">[</span><span class="n">axx</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">axx</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
+<span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="c1"># f.savefig(&quot;cruise-Ri-summary.png&quot;)</span>
 </pre></div>
 </div>
 </div>
@@ -3024,12 +3024,12 @@ Found 33RO20071215 at index 29.
 <h3>CLIVAR P18 2007<a class="headerlink" href="#clivar-p18-2007" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>file = &#39;../datasets/adcp/33RO20071215_rb0711_01079_short.nc&#39;
-expocode = os.path.split(file)[-1].split(&quot;_&quot;)[0].strip()
-ctd = pump.sections.find_cruise(cruises, expocode)
-adcp = pump.sections.read_adcp(file, -110)
-ctd = ctd.sortby(&quot;time&quot;)
-ctd, adcp = pump.sections.trim_ctd_adcp(ctd, adcp)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file</span> <span class="o">=</span> <span class="s1">&#39;../datasets/adcp/33RO20071215_rb0711_01079_short.nc&#39;</span>
+<span class="n">expocode</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="n">ctd</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">find_cruise</span><span class="p">(</span><span class="n">cruises</span><span class="p">,</span> <span class="n">expocode</span><span class="p">)</span>
+<span class="n">adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">read_adcp</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">)</span>
+<span class="n">ctd</span> <span class="o">=</span> <span class="n">ctd</span><span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">trim_ctd_adcp</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3041,9 +3041,9 @@ ctd, adcp = pump.sections.trim_ctd_adcp(ctd, adcp)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binned.N2.sortby(&quot;latitude&quot;).sel(latitude=slice(0, 6), depth=slice(0, 50)).plot.line(
-    col=&quot;latitude&quot;, col_wrap=4, y=&quot;depth&quot;, xscale=&quot;log&quot;
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binned</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">sortby</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3056,9 +3056,9 @@ ctd, adcp = pump.sections.trim_ctd_adcp(ctd, adcp)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
-binned = pump.sections.grid_ctd_adcp(ctd, adcp)
-f, ax = pump.sections.plot_section(ctd, adcp, binned, oisst)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">binned</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">grid_ctd_adcp</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">)</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">,</span> <span class="n">oisst</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3072,7 +3072,7 @@ f, ax = pump.sections.plot_section(ctd, adcp, binned, oisst)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f.savefig(f&quot;../images/cruise-sections/33RO20071215.png&quot;, bbox_inches=&quot;tight&quot;, dpi=200)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;../images/cruise-sections/33RO20071215.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3082,8 +3082,8 @@ f, ax = pump.sections.plot_section(ctd, adcp, binned, oisst)
 <h3>Discoverer EP391<a class="headerlink" href="#discoverer-ep391" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># _, ctd, adcp, binned = process_file(adcp_files[0])
-f = plot_section(ctd, adcp, binned);
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># _, ctd, adcp, binned = process_file(adcp_files[0])</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">plot_section</span><span class="p">(</span><span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -3097,7 +3097,7 @@ f = plot_section(ctd, adcp, binned);
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adcp.u.plot(x=&quot;time&quot;, robust=True)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3114,10 +3114,10 @@ f = plot_section(ctd, adcp, binned);
 <h2>test plots<a class="headerlink" href="#test-plots" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>binned.Ri.plot(
-    y=&quot;depth&quot;, yincrease=False, norm=mpl.colors.LogNorm(0.1, 1), cmap=mpl.cm.Blues
-)
-adcp.u.plot.contour(y=&quot;depth&quot;, colors=&#39;w&#39;, levels=10, ylim=(150, 0))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binned</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Blues</span>
+<span class="p">)</span>
+<span class="n">adcp</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -3130,16 +3130,16 @@ adcp.u.plot.contour(y=&quot;depth&quot;, colors=&#39;w&#39;, levels=10, ylim=(15
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fg = binned.Ri.sel(latitude=slice(0, 6)).plot(
-    col=&quot;latitude&quot;, 
-    y=&quot;depth&quot;, 
-    xscale=&quot;log&quot;, 
-    yincrease=False, 
-    xlim=(0.1, 4), 
-    ylim=(100, 0), 
-    aspect=1/2
-)
-[ax.axvline(0.25) for ax in fg.axes.flat]
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">binned</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> 
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> 
+    <span class="n">xscale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> 
+    <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> 
+    <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> 
+    <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span>
+<span class="p">)</span>
+<span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -3159,7 +3159,7 @@ adcp.u.plot.contour(y=&quot;depth&quot;, colors=&#39;w&#39;, levels=10, ylim=(15
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adcp.v.differentiate(&quot;depth&quot;).plot(x=&quot;time&quot;, y=&quot;depth&quot;, yincrease=False, robust=True)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">yincrease</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

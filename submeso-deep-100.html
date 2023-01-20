@@ -523,39 +523,39 @@ title="Print to PDF"
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%config InlineBackend.figure_format = &quot;retina&quot;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">config</span> InlineBackend.figure_format = &quot;retina&quot;
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%matplotlib inline
-%load_ext autoreload
-%autoreload 2
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
 
-import dask
-import distributed
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-import seawater as sw
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
 
-import cf_xarray
+<span class="kn">import</span> <span class="nn">cf_xarray</span>
 
-import dcpy
-import facetgrid
-import xarray as xr
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">facetgrid</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
-# import xmitgcm
+<span class="c1"># import xmitgcm</span>
 
-# import pump
+<span class="c1"># import pump</span>
 
-mpl.rcParams[&quot;savefig.dpi&quot;] = 300
-mpl.rcParams[&quot;savefig.bbox&quot;] = &quot;tight&quot;
-mpl.rcParams[&quot;figure.dpi&quot;] = 140
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
 
-xr.set_options(keep_attrs=True)
+<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -567,15 +567,15 @@ xr.set_options(keep_attrs=True)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster = distributed.LocalCluster(
-    n_workers=24,
-    processes=True,
-    threads_per_worker=1,
-    local_directory=&quot;/home/dcherian/.dask_worker/&quot;,
-    dashboard_address=&quot;:9999&quot;,
-    memory_limit=&quot;10GB&quot;,
-)
-cluster
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span>
+    <span class="n">n_workers</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+    <span class="n">processes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">local_directory</span><span class="o">=</span><span class="s2">&quot;/home/dcherian/.dask_worker/&quot;</span><span class="p">,</span>
+    <span class="n">dashboard_address</span><span class="o">=</span><span class="s2">&quot;:9999&quot;</span><span class="p">,</span>
+    <span class="n">memory_limit</span><span class="o">=</span><span class="s2">&quot;10GB&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cluster</span>
 </pre></div>
 </div>
 </div>
@@ -586,7 +586,7 @@ cluster
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>client = distributed.Client(cluster)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -596,21 +596,21 @@ cluster
 <h2>Read data<a class="headerlink" href="#read-data" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dirname = &#39;/home/dcherian/pump/TPOS_MITgcm_HR/&#39;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s1">&#39;/home/dcherian/pump/TPOS_MITgcm_HR/&#39;</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ds = xr.open_mfdataset(
-    f&quot;{dirname}/cmpr_*.nc&quot;,
-    parallel=True,
-    data_vars=&quot;minimal&quot;,
-    coords=&quot;minimal&quot;,
-    compat=&quot;override&quot;,
-    chunks={&quot;longitude&quot;: 1500, &quot;latitude&quot;: 240}
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s2">/cmpr_*.nc&quot;</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">data_vars</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
+    <span class="n">coords</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
+    <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">}</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -620,11 +620,11 @@ cluster
 <h2>Ro<a class="headerlink" href="#ro" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>f = dcpy.oceans.coriolis(ds.latitude)
-vor = ds.v.differentiate(&quot;longitude&quot;)/110e3 - ds.u.differentiate(&quot;latitude&quot;)/105e3
-Ro = vor / f
-Ro.attrs[&quot;long_name&quot;] = &quot;$Ro = ζ/f$&quot;
-Ro
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">oceans</span><span class="o">.</span><span class="n">coriolis</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
+<span class="n">vor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">110e3</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">105e3</span>
+<span class="n">Ro</span> <span class="o">=</span> <span class="n">vor</span> <span class="o">/</span> <span class="n">f</span>
+<span class="n">Ro</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ro = ζ/f$&quot;</span>
+<span class="n">Ro</span>
 </pre></div>
 </div>
 </div>
@@ -1245,8 +1245,8 @@ Ro = \frac{|ζ|}{|ζ| + |f|}
 \end{equation}</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sRo = np.abs(vor) / (np.abs(vor) + np.abs(f))
-sRo.attrs[&quot;long_name&quot;] = &quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sRo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vor</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vor</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="n">sRo</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -1256,28 +1256,28 @@ sRo.attrs[&quot;long_name&quot;] = &quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;
 <h2><span class="math notranslate nohighlight">\(u\)</span> lat-depth sections<a class="headerlink" href="#u-lat-depth-sections" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>kwargs = dict(
-    robust=True,
-    vmin=0,
-    vmax=0.8,
-    cmap=mpl.cm.Spectral_r,
-    cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;},
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">vmax</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ds.u.sel(longitude=[-110, -125, -140, -155], method=&quot;nearest&quot;).sel(
-    latitude=slice(-5, 5), depth=slice(-2000)
-).isel(time=50).plot(
-    y=&quot;depth&quot;,
-    x=&quot;latitude&quot;,
-    row=&quot;longitude&quot;,
-    robust=True,
-    cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;},
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">155</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
+    <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">2000</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span>
+    <span class="n">row</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1294,14 +1294,14 @@ sRo.attrs[&quot;long_name&quot;] = &quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;
 <p>Looks more “fronty” at depth</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset = sRo.sel(latitude=slice(-10, 10), longitude=slice(-155, -110))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span> <span class="o">=</span> <span class="n">sRo</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset.isel(time=50).sel(depth=0, method=&quot;nearest&quot;).plot(**kwargs)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1314,7 +1314,7 @@ sRo.attrs[&quot;long_name&quot;] = &quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sRo.isel(time=50).sel(depth=-100, method=&quot;nearest&quot;).plot(**kwargs)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sRo</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1327,7 +1327,7 @@ sRo.attrs[&quot;long_name&quot;] = &quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>subset.isel(time=50).sel(depth=-200, method=&quot;nearest&quot;).plot(**kwargs)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subset</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=-</span><span class="mi">200</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1340,9 +1340,9 @@ sRo.attrs[&quot;long_name&quot;] = &quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>for depth in [-300, -500, -700, -1000]:
-    plt.figure()
-    subset.isel(time=50).sel(depth=depth, method=&quot;nearest&quot;).plot(ylim=(-5, 5), **kwargs)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span> <span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="o">-</span><span class="mi">700</span><span class="p">,</span> <span class="o">-</span><span class="mi">1000</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">subset</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1358,14 +1358,14 @@ sRo.attrs[&quot;long_name&quot;] = &quot;$Ro = |ζ| / (|ζ| + |f|)$&quot;
 <h2>Ro maps at depth<a class="headerlink" href="#ro-maps-at-depth" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>for depth in [-300, -500, -700, -1000]:
-    plt.figure()
-    Ro.reindex_like(subset).isel(time=50).sel(depth=depth, method=&quot;nearest&quot;).plot(
-        ylim=(-5, 5),
-        cmap=mpl.cm.RdBu_r,
-        vmin=-1,
-        vmax=1,
-    )
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span> <span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="o">-</span><span class="mi">700</span><span class="p">,</span> <span class="o">-</span><span class="mi">1000</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">Ro</span><span class="o">.</span><span class="n">reindex_like</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu_r</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1420,11 +1420,11 @@ To avoid creating the large chunks, set the option
 <p>There may be some interesting things in 1°S-1°N, but our vertical resolution is coarse below 250m</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>for longitude in [-155, -140, -125, -110]:
-    plt.figure()
-    Ro.isel(time=50).sel(longitude=longitude, method=&quot;nearest&quot;).plot(
-        ylim=(-500, 0), vmin=-1, vmax=1, cmap=mpl.cm.RdBu_r, y=&quot;depth&quot;
-    )
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">longitude</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">Ro</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu_r</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1437,11 +1437,11 @@ To avoid creating the large chunks, set the option
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>for longitude in [-155, -140, -125, -110]:
-    plt.figure()
-    sRo.isel(time=50).sel(longitude=longitude, method=&quot;nearest&quot;).plot(
-        ylim=(-500, 0), vmin=0, vmax=0.8, cmap=mpl.cm.RdBu_r, y=&quot;depth&quot;
-    )
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">longitude</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">140</span><span class="p">,</span> <span class="o">-</span><span class="mi">125</span><span class="p">,</span> <span class="o">-</span><span class="mi">110</span><span class="p">]:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">sRo</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">longitude</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">500</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu_r</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 </div>

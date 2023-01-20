@@ -464,32 +464,32 @@ title="Print to PDF"
 <h1>miχpods - TAO<a class="headerlink" href="#mipods-tao" title="Permalink to this headline">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%load_ext watermark
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
 
-import os
+<span class="kn">import</span> <span class="nn">os</span>
 
-import cf_xarray
-import dask
-import dcpy
-import distributed
-import flox.xarray
-import hvplot.xarray
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-import xarray as xr
+<span class="kn">import</span> <span class="nn">cf_xarray</span>
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">flox.xarray</span>
+<span class="kn">import</span> <span class="nn">hvplot.xarray</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
-import pump
-from pump import mixpods
+<span class="kn">import</span> <span class="nn">pump</span>
+<span class="kn">from</span> <span class="nn">pump</span> <span class="kn">import</span> <span class="n">mixpods</span>
 
-dask.config.set({&quot;array.slicing.split_large_chunks&quot;: False})
-mpl.rcParams[&quot;figure.dpi&quot;] = 140 
-xr.set_options(keep_attrs=True)
+<span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">({</span><span class="s2">&quot;array.slicing.split_large_chunks&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span> 
+<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-gcmdir = &quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/&quot;  # MITgcm output directory
-stationdirname = gcmdir
+<span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year/OUTPUT/&quot;</span>  <span class="c1"># MITgcm output directory</span>
+<span class="n">stationdirname</span> <span class="o">=</span> <span class="n">gcmdir</span>
 
-%watermark -iv
+<span class="o">%</span><span class="k">watermark</span> -iv
 </pre></div>
 </div>
 </div>
@@ -516,48 +516,48 @@ cf_xarray  : 0.7.2
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import ncar_jobqueue
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ncar_jobqueue</span>
 
-if &quot;client&quot; in locals():
-    client.close()
-    del client
-#if &quot;cluster&quot; in locals():
-#    cluster.close()
+<span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">client</span>
+<span class="c1">#if &quot;cluster&quot; in locals():</span>
+<span class="c1">#    cluster.close()</span>
 
-#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}
+<span class="c1">#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}</span>
 
-# cluster = distributed.LocalCluster(
-#    n_workers=8,
-#    threads_per_worker=1,
-#    env=env
-# )
+<span class="c1"># cluster = distributed.LocalCluster(</span>
+<span class="c1">#    n_workers=8,</span>
+<span class="c1">#    threads_per_worker=1,</span>
+<span class="c1">#    env=env</span>
+<span class="c1"># )</span>
 
-if &quot;cluster&quot; in locals():
-    del cluster
+<span class="k">if</span> <span class="s2">&quot;cluster&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="k">del</span> <span class="n">cluster</span>
 
-#cluster = ncar_jobqueue.NCARCluster(
-#    project=&quot;NCGD0011&quot;,
-#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),
-#)
-# cluster = dask_jobqueue.PBSCluster(
-#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,
-#    env_extra=env,
-# )
+<span class="c1">#cluster = ncar_jobqueue.NCARCluster(</span>
+<span class="c1">#    project=&quot;NCGD0011&quot;,</span>
+<span class="c1">#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),</span>
+<span class="c1">#)</span>
+<span class="c1"># cluster = dask_jobqueue.PBSCluster(</span>
+<span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
+<span class="c1">#    env_extra=env,</span>
+<span class="c1"># )</span>
 
-import dask_jobqueue
+<span class="kn">import</span> <span class="nn">dask_jobqueue</span>
 
-cluster = dask_jobqueue.PBSCluster(
-    cores=1, # The number of cores you want
-    memory=&#39;23GB&#39;, # Amount of memory
-    processes=1, # How many processes
-    queue=&#39;casper&#39;, # The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)
-    local_directory=&#39;$TMPDIR&#39;, # Use your local directory
-    resource_spec=&#39;select=1:ncpus=1:mem=23GB&#39;, # Specify resources
-    project=&#39;ncgd0011&#39;, # Input your project ID here
-    walltime=&#39;02:00:00&#39;, # Amount of wall time
-    interface=&#39;ib0&#39;, # Interface to use
-)
-cluster.scale(jobs=4)
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">dask_jobqueue</span><span class="o">.</span><span class="n">PBSCluster</span><span class="p">(</span>
+    <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># The number of cores you want</span>
+    <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;23GB&#39;</span><span class="p">,</span> <span class="c1"># Amount of memory</span>
+    <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># How many processes</span>
+    <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;casper&#39;</span><span class="p">,</span> <span class="c1"># The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)</span>
+    <span class="n">local_directory</span><span class="o">=</span><span class="s1">&#39;$TMPDIR&#39;</span><span class="p">,</span> <span class="c1"># Use your local directory</span>
+    <span class="n">resource_spec</span><span class="o">=</span><span class="s1">&#39;select=1:ncpus=1:mem=23GB&#39;</span><span class="p">,</span> <span class="c1"># Specify resources</span>
+    <span class="n">project</span><span class="o">=</span><span class="s1">&#39;ncgd0011&#39;</span><span class="p">,</span> <span class="c1"># Input your project ID here</span>
+    <span class="n">walltime</span><span class="o">=</span><span class="s1">&#39;02:00:00&#39;</span><span class="p">,</span> <span class="c1"># Amount of wall time</span>
+    <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ib0&#39;</span><span class="p">,</span> <span class="c1"># Interface to use</span>
+<span class="p">)</span>
+<span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -572,8 +572,8 @@ Hosting the HTTP server on port 36058 instead
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>client = distributed.Client(cluster)
-client
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<span class="n">client</span>
 </pre></div>
 </div>
 </div>
@@ -693,19 +693,19 @@ client
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_gridded = (
-    xr.open_dataset(
-        os.path.expanduser(&quot;~/work/pump/zarrs/tao-gridded-ancillary.zarr&quot;), chunks=&quot;auto&quot;, engine=&quot;zarr&quot;
-    )
-    .sel(longitude=-140, time=slice(&quot;2005-Jun&quot;, &quot;2015&quot;))
-)
-tao_gridded[&quot;depth&quot;].attrs[&quot;axis&quot;] = &quot;Z&quot;
-# eucmax exists
-tao_gridded.coords[&quot;eucmax&quot;] = pump.calc.get_euc_max(tao_gridded.u.reset_coords(drop=True), kind=&quot;data&quot;)
-#pump.calc.calc_reduced_shear(tao_gridded)
-tao_gridded.coords[&quot;enso_transition&quot;] = pump.obs.make_enso_transition_mask().reindex(time=tao_gridded.time, method=&quot;nearest&quot;)
-tao_gridded.u.cf.plot()
-tao_gridded.eucmax.plot()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/work/pump/zarrs/tao-gridded-ancillary.zarr&quot;</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;zarr&quot;</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=-</span><span class="mi">140</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2005-Jun&quot;</span><span class="p">,</span> <span class="s2">&quot;2015&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">tao_gridded</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
+<span class="c1"># eucmax exists</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;eucmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">calc</span><span class="o">.</span><span class="n">get_euc_max</span><span class="p">(</span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="c1">#pump.calc.calc_reduced_shear(tao_gridded)</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s2">&quot;enso_transition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">make_enso_transition_mask</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">tao_gridded</span><span class="o">.</span><span class="n">eucmax</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -726,17 +726,17 @@ tao_gridded.eucmax.plot()
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_gridded = (
-    tao_gridded.update({
-        &quot;n2s2Tpdf&quot;: mixpods.pdf_N2S2(
-            tao_gridded[[&quot;S2&quot;, &quot;N2T&quot;]].drop_vars([&quot;shallowest&quot;, &quot;zeuc&quot;]).rename_vars({&quot;N2T&quot;: &quot;N2&quot;})
-        ).load(),
-        &quot;n2s2pdf&quot;: mixpods.pdf_N2S2(
-            tao_gridded[[&quot;S2&quot;, &quot;N2&quot;]].drop_vars([&quot;shallowest&quot;, &quot;zeuc&quot;])
-        ).load()
-    }
-    )
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+        <span class="s2">&quot;n2s2Tpdf&quot;</span><span class="p">:</span> <span class="n">mixpods</span><span class="o">.</span><span class="n">pdf_N2S2</span><span class="p">(</span>
+            <span class="n">tao_gridded</span><span class="p">[[</span><span class="s2">&quot;S2&quot;</span><span class="p">,</span> <span class="s2">&quot;N2T&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">([</span><span class="s2">&quot;shallowest&quot;</span><span class="p">,</span> <span class="s2">&quot;zeuc&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">rename_vars</span><span class="p">({</span><span class="s2">&quot;N2T&quot;</span><span class="p">:</span> <span class="s2">&quot;N2&quot;</span><span class="p">})</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(),</span>
+        <span class="s2">&quot;n2s2pdf&quot;</span><span class="p">:</span> <span class="n">mixpods</span><span class="o">.</span><span class="n">pdf_N2S2</span><span class="p">(</span>
+            <span class="n">tao_gridded</span><span class="p">[[</span><span class="s2">&quot;S2&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">([</span><span class="s2">&quot;shallowest&quot;</span><span class="p">,</span> <span class="s2">&quot;zeuc&quot;</span><span class="p">])</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -745,9 +745,9 @@ tao_gridded.eucmax.plot()
 <h2>Labeling ENSO phase transitions<a class="headerlink" href="#labeling-enso-phase-transitions" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>pump.obs.process_oni().sel(time=slice(&quot;2005-Oct&quot;, &quot;2016-Feb&quot;)).reset_coords(drop=True).plot.line(aspect=3, size=5, color=&#39;k&#39;)
-pump.obs.make_enso_transition_mask().sel(time=slice(&quot;2005-Oct&quot;, &quot;2016-Feb&quot;)).reset_coords(drop=True).plot.line(ax=plt.gca().twinx(), marker=&#39;x&#39;)
-plt.grid(True, which=&quot;both&quot;, axis=&quot;both&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">process_oni</span><span class="p">()</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2005-Oct&quot;</span><span class="p">,</span> <span class="s2">&quot;2016-Feb&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">aspect</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">make_enso_transition_mask</span><span class="p">()</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2005-Oct&quot;</span><span class="p">,</span> <span class="s2">&quot;2016-Feb&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_coords</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">twinx</span><span class="p">(),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -761,7 +761,7 @@ plt.grid(True, which=&quot;both&quot;, axis=&quot;both&quot;)
 <p>Lot more data with N2T</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_gridded.N2.cf.plot()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">N2</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -774,7 +774,7 @@ plt.grid(True, which=&quot;both&quot;, axis=&quot;both&quot;)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tao_gridded.N2T.cf.plot()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_gridded</span><span class="o">.</span><span class="n">N2T</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -790,15 +790,15 @@ plt.grid(True, which=&quot;both&quot;, axis=&quot;both&quot;)
 <h2>PDFs change<a class="headerlink" href="#pdfs-change" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fg = (
-    tao_gridded.n2s2pdf
-    .sel(enso_transition_phase=[&quot;La-Nina cool&quot;, &quot;La-Nina warm&quot;, &quot;El-Nino warm&quot;, &quot;El-Nino cool&quot;])
-    .plot(vmax=1, col=&quot;enso_transition_phase&quot;)
-)
-fg.set_titles(&quot;{value}&quot;)
-fg.map(dcpy.plots.line45)
-fg.axes[0, 0].set_xlim((-4.5, -2.5))
-fg.axes[0, 0].set_ylim((-4.5, -2.5))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2pdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{value}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">line45</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -811,19 +811,19 @@ fg.axes[0, 0].set_ylim((-4.5, -2.5))
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(   
-    tao_gridded.n2s2pdf
-    .sel(enso_transition_phase=[&quot;La-Nina cool&quot;, &quot;La-Nina warm&quot;, &quot;El-Nino warm&quot;, &quot;El-Nino cool&quot;])
-    .sum(&quot;N2_bins&quot;)
-    .plot(hue=&quot;enso_transition_phase&quot;)
-)
-plt.figure()
-(
-    tao_gridded.n2s2pdf
-    .sel(enso_transition_phase=[&quot;La-Nina cool&quot;, &quot;La-Nina warm&quot;, &quot;El-Nino warm&quot;, &quot;El-Nino cool&quot;])
-    .sum(&quot;S2_bins&quot;)
-    .plot(hue=&quot;enso_transition_phase&quot;)
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>   
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2pdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;N2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2pdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;S2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -840,15 +840,15 @@ plt.figure()
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fg = (
-    tao_gridded.n2s2Tpdf
-    .sel(enso_transition_phase=[&quot;La-Nina cool&quot;, &quot;La-Nina warm&quot;, &quot;El-Nino warm&quot;, &quot;El-Nino cool&quot;])
-    .plot(vmax=1, col=&quot;enso_transition_phase&quot;)
-)
-fg.set_titles(&quot;{value}&quot;)
-fg.map(dcpy.plots.line45)
-fg.axes[0, 0].set_xlim((-4.5, -2.5))
-fg.axes[0, 0].set_ylim((-4.5, -2.5))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2Tpdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">set_titles</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{value}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">dcpy</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">line45</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="o">-</span><span class="mf">4.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.5</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -861,19 +861,19 @@ fg.axes[0, 0].set_ylim((-4.5, -2.5))
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(   
-    tao_gridded.n2s2Tpdf
-    .sel(enso_transition_phase=[&quot;La-Nina cool&quot;, &quot;La-Nina warm&quot;, &quot;El-Nino warm&quot;, &quot;El-Nino cool&quot;])
-    .sum(&quot;N2_bins&quot;)
-    .plot(hue=&quot;enso_transition_phase&quot;)
-)
-plt.figure()
-(
-    tao_gridded.n2s2Tpdf
-    .sel(enso_transition_phase=[&quot;La-Nina cool&quot;, &quot;La-Nina warm&quot;, &quot;El-Nino warm&quot;, &quot;El-Nino cool&quot;])
-    .sum(&quot;S2_bins&quot;)
-    .plot(hue=&quot;enso_transition_phase&quot;)
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>   
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2Tpdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;N2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="p">(</span>
+    <span class="n">tao_gridded</span><span class="o">.</span><span class="n">n2s2Tpdf</span>
+    <span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">enso_transition_phase</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;La-Nina cool&quot;</span><span class="p">,</span> <span class="s2">&quot;La-Nina warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino warm&quot;</span><span class="p">,</span> <span class="s2">&quot;El-Nino cool&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">&quot;S2_bins&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hue</span><span class="o">=</span><span class="s2">&quot;enso_transition_phase&quot;</span><span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -583,33 +583,33 @@ title="Print to PDF"
 <h2>imports and cluster setup<a class="headerlink" href="#imports-and-cluster-setup" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>%load_ext autoreload
-%autoreload 2
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
 
-%matplotlib inline
+<span class="o">%</span><span class="k">matplotlib</span> inline
 
-import dask
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-import seawater as sw
-import xarray as xr
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seawater</span> <span class="k">as</span> <span class="nn">sw</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
-# import hvplot.xarray
+<span class="c1"># import hvplot.xarray</span>
 
-import dcpy
-import pump
+<span class="kn">import</span> <span class="nn">dcpy</span>
+<span class="kn">import</span> <span class="nn">pump</span>
 
-# import facetgrid
+<span class="c1"># import facetgrid</span>
 
-mpl.rcParams[&quot;savefig.dpi&quot;] = 300
-mpl.rcParams[&quot;savefig.bbox&quot;] = &quot;tight&quot;
-mpl.rcParams[&quot;figure.dpi&quot;] = 120
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;savefig.bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;tight&quot;</span>
+<span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.dpi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">120</span>
 
-xr.set_options(keep_attrs=False)
+<span class="n">xr</span><span class="o">.</span><span class="n">set_options</span><span class="p">(</span><span class="n">keep_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-import distributed
-import dask_jobqueue
+<span class="kn">import</span> <span class="nn">distributed</span>
+<span class="kn">import</span> <span class="nn">dask_jobqueue</span>
 </pre></div>
 </div>
 </div>
@@ -622,28 +622,28 @@ import dask_jobqueue
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>if &quot;client&quot; in locals():
-    client.close()
-    cluster.close()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;,
-       &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}
-cluster = distributed.LocalCluster(
-    n_workers=12, 
-    threads_per_worker=1, 
-    env=env
+<span class="n">env</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+       <span class="s2">&quot;NUMBA_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">}</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span>
+    <span class="n">n_workers</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> 
+    <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="n">env</span><span class="o">=</span><span class="n">env</span>
                   
-)
-#cluster = dask_jobqueue.SLURMCluster(
-#    cores=1, processes=1, memory=&quot;25GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0011&quot;
-#)
-#cluster = dask_jobqueue.PBSCluster(
-#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,
-#    env_extra=env,
-#)
+<span class="p">)</span>
+<span class="c1">#cluster = dask_jobqueue.SLURMCluster(</span>
+<span class="c1">#    cores=1, processes=1, memory=&quot;25GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0011&quot;</span>
+<span class="c1">#)</span>
+<span class="c1">#cluster = dask_jobqueue.PBSCluster(</span>
+<span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
+<span class="c1">#    env_extra=env,</span>
+<span class="c1">#)</span>
 
-client = distributed.Client(cluster)
-cluster
+<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+<span class="n">cluster</span>
 </pre></div>
 </div>
 </div>
@@ -658,141 +658,141 @@ cluster
 <p><code class="docutils literal notranslate"><span class="pre">read_metrics</span></code> will sometimes fail because the files don’t exist. This happens when Scott restarts a run :)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def read_metrics(dirname, longitude, latitude, depth):
-    &quot;&quot;&quot; 
-    
-    This function needs longitude, latitude, depth to assign the right metadata.
-    If size of the metrics variables are not the same as (longitude, latitude),
-    the code assumes that a boundary region has been cut out at the low-end and
-    high-end of the appropriate axis.
-    
-    If the size in depth-axis is different, then it assumes that the provided depth
-    is a slice from surface to the Nth-point where N=len(depth).
-    
-    &quot;&quot;&quot;
-    import xmitgcm
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">read_metrics</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    </span>
+<span class="sd">    This function needs longitude, latitude, depth to assign the right metadata.</span>
+<span class="sd">    If size of the metrics variables are not the same as (longitude, latitude),</span>
+<span class="sd">    the code assumes that a boundary region has been cut out at the low-end and</span>
+<span class="sd">    high-end of the appropriate axis.</span>
+<span class="sd">    </span>
+<span class="sd">    If the size in depth-axis is different, then it assumes that the provided depth</span>
+<span class="sd">    is a slice from surface to the Nth-point where N=len(depth).</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">xmitgcm</span>
 
-    h = dict()
-    for ff in [&quot;hFacC&quot;, &quot;RAC&quot;, &quot;RF&quot;, &quot;DXC&quot;, &quot;DYC&quot;]:
-        try:
-            h[ff] = xmitgcm.utils.read_mds(dirname + ff)[ff]
-        except (FileNotFoundError):
-            print(f&quot;metrics files not available. {dirname + ff}&quot;)
-            metrics = None
-            return xr.Dataset()
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;hFacC&quot;</span><span class="p">,</span> <span class="s2">&quot;RAC&quot;</span><span class="p">,</span> <span class="s2">&quot;RF&quot;</span><span class="p">,</span> <span class="s2">&quot;DXC&quot;</span><span class="p">,</span> <span class="s2">&quot;DYC&quot;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">h</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">=</span> <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="n">ff</span><span class="p">)[</span><span class="n">ff</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;metrics files not available. </span><span class="si">{</span><span class="n">dirname</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
 
-    hFacC = h[&quot;hFacC&quot;].copy().squeeze().astype(&quot;float32&quot;)
-    RAC = h[&quot;RAC&quot;].copy().squeeze().astype(&quot;float32&quot;)
-    RF = h[&quot;RF&quot;].copy().squeeze().astype(&quot;float32&quot;)
-    DXC = h[&quot;DXC&quot;].copy().squeeze().astype(&quot;float32&quot;)
-    DYC = h[&quot;DYC&quot;].copy().squeeze().astype(&quot;float32&quot;)
+    <span class="n">hFacC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;hFacC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">RAC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;RAC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">RF</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;RF&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">DXC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;DXC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">DYC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;DYC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
 
-    del h
+    <span class="k">del</span> <span class="n">h</span>
     
-    if len(longitude) != RAC.shape[1]:
-        dlon = RAC.shape[1] - len(longitude)
-        lons = slice(dlon//2, -dlon//2)
-    else:
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span> <span class="o">!=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">dlon</span> <span class="o">=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlon</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlon</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
         
-        lons = slice(None, None)
+        <span class="n">lons</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    if len(latitude) != RAC.shape[0]:
-        dlat = RAC.shape[0] - len(latitude)
-        lats = slice(dlat//2, -dlat//2)
-    else:
-        lats = slice(None, None)
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span> <span class="o">!=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">dlat</span> <span class="o">=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlat</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlat</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    RAC = xr.DataArray(
-        RAC[lats ,lons],
-        dims=[&quot;latitude&quot;, &quot;longitude&quot;],
-        coords={&quot;longitude&quot;: longitude, &quot;latitude&quot;: latitude},
-        name=&quot;RAC&quot;,
-    )
-    DXC = xr.DataArray(
-        DXC[lats ,lons],
-        dims=[&quot;latitude&quot;, &quot;longitude&quot;],
-        coords={&quot;longitude&quot;: longitude, &quot;latitude&quot;: latitude},
-        name=&quot;DXC&quot;,
-    )
-    DYC = xr.DataArray(
-        DYC[lats ,lons],
-        dims=[&quot;latitude&quot;, &quot;longitude&quot;],
-        coords={&quot;longitude&quot;: longitude, &quot;latitude&quot;: latitude},
-        name=&quot;DYC&quot;,
-    )
+    <span class="n">RAC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">RAC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RAC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">DXC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">DXC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DXC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">DYC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">DYC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DYC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    depth = xr.DataArray(
-        (RF[1:] + RF[:-1]) / 2,
-        dims=[&quot;depth&quot;],
-        name=&quot;depth&quot;,
-        attrs={&quot;long_name&quot;: &quot;depth&quot;, &quot;units&quot;: &quot;m&quot;},
-    )
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">RF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">RF</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
 
-    dRF = xr.DataArray(
-        np.diff(RF.squeeze()),
-        dims=[&quot;depth&quot;],
-        coords={&quot;depth&quot;: depth},
-        name=&quot;dRF&quot;,
-        attrs={&quot;long_name&quot;: &quot;cell_height&quot;, &quot;units&quot;: &quot;m&quot;},
-    )
+    <span class="n">dRF</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">RF</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="n">depth</span><span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dRF&quot;</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;cell_height&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
 
-    RF = xr.DataArray(RF.squeeze(), dims=[&quot;depth_left&quot;], name=&quot;depth_left&quot;)
+    <span class="n">RF</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">RF</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth_left&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;depth_left&quot;</span><span class="p">)</span>
 
-    hFacC = xr.DataArray(
-        hFacC[:, lats ,lons],
-        dims=[&quot;depth&quot;, &quot;latitude&quot;, &quot;longitude&quot;],
-        coords={
-            &quot;depth&quot;: depth,
-            &quot;latitude&quot;: latitude,
-            &quot;longitude&quot;: longitude,
-        },
-        name=&quot;hFacC&quot;,
-    )
+    <span class="n">hFacC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">hFacC</span><span class="p">[:,</span> <span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="n">depth</span><span class="p">,</span>
+            <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">,</span>
+            <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hFacC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    metrics = xr.merge([dRF, hFacC, RAC, DXC, DYC])
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">dRF</span><span class="p">,</span> <span class="n">hFacC</span><span class="p">,</span> <span class="n">RAC</span><span class="p">,</span> <span class="n">DXC</span><span class="p">,</span> <span class="n">DYC</span><span class="p">])</span>
 
-    metrics[&quot;cellvol&quot;] = np.abs(metrics.RAC * metrics.dRF * metrics.hFacC)
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;cellvol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RAC</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacC</span><span class="p">)</span>
 
-    metrics[&quot;cellvol&quot;] = metrics.cellvol.where(metrics.cellvol &gt; 0)
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;cellvol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 
-    metrics[&quot;RF&quot;] = RF
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;RF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF</span>
     
-    metrics[&quot;rAw&quot;] = xr.DataArray(
-        xmitgcm.utils.read_mds(dirname + &quot;/RAW&quot;)[&quot;RAW&quot;][lats ,lons].astype(&quot;float32&quot;),
-        dims=[&quot;latitude&quot;, &quot;longitude&quot;]
-    )
-    metrics[&quot;hFacW&quot;] = xr.DataArray(
-        xmitgcm.utils.read_mds(dirname + &quot;/hFacW&quot;)[&quot;hFacW&quot;][:, lats ,lons].astype(&quot;float32&quot;),
-        dims=[&quot;depth&quot;, &quot;latitude&quot;, &quot;longitude&quot;])
-    metrics[&quot;hFacW&quot;] = metrics.hFacW.where(metrics.hFacW &gt; 0)
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;rAw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/RAW&quot;</span><span class="p">)[</span><span class="s2">&quot;RAW&quot;</span><span class="p">][</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/hFacW&quot;</span><span class="p">)[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">][:,</span> <span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">])</span>
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 
-    metrics[&quot;drF&quot;] = xr.DataArray(
-        xmitgcm.utils.read_mds(dirname + &quot;/DRF&quot;)[&quot;DRF&quot;].squeeze().astype(&quot;float32&quot;),
-        dims=[&quot;depth&quot;])
+    <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;drF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/DRF&quot;</span><span class="p">)[</span><span class="s2">&quot;DRF&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">])</span>
     
-    metrics = metrics.isel(depth=slice(budget.sizes[&quot;depth&quot;]), depth_left=slice(budget.sizes[&quot;depth&quot;]+1))
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]),</span> <span class="n">depth_left</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
     
 
-    return metrics
+    <span class="k">return</span> <span class="n">metrics</span>
 
 
-def plot_lhs_rhs(LHS, RHS):
+<span class="k">def</span> <span class="nf">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">):</span>
     
-    LHS, RHS = dask.compute(LHS, RHS)
+    <span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
     
-    kwargs = dict(histtype=&#39;step&#39;, bins=1000, density=True, ylim=[0, 5])
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
 
-    f, ax = plt.subplots(2, 1, constrained_layout=True)
-    np.log10(np.abs(LHS).where(np.abs(LHS) &gt; 0)).plot.hist(ax=ax[0], **kwargs)
-    np.log10(np.abs(RHS).where(np.abs(RHS) &gt; 0)).plot.hist(ax=ax[0], **kwargs)
+    <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">RHS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    diff = np.abs(LHS - RHS)
-    np.log10(diff.where(diff &gt; 0)).plot.hist(ax=ax[0], **kwargs)
-    ax[0].legend((&#39;LHS&#39;, &#39;RHS&#39;, &#39;LHS-RHS&#39;))
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s1">&#39;LHS&#39;</span><span class="p">,</span> <span class="s1">&#39;RHS&#39;</span><span class="p">,</span> <span class="s1">&#39;LHS-RHS&#39;</span><span class="p">))</span>
 
-    if diff.ndim == 2:
-        (LHS - RHS).plot(ax=ax[1], x=&#39;longitude&#39;, robust=True)
-        ax[1].set_title(&#39;LHS - RHS&#39;)
+    <span class="k">if</span> <span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;LHS - RHS&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -802,7 +802,7 @@ def plot_lhs_rhs(LHS, RHS):
 <h2>Heat budget<a class="headerlink" href="#heat-budget" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>dirname = &quot;/glade/campaign/cgd/oce/people/bachman/TPOS_MITgcm_fix2/&quot;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_MITgcm_fix2/&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -811,34 +811,34 @@ def plot_lhs_rhs(LHS, RHS):
 <h3>Read in data<a class="headerlink" href="#read-in-data" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>hb_files = xr.open_dataset(dirname + &#39;File_0003_hb.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500})
-sf_files = xr.open_dataset(dirname + &#39;File_0003_surf.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500})
-budget = (xr.merge([hb_files, sf_files])
-          .transpose(&#39;longitude&#39;, &#39;latitude&#39;, &#39;depth&#39;, &#39;time&#39;))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_0003_hb.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="n">sf_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_0003_surf.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">hb_files</span><span class="p">,</span> <span class="n">sf_files</span><span class="p">])</span>
+          <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">))</span>
 
-budget[&#39;oceQsw&#39;] = budget.oceQsw.fillna(0)
-# budget = budget.drop([&quot;DFxE_TH&quot;, &quot;DFyE_TH&quot;, &quot;DFrE_TH&quot;])
+<span class="n">budget</span><span class="p">[</span><span class="s1">&#39;oceQsw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">oceQsw</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># budget = budget.drop([&quot;DFxE_TH&quot;, &quot;DFyE_TH&quot;, &quot;DFrE_TH&quot;])</span>
 
-metrics = (
-    read_metrics(
-        dirname, 
-        longitude=budget.longitude, 
-        latitude=budget.latitude,
-        depth=budget.depth,
-    ).chunk({&quot;latitude&quot;: 120, &quot;longitude&quot;: 500})
-)
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">read_metrics</span><span class="p">(</span>
+        <span class="n">dirname</span><span class="p">,</span> 
+        <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> 
+        <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+        <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="p">)</span>
 
-def sw_prof(depth):    
-    &quot;&quot;&quot; MITgcm Shortwave radiation penetration profile. &quot;&quot;&quot;
-    return 0.62 * np.exp(depth / 0.6) + (1 - 0.62) * np.exp(depth / 20)
+<span class="k">def</span> <span class="nf">sw_prof</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>    
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; MITgcm Shortwave radiation penetration profile. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">0.62</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">depth</span> <span class="o">/</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.62</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">depth</span> <span class="o">/</span> <span class="mi">20</span><span class="p">)</span>
 
-# penetrative shortwave radiation
-budget[&#39;swprofile&#39;] = xr.DataArray(
-    sw_prof(metrics.RF[:-1].values) - sw_prof(metrics.RF[1:].values),
-    dims=[&#39;depth&#39;],
-    attrs={&#39;long_name&#39;: &#39;SW radiation deposited in cell&#39;})
+<span class="c1"># penetrative shortwave radiation</span>
+<span class="n">budget</span><span class="p">[</span><span class="s1">&#39;swprofile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+    <span class="n">sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="n">sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+    <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">],</span>
+    <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;SW radiation deposited in cell&#39;</span><span class="p">})</span>
 
-budget
+<span class="n">budget</span>
 </pre></div>
 </div>
 </div>
@@ -868,71 +868,71 @@ Data variables:
 <p>The heat budget code is dirtier than the momentum budget and could be cleanedup a bit</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>level = 120
-levelp = level + 1
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="n">levelp</span> <span class="o">=</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span>
 
-terms = budget.isel(depth=level).squeeze()
+<span class="n">terms</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
-metrics_sub = metrics.isel(depth=level, latitude=slice(1, -1), longitude=slice(1, -1))
-cellvol = metrics_sub.cellvol.transpose()
+<span class="n">metrics_sub</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">cellvol</span> <span class="o">=</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">cellvol</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 
-terms[&#39;ADVr_THp&#39;] = budget[&#39;ADVr_TH&#39;].isel(depth=levelp).squeeze()
-terms[&#39;DFrI_THp&#39;] = budget[&#39;DFrI_TH&#39;].isel(depth=levelp).squeeze()
-terms[&#39;KPPg_THp&#39;] = budget[&#39;KPPg_TH&#39;].isel(depth=levelp).squeeze()
+<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;ADVr_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;ADVr_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;DFrI_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;DFrI_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;KPPg_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;KPPg_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
-surf_mass = terms.WTHMASS[1:-1, 1:-1] * metrics_sub.RAC[1:-1, 1:-1]
+<span class="n">surf_mass</span> <span class="o">=</span> <span class="n">terms</span><span class="o">.</span><span class="n">WTHMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">RAC</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-# constants taken from diagnostics.log (I think)
-global_area = 2.196468634481708E+13
-rhoConst = 1035
-Cp = 3994
-TsurfCor = surf_mass.sum() / global_area
+<span class="c1"># constants taken from diagnostics.log (I think)</span>
+<span class="n">global_area</span> <span class="o">=</span> <span class="mf">2.196468634481708E+13</span>
+<span class="n">rhoConst</span> <span class="o">=</span> <span class="mi">1035</span>
+<span class="n">Cp</span> <span class="o">=</span> <span class="mi">3994</span>
+<span class="n">TsurfCor</span> <span class="o">=</span> <span class="n">surf_mass</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">global_area</span>
 
-LHS = terms.TOTTTEND[1:-1, 1:-1] / 86400
+<span class="n">LHS</span> <span class="o">=</span> <span class="n">terms</span><span class="o">.</span><span class="n">TOTTTEND</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">86400</span>
 
-ADVx = (terms.ADVx_TH.values[2:, 1:-1] -
-        terms.ADVx_TH.values[1:-1, 1:-1]) / cellvol
-ADVy = (terms.ADVy_TH.values[1:-1, 2:] -
-        terms.ADVy_TH.values[1:-1, 1:-1]) / cellvol
-ADVr = (terms.ADVr_TH.fillna(0).values[1:-1, 1:-1] -
-        terms.ADVr_THp.values[1:-1, 1:-1]) / cellvol
+<span class="n">ADVx</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">ADVy</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">ADVr</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVr_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">ADVr_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
 
-# no explicit diffusion
-# DFxE = (terms.DFxE_TH.values[2:, 1:-1] - terms.DFxE_TH.values[1:-1, 1:-1]) / cellvol
-# DFyE = (terms.DFyE_TH.values[1:-1, 2:] - terms.DFyE_TH.values[1:-1, 1:-1]) / cellvol
-# DFrE = (terms.DFrE_TH.values[1:-1, 1:-1] - terms.DFrE_THp.values[1:-1, 1:-1]) / cellvol
-DFrI = (terms.DFrI_TH.fillna(0).values[1:-1, 1:-1] -
-        terms.DFrI_THp.values[1:-1, 1:-1]) / cellvol
+<span class="c1"># no explicit diffusion</span>
+<span class="c1"># DFxE = (terms.DFxE_TH.values[2:, 1:-1] - terms.DFxE_TH.values[1:-1, 1:-1]) / cellvol</span>
+<span class="c1"># DFyE = (terms.DFyE_TH.values[1:-1, 2:] - terms.DFyE_TH.values[1:-1, 1:-1]) / cellvol</span>
+<span class="c1"># DFrE = (terms.DFrE_TH.values[1:-1, 1:-1] - terms.DFrE_THp.values[1:-1, 1:-1]) / cellvol</span>
+<span class="n">DFrI</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">DFrI_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">DFrI_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
 
-# non-local stuff only in mixing layer
-KPPg = (terms.KPPg_TH.fillna(0).values[1:-1, 1:-1] -
-        terms.KPPg_THp.fillna(0).values[1:-1, 1:-1]) / cellvol
+<span class="c1"># non-local stuff only in mixing layer</span>
+<span class="n">KPPg</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">KPPg_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">KPPg_THp</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
 
-ADV = LHS.copy(data=ADVx + ADVy + ADVr)
-DIFF = LHS.copy(data=DFrI + KPPg)  # no explicit horizontal diffusion
-ADV.name = &#39;ADV&#39;
-DIFF.name = &#39;DIFF&#39;
+<span class="n">ADV</span> <span class="o">=</span> <span class="n">LHS</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">ADVx</span> <span class="o">+</span> <span class="n">ADVy</span> <span class="o">+</span> <span class="n">ADVr</span><span class="p">)</span>
+<span class="n">DIFF</span> <span class="o">=</span> <span class="n">LHS</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">DFrI</span> <span class="o">+</span> <span class="n">KPPg</span><span class="p">)</span>  <span class="c1"># no explicit horizontal diffusion</span>
+<span class="n">ADV</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ADV&#39;</span>
+<span class="n">DIFF</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;DIFF&#39;</span>
 
-SW = (terms.oceQsw[1:-1, 1:-1] / (rhoConst * Cp) /
-      (metrics_sub.dRF * metrics_sub.hFacC) * terms.swprofile)
+<span class="n">SW</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span><span class="p">)</span> <span class="o">/</span>
+      <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">)</span> <span class="o">*</span> <span class="n">terms</span><span class="o">.</span><span class="n">swprofile</span><span class="p">)</span>
 
-RHS = (ADV + DIFF + SW)
+<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span><span class="n">ADV</span> <span class="o">+</span> <span class="n">DIFF</span> <span class="o">+</span> <span class="n">SW</span><span class="p">)</span>
 
-# surface level stuff
-if level == 0:
-    # surface tendency due to SW flux
-    tflx_tend = ((terms.TFLUX[1:-1, 1:-1] - terms.oceQsw[1:-1, 1:-1]) /
-                 (rhoConst * Cp * metrics_sub.dRF * metrics_sub.hFacC))
+<span class="c1"># surface level stuff</span>
+<span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># surface tendency due to SW flux</span>
+    <span class="n">tflx_tend</span> <span class="o">=</span> <span class="p">((</span><span class="n">terms</span><span class="o">.</span><span class="n">TFLUX</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span>
+                 <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">))</span>
 
-    # tendency due to mass correction
-    surf_corr_tend = -(
-        (terms.WTHMASS[1:-1, 1:-1] - TsurfCor) / (metrics_sub.dRF * metrics_sub.hFacC))
+    <span class="c1"># tendency due to mass correction</span>
+    <span class="n">surf_corr_tend</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">WTHMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TsurfCor</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">))</span>
 
-    RHS += tflx_tend + surf_corr_tend
+    <span class="n">RHS</span> <span class="o">+=</span> <span class="n">tflx_tend</span> <span class="o">+</span> <span class="n">surf_corr_tend</span>
 
-RHS *= -1
+<span class="n">RHS</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
     
-plot_lhs_rhs(LHS, RHS)
+<span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -956,59 +956,59 @@ plot_lhs_rhs(LHS, RHS)
 <p>Need to append zeros to the viscosity terms because the bottom level is not stored :/</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ssh_files = xr.open_mfdataset(dirname + &#39;File_*_etan.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500}, combine=&quot;by_coords&quot;, parallel=True)
-ub_files = xr.open_mfdataset(dirname + &#39;File_*_ub.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500}, combine=&quot;by_coords&quot;, parallel=True)
-vb_files = xr.open_mfdataset(dirname + &#39;File_*_vb.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500}, combine=&quot;by_coords&quot;, parallel=True)
-# sf_files = xr.open_mfdataset(dirname + &#39;File_*_surf.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500}, combine=&quot;by_coords&quot;, parallel=True)[[&quot;ETAN&quot;]]
-budget = (xr.merge([ub_files, vb_files, ssh_files])
-          .transpose(&#39;longitude&#39;, &#39;latitude&#39;, &#39;depth&#39;, &#39;time&#39;)).squeeze()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ssh_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_etan.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ub_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_ub.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">vb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_vb.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># sf_files = xr.open_mfdataset(dirname + &#39;File_*_surf.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500}, combine=&quot;by_coords&quot;, parallel=True)[[&quot;ETAN&quot;]]</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">ub_files</span><span class="p">,</span> <span class="n">vb_files</span><span class="p">,</span> <span class="n">ssh_files</span><span class="p">])</span>
+          <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
-# From http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006920.html
-# And to get a tendency from this vertical flux:
-# Um_Impl(:,:,k) =[ VISrI_Um(:,:,k+1) - VISrI_Um(:,:,k) ]
-#                /[ rAw(:,:)*drF(k)*hFacW(:,:,k) ]
-# (hope I got the sign right)
-# VISrI_Um(k=1) should be zero, and the bottom one (k=Nr+1)
-# is not shored in the output file but it&#39;s also zero.
+<span class="c1"># From http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006920.html</span>
+<span class="c1"># And to get a tendency from this vertical flux:</span>
+<span class="c1"># Um_Impl(:,:,k) =[ VISrI_Um(:,:,k+1) - VISrI_Um(:,:,k) ]</span>
+<span class="c1">#                /[ rAw(:,:)*drF(k)*hFacW(:,:,k) ]</span>
+<span class="c1"># (hope I got the sign right)</span>
+<span class="c1"># VISrI_Um(k=1) should be zero, and the bottom one (k=Nr+1)</span>
+<span class="c1"># is not shored in the output file but it&#39;s also zero.</span>
 
-budget[&quot;VISrI_Um&quot;] = budget.VISrI_Um.fillna(0)  # fills surface values with 0 
-budget[&quot;VISrI_Vm&quot;] = budget.VISrI_Vm.fillna(0)
+<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;VISrI_Um&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># fills surface values with 0 </span>
+<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;VISrI_Vm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># NOTE: This is totally wrong now since TPOS_MITgcm_20 is only a top 1000m subset.
-VISrI_Um = xr.concat(
-    [
-        budget.VISrI_Um,
-        xr.zeros_like(budget.VISrI_Um.isel(depth=0).drop(&quot;depth&quot;)).expand_dims(depth=[-5865.922])        
-    ],
-    dim=&quot;depth&quot;,
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># NOTE: This is totally wrong now since TPOS_MITgcm_20 is only a top 1000m subset.</span>
+<span class="n">VISrI_Um</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="p">,</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">])</span>        
+    <span class="p">],</span>
+    <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
-VISrI_Vm = xr.concat(
-    [
-        budget.VISrI_Vm,
-        xr.zeros_like(budget.VISrI_Vm.isel(depth=0).drop(&quot;depth&quot;)).expand_dims(depth=[-5865.922])        
-    ],
-    dim=&quot;depth&quot;,
-)
+<span class="n">VISrI_Vm</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="p">,</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">])</span>        
+    <span class="p">],</span>
+    <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>metrics = (
-    read_metrics(dirname, 
-                 longitude=budget.longitude, 
-                 latitude=budget.latitude,
-                 depth=budget.depth)
-    .chunk({&quot;latitude&quot;: 120, &quot;longitude&quot;: 500})
-)
-metrics
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">read_metrics</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> 
+                 <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> 
+                 <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+                 <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<span class="p">)</span>
+<span class="n">metrics</span>
 </pre></div>
 </div>
 </div>
@@ -1038,46 +1038,46 @@ Data variables:
 <p>We are using <code class="docutils literal notranslate"><span class="pre">implicSurfPres=1</span></code> and Scott is saving SSH at the appropriate timestep.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>level = 120; # depth level # budget.sizes[&quot;depth&quot;]
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span> <span class="c1"># depth level # budget.sizes[&quot;depth&quot;]</span>
 
-#SSHx = - 9.81 * budget.ETAN.copy(
-#    data=np.gradient(budget.ETAN, axis=budget.ETAN.get_axis_num(&quot;longitude&quot;))
-#) / metrics.DXC
-
-
-# when trying to do a budget over just 1 time-step, one needs to be aware 
-#  of the precise time-discretisation of the the first term which is evaluated 
-#  in the model as 
-#   - gravity * {  implicSurfPress * (d.EtaN/dx)^n+1 
-#                +(1-implicSurfPress)*(d.EtaN/dx)^n }
-#  (using the default implicSurfPress=1 , it might be be easier to use 
-#   snap-shot output Eta.[iter+1] to get EtaN^n+1 )
-
-# this works because Scott has saved SSH one timestep prior to the saved timestep for the other fields
-SSHx = (-9.81 * budget.ETAN.diff(&quot;longitude&quot;)
-        .reindex(longitude=budget.longitude) 
-        / metrics.DXC)
-
-# from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html
-Um_Impl =( VISrI_Um.diff(&quot;depth&quot;, label=&quot;lower&quot;)
-          / (metrics.rAw * metrics.drF.isel(depth=level) * metrics.hFacW.isel(depth=level)))
+<span class="c1">#SSHx = - 9.81 * budget.ETAN.copy(</span>
+<span class="c1">#    data=np.gradient(budget.ETAN, axis=budget.ETAN.get_axis_num(&quot;longitude&quot;))</span>
+<span class="c1">#) / metrics.DXC</span>
 
 
-RHS = (
-    SSHx
-    + budget.Um_dPHdx
-    + budget.Um_Advec
-    #+ budget.Um_Cori  # is in Um_Advec
-    + budget.Um_Diss
-    + Um_Impl
-    + budget.Um_Ext.fillna(0)
-    + budget.AB_gU
-).isel(depth=level)
+<span class="c1"># when trying to do a budget over just 1 time-step, one needs to be aware </span>
+<span class="c1">#  of the precise time-discretisation of the the first term which is evaluated </span>
+<span class="c1">#  in the model as </span>
+<span class="c1">#   - gravity * {  implicSurfPress * (d.EtaN/dx)^n+1 </span>
+<span class="c1">#                +(1-implicSurfPress)*(d.EtaN/dx)^n }</span>
+<span class="c1">#  (using the default implicSurfPress=1 , it might be be easier to use </span>
+<span class="c1">#   snap-shot output Eta.[iter+1] to get EtaN^n+1 )</span>
 
-LHS = budget.TOTUTEND.isel(depth=level) / 86400
+<span class="c1"># this works because Scott has saved SSH one timestep prior to the saved timestep for the other fields</span>
+<span class="n">SSHx</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span> 
+        <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXC</span><span class="p">)</span>
 
-#da = xr.Dataset({&quot;LHS&quot;: LHS, &quot;RHS&quot;: RHS}).to_array(&quot;variable&quot;)
-#da.compute().plot(row=&quot;variable&quot;, robust=True, x=&quot;longitude&quot;, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;})
+<span class="c1"># from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</span>
+<span class="n">Um_Impl</span> <span class="o">=</span><span class="p">(</span> <span class="n">VISrI_Um</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+          <span class="o">/</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)))</span>
+
+
+<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SSHx</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_dPHdx</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Advec</span>
+    <span class="c1">#+ budget.Um_Cori  # is in Um_Advec</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Diss</span>
+    <span class="o">+</span> <span class="n">Um_Impl</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">AB_gU</span>
+<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+
+<span class="n">LHS</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">TOTUTEND</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">86400</span>
+
+<span class="c1">#da = xr.Dataset({&quot;LHS&quot;: LHS, &quot;RHS&quot;: RHS}).to_array(&quot;variable&quot;)</span>
+<span class="c1">#da.compute().plot(row=&quot;variable&quot;, robust=True, x=&quot;longitude&quot;, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;})</span>
 </pre></div>
 </div>
 </div>
@@ -1090,7 +1090,7 @@ LHS = budget.TOTUTEND.isel(depth=level) / 86400
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(LHS-RHS).isel(time=slice(12)).compute().plot(col=&quot;time&quot;, col_wrap=4, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;}, x=&quot;longitude&quot;, robust=True)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1107,21 +1107,21 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>diff = (LHS-RHS).compute()
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>diff.mean(&quot;time&quot;).plot(robust=True, x=&quot;longitude&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plot_lhs_rhs(LHS.isel(time=10), RHS.isel(time=10))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="n">RHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1133,7 +1133,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 <h4>all time steps<a class="headerlink" href="#all-time-steps" title="Permalink to this headline">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plot_lhs_rhs(LHS, RHS)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1147,7 +1147,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 <p>residual ~ 1e-11</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>diff.plot(col=&quot;time&quot;, col_wrap=4, robust=True)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1164,7 +1164,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 <p>residual ~ 1e-7</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>diff.plot(col=&quot;time&quot;, col_wrap=4, robust=True)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1182,28 +1182,28 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 <p>This seems to have some systematic error but it is small</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>level = 10
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">10</span>
 
-SSHy = (-9.81 * budget.ETAN
-        .diff(&quot;latitude&quot;, label=&quot;upper&quot;)
-        .reindex(latitude=budget.latitude)
-        / metrics.DYC)
+<span class="n">SSHy</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span>
+        <span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
+        <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYC</span><span class="p">)</span>
 
-# from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html
-Vm_Impl =( VISrI_Vm.diff(&quot;depth&quot;, label=&quot;lower&quot;)
-          / (metrics.rAw * metrics.drF.isel(depth=level) * metrics.hFacW.isel(depth=level)))
-RHS = (
-    SSHy
-    + budget.Vm_dPHdy
-    + budget.Vm_Advec
-    #+ budget.Vm_Cori  # in Vm_Advec
-    + budget.Vm_Diss
-    + Vm_Impl
-    + budget.Vm_Ext.fillna(0)
-    + budget.AB_gV
-).isel(depth=level) 
+<span class="c1"># from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</span>
+<span class="n">Vm_Impl</span> <span class="o">=</span><span class="p">(</span> <span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+          <span class="o">/</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)))</span>
+<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">SSHy</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_dPHdy</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Advec</span>
+    <span class="c1">#+ budget.Vm_Cori  # in Vm_Advec</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Diss</span>
+    <span class="o">+</span> <span class="n">Vm_Impl</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">AB_gV</span>
+<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> 
 
-LHS = budget.TOTVTEND.isel(depth=level) / 86400
+<span class="n">LHS</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">TOTVTEND</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">86400</span>
 </pre></div>
 </div>
 </div>
@@ -1216,13 +1216,13 @@ LHS = budget.TOTVTEND.isel(depth=level) / 86400
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>(LHS-RHS).isel(time=slice(6)).compute().plot(
-    col=&quot;time&quot;, 
-    col_wrap=3,
-    x=&quot;longitude&quot;, 
-    cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;}, 
-    robust=True
-)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> 
+    <span class="n">col_wrap</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> 
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span> 
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1237,7 +1237,7 @@ LHS = budget.TOTVTEND.isel(depth=level) / 86400
 <h4>all time steps<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plot_lhs_rhs(LHS, RHS)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1247,7 +1247,7 @@ LHS = budget.TOTVTEND.isel(depth=level) / 86400
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plot_lhs_rhs(LHS.isel(time=20), RHS.isel(time=20))
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span> <span class="n">RHS</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
