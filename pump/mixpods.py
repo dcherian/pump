@@ -31,7 +31,7 @@ LOAD_VARNAMES = [
     "ocean_vertical_heat_diffusivity",
     "eps",
     "chi",
-    "Jq",
+    "Jb",
     "eps_ri",
     "eps_n2s2",
     "Rig_T",
@@ -833,13 +833,15 @@ def add_turbulence_quantities(ds, grid):
             )
 
     # buoyancy flux
-    α = xgcm_interp_to(
-        grid, ds.cf["sea_water_thermal_expansion_coefficient"], axis="Z", to="outer"
-    )
-    β = xgcm_interp_to(
-        grid, ds.cf["sea_water_haline_contraction_coefficient"], axis="Z", to="outer"
-    )
-    ds["Jb"] = -9.81 * (-ds.Kd_heat * α * ds.Tz + ds.Kd_heat * β * ds.Sz)
+    α = ds.cf["sea_water_thermal_expansion_coefficient"]
+    β = ds.cf["sea_water_haline_contraction_coefficient"]
+    if set(α.dims) != set(ds.Tz.dims):
+        α = xgcm_interp_to(grid, α, axis="Z", to="outer")
+    if set(β.dims) != set(ds.Sz.dims):
+        β = xgcm_interp_to(grid, β, axis="Z", to="outer")
+
+    K = ds.cf["ocean_vertical_heat_diffusivity"]
+    ds["Jb"] = -9.81 * (-K * α * ds.Tz + K * β * ds.Sz)
     ds["Jb"].attrs["standard_name"] = "turbulent_buoyancy_flux"
 
     # flux Ri
@@ -1044,3 +1046,12 @@ def load_mom6_sections(casename):
     # mom6140 = mom6140.update(pdf_N2S2(mom6140))
 
     return mom6140
+
+
+def validate_tree(tree):
+    """Make sure variables I want to load are present"""
+
+    for name, node in tree.children.items():
+        for var in LOAD_VARNAMES:
+            if var not in node.ds and var not in node.ds.cf:
+                print(f"{var} missing in {name}")
