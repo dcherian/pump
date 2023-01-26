@@ -908,7 +908,7 @@ def interp_to_center(ds):
 
     for var in out:
         if "xq" in out[var].dims:
-            out[var] = out[var].rename({"xq": "xh"}).drop("xh")
+            out[var] = out[var].rename({"xq": "xh"}).drop_vars("xh")
     return out.drop_vars("xq")
 
 
