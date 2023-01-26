@@ -621,8 +621,11 @@ def make_enso_transition_mask(oni):
     enso.loc[ln_mask & cool_mask] = "La-Nina cool"
 
     # tweaks from Warner & Moum
-    enso.loc[{"time": "2015-12"}] = "El-Nino warm"
-    enso.loc[{"time": "2015-01"}] = "El-Nino warm"
+    try:
+        enso.loc[{"time": "2015-12"}] = "El-Nino warm"
+        enso.loc[{"time": "2015-01"}] = "El-Nino warm"
+    except KeyError:
+        pass
 
     enso.coords["en_mask"] = en_mask
     enso.coords["ln_mask"] = ln_mask
@@ -917,7 +920,7 @@ def read_mom6_sections(casename):
     from mom6_tools.sections import combine_variables_by_coords, read_raw_files
 
     dirname = f"/glade/scratch/dcherian/{casename}/run/"
-    globstr = f"{dirname}/*TAO*140W*_00[4-9]*.nc.*"
+    globstr = f"{dirname}/*TAO*140W*.nc.*"
     files = sorted(glob.glob(globstr))
 
     if not files:
@@ -1013,7 +1016,7 @@ def load_mom6_sections(casename):
     dirname = f"/glade/scratch/dcherian/archive/{casename}/ocn/hist"
     static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
     sfc = xr.open_mfdataset(
-        sorted(glob.glob(f"{dirname}/*sfc*_00[4-9]*")),
+        sorted(glob.glob(f"{dirname}/*sfc*")),
         coords="minimal",
         data_vars="minimal",
         compat="override",
