@@ -17,6 +17,7 @@ dependencies:
   - distributed
   - flox
   - gsw
+  - gsw-xarray
   - h5py
   - hdf5
   - intake
@@ -55,10 +56,9 @@ dependencies:
   - xmitgcm
   - watermark
   - zarr
+  - ncar-jobqueue
+  - dask-jobqueue
   - pip:
-    - dask_jobqueue
-    - ncar_jobqueue
-    - gsw_xarray
     - git+https://github.com/dcherian/pump.git
     - git+https://github.com/dcherian/dcpy.git
     - git+https://github.com/hetland/xroms.git
