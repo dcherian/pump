@@ -329,15 +329,17 @@ def pdf_N2S2(data, coord_is_center=False):
         ]
         newby.extend(by[2:])
         eps = data.eps.cf.sel(Z=epsZ)
-        out["eps_n2s2"] = xr.concat(
-            [
-                xarray_reduce(eps, *newby, func=func, **enso_kwargs)
-                .rename({"enso_transition": "enso_transition_phase"})
-                .expand_dims(stat=[func])
-                for func in ["mean", "count"]
-            ],
-            dim="stat",
-        )
+
+        if "enso_transition" in eps.coords:
+            out["eps_n2s2"] = xr.concat(
+                [
+                    xarray_reduce(eps, *newby, func=func, **enso_kwargs)
+                    .rename({"enso_transition": "enso_transition_phase"})
+                    .expand_dims(stat=[func])
+                    for func in ["mean", "count"]
+                ],
+                dim="stat",
+            )
 
         Ri = np.log10(reindex_Z_to(data.Rig_T, epsZ))
         # Ri_bins = np.logspace(np.log10(0.025), np.log10(2), 11)
@@ -348,15 +350,18 @@ def pdf_N2S2(data, coord_is_center=False):
             "isbin": (True, False),
         }
 
-        eps_ri = xr.concat(
-            [
-                xarray_reduce(
-                    eps, Ri, data.enso_transition, func=func, **Ri_kwargs
-                ).expand_dims(stat=[func])
-                for func in ["mean", "std", "count"]
-            ],
-            dim="stat",
-        ).rename({"enso_transition": "enso_transition_phase"})
+        eps_ri_concat = []
+        if "enso_transition" in eps.coords:
+            eps_ri = xr.concat(
+                [
+                    xarray_reduce(
+                        eps, Ri, data.enso_transition, func=func, **Ri_kwargs
+                    ).expand_dims(stat=[func])
+                    for func in ["mean", "std", "count"]
+                ],
+                dim="stat",
+            ).rename({"enso_transition": "enso_transition_phase"})
+            eps_ri_concat.append(eps_ri)
 
         eps_ri_noen = xr.concat(
             [
@@ -368,7 +373,9 @@ def pdf_N2S2(data, coord_is_center=False):
             dim="stat",
         ).assign_coords({"enso_transition_phase": "none"})
 
-        out["eps_ri"] = xr.concat([eps_ri, eps_ri_noen], dim="enso_transition_phase")
+        out["eps_ri"] = xr.concat(
+            [*eps_ri_concat, eps_ri_noen], dim="enso_transition_phase"
+        )
 
     return out
 
@@ -1066,6 +1073,7 @@ def validate_tree(tree):
 
 
 def add_ancillary_variables_microstructure(ds):
+    ds = ds.copy()
     ds.u.attrs["standard_name"] = "sea_water_x_velocity"
     ds.v.attrs["standard_name"] = "sea_water_y_velocity"
     ds.pden.attrs["standard_name"] = "sea_water_potential_density"
@@ -1073,10 +1081,28 @@ def add_ancillary_variables_microstructure(ds):
         ds.u.cf.differentiate("Z", positive_upward=True) ** 2
         + ds.v.cf.differentiate("Z", positive_upward=True) ** 2
     )
-    del ds.zeuc.attrs["axis"]
+
+    # questionable choices to make prepare work
+    del ds["zeuc"]
+    del ds["sortTbyT"]
+    del ds["sortT"]
+    ds["densT"] = ds.pden
+
+    assert len(ds.cf.axes["Z"]) == 1
+    Zname = ds.cf.axes["Z"][0]
+    ds[Zname] = ds[Zname] * -1
+    ds[Zname].attrs["positive"] = "up"
+    ds = ds.sortby(Zname, ascending=True)
+
+    ds["Tz"] = ds.cf["sea_water_potential_temperature"].cf.differentiate(
+        "Z", positive_upward=True
+    )
+    ds["Sz"] = ds.cf["sea_water_salinity"].cf.differentiate("Z", positive_upward=True)
+    ds["N2T"] = -9.81 / 1025 * ds.densT.cf.differentiate("Z", positive_upward=True)
+    # ds["Tz"] = ds.cf["sea_water_potential_temperature"].cf.differentiate("Z", positive_upward=True)
 
     ds = prepare(ds)
-    ds["n2s2pdf"] = pdf_N2S2(ds)
+    ds.update(pdf_N2S2(ds))
     return ds
 
 
