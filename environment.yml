@@ -21,9 +21,9 @@ dependencies:
   - hdf5
   - intake
   - intake-xarray
-  - flox
   - ecgtools
   - fsspec
+  - hvplot
   - geoviews
   - h5netcdf
   - pydantic
