@@ -1,16 +1,21 @@
 import datetime
 import glob
+import os
 import warnings
 
 import cf_xarray as cfxr
 import dcpy
+import gsw_xarray
 import holoviews as hv
 import hvplot.xarray  # noqa
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import xarray as xr
+from datatree import DataTree
 from flox.xarray import xarray_reduce
+
+from .obs import process_oni
 
 ENSO_COLORS_RGB = {
     "El-Nino warm": (177, 0, 19),
@@ -1058,3 +1063,90 @@ def validate_tree(tree):
         for var in LOAD_VARNAMES:
             if var not in node.ds and var not in node.ds.cf:
                 print(f"{var} missing in {name}")
+
+
+def add_ancillary_variables_microstructure(ds):
+    ds.u.attrs["standard_name"] = "sea_water_x_velocity"
+    ds.v.attrs["standard_name"] = "sea_water_y_velocity"
+    ds.pden.attrs["standard_name"] = "sea_water_potential_density"
+    ds["S2"] = (
+        ds.u.cf.differentiate("Z", positive_upward=True) ** 2
+        + ds.v.cf.differentiate("Z", positive_upward=True) ** 2
+    )
+    del ds.zeuc.attrs["axis"]
+
+    ds = prepare(ds)
+    ds["n2s2pdf"] = pdf_N2S2(ds)
+    return ds
+
+
+def load_microstructure():
+    micro = DataTree.from_dict(
+        {
+            key: xr.open_dataset(f"~/work/datasets/microstructure/osu/{key}.nc")
+            for key in ["equix", "tropicheat", "tiwe"]
+        }
+    )
+    micro = micro.map_over_subtree(add_ancillary_variables_microstructure)
+    return micro
+
+
+def load_tao():
+    tao_gridded = xr.open_dataset(
+        os.path.expanduser("~/work/pump/zarrs/tao-gridded-ancillary.zarr"),
+        chunks="auto",
+        engine="zarr",
+    ).sel(longitude=-140, time=slice("1996", None))
+    tao_gridded["pressure"] = gsw_xarray.p_from_z(
+        tao_gridded.depth, lat=tao_gridded.latitude
+    )
+    tao_gridded["SA"] = gsw_xarray.SA_from_SP(
+        tao_gridded.S, tao_gridded.pressure, tao_gridded.longitude, tao_gridded.latitude
+    )
+    tao_gridded["CT"] = gsw_xarray.CT_from_t(
+        SA=tao_gridded.SA, t=tao_gridded.T, p=tao_gridded.pressure
+    )
+    tao_gridded["α"] = gsw_xarray.alpha(
+        tao_gridded.SA, tao_gridded.CT, tao_gridded.pressure
+    )
+    tao_gridded["β"] = gsw_xarray.beta(
+        tao_gridded.SA, tao_gridded.CT, tao_gridded.pressure
+    )
+    tao_gridded.α.attrs["standard_name"] = "sea_water_thermal_expansion_coefficient"
+    tao_gridded.β.attrs["standard_name"] = "sea_water_haline_contraction_coefficient"
+    tao_gridded["depth"].attrs["axis"] = "Z"
+    tao_gridded["shallowest"].attrs.clear()
+
+    tao_gridded["Tz"] = tao_gridded.T.cf.differentiate("Z")
+    tao_gridded.Tz.attrs = {"long_name": "$T_z$", "units": "℃/m"}
+    tao_gridded["Sz"] = tao_gridded.S.cf.differentiate("Z")
+    tao_gridded.Sz.attrs = {"long_name": "$S_z$", "units": "g/kg/m"}
+
+    chipod = (
+        dcpy.oceans.read_cchdo_chipod_file(
+            "~/datasets/microstructure/osu/chipods_0_140W.nc"
+        )
+        .sel(time=slice("2015"))
+        # move from time on the half hour to on the hour
+        .coarsen(time=2, boundary="trim")
+        .mean()
+        # "Only χpods between 29 and 69 m are used in this analysis as
+        # deeper χpods are more strongly influenced by the variability of zEUC than by surface forcing."
+        # - Warner and Moum (2019)
+        .sel(depth=slice(29, 69))
+        .reindex(time=tao_gridded.time, method="nearest", tolerance="5min")
+        .pipe(normalize_z, sort=True)
+    )
+
+    tao_gridded = tao_gridded.update(
+        chipod[["chi", "KT", "eps", "Jq"]]
+        .reset_coords(drop=True)
+        .rename({"depth": "depthchi"})
+    )
+
+    tao_gridded = prepare(tao_gridded, oni=process_oni())
+    tao_gridded["Jq"].attrs["standard_name"] = "ocean_vertical_diffusive_heat_flux"
+    del tao_gridded.KT.encoding["coordinates"]
+    add_turbulence_quantities(tao_gridded, grid=None)
+
+    return tao_gridded
