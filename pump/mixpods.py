@@ -1025,7 +1025,7 @@ def load_mom6_sections(casename):
     )
     sfc["time"] = sfc.time + datetime.timedelta(days=365 * 1957)
     # sfc["time"] = sfc.time + xr.coding.cftime_offsets.YearBegin(1957)
-    sfc.coords.update(static.drop("time"))
+    sfc.coords.update(static.drop_vars("time"))
     # sfc["tos"].attrs["coordinates"] = "geolon geolat"
 
     sst = sfc.cf["sea_surface_temperature"]
