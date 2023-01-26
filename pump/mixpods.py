@@ -1,3 +1,4 @@
+import ast
 import datetime
 import glob
 import os
@@ -8,6 +9,7 @@ import dcpy
 import gsw_xarray
 import holoviews as hv
 import hvplot.xarray  # noqa
+import intake
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -1176,3 +1178,19 @@ def load_tao():
     add_turbulence_quantities(tao_gridded, grid=None)
 
     return tao_gridded
+
+
+def load_les_moorings():
+    from .les import preprocess_les_dataset
+
+    les_catalog = intake.open_esm_datastore(
+        "../catalogs/pump-les-catalog.json",
+        read_csv_kwargs={"converters": {"variables": ast.literal_eval}},
+    )
+    mooring_datasets = les_catalog.search(
+        kind="mooring",
+        length="month",
+        latitude=0,
+    ).to_dataset_dict(preprocess=preprocess_les_dataset)
+    moorings = DataTree.from_dict(mooring_datasets).squeeze()
+    return moorings
