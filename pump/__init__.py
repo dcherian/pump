@@ -1,5 +1,3 @@
-import socket
-
 from . import KPP  # noqa
 from . import calc  # noqa
 from . import cesm  # noqa
@@ -15,10 +13,4 @@ from . import utils  # noqa
 from .calc import *  # noqa
 from .constants import *  # noqa
 from .obs import *  # noqa
-
-OPTIONS = {}
-
-if "darya" in socket.getfqdn():
-    OPTIONS["root"] = "/home/deepak/work/pump/"
-else:
-    OPTIONS["root"] = "/glade/work/dcherian/pump/"
+from .options import OPTIONS  # noqa
