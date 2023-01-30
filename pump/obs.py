@@ -1,15 +1,28 @@
+import glob
+import itertools
 import warnings
 
 import dcpy
 import numpy as np
 import pandas as pd
-import tqdm
 import xarray as xr
-
-import pump
 
 from . import mdjwf, mixpods
 from .constants import section_lons  # noqa
+from .options import OPTIONS
+
+TAO_STANDARD_NAMES = {
+    "WU_422": "eastward_wind",
+    "WV_423": "northward_wind",
+    "RH_910": "relative_humidity",
+    "T_25": "sea_surface_temperature",
+    "AT_21": "air_temperature",
+    "WS_401": "wind_speed",
+    "WD_410": "wind_from_direction",
+    "TX_442": "surface_downward_eastward_stress",
+    "TY_443": "surface_downward_northward_stress",
+    # "TAU_440": "",
+}
 
 
 def read_all(domain=None):
@@ -23,7 +36,7 @@ def read_all(domain=None):
 
 def read_johnson(filename=None):
     if filename is None:
-        root = pump.OPTIONS["root"]
+        root = OPTIONS["root"]
         filename = f"{root}/obs/johnson-eq-pac-adcp.cdf"
     ds = xr.open_dataset(filename).rename(
         {
@@ -48,7 +61,7 @@ def read_johnson(filename=None):
 
 
 def read_tao_adcp(domain=None, freq="dy", dirname=None):
-    root = pump.OPTIONS["root"]
+    root = OPTIONS["root"]
 
     if dirname is None:
         dirname = root + "/obs/tao/"
@@ -82,10 +95,11 @@ def read_tao_adcp(domain=None, freq="dy", dirname=None):
 def tao_read_and_merge(suffix, kind):
     """read non-ADCP files."""
 
-    root = pump.OPTIONS["root"]
+    root = OPTIONS["root"]
     if kind == "temp":
         prefix = "t"
         renamer = {"T_20": "T"}
+
     elif kind == "salt":
         prefix = "s"
         renamer = {"S_41": "S"}
@@ -98,29 +112,68 @@ def tao_read_and_merge(suffix, kind):
         prefix = "adcp"
         renamer = {"u_1205": "u", "v_1206": "v"}
 
+    elif kind == "met":
+        prefix = "met"
+        renamer = {
+            "WU_422": "uwnd",
+            "WV_423": "vwnd",
+            "RH_910": "relhum",
+            "T_25": "sst",
+            "AT_21": "airt",
+            "WS_401": "wndspd",
+            "WD_410": "wnddir",
+        }
+
+    elif kind == "tau":
+        prefix = "tau"
+        renamer = {
+            "TX_442": "taux",
+            "TY_443": "tauy",
+            "TAU_440": "tau",
+            "TD_445": "taudir",
+        }
+    elif kind == "rad":
+        prefix = "*nc"
+        renamer = {
+            "SWN_1495": "swnet",
+            "LWN_1136": "lwnet",
+            "QS_138": "qsen",
+            "QL_137": "qlat",
+            "QT_210": "qnet",
+        }
+
     ds = []
-    tfiles = [
-        f"{root}/obs/tao/{prefix}0n{lon}_{suffix}.cdf"
-        for lon in ["156e", "165e", "170w", "140w", "110w"]
-    ]
 
-    for file in tqdm.tqdm(tfiles):
-        try:
-            ds.append(
-                xr.open_dataset(file, chunks={"time": 1000000})[list(renamer.keys())]
-            )
-        except FileNotFoundError:
-            pass
-
-    if not ds:
-        raise ValueError(f"0 files were found: {tfiles}")
-    merged = xr.concat(ds, join="outer", dim="lon").rename(
-        {"lon": "longitude", "lat": "latitude"}
+    tfiles = tuple(
+        itertools.chain(
+            *[
+                glob.glob(f"{root}/obs/tao/{prefix}0n{lon}_{suffix}.cdf")
+                for lon in ["156e", "165e", "170w", "140w", "110w"]
+            ]
+        )
     )
 
-    merged["longitude"] = merged.longitude - 360
-    merged["depth"] = -1 * merged.depth
-    merged["depth"].attrs.update({"units": "m", "axis": "Z", "positive": "up"})
+    if not tfiles:
+        raise ValueError(f"0 files were found: {tfiles}")
+
+    ds = xr.open_mfdataset(tfiles, chunks={"time": 1000000}, join="outer")
+    if renamer:
+        ds = ds[list(renamer.keys())]
+    for name in set(TAO_STANDARD_NAMES) & set(ds.variables):
+        ds[name].attrs["standard_name"] = TAO_STANDARD_NAMES[name]
+
+    merged = ds.rename({"lon": "longitude", "lat": "latitude"}).cf.guess_coord_axis(
+        verbose=True
+    )
+
+    for var in merged:
+        merged[var] = merged[var].where(merged[var] < 1e9)
+
+    with xr.set_options(keep_attrs=True):
+        merged["longitude"] = merged.longitude - 360
+        if "depth" in merged:
+            merged["depth"] = -1 * merged.depth
+            merged["depth"].attrs.update({"units": "m", "axis": "Z", "positive": "up"})
     return merged.rename_vars(renamer)
 
 
@@ -186,7 +239,7 @@ def read_eq_tao_temp_hr():
 
 
 def read_tao(domain=None):
-    root = pump.OPTIONS["root"]
+    root = OPTIONS["root"]
 
     tao = xr.open_mfdataset(
         [
@@ -242,7 +295,7 @@ def read_tao(domain=None):
 
 def read_sst(domain=None):
 
-    root = pump.OPTIONS["root"]
+    root = OPTIONS["root"]
 
     if domain is not None:
         years = range(
@@ -276,7 +329,7 @@ def read_sst(domain=None):
 
 
 def read_oscar(domain=None):
-    root = pump.OPTIONS["root"]
+    root = OPTIONS["root"]
 
     oscar = dcpy.oceans.read_oscar(root + "/obs/oscar/").rename(
         {"lat": "latitude", "lon": "longitude"}
@@ -291,7 +344,7 @@ def read_oscar(domain=None):
 
 
 def read_argo():
-    root = pump.OPTIONS["root"]
+    root = OPTIONS["root"]
 
     dirname = root + "/obs/argo/"
     chunks = {"LATITUDE": 1, "LONGITUDE": 1}
@@ -345,7 +398,7 @@ def process_oni():
 
 def process_esrl_index(file, skipfooter=3):
     """Read and make xarray version of climate indices from ESRL."""
-    root = pump.OPTIONS["root"]
+    root = OPTIONS["root"]
 
     month_names = (
         pd.date_range("01-Jan-2001", "31-Dec-2001", freq="MS")
@@ -536,7 +589,7 @@ def read_tao_zarr(kind="gridded", **kwargs):
             f"'kind' must be one of ['gridded', 'merged']. Received {kind!r}"
         )
 
-    root = pump.OPTIONS["root"] + "/datasets/zarrs/"
+    root = OPTIONS["root"] + "/datasets/zarrs/"
     if kind == "merged":
         tao = xr.open_zarr(f"{root}/tao_eq_hr_merged_cur.zarr", **kwargs)
     elif kind == "gridded":
