@@ -809,7 +809,7 @@ def get_mld_tao_theta(theta):
 
 def add_turbulence_quantities(ds, grid):
     """
-    This is an inaccurate estimate of ε.
+    This is an inaccurate estimate of ε, χ.
     We should accumulate online and save ε, χ directly.
     """
 
@@ -864,6 +864,12 @@ def add_turbulence_quantities(ds, grid):
     # flux Ri
     ds["Rif"] = ds.Jb / ds.eps
     ds.Rif.attrs["standard_name"] = "flux_richardson_number"
+
+    # Jq
+    ds["Jq"] = -1025 * 4200 * K * ds.Tz
+    ds["Jq"].attrs["units"] = "W/m^2"
+    ds["Jq"].attrs["long_name"] = "$J_q^t$"
+    ds["Jq"].attrs["standard_name"] = "turbulent_heat_flux"
 
 
 def xgcm_interp_to(grid, da, *, axis, to):
