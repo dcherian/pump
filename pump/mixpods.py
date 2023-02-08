@@ -873,18 +873,27 @@ def add_turbulence_quantities(ds, grid):
 
     K = ds.cf["ocean_vertical_heat_diffusivity"]
     ds["Jb"] = -9.81 * (-K * α * ds.Tz + K * β * ds.Sz)
-    ds["Jb"].attrs["standard_name"] = "turbulent_buoyancy_flux"
+    ds["Jb"].attrs["standard_name"] = "ocean_vertical_diffusive_buoyancy_flux"
 
     # flux Ri
     ds["Rif"] = ds.Jb / ds.eps
     ds.Rif.attrs["standard_name"] = "flux_richardson_number"
 
+    if "ocean_vertical_diffusive_heat_flux" not in ds.cf.keys():
+        ds["Tflx_dia_diff"] = K * ds.Tz
+        ds["Tflx_dia_diff"].attrs = {
+            "units": "degC m s-1",
+            "standard_name": "ocean_vertical_diffusive_heat_flux",
+        }
+
+    # define constants, these could be moved up as arguments if we wanted to vary
+    # cp = 4186  # J/g°C
+    # rho = 1028
+
     if "Jq" not in ds:
         # Jq
-        ds["Jq"] = -1025 * 4200 * K * ds.Tz
-        ds["Jq"].attrs["units"] = "W/m^2"
-        ds["Jq"].attrs["long_name"] = "$J_q^t$"
-        ds["Jq"].attrs["standard_name"] = "turbulent_heat_flux"
+        ds["Jq"] = -1025 * 4200 * ds.cf["ocean_vertical_diffusive_heat_flux"]
+        ds["Jq"].attrs = {"units": "W/m^2", "long_name": "$J_q^t$"}
 
 
 def xgcm_interp_to(grid, da, *, axis, to):
@@ -1194,8 +1203,13 @@ def load_tao():
     )
 
     tao_gridded = prepare(tao_gridded, oni=process_oni())
-    tao_gridded["Jq"].attrs["standard_name"] = "ocean_vertical_diffusive_heat_flux"
-    del tao_gridded.KT.encoding["coordinates"]
+    tao_gridded["Tflx_dia_diff"] = tao_gridded.Jq / 1025 / 4200
+    tao_gridded["Tflx_dia_diff"].attrs[
+        "standard_name"
+    ] = "ocean_vertical_diffusive_heat_flux"
+    for var in tao_gridded.variables:
+        tao_gridded[var].encoding.pop("coordinates", None)
+
     add_turbulence_quantities(tao_gridded, grid=None)
 
     return tao_gridded
