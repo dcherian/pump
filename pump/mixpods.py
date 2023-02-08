@@ -1196,14 +1196,15 @@ def load_tao():
         os.path.expanduser(
             "~/work/pump/datasets/microstructure/chipods_0_140W_hourly.mat"
         )
-        .sel(time=slice("2015"))
+    )
+    chipod = (
+        chi  # .sel(time=slice("2015"))
         # move from time on the half hour to on the hour
         .coarsen(time=2, boundary="trim")
         .mean()
         # "Only χpods between 29 and 69 m are used in this analysis as
         # deeper χpods are more strongly influenced by the variability of zEUC than by surface forcing."
         # - Warner and Moum (2019)
-        .sel(depth=slice(29, 69))
         .reindex(time=tao_gridded.time, method="nearest", tolerance="5min")
         .pipe(normalize_z, sort=True)
     )
@@ -1245,8 +1246,7 @@ def load_les_moorings():
 
 def solar_decay_moum(h, gamma=0.04):
     # gamma is in /m so h must be in meters
-    I = 0.45 * np.exp(-gamma * np.abs(h))
-    return I
+    return 0.45 * np.exp(-gamma * np.abs(h))
 
 
 def solar_decay_mom(chl, h):
@@ -1270,7 +1270,7 @@ def solar_decay_mom(chl, h):
     k_blue = k_sw_blue + chi_blue * (chl**x_blue)
 
     h = np.abs(h)
-    I = (
+    frac = (
         frac_ir * np.exp(-k_sw_ir * h)
         + frac_red * np.exp(-k_red * h)
         + frac_blue * np.exp(-k_blue * h)
@@ -1278,12 +1278,11 @@ def solar_decay_mom(chl, h):
 
     # col = ["deepskyblue", "aquamarine", "greenyellow", "green", "darkolivegreen"]
 
-    return I
+    return frac
 
 
 def plot_climo_heat_budget_1d(ds, mxldepth=-40, penetration="mom", ax=None):
     if penetration == "mom":
-        pen_func = solar_decay_mom
         inputdir = "/glade/p/cesmdata/cseg/inputdata/ocn/mom/tx0.66v1/"
         seawifs = xr.open_dataset(f"{inputdir}/seawifs-clim-1997-2010-tx0.66v1.nc")
         chl_clim = (
