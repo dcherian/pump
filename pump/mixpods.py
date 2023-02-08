@@ -178,6 +178,16 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         assert grid is not None
         add_turbulence_quantities(out, grid)
 
+    if "sea_surface_temperature" not in ds.cf:
+        out["sst"] = (
+            out.cf["sea_water_potential_temperature"]
+            .cf.sel(Z=0, method="nearest")
+            .reset_coords(drop=True)
+        )
+        out["sst"].attrs.update(
+            {"long_name": "$SST$", "standard_name": "sea_surface_temperature"}
+        )
+
     return out
 
 
