@@ -1007,8 +1007,9 @@ def mom6_sections_to_zarr(casename):
 def load_mom6_sections(casename):
     import xgcm
 
+    root = "/glade/campaign/cgd/oce/projects/pump"
     mom6tao = xr.open_dataset(
-        f"/glade/scratch/dcherian/archive/{casename}/ocn/moorings/tao.zarr",
+        f"{root}/{casename}/ocn/moorings/tao.zarr",
         engine="zarr",
         chunks="auto",
         consolidated=True,
@@ -1034,7 +1035,7 @@ def load_mom6_sections(casename):
         metrics={("Z",): "h"},
     )
 
-    dirname = f"/glade/scratch/dcherian/archive/{casename}/ocn/hist"
+    dirname = f"{root}/{casename}/ocn/hist"
     static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
     sfc = xr.open_mfdataset(
         sorted(glob.glob(f"{dirname}/*sfc*")),
