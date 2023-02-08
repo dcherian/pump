@@ -74,7 +74,6 @@ def preprocess(ds):
 
 
 def read_cruise_folders(dirname):
-
     cruises = []
     dirs = glob.glob(dirname)
     for folder in tqdm.tqdm(dirs):
@@ -164,7 +163,6 @@ def plot_ctd_stations_sst(cruises, oisst):
 
 
 def grid_ctd_adcp(ctd, adcp):
-
     bins = get_bins_around_levels(adcp.depth.values)
     binned = (
         ctd.groupby_bins("pressure", bins).mean().rename({"pressure_bins": "depth"})
@@ -193,7 +191,6 @@ def get_bins_around_levels(levels):
 
 
 def plot_section(ctd, adcp, binned, oisst, ladcp=None):
-
     expected_lat = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5]
 
     f = plt.figure(constrained_layout=True)
@@ -282,7 +279,6 @@ def plot_section(ctd, adcp, binned, oisst, ladcp=None):
         binned.latitude.sel(latitude=expected_lat, method="nearest").values,
         expected_lat,
     ):
-
         # print([lat, expect_lat])
         # print(plotted_lats)
         # import IPython; IPython.core.debugger.set_trace()
@@ -444,7 +440,6 @@ def plot_row(ctd, adcp, binned, oisst, ax, expected_lat):
         binned.latitude.sel(latitude=expected_lat, method="nearest").values,
         expected_lat,
     ):
-
         # print([lat, expect_lat])
         # print(plotted_lats)
         # import IPython; IPython.core.debugger.set_trace()

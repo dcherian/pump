@@ -31,7 +31,6 @@ def kpp(
     rho0=1030,
     debug=False,
 ):
-
     # USAGE:  [KM KT KS ghatu ghatv ghatt ghats hbl D] = kpp(U,V,T,S,ZZ,ZP,WUSURF,WVSURF,WTSURF,WSSURF,SWRD,COR,hbl,r1,amu1,r2,amu2,imod)
     #
     #   Subroutine to implement the KPP turbulence closure for use in 1d models
@@ -264,7 +263,6 @@ def kpp(
         # print dvdz
 
     else:
-
         bvf2[1:-1] = -(gravity / rho0) * (sigma[:-2] - sigma[2:]) / (ZZ[:-2] - ZZ[2:])
         dudz[1:-1] = (U[:-2] - U[2:]) / (ZZ[:-2] - ZZ[2:])
         dvdz[1:-1] = (V[:-2] - V[2:]) / (ZZ[:-2] - ZZ[2:])

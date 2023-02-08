@@ -294,7 +294,6 @@ def read_tao(domain=None):
 
 
 def read_sst(domain=None):
-
     root = OPTIONS["root"]
 
     if domain is not None:
@@ -473,7 +472,6 @@ def read_jra(files=None, chunks={"time": 1200}, correct_time=False):
 
 
 def read_jra_95():
-
     jradir = "/glade/work/dcherian/pump/combined_95_97_JRA/"
 
     jrafull = read_jra(
@@ -508,7 +506,6 @@ def read_jra_95():
 
 
 def read_jra_20():
-
     jradir = "/glade/campaign/cgd/oce/people/bachman/make_TPOS_MITgcm/1_20_1999-2018/JRA_FORCING"
 
     # the time offset for 1999 is different from the rest!
@@ -583,7 +580,6 @@ def read_drifters(kind="annual"):
 
 
 def read_tao_zarr(kind="gridded", **kwargs):
-
     if kind not in ["gridded", "merged", "ancillary"]:
         raise ValueError(
             f"'kind' must be one of ['gridded', 'merged']. Received {kind!r}"
@@ -646,7 +642,6 @@ def get_nan_block_lengths(obj, dim, index):
 
 
 def make_enso_mask_old(threshold=6):
-
     oni = process_oni()
     ntime = oni.sizes["time"]
     # freq = xr.infer_freq(oni.time)
@@ -708,7 +703,6 @@ def make_enso_mask(nino34=None):
 
 
 def make_enso_transition_mask(oni=None):
-
     if oni is None:
         warnings.warn("Pass ONI directly please", DeprecationWarning)
         oni = process_oni()

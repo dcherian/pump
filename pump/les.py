@@ -146,7 +146,6 @@ def preprocess_les_dataset(ds):
 
 
 def write_to_txt(ds, outdir, prefix, interleave, t0=None):
-
     f = debug_plots(ds.drop_vars(["XG", "YG"]))
     f.suptitle(prefix[:-1], y=1.02)
     f.savefig(f"{outdir}/{prefix}_plot.png", dpi=150)
@@ -197,7 +196,6 @@ def interpolate(ds, newz):
 
 
 def debug_plots(ds):
-
     varnames = sorted(set(ds.data_vars) - {"time"})
 
     if "time" in ds.cf.dims:

@@ -91,7 +91,6 @@ xarray.plot.dataset_plot.quiver = quiver
 
 
 def plot_depths(ds, ax=None, **kwargs):
-
     if ax is None:
         ax = plt.gca()
 
@@ -264,7 +263,6 @@ def plot_bulk_Ri_diagnosis(ds, f=None, ax=None, buoy=True, **kwargs):
 def plot_jq_sst(
     model, lon, periods, lat=0, period=None, full=None, eucmax=None, time_Ri=None
 ):
-
     tao = None
     if not isinstance(model, xr.Dataset):
         sst = model.surface.theta.sel(longitude=lon, method="nearest")
@@ -480,7 +478,6 @@ def plot_jq_sst(
 
 
 def plot_debug_sst_front(model, lon, periods):
-
     _, sst, sstfilt, gradT, tiw_phase, period, _ = model.get_quantities_for_composite(
         longitudes=[lon]
     )
@@ -568,7 +565,6 @@ def plot_debug_sst_front(model, lon, periods):
 
 
 def plot_shred2_time_instant(tsub, ax, add_colorbar):
-
     kwargs = dict(
         # vmin=-0.02,
         # vmax=0.02,
@@ -662,7 +658,6 @@ def plot_shred2_time_instant(tsub, ax, add_colorbar):
 
 
 def plot_tiw_lat_lon_summary(subset, times):
-
     f = plt.figure(constrained_layout=True)
     width = dcpy.plots.pub_fig_width("jpo", "two column")
     f.set_size_inches((width, 5))
@@ -977,7 +972,6 @@ def plot_dcl(subset, shear_max=False, zeros_flux=True, lw=2, kpp_terms=True):
     locator.intervald[mpl.dates.HOURLY] = [12]  # only show every 3 hours
 
     def plot(ax):
-
         if Rib is not None:
             hrib = (
                 dcpy.interpolate.pchip_roots(
@@ -1150,13 +1144,14 @@ def plot_shear_terms(ds, duzdt, dvzdt, mask_dcl=True):
     def avg(ds):
         return ds.sel(depth=slice(-60), latitude=slice(-2, 6.5)).mean("depth")
 
-    terms = ["shear",] + [
+    terms = [
+        "shear",
+    ] + [
         term
         for term in ["xadv", "yadv", "str", "vtilt", "htilt", "buoy", "fric"]
         if term in duzdt
     ]
     with plt.rc_context({"font.size": 9}):
-
         f, axx = plt.subplots(
             len(terms), 2, sharex=True, sharey=True, constrained_layout=True
         )
@@ -1281,7 +1276,6 @@ def vor_streamplot(
     scale=0.6,
     ax=None,
 ):
-
     subset = vort.sel(latitude=slice(-2, 5), depth=slice(0, -60)).mean("depth")
     f0 = vort.f.reindex_like(subset.z)
 
@@ -1440,7 +1434,6 @@ def vor_streamplot(
 
 
 def plot_reference_speed(ax):
-
     ax.axvline(-110)
 
     speeds = [
@@ -1463,7 +1456,6 @@ plot_reference = plot_reference_speed
 
 
 def plot_daily_cycles(ds):
-
     f, axx = plt.subplots(4, 1, sharex=True, sharey=True, constrained_layout=True)
     ax = dict(zip(["Ri", "S2", "N2", "Jq"], axx))
 
@@ -1497,7 +1489,6 @@ def plot_daily_cycles(ds):
 
 
 def plot_Rig_u(ds):
-
     f, ax = plt.subplots(3, 1, sharex=True, sharey=True, squeeze=False)
     ds.T.plot(robust=True, x="time", ax=ax[0, 0])
     ds.Rig.plot(

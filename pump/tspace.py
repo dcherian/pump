@@ -251,7 +251,6 @@ def regrid_chameleon_(profiles, *, bins=None, debug=False, trim_mld=False):
 
 
 def regrid_chameleon(profiles, bins, time_freq, debug=False, trim_mld=False):
-
     dsets = [
         regrid_chameleon_(
             prof,

@@ -153,7 +153,6 @@ def calc_reduced_shear(data):
 
 
 def _get_max(var, dim="depth"):
-
     # return((xr.where(var == var.max(dim), var[dim], np.nan))
     #       .max(dim))
 
@@ -546,7 +545,6 @@ def fix_phase_using_sst_front(gr, debug=False):
 
 
 def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
-
     ds = sig
     sig = ds["sst"]
     grad = ds["grad"].squeeze()
@@ -725,7 +723,6 @@ def _find_phase_single_lon(sig, algo_0_180="zero-crossing", debug=False):
 
 
 def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
-
     if filt == "lowpass":
         sstfilt = xfilter.lowpass(
             sst.sel(latitude=slice(-1, 5)).mean("latitude"),
@@ -765,7 +762,6 @@ def tiw_avg_filter_sst(sst, filt="bandpass", debug=False):
 
 
 def get_tiw_phase_sst(sstfilt, gradsst, debug=False):
-
     ds = xr.Dataset()
     ds["sst"] = sstfilt
     ds["grad"] = gradsst
@@ -923,7 +919,6 @@ def estimate_euc_depth_terms(ds, inplace=True):
 
 
 def estimate_bulk_Ri_terms(ds, inplace=True, use_mld=True):
-
     # ds.load()
 
     if not inplace:
@@ -968,7 +963,6 @@ def estimate_bulk_Ri_terms(ds, inplace=True, use_mld=True):
         ds.du.attrs["long_name"] = "$\Delta$u"
 
     if "dens" in ds:
-
         # ds["dens_euc"] = ds.dens.interp(
         #     depth=ds.eucmax, longitude=ds.longitude, method="linear"
         # )
@@ -1226,7 +1220,6 @@ def coare_fluxes_jra(ocean, forcing):
 
 
 def calc_kpp_terms(station, debug=False):
-
     from . import KPP
 
     station = station.sel(depth=slice(-500))
@@ -1304,7 +1297,6 @@ def calc_kpp_terms(station, debug=False):
 
 
 def vorticity(period4):
-
     assert period4.sizes["longitude"] > 1
 
     vort = xr.Dataset()
@@ -1350,7 +1342,6 @@ def get_euc_bounds(usub, debug=False):
 
 
 def find_extent_ufunc(data, coord, breaks, debug=False):
-
     from scipy.signal import find_peaks
 
     minbaseheight = 10
@@ -1381,7 +1372,6 @@ def find_extent_ufunc(data, coord, breaks, debug=False):
     used = []
     idx = np.full((6, 3), fill_value=-12345)
     for ipeak in range(npeaks):
-
         for ibin, (lo, hi) in enumerate(zip(breaks[:-1], breaks[1:])):
             peak_coord = coord[peakidx[ipeak]]
             if peak_coord > lo and peak_coord <= hi:

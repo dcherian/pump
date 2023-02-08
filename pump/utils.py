@@ -49,7 +49,6 @@ def lowpass(obj, coord, freq, cycles_per="s", order=2, use_overlap=True, debug=F
     import scipy as sp
 
     def _process_time(time, cycles_per="s"):
-
         time = time.copy()
         dt = np.nanmedian(np.diff(time.values) / np.timedelta64(1, cycles_per))
 

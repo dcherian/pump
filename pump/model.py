@@ -58,14 +58,13 @@ def read_mitgcm_coords(dirname):
 
             h[ff] += (attrs,)
 
-        except (FileNotFoundError):
+        except FileNotFoundError:
             print(f"metrics files not available. {dirname + ff}")
 
     return xr.Dataset(h)
 
 
 def rename_mitgcm_budget_terms(hb, coords):
-
     hb_ren = xr.Dataset()
     for var in hb:
         if "x_TH" in var:
@@ -136,7 +135,6 @@ def mitgcm_sw_prof(depth):
 
 
 def make_cartesian(ds):
-
     renamer = {
         dim: dim.replace("xi", "lon").replace("eta", "lat")
         for dim in ds.dims
@@ -327,7 +325,7 @@ def read_metrics(dirname):
                 .squeeze()
                 .astype("float")
             )
-        except (FileNotFoundError):
+        except FileNotFoundError:
             print(f"metrics files not available. {dirname + ff}")
             metrics = None
             return xr.Dataset()
@@ -864,7 +862,6 @@ class Model:
         self.metrics = metrics
 
     def read_budget(self):
-
         if self.name == "gcm1":
             chunks = {"depth": 50 * 2, "latitude": 69 * 2, "longitude": 215 * 2}
         else:
@@ -898,7 +895,6 @@ class Model:
         self.budget["Jq"].attrs["units"] = "W/m$^2$"
 
     def get_tiw_phase(self, v, debug=False):
-
         ph = []
         for tt in self.tiw_trange:
             print(tt)
@@ -973,7 +969,6 @@ class Model:
         }
 
     def plot_tiw_summary(self, subset, ax=None, normalize_period=False, **kwargs):
-
         if ax is None:
             f, axx = plt.subplots(
                 9,
@@ -1098,7 +1093,6 @@ class Model:
     def plot_tiw_composite(
         self, region=dict(latitude=0, longitude=-140), ax=None, ds="tao", **kwargs
     ):
-
         ds = getattr(self, ds)
 
         subset = ds.sel(**region)
@@ -1125,7 +1119,6 @@ class Model:
         return handles, ax
 
     def plot_dcl(self, region, ds="tao"):
-
         subset = getattr(self, ds).sel(**region)
 
         f, axx = plt.subplots(

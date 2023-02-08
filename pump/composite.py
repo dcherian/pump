@@ -43,7 +43,6 @@ def detrend(data, dim):
 
 
 class Composite:
-
     data = dict()
 
     def __init__(self, comp_dict):
@@ -65,7 +64,6 @@ class Composite:
         return data
 
     def plot(self, variable, filter=True, ax=None, **kwargs):
-
         if ax is None:
             ax = plt.gca()
         data = self.get(variable, filter)
@@ -76,7 +74,6 @@ class Composite:
         return handle
 
     def overlay_contours(self, variable, filter=False, ax=None, **kwargs):
-
         if ax is None:
             ax = plt.gca()
         overlay = self.get(variable, filter)
@@ -144,7 +141,6 @@ def tiw_avg_filter_v(v):
 
 
 def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
-
     prom = 0.1
     indexes, properties = sp.signal.find_peaks(-data, prominence=prom)
     indexes = np.array(indexes)
@@ -209,7 +205,6 @@ def _get_tiv_extent_single_period(data, iy0, debug_ax, debug=False):
 
 
 def get_tiv_extent(data, kind, dim="latitude", debug=False, savefig=False):
-
     if kind == "warm":
         # data = data - 0.15
         iy0 = data.where(np.abs(data.latitude) < 3).argmax(dim)
@@ -349,7 +344,6 @@ def sst_for_y_reference_cold(anom):
 
 
 def tiw_period_anom(x):
-
     x = detrend(x, "latitude")
 
     return x - x.mean()
@@ -360,7 +354,6 @@ def tiw_period_anom(x):
 
 
 def _get_y_reference(theta, periods=None, kind="cold", debug=False, savefig=False):
-
     if periods is not None:
         subset = theta.where(theta.period.isin(periods), drop=True)
     else:
@@ -531,7 +524,6 @@ def _wrap_interp(x, y, newx, out):
 
 
 def to_uniform_grid(data, coord, new_coord=np.arange(-4, 4, 0.01)):
-
     if isinstance(new_coord, np.ndarray):
         new_coord = xr.DataArray(new_coord, dims=[coord], name=coord)
 
@@ -662,7 +654,6 @@ def make_composite(data, interped=None, mean_yref=None, mean_lat=None):
 
 
 def test_composite_algorithm(full, tao, period, debug=False):
-
     assert "sst" in full
 
     sst = full.sst - full.sst.mean("time")
