@@ -790,7 +790,7 @@ def map_hvplot(func, datasets, visible=None):
         visible = []
     return hv.Overlay(
         [func(ds, name=name, muted=name in visible) for name, ds in datasets.items()]
-    )
+    ).collate()
 
 
 def get_mld_tao_theta(theta):
@@ -1007,7 +1007,6 @@ def read_mom6_sections(casename):
 
 
 def mom6_sections_to_zarr(casename):
-
     mom6tao = read_mom6_sections(casename)
     mom6tao.drop_vars(
         ["average_DT", "average_T2", "average_T1", "time_bnds"], errors="ignore"
