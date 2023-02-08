@@ -1180,9 +1180,21 @@ def load_tao():
     tao_gridded["Sz"] = tao_gridded.S.cf.differentiate("Z")
     tao_gridded.Sz.attrs = {"long_name": "$S_z$", "units": "g/kg/m"}
 
-    chipod = (
-        dcpy.oceans.read_cchdo_chipod_file(
-            "~/datasets/microstructure/osu/chipods_0_140W.nc"
+    tao_gridded["swnet"].attrs[
+        "standard_name"
+    ] = "net_downward_shortwave_flux_at_sea_water_surface"
+    tao_gridded["qnet"].attrs[
+        "standard_name"
+    ] = "surface_downward_heat_flux_in_sea_water"
+
+    # chi = (dcpy.oceans.read_cchdo_chipod_file(
+    #        "~/datasets/microstructure/osu/chipods_0_140W.nc"
+    #    )
+    #       )
+
+    chi = read_chipod_mat_file(
+        os.path.expanduser(
+            "~/work/pump/datasets/microstructure/chipods_0_140W_hourly.mat"
         )
         .sel(time=slice("2015"))
         # move from time on the half hour to on the hour
@@ -1229,3 +1241,137 @@ def load_les_moorings():
     ).to_dataset_dict(preprocess=preprocess_les_dataset)
     moorings = DataTree.from_dict(mooring_datasets).squeeze()
     return moorings
+
+
+def solar_decay_moum(h, gamma=0.04):
+    # gamma is in /m so h must be in meters
+    I = 0.45 * np.exp(-gamma * np.abs(h))
+    return I
+
+
+def solar_decay_mom(chl, h):
+    frac_ir = 0.58
+    frac_vis = 0.42
+    frac_red = 0.5 * frac_vis
+    frac_blue = frac_red
+
+    k_sw_ir = 2.86
+    k_sw_red = 0.255
+    k_sw_blue = 0.0232
+
+    chi_red = 0.037
+    chi_blue = 0.074
+
+    x_red = 0.629
+    x_blue = 0.674
+
+    # chl = np.array([1.0e-3, 0.01, 0.1, 1.0, 10.0])
+    k_red = k_sw_red + chi_red * (chl**x_red)
+    k_blue = k_sw_blue + chi_blue * (chl**x_blue)
+
+    h = np.abs(h)
+    I = (
+        frac_ir * np.exp(-k_sw_ir * h)
+        + frac_red * np.exp(-k_red * h)
+        + frac_blue * np.exp(-k_blue * h)
+    )
+
+    # col = ["deepskyblue", "aquamarine", "greenyellow", "green", "darkolivegreen"]
+
+    return I
+
+
+def plot_climo_heat_budget_1d(ds, mxldepth=-40, penetration="mom", ax=None):
+    if penetration == "mom":
+        pen_func = solar_decay_mom
+        inputdir = "/glade/p/cesmdata/cseg/inputdata/ocn/mom/tx0.66v1/"
+        seawifs = xr.open_dataset(f"{inputdir}/seawifs-clim-1997-2010-tx0.66v1.nc")
+        chl_clim = (
+            seawifs.cf.sel(latitude=0, longitude=-140, method="nearest")
+            .CHL_A.drop_vars("TIME")
+            .assign_coords(TIME=np.arange(1, 13))
+            .rename({"TIME": "time"})
+        )
+
+        pen = (
+            solar_decay_mom(h=mxldepth, chl=chl_clim)
+            .reindex(time=ds.time.dt.month)
+            .assign_coords(time=ds.time.data)
+        )
+    elif penetration == "moum":
+        pen = solar_decay_moum(h=mxldepth)
+    else:
+        raise ValueError(f"Unknown solar penetration function: {penetration}")
+
+    terms = xr.Dataset()
+    terms["Jq_0"] = ds.cf["surface_downward_heat_flux_in_sea_water"]
+    terms["Jq_0"].attrs["long_name"] = "$J_q^{-0}$"
+    terms["SW"] = ds.cf["net_downward_shortwave_flux_at_sea_water_surface"]
+    terms["Jq_h"] = np.abs(
+        1025 * 4200 * ds.cf["ocean_vertical_diffusive_heat_flux"]
+    ).cf.sel(Z=slice(-60, -20))
+    terms["Jq_h"].attrs["long_name"] = "$J_q^{-h}$"
+    terms["sst"] = ds.sst
+    terms["Ih"] = terms.SW * pen
+    terms["Ih"].attrs["long_name"] = "$I^{h}$"
+    terms["Jq0-Ih"] = terms.Jq_0 - terms.Ih
+    terms["Jq0-Ih"].attrs["long_name"] = "$J_q^0 - I^h$"
+
+    terms = terms.cf.groupby("time.month").mean(["Z", "time"]).load()
+
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(6, 3))
+    terms.Jq_h.plot(ax=ax)
+    terms["Jq0-Ih"].plot(ax=ax, color="red")
+    ax.legend(frameon=False, loc="upper right")
+    ax.set_ylim(0, 150)
+    ax.set_ylabel(r"[W/m$^2$]")
+
+    ax_sst = ax.twinx()
+    terms["sst"].plot(ax=ax_sst, color="k", _labels=False)
+    ax_sst.set_ylabel(r"[$^{\circ}$C]")
+    ax_sst.set_ylim([24.5, 27.5])
+    ax_sst.legend(frameon=False, loc="upper left")
+
+    ax.fill_between(
+        range(1, 13),
+        terms["Jq0-Ih"],
+        terms["Jq_h"],
+        where=(terms["Jq0-Ih"] >= terms["Jq_h"]).data,
+        facecolor="red",
+        alpha=0.2,
+        interpolate=True,
+    )
+    ax.fill_between(
+        range(1, 13),
+        terms["Jq0-Ih"],
+        terms["Jq_h"],
+        where=(terms["Jq0-Ih"] < terms["Jq_h"]).data,
+        facecolor="blue",
+        alpha=0.2,
+        interpolate=True,
+    )
+    ax.grid(b=None)
+    ax_sst.grid(b=None)
+
+
+def read_chipod_mat_file(fname):
+    import h5py
+    import pandas as pd
+
+    file = h5py.File(fname, mode="r")
+
+    chipod = xr.Dataset()
+
+    chipod["depth"] = ("depth", file["chr"]["depth"][:].squeeze())
+    chipod["time"] = ("time", file["chr"]["time"][:].squeeze())
+    chipod["time"] = pd.to_datetime(chipod.time.data - 719529, unit="D")
+    for var in ["Jq", "Kt", "N2", "T", "chi", "dTdz", "eps"]:
+        chipod[var] = xr.DataArray(file["chr"][var][:, :], dims=("time", "depth"))
+    chipod = chipod.cf.guess_coord_axis()
+    chipod["depth"].attrs["positive"] = "down"
+    chipod = chipod.rename({"Kt": "KT"})
+    chipod["KT"].attrs["standard_name"] = "ocean_vertical_heat_diffusivity"
+
+    file.close()
+    return chipod
