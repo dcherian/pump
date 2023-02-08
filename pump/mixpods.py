@@ -342,7 +342,7 @@ def pdf_N2S2(data, coord_is_center=False):
         newby.extend(by[2:])
         eps = data.eps.cf.sel(Z=epsZ)
 
-        if "enso_transition" in eps.coords:
+        if "enso_transition" in data.variables:
             out["eps_n2s2"] = xr.concat(
                 [
                     xarray_reduce(eps, *newby, func=func, **enso_kwargs)
@@ -657,9 +657,13 @@ def make_enso_transition_mask(oni):
     enso.coords["cool_mask"] = cool_mask
 
     enso.name = "enso_phase"
-    enso.attrs[
-        "description"
-    ] = "Warner & Moum (2019) ENSO transition phase; El-Nino = ONI > 0.5 for at least 6 months; La-Nina = ONI < -0.5 for at least 6 months"
+    enso.attrs = {
+        "description": (
+            "Warner & Moum (2019) ENSO transition phase; "
+            "El-Nino = ONI > 0.5 for at least 6 months; "
+            "La-Nina = ONI < -0.5 for at least 6 months"
+        )
+    }
 
     return enso
 
