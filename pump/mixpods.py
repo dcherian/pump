@@ -680,20 +680,21 @@ def make_enso_transition_mask(oni):
 
 def normalize_z_da(da):
     """Normalize vertical depth so that positive is always up."""
-    datapos = da.attrs.get("positive", None)
-    if not datapos:
-        Z = da.cf["Z"]
-        if "positive" not in Z.attrs:
-            raise ValueError(
-                "Could not find a 'positive' attribute to use for normalization."
-            )
-        newz = normalize_z(Z)
-        da[Z.name] = newz
-        return da
+    with xr.set_options(keep_attrs=True):
+        datapos = da.attrs.get("positive", None)
+        if not datapos:
+            Z = da.cf["Z"]
+            if "positive" not in Z.attrs:
+                raise ValueError(
+                    "Could not find a 'positive' attribute to use for normalization."
+                )
+            newz = normalize_z(Z)
+            da[Z.name] = newz
+            return da
 
-    if datapos == "down":
-        da = da * -1
-        da.attrs["positive"] = "up"
+        if datapos == "down":
+            da = da * -1
+            da.attrs["positive"] = "up"
 
     return da
 
@@ -702,12 +703,13 @@ def normalize_z(obj, sort=False):
     if isinstance(obj, xr.DataArray):
         return normalize_z_da(obj)
     else:
-        out = obj.copy(deep=True)
-        for z in set(out.cf.axes["Z"]) & set(out.dims):
-            assert "positive" in out[z].attrs
-            out[z] = normalize_z_da(out[z])
-            if sort:
-                out = out.sortby(z)
+        with xr.set_options(keep_attrs=True):
+            out = obj.copy(deep=True)
+            for z in set(out.cf.axes["Z"]) & set(out.dims):
+                assert "positive" in out[z].attrs
+                out[z] = normalize_z_da(out[z])
+                if sort:
+                    out = out.sortby(z)
 
         return out
 
