@@ -3,10 +3,7 @@
 # Script to loop on timespan (day / week / month or year) to optimize dataset requests (heavy in terms of number of files to be manipulated).
 
 
-import calendar
-import datetime as dt
 import os
-import platform
 import subprocess
 import time
 
@@ -214,7 +211,6 @@ boundaries = {
 }
 # To illustrate a For_Loop in order to generate download requests for several datasets held in a product
 for key, value in dict_id.items():
-
     if buffer_flag:
         print(
             "Little pause to let the server clearing the buffer, it will AUTOMATICALLY resume once it's completed.\nNot mandatory but server-friendly :-)\n"
@@ -226,7 +222,6 @@ for key, value in dict_id.items():
     # for as many download requests as number of months available in the timerange.
     for time_start, time_end in zip(date_starts, date_stops):
         for bound, (x0, x1, y0, y1) in boundaries.items():
-
             xmin = "-x " + str(x0)
             xmax = "-X " + str(x1)
             ymin = "-y " + str(y0)
