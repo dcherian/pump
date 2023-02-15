@@ -266,6 +266,7 @@ def pdf_N2S2(data, coord_is_center=False):
     index = pd.IntervalIndex.from_breaks(bins, closed="left")
 
     assert_z_is_normalized(data)
+    do_enso_phase = "enso_transition" in data.variables
 
     data["S2"] = data.S2.where(data.dcl_mask)
 
@@ -287,7 +288,7 @@ def pdf_N2S2(data, coord_is_center=False):
     enso_counts = xarray_reduce(data.S2, *by, func="count", **enso_kwargs)
 
     to_concat = []
-    if "enso_transition" in data.variables:
+    if do_enso_phase:
         counts_all = enso_counts.sum("enso_transition", keepdims=True).assign_coords(
             enso_transition=["none"]
         )
@@ -317,7 +318,7 @@ def pdf_N2S2(data, coord_is_center=False):
     counts.N2T_bins.attrs["long_name"] = "log$_{10} 4N_T^2$"
     counts.S2_bins.attrs["long_name"] = "log$_{10} S^2$"
 
-    if "enso_transition" in data.variables:
+    if do_enso_phase:
         counts["enso_transition_phase"].attrs = {
             "description": (
                 "El-Nino transition phase as defined by Warner and Moum (2019)."
@@ -357,9 +358,9 @@ def pdf_N2S2(data, coord_is_center=False):
                 dim="stat",
             )
 
-        Ri = np.log10(reindex_Z_to(data.Rig_T, epsZ))
-        # Ri_bins = np.logspace(np.log10(0.025), np.log10(2), 11)
-        Ri_bins = np.arange(-1.6, 0.4, 0.2)  # in log space from Sally
+        Ri = reindex_Z_to(data.Rig_T, epsZ)
+        # Ri_bins = np.exp(np.logspace(np.log10(0.025), np.log10(2), 11))
+        Ri_bins = 10 ** np.arange(-1.6, 0.4, 0.2)  # in log space from Sally
         # Ri_bins = np.array([0.02, 0.04, 0.06, 0.1, 0.3, 0.5, 0.7, 1.5, 2])
         Ri_kwargs = {
             "expected_groups": (Ri_bins, None),
@@ -367,7 +368,7 @@ def pdf_N2S2(data, coord_is_center=False):
         }
 
         eps_ri_concat = []
-        if "enso_transition" in eps.coords:
+        if do_enso_phase:
             eps_ri = xr.concat(
                 [
                     xarray_reduce(
