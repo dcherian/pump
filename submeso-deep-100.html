@@ -596,7 +596,7 @@ title="Print to PDF"
 <h2>Read data<a class="headerlink" href="#read-data" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s1">&#39;/home/dcherian/pump/TPOS_MITgcm_HR/&#39;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/home/dcherian/pump/TPOS_MITgcm_HR/&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -609,7 +609,7 @@ title="Print to PDF"
     <span class="n">data_vars</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
     <span class="n">coords</span><span class="o">=</span><span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
     <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">,</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">}</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -621,7 +621,7 @@ title="Print to PDF"
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">oceans</span><span class="o">.</span><span class="n">coriolis</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
-<span class="n">vor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">110e3</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span><span class="o">/</span><span class="mf">105e3</span>
+<span class="n">vor</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">110e3</span> <span class="o">-</span> <span class="n">ds</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">differentiate</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">105e3</span>
 <span class="n">Ro</span> <span class="o">=</span> <span class="n">vor</span> <span class="o">/</span> <span class="n">f</span>
 <span class="n">Ro</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;long_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;$Ro = ζ/f$&quot;</span>
 <span class="n">Ro</span>

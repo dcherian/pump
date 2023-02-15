@@ -626,21 +626,15 @@ title="Print to PDF"
     <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;NUMBA_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">}</span>
-<span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span>
-    <span class="n">n_workers</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> 
-    <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
-    <span class="n">env</span><span class="o">=</span><span class="n">env</span>
-                  
-<span class="p">)</span>
-<span class="c1">#cluster = dask_jobqueue.SLURMCluster(</span>
+<span class="n">env</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;OMP_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;NUMBA_NUM_THREADS&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">}</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
+<span class="c1"># cluster = dask_jobqueue.SLURMCluster(</span>
 <span class="c1">#    cores=1, processes=1, memory=&quot;25GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0011&quot;</span>
-<span class="c1">#)</span>
-<span class="c1">#cluster = dask_jobqueue.PBSCluster(</span>
+<span class="c1"># )</span>
+<span class="c1"># cluster = dask_jobqueue.PBSCluster(</span>
 <span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
 <span class="c1">#    env_extra=env,</span>
-<span class="c1">#)</span>
+<span class="c1"># )</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
 <span class="n">cluster</span>
@@ -659,16 +653,16 @@ title="Print to PDF"
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">read_metrics</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">    This function needs longitude, latitude, depth to assign the right metadata.</span>
 <span class="sd">    If size of the metrics variables are not the same as (longitude, latitude),</span>
 <span class="sd">    the code assumes that a boundary region has been cut out at the low-end and</span>
 <span class="sd">    high-end of the appropriate axis.</span>
-<span class="sd">    </span>
+
 <span class="sd">    If the size in depth-axis is different, then it assumes that the provided depth</span>
 <span class="sd">    is a slice from surface to the Nth-point where N=len(depth).</span>
-<span class="sd">    </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">xmitgcm</span>
 
@@ -676,7 +670,7 @@ title="Print to PDF"
     <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;hFacC&quot;</span><span class="p">,</span> <span class="s2">&quot;RAC&quot;</span><span class="p">,</span> <span class="s2">&quot;RF&quot;</span><span class="p">,</span> <span class="s2">&quot;DXC&quot;</span><span class="p">,</span> <span class="s2">&quot;DYC&quot;</span><span class="p">]:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">h</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">=</span> <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="n">ff</span><span class="p">)[</span><span class="n">ff</span><span class="p">]</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;metrics files not available. </span><span class="si">{</span><span class="n">dirname</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ff</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
@@ -688,34 +682,33 @@ title="Print to PDF"
     <span class="n">DYC</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="s2">&quot;DYC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
 
     <span class="k">del</span> <span class="n">h</span>
-    
+
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span> <span class="o">!=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
         <span class="n">dlon</span> <span class="o">=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
-        <span class="n">lons</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlon</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlon</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlon</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlon</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        
         <span class="n">lons</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span> <span class="o">!=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="n">dlat</span> <span class="o">=</span> <span class="n">RAC</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
-        <span class="n">lats</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlat</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlat</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">dlat</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">dlat</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lats</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="n">RAC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-        <span class="n">RAC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">RAC</span><span class="p">[</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">],</span>
         <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
         <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RAC&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">DXC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-        <span class="n">DXC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">DXC</span><span class="p">[</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">],</span>
         <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
         <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DXC&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">DYC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-        <span class="n">DYC</span><span class="p">[</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">DYC</span><span class="p">[</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">],</span>
         <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
         <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">},</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DYC&quot;</span><span class="p">,</span>
@@ -739,7 +732,7 @@ title="Print to PDF"
     <span class="n">RF</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">RF</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth_left&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;depth_left&quot;</span><span class="p">)</span>
 
     <span class="n">hFacC</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-        <span class="n">hFacC</span><span class="p">[:,</span> <span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">],</span>
+        <span class="n">hFacC</span><span class="p">[:,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">],</span>
         <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
         <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="n">depth</span><span class="p">,</span>
@@ -756,31 +749,35 @@ title="Print to PDF"
     <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;cellvol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">cellvol</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;RF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF</span>
-    
+
     <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;rAw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/RAW&quot;</span><span class="p">)[</span><span class="s2">&quot;RAW&quot;</span><span class="p">][</span><span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
-        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">]</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/RAW&quot;</span><span class="p">)[</span><span class="s2">&quot;RAW&quot;</span><span class="p">][</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
-        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/hFacW&quot;</span><span class="p">)[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">][:,</span> <span class="n">lats</span> <span class="p">,</span><span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
-        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">])</span>
+        <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/hFacW&quot;</span><span class="p">)[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">][:,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="s2">&quot;float32&quot;</span>
+        <span class="p">),</span>
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
     <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;hFacW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;drF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
         <span class="n">xmitgcm</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">read_mds</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;/DRF&quot;</span><span class="p">)[</span><span class="s2">&quot;DRF&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span>
-        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">])</span>
-    
-    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]),</span> <span class="n">depth_left</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-    
+        <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span>
+        <span class="n">depth</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]),</span> <span class="n">depth_left</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">sizes</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">metrics</span>
 
 
 <span class="k">def</span> <span class="nf">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">):</span>
-    
     <span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
-    
-    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
 
     <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -788,11 +785,11 @@ title="Print to PDF"
 
     <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s1">&#39;LHS&#39;</span><span class="p">,</span> <span class="s1">&#39;RHS&#39;</span><span class="p">,</span> <span class="s1">&#39;LHS-RHS&#39;</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">((</span><span class="s2">&quot;LHS&quot;</span><span class="p">,</span> <span class="s2">&quot;RHS&quot;</span><span class="p">,</span> <span class="s2">&quot;LHS-RHS&quot;</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">diff</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;LHS - RHS&#39;</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;LHS - RHS&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -811,32 +808,38 @@ title="Print to PDF"
 <h3>Read in data<a class="headerlink" href="#read-in-data" title="Permalink to this headline">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_0003_hb.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
-<span class="n">sf_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_0003_surf.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
-<span class="n">budget</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">hb_files</span><span class="p">,</span> <span class="n">sf_files</span><span class="p">])</span>
-          <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">))</span>
-
-<span class="n">budget</span><span class="p">[</span><span class="s1">&#39;oceQsw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">oceQsw</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="c1"># budget = budget.drop([&quot;DFxE_TH&quot;, &quot;DFyE_TH&quot;, &quot;DFrE_TH&quot;])</span>
-
-<span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">read_metrics</span><span class="p">(</span>
-        <span class="n">dirname</span><span class="p">,</span> 
-        <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> 
-        <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
-        <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
+    <span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;File_0003_hb.nc&quot;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">sf_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
+    <span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;File_0003_surf.nc&quot;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">hb_files</span><span class="p">,</span> <span class="n">sf_files</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span>
+    <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span>
 <span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">sw_prof</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>    
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; MITgcm Shortwave radiation penetration profile. &quot;&quot;&quot;</span>
+<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;oceQsw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">oceQsw</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># budget = budget.drop([&quot;DFxE_TH&quot;, &quot;DFyE_TH&quot;, &quot;DFrE_TH&quot;])</span>
+
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">read_metrics</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="p">,</span>
+    <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span>
+    <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
+    <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
+
+
+<span class="k">def</span> <span class="nf">sw_prof</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;MITgcm Shortwave radiation penetration profile.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="mf">0.62</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">depth</span> <span class="o">/</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.62</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">depth</span> <span class="o">/</span> <span class="mi">20</span><span class="p">)</span>
 
+
 <span class="c1"># penetrative shortwave radiation</span>
-<span class="n">budget</span><span class="p">[</span><span class="s1">&#39;swprofile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;swprofile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
     <span class="n">sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="n">sw_prof</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">RF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
-    <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;depth&#39;</span><span class="p">],</span>
-    <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;SW radiation deposited in cell&#39;</span><span class="p">})</span>
+    <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;depth&quot;</span><span class="p">],</span>
+    <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;long_name&quot;</span><span class="p">:</span> <span class="s2">&quot;SW radiation deposited in cell&quot;</span><span class="p">},</span>
+<span class="p">)</span>
 
 <span class="n">budget</span>
 </pre></div>
@@ -876,62 +879,70 @@ Data variables:
 <span class="n">metrics_sub</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">longitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 <span class="n">cellvol</span> <span class="o">=</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">cellvol</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 
-<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;ADVr_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;ADVr_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;DFrI_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;DFrI_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-<span class="n">terms</span><span class="p">[</span><span class="s1">&#39;KPPg_THp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s1">&#39;KPPg_TH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">terms</span><span class="p">[</span><span class="s2">&quot;ADVr_THp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s2">&quot;ADVr_TH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">terms</span><span class="p">[</span><span class="s2">&quot;DFrI_THp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s2">&quot;DFrI_TH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">terms</span><span class="p">[</span><span class="s2">&quot;KPPg_THp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="p">[</span><span class="s2">&quot;KPPg_TH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">levelp</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
 <span class="n">surf_mass</span> <span class="o">=</span> <span class="n">terms</span><span class="o">.</span><span class="n">WTHMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">RAC</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 <span class="c1"># constants taken from diagnostics.log (I think)</span>
-<span class="n">global_area</span> <span class="o">=</span> <span class="mf">2.196468634481708E+13</span>
+<span class="n">global_area</span> <span class="o">=</span> <span class="mf">2.196468634481708e13</span>
 <span class="n">rhoConst</span> <span class="o">=</span> <span class="mi">1035</span>
 <span class="n">Cp</span> <span class="o">=</span> <span class="mi">3994</span>
 <span class="n">TsurfCor</span> <span class="o">=</span> <span class="n">surf_mass</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">global_area</span>
 
 <span class="n">LHS</span> <span class="o">=</span> <span class="n">terms</span><span class="o">.</span><span class="n">TOTTTEND</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">86400</span>
 
-<span class="n">ADVx</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
-        <span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
-<span class="n">ADVy</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">-</span>
-        <span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
-<span class="n">ADVr</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVr_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
-        <span class="n">terms</span><span class="o">.</span><span class="n">ADVr_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">ADVx</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">ADVx_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">ADVy</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">ADVy_TH</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">ADVr</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">terms</span><span class="o">.</span><span class="n">ADVr_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">ADVr_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">/</span> <span class="n">cellvol</span>
 
 <span class="c1"># no explicit diffusion</span>
 <span class="c1"># DFxE = (terms.DFxE_TH.values[2:, 1:-1] - terms.DFxE_TH.values[1:-1, 1:-1]) / cellvol</span>
 <span class="c1"># DFyE = (terms.DFyE_TH.values[1:-1, 2:] - terms.DFyE_TH.values[1:-1, 1:-1]) / cellvol</span>
 <span class="c1"># DFrE = (terms.DFrE_TH.values[1:-1, 1:-1] - terms.DFrE_THp.values[1:-1, 1:-1]) / cellvol</span>
-<span class="n">DFrI</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">DFrI_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
-        <span class="n">terms</span><span class="o">.</span><span class="n">DFrI_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">DFrI</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">terms</span><span class="o">.</span><span class="n">DFrI_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">DFrI_THp</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">/</span> <span class="n">cellvol</span>
 
 <span class="c1"># non-local stuff only in mixing layer</span>
-<span class="n">KPPg</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">KPPg_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
-        <span class="n">terms</span><span class="o">.</span><span class="n">KPPg_THp</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">cellvol</span>
+<span class="n">KPPg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">terms</span><span class="o">.</span><span class="n">KPPg_TH</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">KPPg_THp</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">/</span> <span class="n">cellvol</span>
 
 <span class="n">ADV</span> <span class="o">=</span> <span class="n">LHS</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">ADVx</span> <span class="o">+</span> <span class="n">ADVy</span> <span class="o">+</span> <span class="n">ADVr</span><span class="p">)</span>
 <span class="n">DIFF</span> <span class="o">=</span> <span class="n">LHS</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">DFrI</span> <span class="o">+</span> <span class="n">KPPg</span><span class="p">)</span>  <span class="c1"># no explicit horizontal diffusion</span>
-<span class="n">ADV</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ADV&#39;</span>
-<span class="n">DIFF</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;DIFF&#39;</span>
+<span class="n">ADV</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;ADV&quot;</span>
+<span class="n">DIFF</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;DIFF&quot;</span>
 
-<span class="n">SW</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span><span class="p">)</span> <span class="o">/</span>
-      <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">)</span> <span class="o">*</span> <span class="n">terms</span><span class="o">.</span><span class="n">swprofile</span><span class="p">)</span>
+<span class="n">SW</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="o">/</span> <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span><span class="p">)</span>
+    <span class="o">/</span> <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">)</span>
+    <span class="o">*</span> <span class="n">terms</span><span class="o">.</span><span class="n">swprofile</span>
+<span class="p">)</span>
 
-<span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span><span class="n">ADV</span> <span class="o">+</span> <span class="n">DIFF</span> <span class="o">+</span> <span class="n">SW</span><span class="p">)</span>
+<span class="n">RHS</span> <span class="o">=</span> <span class="n">ADV</span> <span class="o">+</span> <span class="n">DIFF</span> <span class="o">+</span> <span class="n">SW</span>
 
 <span class="c1"># surface level stuff</span>
 <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="c1"># surface tendency due to SW flux</span>
-    <span class="n">tflx_tend</span> <span class="o">=</span> <span class="p">((</span><span class="n">terms</span><span class="o">.</span><span class="n">TFLUX</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span>
-                 <span class="p">(</span><span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">))</span>
+    <span class="n">tflx_tend</span> <span class="o">=</span> <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">TFLUX</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">terms</span><span class="o">.</span><span class="n">oceQsw</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">rhoConst</span> <span class="o">*</span> <span class="n">Cp</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span>
+    <span class="p">)</span>
 
     <span class="c1"># tendency due to mass correction</span>
     <span class="n">surf_corr_tend</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">WTHMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TsurfCor</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">))</span>
+        <span class="p">(</span><span class="n">terms</span><span class="o">.</span><span class="n">WTHMASS</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">TsurfCor</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">metrics_sub</span><span class="o">.</span><span class="n">dRF</span> <span class="o">*</span> <span class="n">metrics_sub</span><span class="o">.</span><span class="n">hFacC</span><span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="n">RHS</span> <span class="o">+=</span> <span class="n">tflx_tend</span> <span class="o">+</span> <span class="n">surf_corr_tend</span>
 
 <span class="n">RHS</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
-    
+
 <span class="n">plot_lhs_rhs</span><span class="p">(</span><span class="n">LHS</span><span class="p">,</span> <span class="n">RHS</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -956,12 +967,30 @@ Data variables:
 <p>Need to append zeros to the viscosity terms because the bottom level is not stored :/</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ssh_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_etan.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ub_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_ub.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">vb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span><span class="n">dirname</span> <span class="o">+</span> <span class="s1">&#39;File_*_vb.nc&#39;</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ssh_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;File_*_etan.nc&quot;</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ub_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;File_*_ub.nc&quot;</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">vb_files</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_mfdataset</span><span class="p">(</span>
+    <span class="n">dirname</span> <span class="o">+</span> <span class="s2">&quot;File_*_vb.nc&quot;</span><span class="p">,</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">},</span>
+    <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;by_coords&quot;</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="c1"># sf_files = xr.open_mfdataset(dirname + &#39;File_*_surf.nc&#39;, chunks={&quot;latitude&quot;: 120, &quot;longitude&quot;: 500}, combine=&quot;by_coords&quot;, parallel=True)[[&quot;ETAN&quot;]]</span>
-<span class="n">budget</span> <span class="o">=</span> <span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">ub_files</span><span class="p">,</span> <span class="n">vb_files</span><span class="p">,</span> <span class="n">ssh_files</span><span class="p">])</span>
-          <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">ub_files</span><span class="p">,</span> <span class="n">vb_files</span><span class="p">,</span> <span class="n">ssh_files</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span>
+        <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
 <span class="c1"># From http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006920.html</span>
 <span class="c1"># And to get a tendency from this vertical flux:</span>
@@ -971,7 +1000,7 @@ Data variables:
 <span class="c1"># VISrI_Um(k=1) should be zero, and the bottom one (k=Nr+1)</span>
 <span class="c1"># is not shored in the output file but it&#39;s also zero.</span>
 
-<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;VISrI_Um&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># fills surface values with 0 </span>
+<span class="n">budget</span><span class="p">[</span><span class="s2">&quot;VISrI_Um&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># fills surface values with 0</span>
 <span class="n">budget</span><span class="p">[</span><span class="s2">&quot;VISrI_Vm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -983,7 +1012,9 @@ Data variables:
 <span class="n">VISrI_Um</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="p">,</span>
-        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">])</span>        
+        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Um</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span>
+            <span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">]</span>
+        <span class="p">),</span>
     <span class="p">],</span>
     <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
 <span class="p">)</span>
@@ -991,7 +1022,9 @@ Data variables:
 <span class="n">VISrI_Vm</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="p">,</span>
-        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">])</span>        
+        <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">budget</span><span class="o">.</span><span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span>
+            <span class="n">depth</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5865.922</span><span class="p">]</span>
+        <span class="p">),</span>
     <span class="p">],</span>
     <span class="n">dim</span><span class="o">=</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1001,13 +1034,9 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">read_metrics</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> 
-                 <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> 
-                 <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span>
-                 <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="n">read_metrics</span><span class="p">(</span>
+    <span class="n">dirname</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">depth</span>
+<span class="p">)</span><span class="o">.</span><span class="n">chunk</span><span class="p">({</span><span class="s2">&quot;latitude&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">})</span>
 <span class="n">metrics</span>
 </pre></div>
 </div>
@@ -1038,36 +1067,40 @@ Data variables:
 <p>We are using <code class="docutils literal notranslate"><span class="pre">implicSurfPres=1</span></code> and Scott is saving SSH at the appropriate timestep.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span> <span class="c1"># depth level # budget.sizes[&quot;depth&quot;]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">120</span>
+<span class="c1"># depth level # budget.sizes[&quot;depth&quot;]</span>
 
-<span class="c1">#SSHx = - 9.81 * budget.ETAN.copy(</span>
+<span class="c1"># SSHx = - 9.81 * budget.ETAN.copy(</span>
 <span class="c1">#    data=np.gradient(budget.ETAN, axis=budget.ETAN.get_axis_num(&quot;longitude&quot;))</span>
-<span class="c1">#) / metrics.DXC</span>
+<span class="c1"># ) / metrics.DXC</span>
 
 
-<span class="c1"># when trying to do a budget over just 1 time-step, one needs to be aware </span>
-<span class="c1">#  of the precise time-discretisation of the the first term which is evaluated </span>
-<span class="c1">#  in the model as </span>
-<span class="c1">#   - gravity * {  implicSurfPress * (d.EtaN/dx)^n+1 </span>
+<span class="c1"># when trying to do a budget over just 1 time-step, one needs to be aware</span>
+<span class="c1">#  of the precise time-discretisation of the the first term which is evaluated</span>
+<span class="c1">#  in the model as</span>
+<span class="c1">#   - gravity * {  implicSurfPress * (d.EtaN/dx)^n+1</span>
 <span class="c1">#                +(1-implicSurfPress)*(d.EtaN/dx)^n }</span>
-<span class="c1">#  (using the default implicSurfPress=1 , it might be be easier to use </span>
+<span class="c1">#  (using the default implicSurfPress=1 , it might be be easier to use</span>
 <span class="c1">#   snap-shot output Eta.[iter+1] to get EtaN^n+1 )</span>
 
 <span class="c1"># this works because Scott has saved SSH one timestep prior to the saved timestep for the other fields</span>
-<span class="n">SSHx</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span> 
-        <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXC</span><span class="p">)</span>
+<span class="n">SSHx</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">-</span><span class="mf">9.81</span>
+    <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;longitude&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">longitude</span><span class="p">)</span>
+    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DXC</span>
+<span class="p">)</span>
 
 <span class="c1"># from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</span>
-<span class="n">Um_Impl</span> <span class="o">=</span><span class="p">(</span> <span class="n">VISrI_Um</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-          <span class="o">/</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)))</span>
+<span class="n">Um_Impl</span> <span class="o">=</span> <span class="n">VISrI_Um</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+<span class="p">)</span>
 
 
 <span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">SSHx</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_dPHdx</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Advec</span>
-    <span class="c1">#+ budget.Um_Cori  # is in Um_Advec</span>
+    <span class="c1"># + budget.Um_Cori  # is in Um_Advec</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Diss</span>
     <span class="o">+</span> <span class="n">Um_Impl</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Um_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -1076,8 +1109,8 @@ Data variables:
 
 <span class="n">LHS</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">TOTUTEND</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">86400</span>
 
-<span class="c1">#da = xr.Dataset({&quot;LHS&quot;: LHS, &quot;RHS&quot;: RHS}).to_array(&quot;variable&quot;)</span>
-<span class="c1">#da.compute().plot(row=&quot;variable&quot;, robust=True, x=&quot;longitude&quot;, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;})</span>
+<span class="c1"># da = xr.Dataset({&quot;LHS&quot;: LHS, &quot;RHS&quot;: RHS}).to_array(&quot;variable&quot;)</span>
+<span class="c1"># da.compute().plot(row=&quot;variable&quot;, robust=True, x=&quot;longitude&quot;, cbar_kwargs={&quot;orientation&quot;: &quot;horizontal&quot;})</span>
 </pre></div>
 </div>
 </div>
@@ -1090,7 +1123,13 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
+    <span class="n">col_wrap</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1107,7 +1146,7 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1184,24 +1223,26 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">level</span> <span class="o">=</span> <span class="mi">10</span>
 
-<span class="n">SSHy</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.81</span> <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span>
-        <span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
-        <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYC</span><span class="p">)</span>
+<span class="n">SSHy</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">-</span><span class="mf">9.81</span>
+    <span class="o">*</span> <span class="n">budget</span><span class="o">.</span><span class="n">ETAN</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">budget</span><span class="o">.</span><span class="n">latitude</span><span class="p">)</span>
+    <span class="o">/</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DYC</span>
+<span class="p">)</span>
 
 <span class="c1"># from http://mailman.mitgcm.org/pipermail/mitgcm-support/2010-December/006921.html</span>
-<span class="n">Vm_Impl</span> <span class="o">=</span><span class="p">(</span> <span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
-          <span class="o">/</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)))</span>
+<span class="n">Vm_Impl</span> <span class="o">=</span> <span class="n">VISrI_Vm</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="n">metrics</span><span class="o">.</span><span class="n">rAw</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">drF</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">*</span> <span class="n">metrics</span><span class="o">.</span><span class="n">hFacW</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+<span class="p">)</span>
 <span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">SSHy</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_dPHdy</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Advec</span>
-    <span class="c1">#+ budget.Vm_Cori  # in Vm_Advec</span>
+    <span class="c1"># + budget.Vm_Cori  # in Vm_Advec</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Diss</span>
     <span class="o">+</span> <span class="n">Vm_Impl</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">Vm_Ext</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="o">+</span> <span class="n">budget</span><span class="o">.</span><span class="n">AB_gV</span>
-<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> 
+<span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
 
 <span class="n">LHS</span> <span class="o">=</span> <span class="n">budget</span><span class="o">.</span><span class="n">TOTVTEND</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">level</span><span class="p">)</span> <span class="o">/</span> <span class="mi">86400</span>
 </pre></div>
@@ -1216,12 +1257,12 @@ task: &lt;Task pending coro=&lt;Nanny._on_exit() running at /glade/u/home/dcheri
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span><span class="o">-</span><span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> 
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LHS</span> <span class="o">-</span> <span class="n">RHS</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span>
     <span class="n">col_wrap</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> 
-    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span> 
-    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">},</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>

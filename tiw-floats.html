@@ -466,7 +466,9 @@ dask       : 2.30.0
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/Day_2000.nc&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
+    <span class="s2">&quot;/glade/campaign/cgd/oce/people/dcherian/TPOS_MITgcm_1_hb/full_domain/HOLD_NC/Day_2000.nc&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -513,7 +515,6 @@ dask       : 2.30.0
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the new Kernel that mimics Argo vertical movement</span>
 <span class="k">def</span> <span class="nf">EMApexVerticalMovement</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">fieldset</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
-
     <span class="c1"># if all(fieldset.U.depth &gt;= 0):</span>
     <span class="c1">#    sign = 1</span>
     <span class="c1"># else:</span>
@@ -654,7 +655,7 @@ INFO: You can use &quot;parcels_convert_npydir_to_netcdf ../trajectories/out-SVI
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_file</span><span class="o">.</span><span class="n">export</span><span class="p">()</span> 
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_file</span><span class="o">.</span><span class="n">export</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -696,7 +697,6 @@ INFO: You can use &quot;parcels_convert_npydir_to_netcdf ../trajectories/out-SVI
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the new Kernel that mimics Argo vertical movement</span>
 <span class="k">def</span> <span class="nf">ArgoVerticalMovement</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="n">fieldset</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
-
     <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">fieldset</span><span class="o">.</span><span class="n">U</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span>

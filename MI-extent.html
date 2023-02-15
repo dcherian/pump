@@ -1977,10 +1977,10 @@ xarray     : 0.19.0
 <span class="k">if</span> <span class="s2">&quot;client&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
     <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="k">del</span> <span class="n">client</span>
-<span class="c1">#if &quot;cluster&quot; in locals():</span>
+<span class="c1"># if &quot;cluster&quot; in locals():</span>
 <span class="c1">#    cluster.close()</span>
 
-<span class="c1">#env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}</span>
+<span class="c1"># env = {&quot;OMP_NUM_THREADS&quot;: &quot;3&quot;, &quot;NUMBA_NUM_THREADS&quot;: &quot;3&quot;}</span>
 
 <span class="c1"># cluster = distributed.LocalCluster(</span>
 <span class="c1">#    n_workers=8,</span>
@@ -1991,26 +1991,27 @@ xarray     : 0.19.0
 <span class="k">if</span> <span class="s2">&quot;cluster&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
     <span class="k">del</span> <span class="n">cluster</span>
 
-<span class="c1">#cluster = ncar_jobqueue.NCARCluster(</span>
+<span class="c1"># cluster = ncar_jobqueue.NCARCluster(</span>
 <span class="c1">#    project=&quot;NCGD0011&quot;,</span>
 <span class="c1">#    scheduler_options=dict(dashboard_address=&quot;:9797&quot;),</span>
-<span class="c1">#)</span>
+<span class="c1"># )</span>
 <span class="c1"># cluster = dask_jobqueue.PBSCluster(</span>
 <span class="c1">#    cores=9, processes=9, memory=&quot;108GB&quot;, walltime=&quot;02:00:00&quot;, project=&quot;NCGD0043&quot;,</span>
 <span class="c1">#    env_extra=env,</span>
 <span class="c1"># )</span>
 
 <span class="kn">import</span> <span class="nn">dask_jobqueue</span>
+
 <span class="n">cluster</span> <span class="o">=</span> <span class="n">dask_jobqueue</span><span class="o">.</span><span class="n">PBSCluster</span><span class="p">(</span>
-    <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># The number of cores you want</span>
-    <span class="n">memory</span><span class="o">=</span><span class="s1">&#39;23GB&#39;</span><span class="p">,</span> <span class="c1"># Amount of memory</span>
-    <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># How many processes</span>
-    <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;casper&#39;</span><span class="p">,</span> <span class="c1"># The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)</span>
-    <span class="n">local_directory</span><span class="o">=</span><span class="s1">&#39;$TMPDIR&#39;</span><span class="p">,</span> <span class="c1"># Use your local directory</span>
-    <span class="n">resource_spec</span><span class="o">=</span><span class="s1">&#39;select=1:ncpus=1:mem=23GB&#39;</span><span class="p">,</span> <span class="c1"># Specify resources</span>
-    <span class="n">project</span><span class="o">=</span><span class="s1">&#39;ncgd0011&#39;</span><span class="p">,</span> <span class="c1"># Input your project ID here</span>
-    <span class="n">walltime</span><span class="o">=</span><span class="s1">&#39;02:00:00&#39;</span><span class="p">,</span> <span class="c1"># Amount of wall time</span>
-    <span class="n">interface</span><span class="o">=</span><span class="s1">&#39;ib0&#39;</span><span class="p">,</span> <span class="c1"># Interface to use</span>
+    <span class="n">cores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># The number of cores you want</span>
+    <span class="n">memory</span><span class="o">=</span><span class="s2">&quot;23GB&quot;</span><span class="p">,</span>  <span class="c1"># Amount of memory</span>
+    <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># How many processes</span>
+    <span class="n">queue</span><span class="o">=</span><span class="s2">&quot;casper&quot;</span><span class="p">,</span>  <span class="c1"># The type of queue to utilize (/glade/u/apps/dav/opt/usr/bin/execcasper)</span>
+    <span class="n">local_directory</span><span class="o">=</span><span class="s2">&quot;$TMPDIR&quot;</span><span class="p">,</span>  <span class="c1"># Use your local directory</span>
+    <span class="n">resource_spec</span><span class="o">=</span><span class="s2">&quot;select=1:ncpus=1:mem=23GB&quot;</span><span class="p">,</span>  <span class="c1"># Specify resources</span>
+    <span class="n">project</span><span class="o">=</span><span class="s2">&quot;ncgd0011&quot;</span><span class="p">,</span>  <span class="c1"># Input your project ID here</span>
+    <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;02:00:00&quot;</span><span class="p">,</span>  <span class="c1"># Amount of wall time</span>
+    <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;ib0&quot;</span><span class="p">,</span>  <span class="c1"># Interface to use</span>
 <span class="p">)</span>
 <span class="n">cluster</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -2169,9 +2170,10 @@ Hosting the HTTP server on port 46243 instead
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">print_metrics</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">metricvars</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> at </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">dims</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">metricvars</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">var</span><span class="o">.</span><span class="n">dims</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">v</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">k</span><span class="p">))</span><span class="si">!s}</span><span class="s2">: </span><span class="si">{</span><span class="n">metricvars</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
+
+
 <span class="n">print_metrics</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2923,7 +2925,7 @@ Data variables:
     <span class="n">x</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">add_legend</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
-<span class="c1">#for i in idx:</span>
+<span class="c1"># for i in idx:</span>
 <span class="c1">#    ax[0].plot([subset.time.data[i]] * 2, [-10, 10])</span>
 <span class="c1">#    extent = find_extent(</span>
 <span class="c1">#        tsmoothed.isel(time=i).compute(),</span>
@@ -2933,7 +2935,7 @@ Data variables:
 <span class="c1">#    )</span>
 
 <span class="n">f</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="c1">#extents.isel(time=i).compute()</span>
+<span class="c1"># extents.isel(time=i).compute()</span>
 </pre></div>
 </div>
 </div>
@@ -3775,12 +3777,28 @@ distributed.utils_perf - WARNING - full garbage collections took 56% CPU time re
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">ds</span><span class="p">[</span>
         <span class="p">[</span>
-            <span class="s2">&quot;UVEL&quot;</span><span class="p">,</span> <span class="s2">&quot;VVEL&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;ULONG&quot;</span><span class="p">,</span> <span class="s2">&quot;TLONG&quot;</span><span class="p">,</span> <span class="s2">&quot;ULAT&quot;</span><span class="p">,</span> <span class="s2">&quot;TLAT&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;DXU&quot;</span><span class="p">,</span> <span class="s2">&quot;DYU&quot;</span><span class="p">,</span> <span class="s2">&quot;DXT&quot;</span><span class="p">,</span> <span class="s2">&quot;DYT&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;grav&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="s2">&quot;rho_sw&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;z_t&quot;</span><span class="p">,</span> <span class="s2">&quot;z_w&quot;</span><span class="p">,</span> <span class="s2">&quot;z_w_bot&quot;</span><span class="p">,</span> <span class="s2">&quot;z_w_top&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;XMXL&quot;</span><span class="p">,</span> <span class="s2">&quot;TMXL&quot;</span><span class="p">,</span> <span class="s2">&quot;HMXL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;UVEL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;VVEL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TAREA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;UAREA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ULONG&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TLONG&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ULAT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TLAT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DXU&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DYU&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DXT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DYT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;grav&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Q&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rho_sw&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;z_t&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;z_w&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;z_w_bot&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;z_w_top&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;XMXL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TMXL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;HMXL&quot;</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">]</span>
 </pre></div>
@@ -3791,7 +3809,9 @@ distributed.utils_perf - WARNING - full garbage collections took 56% CPU time re
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gridvars</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
     <span class="p">[</span>
-        <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/project/oce/deppenme/helpdir/Pac_DZU_t13.nc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;z_t&quot;</span><span class="p">}),</span> 
+        <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/project/oce/deppenme/helpdir/Pac_DZU_t13.nc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="s2">&quot;z_t&quot;</span><span class="p">}</span>
+        <span class="p">),</span>
         <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;/project/oce/deppenme/helpdir/Pac_dzt_t13.nc&quot;</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
@@ -5671,10 +5691,10 @@ Attributes:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DXU&#39;</span><span class="p">,</span> <span class="s1">&#39;DXT&#39;</span><span class="p">],</span> <span class="c1"># X distances </span>
-    <span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DYU&#39;</span><span class="p">,</span> <span class="s1">&#39;DYT&#39;</span><span class="p">],</span> <span class="c1"># Y distances </span>
-    <span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DZU&#39;</span><span class="p">,</span> <span class="s1">&#39;DZT&#39;</span><span class="p">],</span> <span class="c1"># Z distances </span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">):</span> <span class="p">[</span><span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">],</span> <span class="c1"># Areas (unnecessary)</span>
+    <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,):</span> <span class="p">[</span><span class="s2">&quot;DXU&quot;</span><span class="p">,</span> <span class="s2">&quot;DXT&quot;</span><span class="p">],</span>  <span class="c1"># X distances</span>
+    <span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,):</span> <span class="p">[</span><span class="s2">&quot;DYU&quot;</span><span class="p">,</span> <span class="s2">&quot;DYT&quot;</span><span class="p">],</span>  <span class="c1"># Y distances</span>
+    <span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,):</span> <span class="p">[</span><span class="s2">&quot;DZU&quot;</span><span class="p">,</span> <span class="s2">&quot;DZT&quot;</span><span class="p">],</span>  <span class="c1"># Z distances</span>
+    <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">):</span> <span class="p">[</span><span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">],</span>  <span class="c1"># Areas (unnecessary)</span>
 <span class="p">}</span>
 
 <span class="n">grid</span><span class="p">,</span> <span class="n">xpac</span> <span class="o">=</span> <span class="n">pop_tools</span><span class="o">.</span><span class="n">to_xgcm_grid_dataset</span><span class="p">(</span>
@@ -5687,10 +5707,10 @@ Attributes:
 <span class="n">pacific</span><span class="o">.</span><span class="n">DZTW</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;grid_loc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;3112&quot;</span>
 
 <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DXU&#39;</span><span class="p">,</span> <span class="s1">&#39;DXT&#39;</span><span class="p">],</span> <span class="c1"># X distances </span>
-    <span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DYU&#39;</span><span class="p">,</span> <span class="s1">&#39;DYT&#39;</span><span class="p">],</span> <span class="c1"># Y distances </span>
-    <span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,):</span> <span class="p">[</span><span class="s1">&#39;DZU&#39;</span><span class="p">,</span> <span class="s1">&#39;DZT&#39;</span><span class="p">,</span> <span class="s1">&#39;DZUW&#39;</span><span class="p">,</span> <span class="s1">&#39;DZTW&#39;</span><span class="p">],</span> <span class="c1"># Z distances </span>
-    <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">):</span> <span class="p">[</span><span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">],</span> <span class="c1"># Areas (unnecessary)</span>
+    <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,):</span> <span class="p">[</span><span class="s2">&quot;DXU&quot;</span><span class="p">,</span> <span class="s2">&quot;DXT&quot;</span><span class="p">],</span>  <span class="c1"># X distances</span>
+    <span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,):</span> <span class="p">[</span><span class="s2">&quot;DYU&quot;</span><span class="p">,</span> <span class="s2">&quot;DYT&quot;</span><span class="p">],</span>  <span class="c1"># Y distances</span>
+    <span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,):</span> <span class="p">[</span><span class="s2">&quot;DZU&quot;</span><span class="p">,</span> <span class="s2">&quot;DZT&quot;</span><span class="p">,</span> <span class="s2">&quot;DZUW&quot;</span><span class="p">,</span> <span class="s2">&quot;DZTW&quot;</span><span class="p">],</span>  <span class="c1"># Z distances</span>
+    <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">):</span> <span class="p">[</span><span class="s2">&quot;UAREA&quot;</span><span class="p">,</span> <span class="s2">&quot;TAREA&quot;</span><span class="p">],</span>  <span class="c1"># Areas (unnecessary)</span>
 <span class="p">}</span>
 
 <span class="n">grid</span><span class="p">,</span> <span class="n">xpac</span> <span class="o">=</span> <span class="n">pop_tools</span><span class="o">.</span><span class="n">to_xgcm_grid_dataset</span><span class="p">(</span>
@@ -7631,10 +7651,12 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#xpac[&quot;pden&quot;] = pop_tools.eos(xpac.SALT, xpac.TEMP, depth=xpac.z_t)</span>
-<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">UVEL</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">VVEL</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">xpac</span><span class="o">.</span><span class="n">grav</span> <span class="o">/</span> <span class="n">xpac</span><span class="o">.</span><span class="n">rho_sw</span> <span class="o">*</span> <span class="n">xpac</span><span class="o">.</span><span class="n">Q</span>  <span class="c1">#9.81/1025 * grid.derivative(xpac.pden, &quot;Z&quot;)</span>
-<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;Ri&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xpac</span><span class="o">.</span><span class="n">N2</span><span class="o">/</span><span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">S2</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># xpac[&quot;pden&quot;] = pop_tools.eos(xpac.SALT, xpac.TEMP, depth=xpac.z_t)</span>
+<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;S2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">UVEL</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">grid</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">VVEL</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;N2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">xpac</span><span class="o">.</span><span class="n">grav</span> <span class="o">/</span> <span class="n">xpac</span><span class="o">.</span><span class="n">rho_sw</span> <span class="o">*</span> <span class="n">xpac</span><span class="o">.</span><span class="n">Q</span>
+<span class="p">)</span>  <span class="c1"># 9.81/1025 * grid.derivative(xpac.pden, &quot;Z&quot;)</span>
+<span class="n">xpac</span><span class="p">[</span><span class="s2">&quot;Ri&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xpac</span><span class="o">.</span><span class="n">N2</span> <span class="o">/</span> <span class="n">grid</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xpac</span><span class="o">.</span><span class="n">S2</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -7647,10 +7669,8 @@ Attributes:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eq</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">xpac</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="mi">151</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">500</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
-    <span class="c1">#.chunk({&quot;time&quot;: -1,})</span>
+    <span class="n">xpac</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="mi">151</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">500</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+    <span class="c1"># .chunk({&quot;time&quot;: -1,})</span>
 <span class="p">)</span>
 <span class="n">eq</span><span class="p">[</span><span class="s2">&quot;TLONG&quot;</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
 <span class="n">eq</span><span class="p">[</span><span class="s2">&quot;TLONG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">TLONG</span><span class="o">.</span><span class="n">interpolate_na</span><span class="p">(</span><span class="s2">&quot;nlon_t&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
@@ -8207,10 +8227,10 @@ Attributes:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-    <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span> 
-    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">,</span> 
-    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;aspect&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">}</span>
+    <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">,</span>
+    <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;orientation&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;aspect&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -8218,7 +8238,9 @@ Attributes:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Spectral_r</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8237,12 +8259,9 @@ Attributes:
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="n">t</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="p">(</span>
-    <span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">Ri_kwargs</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="n">eq</span><span class="o">.</span><span class="n">HMXL</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">eq</span><span class="o">.</span><span class="n">XMXL</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">Ri_kwargs</span><span class="p">))</span>
+<span class="n">eq</span><span class="o">.</span><span class="n">HMXL</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">eq</span><span class="o">.</span><span class="n">XMXL</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8729,7 +8748,9 @@ Data variables:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">medianRi</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">250</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">**</span><span class="n">Ri_kwargs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">medianRi</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">250</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">**</span><span class="n">Ri_kwargs</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8743,27 +8764,25 @@ Data variables:
 
 
 <span class="c1"># Use a custom array type to know when data is being evaluated</span>
-<span class="k">class</span> <span class="nc">Array</span><span class="p">():</span>
-    
+<span class="k">class</span> <span class="nc">Array</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;bool&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;bool&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
-        
+
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stop</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evaluating&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mf">.5</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluating&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
 
 <span class="c1"># Control case -- this shows that the print statement is only reached once</span>
-<span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span><span class="o">.</span><span class="n">compute</span><span class="p">();</span>
+<span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 <span class="c1"># Evaluating</span>
 
 <span class="c1"># This usage somehow results in two evaluations of this one array?</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-    <span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">))))</span>
-<span class="p">))</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">))))))</span>
 <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
 <span class="c1"># Evaluating</span>
 <span class="c1"># Evaluating</span>
@@ -8774,12 +8793,14 @@ Data variables:
 <span class="c1">#     a        (x) bool dask.array&lt;chunksize=(51,), meta=np.ndarray&gt;</span>
 
 <span class="c1"># The array is evaluated an extra time for each new variable</span>
-<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-    <span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)))),</span>
-    <span class="n">b</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-    <span class="n">c</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-    <span class="n">d</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-<span class="p">))</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+    <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)))),</span>
+        <span class="n">b</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
+        <span class="n">c</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
+        <span class="n">d</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -9293,12 +9314,21 @@ Data variables:
 <span class="kn">from</span> <span class="nn">xarray.tests</span> <span class="kn">import</span> <span class="n">raise_if_dask_computes</span>
 
 <span class="k">with</span> <span class="n">raise_if_dask_computes</span><span class="p">(</span><span class="n">max_computes</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">,))),</span>
-        <span class="n">b</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-        <span class="n">c</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-        <span class="n">d</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
-    <span class="p">))</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+        <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">a</span><span class="o">=</span><span class="p">(</span>
+                <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+                <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+                        <span class="mi">100</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">b</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
+            <span class="n">c</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
+            <span class="n">d</span><span class="o">=</span><span class="p">((</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">))),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">))</span>
 </pre></div>
 </div>
