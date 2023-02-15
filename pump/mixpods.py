@@ -19,6 +19,9 @@ from flox.xarray import xarray_reduce
 
 from .obs import process_oni
 
+
+ROOT = "/glade/campaign/cgd/oce/projects/pump/cesm/"
+
 ENSO_COLORS_RGB = {
     "El-Nino warm": (177, 0, 19),
     "El-Nino cool": (255, 108, 50),
@@ -1020,7 +1023,7 @@ def mom6_sections_to_zarr(casename):
     mom6tao.drop_vars(
         ["average_DT", "average_T2", "average_T1", "time_bnds"], errors="ignore"
     ).chunk({"time": 24 * 365}).to_zarr(
-        f"/glade/scratch/dcherian/archive/{casename}/ocn/moorings/tao.zarr",
+        f"{ROOT}/{casename}/run/tao.zarr",
         mode="w",
         consolidated=True,
     )
@@ -1029,9 +1032,9 @@ def mom6_sections_to_zarr(casename):
 def load_mom6_sections(casename):
     import xgcm
 
-    root = "/glade/campaign/cgd/oce/projects/pump"
+    # root = "/glade/scratch/dcherian/archive/"
     mom6tao = xr.open_dataset(
-        f"{root}/{casename}/ocn/moorings/tao.zarr",
+        f"{ROOT}/{casename}/run/tao.zarr",
         engine="zarr",
         chunks="auto",
         consolidated=True,
@@ -1057,10 +1060,10 @@ def load_mom6_sections(casename):
         metrics={("Z",): "h"},
     )
 
-    dirname = f"{root}/{casename}/ocn/hist"
+    dirname = f"{ROOT}/{casename}/run"
     static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
     sfc = xr.open_mfdataset(
-        sorted(glob.glob(f"{dirname}/*sfc*")),
+        sorted(glob.glob(f"{dirname}/*{casename}*sfc*")),
         coords="minimal",
         data_vars="minimal",
         compat="override",
@@ -1354,7 +1357,7 @@ def plot_climo_heat_budget_1d(ds, mxldepth=-40, penetration="mom", ax=None):
     ax_sst.grid(b=None)
 
 
-def read_chipod_mat_file(fname):
+def read_chipod_mat_file(fname, mask=True):
     import h5py
     import pandas as pd
 
@@ -1373,4 +1376,21 @@ def read_chipod_mat_file(fname):
     chipod["KT"].attrs["standard_name"] = "ocean_vertical_heat_diffusivity"
 
     file.close()
+
+    locs = [
+        # from sally; all three depths show an increase though...
+        # so I've commented it out
+        # {"time": "2007-01-14 10:30:00", "depth": 49.0},
+        # From sally
+        {"time": "2007-01-28 14:30:00", "depth": 59.0},
+        # the rest are mine
+        {"time": "2011-02-08 10:30:00", "depth": 49.0},
+        {"time": "2010-12-22 05:30:00", "depth": 49.0},
+        {"time": "2009-12-21 13:30:00", "depth": 89.0},
+    ]
+
+    if mask:
+        for loc in locs:
+            for var in ["chi", "eps", "Jq", "KT"]:
+                chipod[var].loc[loc] = np.nan
     return chipod
