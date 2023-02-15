@@ -321,7 +321,8 @@ def pdf_N2S2(data, coord_is_center=False):
         counts["enso_transition_phase"].attrs = {
             "description": (
                 "El-Nino transition phase as defined by Warner and Moum (2019)."
-                " 'none' uses all available data. 'all' sums over all ENSO transition phases"
+                " 'none' uses all available data."
+                " 'all' sums over all ENSO transition phases"
             )
         }
 
@@ -623,14 +624,19 @@ def make_enso_transition_mask(oni):
     ln_mask = _get_nan_block_lengths(
         xr.where(oni <= -thresh, np.nan, 0, keep_attrs=False), dim="time", index=index
     ).isel(time=slice(-1)) >= pd.Timedelta("59d")
-    # neut_mask = _get_nan_block_lengths(xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0), dim="time", index=index) >= pd.Timedelta("120d")
+    # neut_mask = _get_nan_block_lengths(
+    # xr.where((ssta < 0.5) & (ssta > -0.5), np.nan, 0),
+    # dim="time", index=index)
+    # >= pd.Timedelta("120d")
 
     # donidt = oni.diff("time").reindex(time=oni.time)
     oni = oni.isel(time=slice(-1))
     donidt = oni.diff("time", label="upper").reindex(time=oni.time)
     index = index[:-1]
 
-    # warm_mask = _get_nan_block_lengths(xr.where(donidt >= 0, np.nan, 0, keep_attrs=False), dim="time", index=index) >= pd.Timedelta("59d")
+    # warm_mask = _get_nan_block_lengths(
+    # xr.where(donidt >= 0, np.nan, 0, keep_attrs=False),
+    # dim="time", index=index) >= pd.Timedelta("59d")
     cool_mask = _get_nan_block_lengths(
         xr.where(donidt <= 0, np.nan, 0, keep_attrs=False), dim="time", index=index
     ) >= pd.Timedelta("120d")
@@ -1077,7 +1083,8 @@ def load_mom6_sections(casename):
 
     sst = sfc.cf["sea_surface_temperature"]
 
-    # Calculate a monthly average sea surface temperature in the Nino 3.4 region (5°S-5°N, 170°W-120°W).
+    # Calculate a monthly average sea surface temperature
+    # in the Nino 3.4 region (5°S-5°N, 170°W-120°W).
     monthly_ = (
         sst.cf.sel(latitude=slice(-5, 5), longitude=slice(-170, -120))
         .cf.mean(["X", "Y"])
@@ -1134,7 +1141,10 @@ def add_ancillary_variables_microstructure(ds):
     )
     ds["Sz"] = ds.cf["sea_water_salinity"].cf.differentiate("Z", positive_upward=True)
     ds["N2T"] = -9.81 / 1025 * ds.densT.cf.differentiate("Z", positive_upward=True)
-    # ds["Tz"] = ds.cf["sea_water_potential_temperature"].cf.differentiate("Z", positive_upward=True)
+    # ds["Tz"] = (
+    # ds.cf["sea_water_potential_temperature"]
+    # .cf.differentiate("Z", positive_upward=True)
+    # )
 
     ds = prepare(ds)
     ds.update(pdf_N2S2(ds))
@@ -1200,17 +1210,21 @@ def load_tao():
             "~/work/pump/datasets/microstructure/chipods_0_140W_hourly.mat"
         )
     )
+
     chipod = (
         chi  # .sel(time=slice("2015"))
         # move from time on the half hour to on the hour
         .coarsen(time=2, boundary="trim")
         .mean()
         # "Only χpods between 29 and 69 m are used in this analysis as
-        # deeper χpods are more strongly influenced by the variability of zEUC than by surface forcing."
+        # deeper χpods are more strongly influenced by the
+        # variability of zEUC than by surface forcing."
         # - Warner and Moum (2019)
         .reindex(time=tao_gridded.time, method="nearest", tolerance="5min")
         .pipe(normalize_z, sort=True)
     )
+
+    chipod = chipod.where(chipod.eps > 1e-14)
 
     tao_gridded = tao_gridded.update(
         chipod[["chi", "KT", "eps", "Jq"]]
@@ -1368,6 +1382,7 @@ def read_chipod_mat_file(fname, mask=True):
     chipod["depth"] = ("depth", file["chr"]["depth"][:].squeeze())
     chipod["time"] = ("time", file["chr"]["time"][:].squeeze())
     chipod["time"] = pd.to_datetime(chipod.time.data - 719529, unit="D")
+    chipod["time"] = chipod.time.dt.round("min")
     for var in ["Jq", "Kt", "N2", "T", "chi", "dTdz", "eps"]:
         chipod[var] = xr.DataArray(file["chr"][var][:, :], dims=("time", "depth"))
     chipod = chipod.cf.guess_coord_axis()
