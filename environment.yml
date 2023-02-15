@@ -35,8 +35,9 @@ dependencies:
   - jupyter
   - jupyterlab
   - jupyter-server-proxy
+  - mamba
   - matplotlib
-  - netcdf4
+  - netcdf4==1.6.0
   - nc-time-axis
   - nodejs
   - notebook
