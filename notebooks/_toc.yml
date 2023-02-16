@@ -2,6 +2,10 @@ format: jb-book
 root: intro
 
 parts:
+- captions: Presentations
+  chapters:
+  - file: ../presentations/omwg.ipynb
+
 - caption: miχpods
   chapters:
   - file: mixpods
