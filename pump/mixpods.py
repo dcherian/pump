@@ -13,12 +13,12 @@ import intake
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import xarray as xr
 from datatree import DataTree
 from flox.xarray import xarray_reduce
 
-from .obs import process_oni
+import xarray as xr
 
+from .obs import process_oni
 
 ROOT = "/glade/campaign/cgd/oce/projects/pump/cesm/"
 
@@ -209,7 +209,7 @@ def find_pdf_contour(density, targets):
     Finds PDF contour that encloses target fraction of the samples.
     """
 
-    from typing import Iterable
+    from collections.abc import Iterable
 
     from scipy.optimize import minimize_scalar
 
