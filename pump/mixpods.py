@@ -1214,17 +1214,17 @@ def load_tao():
         )
     )
 
+    # TAO data are on the hour
+    chi["time"] = chi.time - pd.Timedelta("30min")
     chipod = (
         chi  # .sel(time=slice("2015"))
-        # move from time on the half hour to on the hour
-        .coarsen(time=2, boundary="trim")
-        .mean()
         # "Only χpods between 29 and 69 m are used in this analysis as
         # deeper χpods are more strongly influenced by the
         # variability of zEUC than by surface forcing."
         # - Warner and Moum (2019)
         .reindex(time=tao_gridded.time, method="nearest", tolerance="5min")
         .pipe(normalize_z, sort=True)
+        .sel(depth=slice(-90, None))
     )
 
     chipod = chipod.where(chipod.eps > 1e-14)
