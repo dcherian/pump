@@ -919,24 +919,28 @@ def add_turbulence_quantities(ds, grid):
     }
     if "eps" not in ds and "eps_chi" not in ds:
         with cfxr.set_options(custom_criteria=visc_criteria):
-            epsx = (
+            shear_prodx = (
                 grid.interp(ds.cf["ocean_vertical_x_viscosity"], "Z")
                 * grid.derivative(ds.cf["sea_water_x_velocity"], "Z") ** 2
             )
-            epsy = (
+            shear_prody = (
                 grid.interp(ds.cf["ocean_vertical_y_viscosity"], "Z")
                 * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
             )
 
-        ds["eps"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
-        ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
+        ds["shear_prod"] = shear_prodx + xgcm_interp_to(
+            grid, shear_prody, axis="Y", to="center"
+        )
+        ds["shear_prod"].attrs = {"long_name": "$SP$", "units": "W/kg"}
 
-        # ds["eps_chi"] = epsx + xgcm_interp_to(grid, epsy, axis="Y", to="center")
-        # ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
+        ds["eps"] = ds["shear_prod"] + ds["Jb"]
 
     if "chi" not in ds:
         ds["chi"] = 2 * ds.cf["ocean_vertical_heat_diffusivity"] * ds.Tz**2
         ds["chi"].attrs = {"long_name": "$χ$", "units": "C^2/s"}
+
+    if "eps" not in ds and "eps_chi" not in ds:
+        ds["eps_chi"] = ds["N2"] * ds.chi / 2 / ds["Tz"] ** 2 / 0.2
 
     for var in ["eps", "eps_chi", "chi"]:
         if var in ds:
