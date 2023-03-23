@@ -26,6 +26,7 @@ dependencies:
   - fsspec
   - hvplot
   - geoviews
+  - kerchunk
   - h5netcdf
   - pydantic
   - intake-esm
