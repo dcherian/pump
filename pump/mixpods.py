@@ -1353,11 +1353,15 @@ def load_les_moorings():
         read_csv_kwargs={"converters": {"variables": ast.literal_eval}},
     )
     mooring_datasets = les_catalog.search(
-        kind="mooring",
+        kind="average",
         length="month",
         latitude=0,
-    ).to_dataset_dict(preprocess=preprocess_les_dataset)
-    moorings = DataTree.from_dict(mooring_datasets).squeeze()
+    ).to_dataset_dict()
+    mooring_datasets = {
+        k: prepare(preprocess_les_dataset(v.squeeze()))
+        for k, v in mooring_datasets.items()
+    }
+    moorings = DataTree.from_dict(mooring_datasets)
     return moorings
 
 
