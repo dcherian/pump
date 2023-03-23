@@ -6,6 +6,7 @@ import warnings
 
 import cf_xarray as cfxr
 import dcpy
+import flox
 import gsw_xarray
 import holoviews as hv
 import hvplot.xarray  # noqa
@@ -46,6 +47,7 @@ LOAD_VARNAMES = [
     "eps_n2s2",
     "Rig_T",
 ]
+DEPTH_CHIPODS = [-89.0, -69.0, -59.0, -49.0, -39.0, -29.0]
 
 
 # TODO: delete
@@ -60,6 +62,31 @@ def assert_z_is_normalized(ds):
         assert ds[z].attrs["positive"] == "up", ds[z].attrs
         assert (ds[z].data < 1).all(), f"{z!r} is not all negative"
         assert ds.indexes[z].is_monotonic_increasing, f"{z} is not monotonic increasing"
+
+
+def grouped_median(
+    group_idx, array, *, axis=-1, size=None, fill_value=None, dtype=None
+):
+    import numpy_groupies as npg
+
+    return npg.aggregate_numpy.aggregate(
+        group_idx,
+        array,
+        func=np.nanmedian,
+        axis=axis,
+        size=size,
+        fill_value=fill_value,
+        dtype=dtype,
+    )
+
+
+agg_median = flox.aggregations.Aggregation(
+    name="median",
+    numpy=grouped_median,
+    fill_value=None,
+    chunk=None,
+    combine=None,
+)
 
 
 def prepare(ds, grid=None, sst_nino34=None, oni=None):
@@ -152,6 +179,11 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         out["Rig"] = out.N2 / out.S2
         out.Rig.attrs["long_name"] = "$Ri^g$"
         out.Rig.attrs.pop("units", None)
+
+    out["tau"] = np.hypot(
+        out.cf["surface_downward_x_stress"], out.cf["surface_downward_y_stress"]
+    )
+    del out["tau"].attrs["standard_name"]
 
     ueq = u.cf.sel(Z=slice(-350, -10))
     if "Y" in ueq.cf.axes:
@@ -395,6 +427,43 @@ def pdf_N2S2(data, coord_is_center=False):
         )
 
     return out
+
+
+def daily_composites(ds):
+    to_composite = (
+        ds.cf[
+            [
+                "eps",
+                "ocean_vertical_heat_diffusivity",
+                "chi",
+                "Jb",
+                "Jq",
+            ]
+        ]
+        .cf.rename({"ocean_vertical_heat_diffusivity": "KT"})
+        .cf.reindex(Z=DEPTH_CHIPODS, method="nearest")
+        .cf.rename({"Z": "depth"})
+        .load()
+    )
+
+    others = (
+        ds.cf[["S2", "N2", "Rig", "Rig_T", "tau"]]
+        .cf.reindex(Z=DEPTH_CHIPODS, method="nearest")
+        .load()
+    )
+
+    if "depth" not in others.dims:
+        others = others.cf.rename(Z="depth")
+
+    daily_composites = xarray_reduce(
+        xr.merge([to_composite, others], join="exact"),
+        ds.time.dt.hour,
+        ds.tau.load(),
+        expected_groups=(None, pd.IntervalIndex.from_breaks([0, 0.04, 0.075, np.inf])),
+        func=agg_median,
+    )
+
+    return daily_composites
 
 
 def plot_n2s2pdf(da, targets=(0.5, 0.75), pcolor=True, **kwargs):
@@ -1202,6 +1271,9 @@ def load_tao():
     tao_gridded["qnet"].attrs[
         "standard_name"
     ] = "surface_downward_heat_flux_in_sea_water"
+
+    tao_gridded["taux"].attrs["standard_name"] = "surface_downward_x_stress"
+    tao_gridded["tauy"].attrs["standard_name"] = "surface_downward_y_stress"
 
     # chi = (dcpy.oceans.read_cchdo_chipod_file(
     #        "~/datasets/microstructure/osu/chipods_0_140W.nc"
