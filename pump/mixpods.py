@@ -199,6 +199,10 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     out.coords["dcl_mask"] = (Z > (out.eucmax + 5)) & (Z < (out.mldT - 5))
     out.dcl_mask.attrs = {"description": "True when 5m below mldT and above eucmax."}
 
+    assert out.dcl_mask.ndim == 2
+    assert out.eucmax.dims == ("time",)
+    assert out.mldT.dims == ("time",)
+
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
     if sst_nino34 is not None and oni is None:
@@ -909,6 +913,34 @@ def add_turbulence_quantities(ds, grid):
     We should accumulate online and save ε, χ directly.
     """
 
+    # buoyancy flux
+    α = ds.cf["sea_water_thermal_expansion_coefficient"]
+    β = ds.cf["sea_water_haline_contraction_coefficient"]
+    if set(α.dims) != set(ds.Tz.dims):
+        α = xgcm_interp_to(grid, α, axis="Z", to="outer")
+    if set(β.dims) != set(ds.Sz.dims):
+        β = xgcm_interp_to(grid, β, axis="Z", to="outer")
+
+    K = ds.cf["ocean_vertical_heat_diffusivity"]
+    ds["Jb"] = -9.81 * (-K * α * ds.Tz + K * β * ds.Sz)
+    ds["Jb"].attrs["standard_name"] = "ocean_vertical_diffusive_buoyancy_flux"
+
+    if "ocean_vertical_diffusive_heat_flux" not in ds.cf.keys():
+        ds["Tflx_dia_diff"] = K * ds.Tz
+        ds["Tflx_dia_diff"].attrs = {
+            "units": "degC m s-1",
+            "standard_name": "ocean_vertical_diffusive_heat_flux",
+        }
+
+    # define constants, these could be moved up as arguments if we wanted to vary
+    # cp = 4186  # J/g°C
+    # rho = 1028
+
+    if "Jq" not in ds:
+        # Jq
+        ds["Jq"] = -1028 * 4186 * ds.cf["ocean_vertical_diffusive_heat_flux"]
+        ds["Jq"].attrs = {"units": "W/m^2", "long_name": "$J_q^t$"}
+
     visc_criteria = {
         "ocean_vertical_x_viscosity": {
             "standard_name": "ocean_vertical_x_viscosity|ocean_vertical_viscosity"
@@ -949,43 +981,19 @@ def add_turbulence_quantities(ds, grid):
                 ds[var].dims,
             )
 
-    # buoyancy flux
-    α = ds.cf["sea_water_thermal_expansion_coefficient"]
-    β = ds.cf["sea_water_haline_contraction_coefficient"]
-    if set(α.dims) != set(ds.Tz.dims):
-        α = xgcm_interp_to(grid, α, axis="Z", to="outer")
-    if set(β.dims) != set(ds.Sz.dims):
-        β = xgcm_interp_to(grid, β, axis="Z", to="outer")
-
-    K = ds.cf["ocean_vertical_heat_diffusivity"]
-    ds["Jb"] = -9.81 * (-K * α * ds.Tz + K * β * ds.Sz)
-    ds["Jb"].attrs["standard_name"] = "ocean_vertical_diffusive_buoyancy_flux"
-
     # flux Ri
     ds["Rif"] = ds.Jb / ds.eps
     ds.Rif.attrs["standard_name"] = "flux_richardson_number"
-
-    if "ocean_vertical_diffusive_heat_flux" not in ds.cf.keys():
-        ds["Tflx_dia_diff"] = K * ds.Tz
-        ds["Tflx_dia_diff"].attrs = {
-            "units": "degC m s-1",
-            "standard_name": "ocean_vertical_diffusive_heat_flux",
-        }
-
-    # define constants, these could be moved up as arguments if we wanted to vary
-    # cp = 4186  # J/g°C
-    # rho = 1028
-
-    if "Jq" not in ds:
-        # Jq
-        ds["Jq"] = -1025 * 4200 * ds.cf["ocean_vertical_diffusive_heat_flux"]
-        ds["Jq"].attrs = {"units": "W/m^2", "long_name": "$J_q^t$"}
 
 
 def xgcm_interp_to(grid, da, *, axis, to):
     # TODO: upstream to xgcm
     yaxes = grid.axes[axis]
-    pos = yaxes._get_position_name(da)[0]
+    try:
+        pos = yaxes._get_position_name(da)[0]
+    except KeyError:
+        print(f"returning {da.name}")
+        return da
     if pos != to:
         da = grid.interp(da, axis, to=to)
     return da
