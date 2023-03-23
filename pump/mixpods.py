@@ -1572,3 +1572,30 @@ def plot_eps_ri_hist(eps_ri, label=None, muted=None):
     return step.opts(
         hv.opts.Curve(xlim=(None, 1.2), xticks=[0.04, 0.1, 0.25, 0.5, 0.63, 1.6])
     )
+
+
+def plot_daily_composites(tree, **kwargs):
+    proc = tree.reset_coords(drop=True).dc.concatenate_nodes(dim="node", join="exact")
+    # Need same name and attrs to allow Overlaying
+    proc["depth"].attrs = {"units": "m"}
+
+    localhour = proc.hour - 10
+    localhour[localhour < 0] += 24
+    proc["hour"] = localhour
+
+    proc = proc.sortby("hour").roll(hour=12, roll_coords=True)
+    proc["hour"] = proc.hour.astype("str")
+    proc["hour"].attrs["long_name"] = "Hour of day (Local Time)"
+
+    return (
+        proc.drop_vars("tau_bins")
+        .to_array()
+        .hvplot.line(
+            col="depth",
+            x="hour",
+            by="node",
+            row="tau_bins",
+            groupby="variable",
+            **kwargs,
+        )
+    )
