@@ -1513,3 +1513,47 @@ def read_chipod_mat_file(fname, mask=True):
             for var in ["chi", "eps", "Jq", "KT"]:
                 chipod[var].loc[loc] = np.nan
     return chipod
+
+
+def plot_eps_ri_hist(eps_ri, label=None, muted=None):
+    import pandas as pd
+
+    intervals = pd.Index(pd.arrays.IntervalArray(eps_ri.Rig_T_bins.data)).mid
+
+    eps_ri = eps_ri.copy()
+    eps_ri["Rig_T_bins"] = intervals
+
+    # df = eps_ri.load().sel(
+    #    stat="mean", enso_transition_phase=["La-Nina cool", "El-Nino warm"]
+    # ).to_dataframe()
+    # new_midx = pd.MultiIndex.from_product(
+    #    [intervals, ["La-Nina cool", "El-Nino warm"]],
+    #    names=["Rig_T_bins", "enso_transition_phase"]),
+    # df.index = new_midx
+
+    step = (
+        eps_ri.sel(stat="mean")
+        .sel(
+            enso_transition_phase=[
+                "El-Nino warm",  # "El-Nino cool",
+                "La-Nina cool",
+                # "La-Nina warm"
+            ]
+        )
+        .hvplot.step(
+            frame_width=600,
+            frame_height=300,
+            col="enso_transition_phase",
+            x="Rig_T_bins",
+            logx=True,
+            logy=True,
+            label=label,
+            muted=muted,
+        )
+    )
+
+    return step.opts(
+        hv.opts.Curve(xlim=(None, 1.2), xticks=[0.04, 0.1, 0.25, 0.5, 0.63, 1.6])
+    )
+
+
