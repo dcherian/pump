@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+
 import xarray as xr
 
 from .calc import get_euc_max
@@ -34,6 +35,13 @@ def add_ancillary_variables(ds):
     ds["buoy"] = -9.81 * ds.rho / ds.rho0
     ds.buoy.attrs["standard_name"] = "sea_water_buoyancy"
 
+    ds["densT"] = ds.rho0 * (
+        1
+        - ds.alpha * (ds.cf["sea_water_potential_temperature"] - ds.T0)
+        - ds.beta * (35 - ds.S0)
+    )
+    ds["buoyT"] = -9.81 * ds.rho / ds.rho0
+
     mask = ds.buoy.isel(z=slice(1, -1)) < (
         ds.buoy.isel(z=slice(-20, -1)).mean("z") - MLDTHRESH
     )
@@ -48,15 +56,20 @@ def add_ancillary_variables(ds):
     )
     ds["dudzim"] = ds.dudz + 1j * ds.dvdz
 
-    ds["dTdz"] = ds.cf["sea_water_potential_temperature"].cf.differentiate(
+    ds["Tz"] = ds.cf["sea_water_potential_temperature"].cf.differentiate(
         "Z", positive_upward=True
     )
-    ds["dSdz"] = ds.cf["sea_water_salinity"].cf.differentiate("Z", positive_upward=True)
+    ds["Sz"] = ds.cf["sea_water_salinity"].cf.differentiate("Z", positive_upward=True)
 
     if "N2" not in ds:
         ds["N2"] = ds.buoy.cf.differentiate("Z", positive_upward=True)
     ds["N2"].attrs["long_name"] = "$N^2$"
     ds["N2"].attrs["units"] = "s$^{-2}$"
+
+    if "N2T" not in ds:
+        ds["N2T"] = ds.buoyT.cf.differentiate("Z", positive_upward=True)
+    ds["N2T"].attrs["long_name"] = "$N_T^2$"
+    ds["N2T"].attrs["units"] = "s$^{-2}$"
 
     if "S2" not in ds:
         ds["S2"] = ds.dudz**2 + ds.dvdz**2
@@ -86,14 +99,24 @@ def preprocess_les_dataset(ds):
 
     ds["ume"].attrs["standard_name"] = "sea_water_x_velocity"
     ds["vme"].attrs["standard_name"] = "sea_water_y_velocity"
-    ds["rho"] = ds.rho0 * (
-        1 - ds.alpha * (ds.tempme - ds.T0) - ds.beta * (ds.saltme - ds.S0)
-    )
-    ds.rho.attrs["standard_name"] = "sea_water_potential_density"
+
     ds["tempme"].attrs["standard_name"] = "sea_water_potential_temperature"
     ds["saltme"].attrs["standard_name"] = "sea_water_salinity"
 
     add_ancillary_variables(ds)
+
+    def _clean_stress(da):
+        masked = da.where(np.abs(da) > 1e-8)
+        return masked.interpolate_na("time")
+
+    ds["taux"] = 1025 * _clean_stress(ds.nududztop)
+    ds["tauy"] = 1025 * _clean_stress(ds.nudvdztop)
+    ds["taux"].attrs["standard_name"] = "surface_downward_x_stress"
+    ds["taux"].attrs["units"] = "N/m2"
+    del ds.taux.attrs["long_name"]
+    ds["tauy"].attrs["standard_name"] = "surface_downward_y_stress"
+    ds["tauy"].attrs["units"] = "N/m2"
+    del ds.tauy.attrs["long_name"]
 
     ds["wb"] = 9.81 * (ds.alpha * ds.tempw + ds.beta * ds.saltw)
 
@@ -118,12 +141,14 @@ def preprocess_les_dataset(ds):
 
     ds["KM"] = np.real(ds.Fim * np.conj(ds.dudzim)) / (ds.dudzim * np.conj(ds.dudzim))
     ds["Kb"] = (ds.Fb * ds.N2) / ((ds.N2) ** 2)
-    ds["KT"] = (ds.FT * ds.dTdz) / (ds.dTdz**2)
-    ds["KS"] = (ds.FS * ds.dSdz) / (ds.dSdz**2)
+    ds["KT"] = (ds.FT * ds.Tz) / (ds.Tz**2)
+    ds["KT"].attrs["standard_name"] = "ocean_vertical_heat_diffusivity"
+    ds["KS"] = (ds.FS * ds.Sz) / (ds.Sz**2)
+    ds["KS"].attrs["standard_name"] = "ocean_vertical_salt_diffusivity"
     ds["SHEARPROD"] = np.real(ds.Fim * np.conj(ds.dudzim))
 
     ds["epsilon"] = ds.epsilon.where((ds.epsilon < 1) & (ds.epsilon > 0))
-    ds["chi"] = ds.FT * ds.dTdz
+    ds["chi"] = ds.FT * ds.Tz
 
     ds["tke"] = 0.5 * (ds.urms**2 + ds.vrms**2 + ds.wrms**2)
 
@@ -141,6 +166,8 @@ def preprocess_les_dataset(ds):
     ds.Jq.attrs = {"long_name": "$J_q$", "units": "W/m^2"}
 
     ds["eucmax"] = get_euc_max(ds.ume)
+
+    ds = ds.rename({"epsilon": "eps", "Fb": "Jb"})
 
     return ds
 
