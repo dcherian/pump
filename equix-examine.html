@@ -1,48 +1,59 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Chameleon heat flux χ vs ε &#8212; PUMP</title>
-    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
-    
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
@@ -52,659 +63,341 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'equix-examine';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Variations in \(Ri_f\), \(Γ\)" href="mixing-efficiency.html" />
     <link rel="prev" title="EQUIX: Jq divergence" href="equix-divergence.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
     
-    <div class="container-fluid" id="banner"></div>
-
     
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
 
-    <div class="container-xl">
-      <div class="row">
-          
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="index.html">
-      
-      
-      
-      <h1 class="site-logo" id="site-title">PUMP</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
-    <div class="bd-toc-item active">
-        <p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  miχpods
- </span>
-</p>
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">PUMP</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">miχpods</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods.html">
-   miχpods
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-tao.html">
-   miχpods - TAO
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-les.html">
-   miχpods for LES simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-mom6.html">
-   miχpods: MOM6
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-diag-table.html">
-   Diag table generation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods.html">miχpods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-tao.html">miχpods - TAO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-les.html">miχpods for LES simulations</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="mixpods-mom6.html">miχpods: MOM6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-diag-table.html">Diag table generation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  TIW Turbulence
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TIW Turbulence</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-DCL.html">
-   TIW DCL
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dcl-paper.html">
-   TIW DCL Paper Figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="ctd-adcp.html">
-   TIW Cruise Sections
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html">
-   TIW Compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="vertical-velocity.html">
-   TIW vertical velocity in MITgcm simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tiw-floats.html">
-   EM-APEX floats in TIWs
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-DCL.html">TIW DCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dcl-paper.html">TIW DCL Paper Figures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctd-adcp.html">TIW Cruise Sections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-compositing.html">TIW Compositing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vertical-velocity.html">TIW vertical velocity in MITgcm simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tiw-floats.html">EM-APEX floats in TIWs</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Marginal Stability
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Marginal Stability</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="bulk-Ri.html">
-   Bulk Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="MI-extent.html">
-   Extent of marginal stability
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tao-ri-analysis.html">
-   TAO Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mi-simple-model.html">
-   Simple model analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="shred2-evol.html">
-   Reduced Shear Evolution equation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="bulk-Ri.html">Bulk Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MI-extent.html">Extent of marginal stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tao-ri-analysis.html">TAO Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mi-simple-model.html">Simple model analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shred2-evol.html">Reduced Shear Evolution equation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  χpod/Chameleon
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">χpod/Chameleon</span></p>
 <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-divergence.html">
-   EQUIX: Jq divergence
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Chameleon heat flux χ vs ε
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixing-efficiency.html">
-   Variations in
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   ,
-   <span class="math notranslate nohighlight">
-    \(Γ\)
-   </span>
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="equix-divergence.html">EQUIX: Jq divergence</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chameleon heat flux χ vs ε</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixing-efficiency.html">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+
+
+
+
+
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Other
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="les-examine.html">
-   LES first look
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="long-term-turbulence.html">
-   Long-term tubulence in 20-year simulation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="les-tendencies.html">
-   LES tendencies
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="heat-momentum-budget-checks.html">
-   Heat and momentum budgets with MITgcm output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="submeso-deep-100.html">
-   Deep submesoscales in 1/100°?
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="les-examine.html">LES first look</a></li>
+<li class="toctree-l1"><a class="reference internal" href="long-term-turbulence.html">Long-term tubulence in 20-year simulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="les-tendencies.html">LES tendencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heat-momentum-budget-checks.html">Heat and momentum budgets with MITgcm output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submeso-deep-100.html">Deep submesoscales in 1/100°?</a></li>
 </ul>
 
     </div>
 </nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-            </div>
-            
-        </div>
     </div>
-    <div id="rtd-footer-container"></div>
-</div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
-          
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
 
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
 <div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
 
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
   
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
     </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/dcherian/pump" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-<a href="https://github.com/dcherian/pump"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="bottom"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fab fa-github"></i>
   </span>
 
 </a>
 
-<div class="menu-dropdown menu-dropdown-download-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Download this page">
-      <i class="fas fa-download"></i>
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
   </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="_sources/equix-examine.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Download source file"
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/equix-examine.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.ipynb</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
-
-      </li>
+</li>
+      
+      
+      
       
       <li>
-        
-<button onclick="printPdf(this)"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="left"
-title="Print to PDF"
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file-pdf"></i>
   </span>
-<span class="headerbtn__text-container">.pdf</span>
+<span class="btn__text-container">.pdf</span>
 </button>
-
-      </li>
+</li>
       
-    </ul>
-  </div>
+  </ul>
 </div>
-<label for="__page-toc"
-  class="headerbtn headerbtn-page-toc"
-  
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-list"></i>
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
   </span>
 
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
 </label>
-
+</div></div>
+      
     </div>
+  
 </div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-    <div class="tocsection onthispage pt-5 pb-3">
-        <i class="fas fa-list"></i> Contents
-    </div>
-    <nav id="bd-toc-nav" aria-label="Page">
-        <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#read-datasets">
-   Read datasets
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#equix-chameleon">
-     EQUIX Chameleon
-    </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#on-masking">
-       On masking
-      </a>
-     </li>
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#on-sorting-and-calculating-gradients">
-       On sorting and calculating gradients
-      </a>
-     </li>
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#comparing-gradients">
-       Comparing gradients
-      </a>
-     </li>
-    </ul>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#equix-pods">
-     EQUIX χpods
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tiwe-chameleon">
-     TIWE chameleon
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#different-jq-calculations">
-   Different Jq calculations
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#averaging-in-temperature-space">
-   Averaging in temperature space
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#j-q-vs-j-q">
-   <span class="math notranslate nohighlight">
-    \(J_q^ε\)
-   </span>
-   vs
-   <span class="math notranslate nohighlight">
-    \(J_q^χ\)
-   </span>
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#perlin-moum">
-   Perlin &amp; Moum:
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     χ, ε
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#variations-in-ri-f">
-   Variations in
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   ,
-   <span class="math notranslate nohighlight">
-    \(Γ\)
-   </span>
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ri-f-tiwe-vs-equix">
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   : TIWE vs EQUIX
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#tiwe">
-   TIWE
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#reproducing-perlin-moum-2012">
-   Reproducing Perlin &amp; Moum (2012)
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tz-n2">
-     Tz, N2
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#explorations">
-   Explorations
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#old-stuff">
-   Old Stuff
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-thorpe-sorting">
-     Test thorpe sorting
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#daily-average-flux-profiles">
-   Daily average flux  profiles
-  </a>
- </li>
-</ul>
-
-    </nav>
 </div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
-            <!-- Table of contents that is only displayed when printing the page -->
-            <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Chameleon heat flux χ vs ε</h1>
-                <!-- Table of contents -->
-                <div id="print-main-content">
-                    <div id="jb-print-toc">
-                        
-                        <div>
-                            <h2> Contents </h2>
-                        </div>
-                        <nav aria-label="Page">
-                            <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#read-datasets">
-   Read datasets
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#equix-chameleon">
-     EQUIX Chameleon
-    </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#on-masking">
-       On masking
-      </a>
-     </li>
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#on-sorting-and-calculating-gradients">
-       On sorting and calculating gradients
-      </a>
-     </li>
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#comparing-gradients">
-       Comparing gradients
-      </a>
-     </li>
-    </ul>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#equix-pods">
-     EQUIX χpods
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tiwe-chameleon">
-     TIWE chameleon
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#different-jq-calculations">
-   Different Jq calculations
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#averaging-in-temperature-space">
-   Averaging in temperature space
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#j-q-vs-j-q">
-   <span class="math notranslate nohighlight">
-    \(J_q^ε\)
-   </span>
-   vs
-   <span class="math notranslate nohighlight">
-    \(J_q^χ\)
-   </span>
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#perlin-moum">
-   Perlin &amp; Moum:
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     χ, ε
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#variations-in-ri-f">
-   Variations in
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   ,
-   <span class="math notranslate nohighlight">
-    \(Γ\)
-   </span>
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ri-f-tiwe-vs-equix">
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   : TIWE vs EQUIX
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#tiwe">
-   TIWE
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#reproducing-perlin-moum-2012">
-   Reproducing Perlin &amp; Moum (2012)
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tz-n2">
-     Tz, N2
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#explorations">
-   Explorations
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#old-stuff">
-   Old Stuff
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-thorpe-sorting">
-     Test thorpe sorting
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#daily-average-flux-profiles">
-   Daily average flux  profiles
-  </a>
- </li>
-</ul>
+              
+              
 
-                        </nav>
-                    </div>
-                </div>
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chameleon heat flux χ vs ε</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
             </div>
-            <main id="main-content" role="main">
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-datasets">Read datasets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equix-chameleon">EQUIX Chameleon</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#on-masking">On masking</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#on-sorting-and-calculating-gradients">On sorting and calculating gradients</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-gradients">Comparing gradients</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equix-pods">EQUIX χpods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tiwe-chameleon">TIWE chameleon</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#different-jq-calculations">Different Jq calculations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#averaging-in-temperature-space">Averaging in temperature space</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#j-q-vs-j-q"><span class="math notranslate nohighlight">\(J_q^ε\)</span> vs <span class="math notranslate nohighlight">\(J_q^χ\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perlin-moum">Perlin &amp; Moum:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">χ, ε</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variations-in-ri-f">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ri-f-tiwe-vs-equix"><span class="math notranslate nohighlight">\(Ri_f\)</span> : TIWE vs EQUIX</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tiwe">TIWE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducing-perlin-moum-2012">Reproducing Perlin &amp; Moum (2012)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tz-n2">Tz, N2</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explorations">Explorations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#old-stuff">Old Stuff</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-thorpe-sorting">Test thorpe sorting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#daily-average-flux-profiles">Daily average flux  profiles</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
                 
-              <div>
-                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <section class="tex2jax_ignore mathjax_ignore" id="chameleon-heat-flux-vs">
-<h1>Chameleon heat flux χ vs ε<a class="headerlink" href="#chameleon-heat-flux-vs" title="Permalink to this headline">#</a></h1>
+<h1>Chameleon heat flux χ vs ε<a class="headerlink" href="#chameleon-heat-flux-vs" title="Permalink to this heading">#</a></h1>
 <p>I’m confused by disagreements between heat flux calculated from χ or ε.</p>
 <p>This notebook studies these differences using chamelon and χpods from EQUIX; and chameleon from TIWE</p>
 <p>TODO:</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> calculate gradients using sorted profiles; this bumps up Jq by a factor of 2!</p>
 <ul class="simple">
 <li><p>Sasha’s dTdz is calculated using θ sorted by θ, and N2 is calculated using σ sorted by σ</p></li>
@@ -719,6 +412,11 @@ title="Print to PDF"
 <li><p>Need TIWE ADCP</p></li>
 </ol>
 <div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">load_ext</span> snakeviz
@@ -2642,6 +2340,7 @@ numpy      : 1.21.5
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -2665,11 +2364,11 @@ numpy      : 1.21.5
 </div>
 </div>
 <section id="read-datasets">
-<h2>Read datasets<a class="headerlink" href="#read-datasets" title="Permalink to this headline">#</a></h2>
+<h2>Read datasets<a class="headerlink" href="#read-datasets" title="Permalink to this heading">#</a></h2>
 <section id="equix-chameleon">
-<h3>EQUIX Chameleon<a class="headerlink" href="#equix-chameleon" title="Permalink to this headline">#</a></h3>
+<h3>EQUIX Chameleon<a class="headerlink" href="#equix-chameleon" title="Permalink to this heading">#</a></h3>
 <section id="on-masking">
-<h4>On masking<a class="headerlink" href="#on-masking" title="Permalink to this headline">#</a></h4>
+<h4>On masking<a class="headerlink" href="#on-masking" title="Permalink to this heading">#</a></h4>
 <p>There are some masks applied in XXX.m, I think the dataset I have has those masks applied.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># badmask = (cham.VARAZ &gt; 0.01) &amp; (np.log10(cham.AZ2) &gt; -4.5) &amp; (cham.eps &gt; 1e-4)</span>
 <span class="c1"># cham = cham.where(~badmask)</span>
@@ -2677,8 +2376,8 @@ numpy      : 1.21.5
 </div>
 </section>
 <section id="on-sorting-and-calculating-gradients">
-<h4>On sorting and calculating gradients<a class="headerlink" href="#on-sorting-and-calculating-gradients" title="Permalink to this headline">#</a></h4>
-<ol class="simple">
+<h4>On sorting and calculating gradients<a class="headerlink" href="#on-sorting-and-calculating-gradients" title="Permalink to this heading">#</a></h4>
+<ol class="arabic simple">
 <li><p>I’m trying to replicate Sasha’s dT/dz</p></li>
 <li><p>Sasha’s dT/dz looks like he’s sorted <span class="math notranslate nohighlight">\(T\)</span> by <span class="math notranslate nohighlight">\(T\)</span>, instead of <span class="math notranslate nohighlight">\(ρ\)</span>, but I still have trouble replicating. Note he has no negative values.</p></li>
 </ol>
@@ -3638,7 +3337,7 @@ Attributes:
 </div>
 </section>
 <section id="comparing-gradients">
-<h4>Comparing gradients<a class="headerlink" href="#comparing-gradients" title="Permalink to this headline">#</a></h4>
+<h4>Comparing gradients<a class="headerlink" href="#comparing-gradients" title="Permalink to this heading">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
@@ -3657,7 +3356,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fabc98c5910&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_6_1.png" src="_images/equix-examine_6_1.png" />
+<img alt="_images/a8a138f9411eadcd2f1dacb4f330dbb15bc00cc3305671409b0b623c41aca209.png" src="_images/a8a138f9411eadcd2f1dacb4f330dbb15bc00cc3305671409b0b623c41aca209.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3677,7 +3376,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fab509d7be0&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_7_1.png" src="_images/equix-examine_7_1.png" />
+<img alt="_images/3fd1aa59f331d5933079976ef4c6581f2674e04afa52b24a52162aea60c70d39.png" src="_images/3fd1aa59f331d5933079976ef4c6581f2674e04afa52b24a52162aea60c70d39.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3699,7 +3398,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fab8885db80&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_8_1.png" src="_images/equix-examine_8_1.png" />
+<img alt="_images/fdf127171d0185f810d6d955d7097908991a25e32dba75850bc037cb0f1a84b2.png" src="_images/fdf127171d0185f810d6d955d7097908991a25e32dba75850bc037cb0f1a84b2.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3715,13 +3414,13 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fab8885dee0&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_9_1.png" src="_images/equix-examine_9_1.png" />
+<img alt="_images/c945796be5f99258b1c4a97874503dfd0bc0e171a53ed0af78140946df0e429c.png" src="_images/c945796be5f99258b1c4a97874503dfd0bc0e171a53ed0af78140946df0e429c.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="equix-pods">
-<h3>EQUIX χpods<a class="headerlink" href="#equix-pods" title="Permalink to this headline">#</a></h3>
+<h3>EQUIX χpods<a class="headerlink" href="#equix-pods" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span>
@@ -3790,12 +3489,12 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7faba97f7070&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_12_1.png" src="_images/equix-examine_12_1.png" />
+<img alt="_images/35773713aaf3c89df924146753b0e45f081733d41336c9f683a1e194410112b5.png" src="_images/35773713aaf3c89df924146753b0e45f081733d41336c9f683a1e194410112b5.png" />
 </div>
 </div>
 </section>
 <section id="tiwe-chameleon">
-<h3>TIWE chameleon<a class="headerlink" href="#tiwe-chameleon" title="Permalink to this headline">#</a></h3>
+<h3>TIWE chameleon<a class="headerlink" href="#tiwe-chameleon" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiwe</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/datasets/microstructure/osu/tiwe.nc&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span>
@@ -3814,7 +3513,7 @@ Attributes:
 </section>
 </section>
 <section id="different-jq-calculations">
-<h2>Different Jq calculations<a class="headerlink" href="#different-jq-calculations" title="Permalink to this headline">#</a></h2>
+<h2>Different Jq calculations<a class="headerlink" href="#different-jq-calculations" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -3874,7 +3573,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fab581a3d30&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_16_1.png" src="_images/equix-examine_16_1.png" />
+<img alt="_images/c343575d6ea5dca51dab72ea7faf04821135f180536a5f215095b01f8b074c8c.png" src="_images/c343575d6ea5dca51dab72ea7faf04821135f180536a5f215095b01f8b074c8c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3890,7 +3589,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fab55a9edf0&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_17_1.png" src="_images/equix-examine_17_1.png" />
+<img alt="_images/294b20468124ed0b51a355bc4b9d6a630e9d825ce40776d40ec93274f5bb1ff8.png" src="_images/294b20468124ed0b51a355bc4b9d6a630e9d825ce40776d40ec93274f5bb1ff8.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3917,12 +3616,12 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;$J_q^χ$&#39;)
 </pre></div>
 </div>
-<img alt="_images/equix-examine_18_1.png" src="_images/equix-examine_18_1.png" />
+<img alt="_images/e299800ffc0d88978e7d9517741f8b91f47c2d32d9ac0696f7ea52534d69d22f.png" src="_images/e299800ffc0d88978e7d9517741f8b91f47c2d32d9ac0696f7ea52534d69d22f.png" />
 </div>
 </div>
 </section>
 <section id="averaging-in-temperature-space">
-<h2>Averaging in temperature space<a class="headerlink" href="#averaging-in-temperature-space" title="Permalink to this headline">#</a></h2>
+<h2>Averaging in temperature space<a class="headerlink" href="#averaging-in-temperature-space" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># xr.set_options(use_numpy_groupies=False)</span>
@@ -3992,13 +3691,13 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fdca55ae190&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_24_1.png" src="_images/equix-examine_24_1.png" />
-<img alt="_images/equix-examine_24_2.png" src="_images/equix-examine_24_2.png" />
+<img alt="_images/85f90c5599ed7c5aaf3afa256bdc493dbcdc25ff3b24dae5aba9563158ce55f5.png" src="_images/85f90c5599ed7c5aaf3afa256bdc493dbcdc25ff3b24dae5aba9563158ce55f5.png" />
+<img alt="_images/4d978c28f5a6173bca2c511e2a01bbbee1258ccc987fbdd44e0474d2071c3608.png" src="_images/4d978c28f5a6173bca2c511e2a01bbbee1258ccc987fbdd44e0474d2071c3608.png" />
 </div>
 </div>
 </section>
 <section id="j-q-vs-j-q">
-<h2><span class="math notranslate nohighlight">\(J_q^ε\)</span> vs <span class="math notranslate nohighlight">\(J_q^χ\)</span><a class="headerlink" href="#j-q-vs-j-q" title="Permalink to this headline">#</a></h2>
+<h2><span class="math notranslate nohighlight">\(J_q^ε\)</span> vs <span class="math notranslate nohighlight">\(J_q^χ\)</span><a class="headerlink" href="#j-q-vs-j-q" title="Permalink to this heading">#</a></h2>
 <p>Define</p>
 <p>\begin{align*}
 J_q^χ &amp;= ρ c_p K_T T_z = ρ c_p \frac{χ/2}{T_z^2} T_z \
@@ -4119,19 +3818,19 @@ J_q^ε &amp;= ρ c_p K_ρ T_z = ρ c_p \frac{Γε}{N²} T_z
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_27_0.png" src="_images/equix-examine_27_0.png" />
+<img alt="_images/bd01ec0837c3a6bc231ba9aca6b677ab6971a4744912d55d4f9c66ae5b2b9794.png" src="_images/bd01ec0837c3a6bc231ba9aca6b677ab6971a4744912d55d4f9c66ae5b2b9794.png" />
 </div>
 </div>
 </section>
 <section id="perlin-moum">
-<h2>Perlin &amp; Moum:<a class="headerlink" href="#perlin-moum" title="Permalink to this headline">#</a></h2>
+<h2>Perlin &amp; Moum:<a class="headerlink" href="#perlin-moum" title="Permalink to this heading">#</a></h2>
 <p>Can I reproduce the figures of Perlin &amp; Moum?</p>
 <p>This is checking whether there’s something wrong in the dataset I have that might explain the differences in <span class="math notranslate nohighlight">\(J_q^ε\)</span> and <span class="math notranslate nohighlight">\(J_q^χ\)</span></p>
 <p><strong>Conclusion:</strong> I can reasonably reproduce these figures, the differences are likely that in masking (I think I have a masked product). The only point of concern is that the TAO χpods are all systematically low by a factor of 2. I recombined these datasets from scratch, so it would be good to double-check that.</p>
 <section id="id1">
-<h3>χ, ε<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<h3>χ, ε<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <p>Reproducing Perlin &amp; Moum</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li><p>75m TAO ε is low</p></li>
 <li><p>ε below 120m is higher than Perlin &amp; Moum by  quite a bit but χ compares well.</p></li>
 </ol>
@@ -4173,7 +3872,7 @@ J_q^ε &amp;= ρ c_p K_ρ T_z = ρ c_p \frac{Γε}{N²} T_z
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_29_0.png" src="_images/equix-examine_29_0.png" />
+<img alt="_images/7cee935d5bb4c9bf1ac13bde33d8e956382e1854d8f6fb6a43ece3b6b08213e0.png" src="_images/7cee935d5bb4c9bf1ac13bde33d8e956382e1854d8f6fb6a43ece3b6b08213e0.png" />
 </div>
 </div>
 <p>59m χpod sensor 2 is low, does not match Perlin &amp; Moum.</p>
@@ -4188,13 +3887,13 @@ J_q^ε &amp;= ρ c_p K_ρ T_z = ρ c_p \frac{Γε}{N²} T_z
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fdcb8ee7a60&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_31_1.png" src="_images/equix-examine_31_1.png" />
+<img alt="_images/83425e348b7732b1fbfa091e3cc5775741a50b578d9ae07cb417c7d41fef9250.png" src="_images/83425e348b7732b1fbfa091e3cc5775741a50b578d9ae07cb417c7d41fef9250.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="variations-in-ri-f">
-<h2>Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span><a class="headerlink" href="#variations-in-ri-f" title="Permalink to this headline">#</a></h2>
+<h2>Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span><a class="headerlink" href="#variations-in-ri-f" title="Permalink to this heading">#</a></h2>
 <p>Γ is potentially a large uncertainty in <span class="math notranslate nohighlight">\(J_q^ε\)</span>. Lets try the analysis of Monismith et al (2016). Definitions:</p>
 <p>\begin{align*}
 Ri_f &amp;= \frac{B}{B + ε} \
@@ -4286,7 +3985,7 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_37_0.png" src="_images/equix-examine_37_0.png" />
+<img alt="_images/454b06eed1e40b7fad758982f51c3c2896031eba82fd2d56ad0d2d3be5cb220c.png" src="_images/454b06eed1e40b7fad758982f51c3c2896031eba82fd2d56ad0d2d3be5cb220c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -4299,12 +3998,12 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_38_0.png" src="_images/equix-examine_38_0.png" />
+<img alt="_images/e0ae066a54c5eb984fc987832140f83e8e8d283dc100ab371cbcac067d4b6510.png" src="_images/e0ae066a54c5eb984fc987832140f83e8e8d283dc100ab371cbcac067d4b6510.png" />
 </div>
 </div>
 </section>
 <section id="ri-f-tiwe-vs-equix">
-<h2><span class="math notranslate nohighlight">\(Ri_f\)</span> : TIWE vs EQUIX<a class="headerlink" href="#ri-f-tiwe-vs-equix" title="Permalink to this headline">#</a></h2>
+<h2><span class="math notranslate nohighlight">\(Ri_f\)</span> : TIWE vs EQUIX<a class="headerlink" href="#ri-f-tiwe-vs-equix" title="Permalink to this heading">#</a></h2>
 <p>Lets split the datasets into two: above, below the EUC (add 5m to EUC max depth as buffer).</p>
 <p>These are contours of counts in logarithmically spaced bins, normalized by the maximum and plotted in log-log space.</p>
 <p>The lines are means in coarser <span class="math notranslate nohighlight">\(Re_b\)</span> bins.</p>
@@ -4325,7 +4024,7 @@ B &amp;= \frac{χ}{2} \frac{N^2}{T_z^2} \
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_41_0.png" src="_images/equix-examine_41_0.png" />
+<img alt="_images/28567c5cffdd5a525732de0ce0b941bc347c4512e31b341a35731b3870dfc916.png" src="_images/28567c5cffdd5a525732de0ce0b941bc347c4512e31b341a35731b3870dfc916.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -5096,7 +4795,7 @@ Attributes:
 </div>
 </section>
 <section id="tiwe">
-<h2>TIWE<a class="headerlink" href="#tiwe" title="Permalink to this headline">#</a></h2>
+<h2>TIWE<a class="headerlink" href="#tiwe" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tiwe</span><span class="p">[</span><span class="s2">&quot;Jq_ε&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
@@ -5127,7 +4826,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7faa0e310190&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_45_1.png" src="_images/equix-examine_45_1.png" />
+<img alt="_images/353d5b84e5941799a6cee6859ca6fd0b418427e92ba1f55f6437e724db2e445c.png" src="_images/353d5b84e5941799a6cee6859ca6fd0b418427e92ba1f55f6437e724db2e445c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -5138,8 +4837,8 @@ Attributes:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_46_0.png" src="_images/equix-examine_46_0.png" />
-<img alt="_images/equix-examine_46_1.png" src="_images/equix-examine_46_1.png" />
+<img alt="_images/6387074b93e9803c28bc1e0e610dc937e2ad6e0d44bce12d3bbc7571e445d5c6.png" src="_images/6387074b93e9803c28bc1e0e610dc937e2ad6e0d44bce12d3bbc7571e445d5c6.png" />
+<img alt="_images/4582ce11790ac16c5605f00f91d68dc7cf13ca64acfa0f67e52391411dcac98c.png" src="_images/4582ce11790ac16c5605f00f91d68dc7cf13ca64acfa0f67e52391411dcac98c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -5152,20 +4851,20 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f873fbb0a90&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_47_1.png" src="_images/equix-examine_47_1.png" />
+<img alt="_images/00b6514ba596c2a50feecc0c84ddc2569ae355f4e486f3bf9e3a6fb54b985665.png" src="_images/00b6514ba596c2a50feecc0c84ddc2569ae355f4e486f3bf9e3a6fb54b985665.png" />
 </div>
 </div>
 </section>
 <section id="reproducing-perlin-moum-2012">
-<h2>Reproducing Perlin &amp; Moum (2012)<a class="headerlink" href="#reproducing-perlin-moum-2012" title="Permalink to this headline">#</a></h2>
+<h2>Reproducing Perlin &amp; Moum (2012)<a class="headerlink" href="#reproducing-perlin-moum-2012" title="Permalink to this heading">#</a></h2>
 <p>I’m tuning max allowable χ, ε to visually match Perlin &amp; Moum</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li><p>Deepest 2 TAO χpods seem to be at wrong depths</p></li>
 <li><p>TAO at 18m, 75m is too low.</p></li>
 <li><p>~Need to save both sensors separately. If I did average then that’s an issue here.~ I did not average, just followed the comment and always picked sensor 1.</p></li>
 </ol>
 <p>TODO:</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li><p>Find all other sensor 2 data for EQUIX.</p></li>
 <li><p>See if I can find Sasha’s merged files</p></li>
 </ol>
@@ -5196,11 +4895,11 @@ Attributes:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_49_0.png" src="_images/equix-examine_49_0.png" />
+<img alt="_images/9fe081fa2e49a5577e6b7645d338c609cdc68b6e492b7bff67b282dd9ae54ba8.png" src="_images/9fe081fa2e49a5577e6b7645d338c609cdc68b6e492b7bff67b282dd9ae54ba8.png" />
 </div>
 </div>
 <section id="tz-n2">
-<h3>Tz, N2<a class="headerlink" href="#tz-n2" title="Permalink to this headline">#</a></h3>
+<h3>Tz, N2<a class="headerlink" href="#tz-n2" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">axx</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -5249,13 +4948,13 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(7.5e-05, 0.002)
 </pre></div>
 </div>
-<img alt="_images/equix-examine_51_1.png" src="_images/equix-examine_51_1.png" />
+<img alt="_images/c455af423728e51d941bbe987465575941718dcbf191ab7c23b2eaab8b7f91d8.png" src="_images/c455af423728e51d941bbe987465575941718dcbf191ab7c23b2eaab8b7f91d8.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="explorations">
-<h2>Explorations<a class="headerlink" href="#explorations" title="Permalink to this headline">#</a></h2>
+<h2>Explorations<a class="headerlink" href="#explorations" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cham5m</span> <span class="o">=</span> <span class="n">cham</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -5307,7 +5006,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7faa0b1a6a60&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_54_1.png" src="_images/equix-examine_54_1.png" />
+<img alt="_images/aab9a784f7fac7e87c84c499855f358db2dd5b725a6e1f35fe59d23e86ee19af.png" src="_images/aab9a784f7fac7e87c84c499855f358db2dd5b725a6e1f35fe59d23e86ee19af.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -5326,7 +5025,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fa9f6383670&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_55_1.png" src="_images/equix-examine_55_1.png" />
+<img alt="_images/57ae8b5da7a1fde65c88df74dd786cdeb567502a0b93266693aa903d61bb5ece.png" src="_images/57ae8b5da7a1fde65c88df74dd786cdeb567502a0b93266693aa903d61bb5ece.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -5350,14 +5049,14 @@ Attributes:
  &lt;matplotlib.legend.Legend at 0x7fab86ba9340&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_56_1.png" src="_images/equix-examine_56_1.png" />
+<img alt="_images/9c5b1714140f9e9cf4fb7906718054ba2b6727df60dcb43feac3967291a76ece.png" src="_images/9c5b1714140f9e9cf4fb7906718054ba2b6727df60dcb43feac3967291a76ece.png" />
 </div>
 </div>
 </section>
 <section id="old-stuff">
-<h2>Old Stuff<a class="headerlink" href="#old-stuff" title="Permalink to this headline">#</a></h2>
+<h2>Old Stuff<a class="headerlink" href="#old-stuff" title="Permalink to this heading">#</a></h2>
 <section id="test-thorpe-sorting">
-<h3>Test thorpe sorting<a class="headerlink" href="#test-thorpe-sorting" title="Permalink to this headline">#</a></h3>
+<h3>Test thorpe sorting<a class="headerlink" href="#test-thorpe-sorting" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -5375,7 +5074,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fabc7d716a0&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_59_1.png" src="_images/equix-examine_59_1.png" />
+<img alt="_images/dea80b0244afeff97e4fbc45011a73a403e047731792494281b4eca6c20e68ac.png" src="_images/dea80b0244afeff97e4fbc45011a73a403e047731792494281b4eca6c20e68ac.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -5394,17 +5093,17 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7faba6b77640&gt;]
 </pre></div>
 </div>
-<img alt="_images/equix-examine_60_1.png" src="_images/equix-examine_60_1.png" />
+<img alt="_images/1a85dad0eec43d1c38008a0b82f4a981c56609be3402ed10b5a380b68ef266e2.png" src="_images/1a85dad0eec43d1c38008a0b82f4a981c56609be3402ed10b5a380b68ef266e2.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="daily-average-flux-profiles">
-<h2>Daily average flux  profiles<a class="headerlink" href="#daily-average-flux-profiles" title="Permalink to this headline">#</a></h2>
-<ol class="simple">
+<h2>Daily average flux  profiles<a class="headerlink" href="#daily-average-flux-profiles" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
 <li><p>What is the time zone?</p></li>
 <li><p>We need to know the base of the DCL. This is key to knowing where Jq ~ 0. This could be shallower than the EUC by ~40m or so.</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li><p>Use χpod to decide where <span class="math notranslate nohighlight">\(J_q → 0\)</span></p></li>
 <li><p>Use <span class="math notranslate nohighlight">\(Ri\)</span> as in Smyth &amp; Moum(2013) from ADCP + T</p></li>
 </ol>
@@ -5850,7 +5549,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x16af84b50&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_63_1.png" src="_images/equix-examine_63_1.png" />
+<img alt="_images/877404ff5c5facab5ebda705b34f62d746263401639ea714c08e609ec803b61f.png" src="_images/877404ff5c5facab5ebda705b34f62d746263401639ea714c08e609ec803b61f.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6014,7 +5713,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x169c8a020&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_65_1.png" src="_images/equix-examine_65_1.png" />
+<img alt="_images/98c593a05a6bf4d42b0cbc118cc8a6a3f59b09cdfaa3f70afc138309a381926e.png" src="_images/98c593a05a6bf4d42b0cbc118cc8a6a3f59b09cdfaa3f70afc138309a381926e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6049,7 +5748,7 @@ Coordinates:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_68_0.png" src="_images/equix-examine_68_0.png" />
+<img alt="_images/564c99590ea7c9ed744bd1cf58a758f8e37be5ae406f1f1fc9d4a8dca132d18c.png" src="_images/564c99590ea7c9ed744bd1cf58a758f8e37be5ae406f1f1fc9d4a8dca132d18c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6082,7 +5781,7 @@ Coordinates:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/equix-examine_70_0.png" src="_images/equix-examine_70_0.png" />
+<img alt="_images/6053b060d0943fd1581f14048d83342db32466d10205d7b86d62b222544b38df.png" src="_images/6053b060d0943fd1581f14048d83342db32466d10205d7b86d62b222544b38df.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6101,7 +5800,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x178715c00&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_71_1.png" src="_images/equix-examine_71_1.png" />
+<img alt="_images/2d81c835aedb2fbbcf24b783952d7bc88f8ad5f544f9b20fe01b822559ceb694.png" src="_images/2d81c835aedb2fbbcf24b783952d7bc88f8ad5f544f9b20fe01b822559ceb694.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6119,7 +5818,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x1723dffa0&gt;
 </pre></div>
 </div>
-<img alt="_images/equix-examine_72_1.png" src="_images/equix-examine_72_1.png" />
+<img alt="_images/316bb7d662214a298bcb0f201eac146dc7729b277910ee6d555a99192805df9a.png" src="_images/316bb7d662214a298bcb0f201eac146dc7729b277910ee6d555a99192805df9a.png" />
 </div>
 </div>
 </section>
@@ -6145,57 +5844,136 @@ Coordinates:
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="equix-divergence.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">EQUIX: Jq divergence</p>
-        </div>
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="equix-divergence.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">EQUIX: Jq divergence</p>
+      </div>
     </a>
-    <a class='right-next' id="next-link" href="mixing-efficiency.html" title="next page">
-    <div class="prev-next-info">
+    <a class="right-next"
+       href="mixing-efficiency.html"
+       title="next page">
+      <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
         <p class="prev-next-title">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
-            </footer>
-        </div>
-    </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-datasets">Read datasets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equix-chameleon">EQUIX Chameleon</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#on-masking">On masking</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#on-sorting-and-calculating-gradients">On sorting and calculating gradients</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-gradients">Comparing gradients</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equix-pods">EQUIX χpods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tiwe-chameleon">TIWE chameleon</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#different-jq-calculations">Different Jq calculations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#averaging-in-temperature-space">Averaging in temperature space</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#j-q-vs-j-q"><span class="math notranslate nohighlight">\(J_q^ε\)</span> vs <span class="math notranslate nohighlight">\(J_q^χ\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#perlin-moum">Perlin &amp; Moum:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">χ, ε</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variations-in-ri-f">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ri-f-tiwe-vs-equix"><span class="math notranslate nohighlight">\(Ri_f\)</span> : TIWE vs EQUIX</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tiwe">TIWE</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducing-perlin-moum-2012">Reproducing Perlin &amp; Moum (2012)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tz-n2">Tz, N2</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explorations">Explorations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#old-stuff">Old Stuff</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-thorpe-sorting">Test thorpe sorting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#daily-average-flux-profiles">Daily average flux  profiles</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
   
-    By Deepak Cherian<br/>
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deepak Cherian
+</p>
+
+  </div>
   
-      &copy; Copyright 2022.<br/>
-    <div class="extra_footer">
-      <div>
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-    </div>
-</p>
-        </footer>
-    </div>
-    
 </div>
+  </div>
+  
+</div></div>
+          </footer>
+        
 
-
-      </div>
+      </main>
     </div>
+  </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
 
-
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>

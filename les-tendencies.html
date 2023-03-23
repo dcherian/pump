@@ -1,48 +1,59 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>LES tendencies &#8212; PUMP</title>
-    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
-    
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
@@ -50,596 +61,332 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'les-tendencies';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Heat and momentum budgets with MITgcm output" href="heat-momentum-budget-checks.html" />
     <link rel="prev" title="Long-term tubulence in 20-year simulation" href="long-term-turbulence.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
     
-    <div class="container-fluid" id="banner"></div>
-
     
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
 
-    <div class="container-xl">
-      <div class="row">
-          
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="index.html">
-      
-      
-      
-      <h1 class="site-logo" id="site-title">PUMP</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
-    <div class="bd-toc-item active">
-        <p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  miχpods
- </span>
-</p>
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">PUMP</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">miχpods</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods.html">
-   miχpods
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-tao.html">
-   miχpods - TAO
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-les.html">
-   miχpods for LES simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-mom6.html">
-   miχpods: MOM6
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-diag-table.html">
-   Diag table generation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods.html">miχpods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-tao.html">miχpods - TAO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-les.html">miχpods for LES simulations</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="mixpods-mom6.html">miχpods: MOM6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-diag-table.html">Diag table generation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  TIW Turbulence
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TIW Turbulence</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-DCL.html">
-   TIW DCL
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dcl-paper.html">
-   TIW DCL Paper Figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="ctd-adcp.html">
-   TIW Cruise Sections
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html">
-   TIW Compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="vertical-velocity.html">
-   TIW vertical velocity in MITgcm simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tiw-floats.html">
-   EM-APEX floats in TIWs
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-DCL.html">TIW DCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dcl-paper.html">TIW DCL Paper Figures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctd-adcp.html">TIW Cruise Sections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-compositing.html">TIW Compositing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vertical-velocity.html">TIW vertical velocity in MITgcm simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tiw-floats.html">EM-APEX floats in TIWs</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Marginal Stability
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Marginal Stability</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="bulk-Ri.html">
-   Bulk Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="MI-extent.html">
-   Extent of marginal stability
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tao-ri-analysis.html">
-   TAO Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mi-simple-model.html">
-   Simple model analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="shred2-evol.html">
-   Reduced Shear Evolution equation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="bulk-Ri.html">Bulk Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MI-extent.html">Extent of marginal stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tao-ri-analysis.html">TAO Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mi-simple-model.html">Simple model analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shred2-evol.html">Reduced Shear Evolution equation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  χpod/Chameleon
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">χpod/Chameleon</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-divergence.html">
-   EQUIX: Jq divergence
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-examine.html">
-   Chameleon heat flux χ vs ε
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixing-efficiency.html">
-   Variations in
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   ,
-   <span class="math notranslate nohighlight">
-    \(Γ\)
-   </span>
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="equix-divergence.html">EQUIX: Jq divergence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="equix-examine.html">Chameleon heat flux χ vs ε</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixing-efficiency.html">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+
+
+
+
+
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Other
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="les-examine.html">
-   LES first look
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="long-term-turbulence.html">
-   Long-term tubulence in 20-year simulation
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   LES tendencies
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="heat-momentum-budget-checks.html">
-   Heat and momentum budgets with MITgcm output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="submeso-deep-100.html">
-   Deep submesoscales in 1/100°?
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="les-examine.html">LES first look</a></li>
+<li class="toctree-l1"><a class="reference internal" href="long-term-turbulence.html">Long-term tubulence in 20-year simulation</a></li>
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">LES tendencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heat-momentum-budget-checks.html">Heat and momentum budgets with MITgcm output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submeso-deep-100.html">Deep submesoscales in 1/100°?</a></li>
 </ul>
 
     </div>
 </nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-            </div>
-            
-        </div>
     </div>
-    <div id="rtd-footer-container"></div>
-</div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
-          
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
 
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
 <div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
 
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
   
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
     </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/dcherian/pump" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-<a href="https://github.com/dcherian/pump"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="bottom"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fab fa-github"></i>
   </span>
 
 </a>
 
-<div class="menu-dropdown menu-dropdown-download-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Download this page">
-      <i class="fas fa-download"></i>
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
   </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="_sources/les-tendencies.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Download source file"
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/les-tendencies.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.ipynb</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
-
-      </li>
+</li>
+      
+      
+      
       
       <li>
-        
-<button onclick="printPdf(this)"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="left"
-title="Print to PDF"
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file-pdf"></i>
   </span>
-<span class="headerbtn__text-container">.pdf</span>
+<span class="btn__text-container">.pdf</span>
 </button>
-
-      </li>
+</li>
       
-    </ul>
-  </div>
+  </ul>
 </div>
-<label for="__page-toc"
-  class="headerbtn headerbtn-page-toc"
-  
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-list"></i>
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
   </span>
 
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
 </label>
-
+</div></div>
+      
     </div>
+  
 </div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-    <div class="tocsection onthispage pt-5 pb-3">
-        <i class="fas fa-list"></i> Contents
-    </div>
-    <nav id="bd-toc-nav" aria-label="Page">
-        <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#choose-time-period-plot-ocean-state-to-see-what-we-get">
-   Choose time period + plot ocean state to see what we get
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#les-config">
-   LES config
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#mitgcm">
-   MITgcm
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#read-all-ocean-model-output">
-     Read all ocean model output
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#estimate-flux-divergences">
-     Estimate flux divergences
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tendency-terms">
-     Tendency terms
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#initial-condition">
-     initial condition
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#restoring">
-     restoring
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#estimate-surface-forcing-from-jra-using-coare3-6">
-     Estimate surface forcing from JRA using coare3.6
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-coare-fluxes-vs-mitgcm">
-     Test: coare fluxes vs mitgcm
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#debugging-checks">
-   Debugging checks
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-heat-budget">
-     Test: heat budget
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-u-budget">
-     Test : U budget
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-v-budget">
-     test: V budget
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#roms">
-   ROMS
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#rhs-forcing">
-     RHS forcing
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     initial condition
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id2">
-     restoring
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#surface-forcing">
-     surface forcing
-    </a>
-   </li>
-  </ul>
- </li>
-</ul>
-
-    </nav>
 </div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
-            <!-- Table of contents that is only displayed when printing the page -->
-            <div id="jb-print-docs-body" class="onlyprint">
-                <h1>LES tendencies</h1>
-                <!-- Table of contents -->
-                <div id="print-main-content">
-                    <div id="jb-print-toc">
-                        
-                        <div>
-                            <h2> Contents </h2>
-                        </div>
-                        <nav aria-label="Page">
-                            <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#choose-time-period-plot-ocean-state-to-see-what-we-get">
-   Choose time period + plot ocean state to see what we get
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#les-config">
-   LES config
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#mitgcm">
-   MITgcm
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#read-all-ocean-model-output">
-     Read all ocean model output
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#estimate-flux-divergences">
-     Estimate flux divergences
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tendency-terms">
-     Tendency terms
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#initial-condition">
-     initial condition
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#restoring">
-     restoring
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#estimate-surface-forcing-from-jra-using-coare3-6">
-     Estimate surface forcing from JRA using coare3.6
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-coare-fluxes-vs-mitgcm">
-     Test: coare fluxes vs mitgcm
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#debugging-checks">
-   Debugging checks
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-heat-budget">
-     Test: heat budget
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-u-budget">
-     Test : U budget
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#test-v-budget">
-     test: V budget
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#roms">
-   ROMS
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#rhs-forcing">
-     RHS forcing
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     initial condition
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id2">
-     restoring
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#surface-forcing">
-     surface forcing
-    </a>
-   </li>
-  </ul>
- </li>
-</ul>
+              
+              
 
-                        </nav>
-                    </div>
-                </div>
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>LES tendencies</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
             </div>
-            <main id="main-content" role="main">
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-time-period-plot-ocean-state-to-see-what-we-get">Choose time period + plot ocean state to see what we get</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#les-config">LES config</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mitgcm">MITgcm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-all-ocean-model-output">Read all ocean model output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimate-flux-divergences">Estimate flux divergences</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tendency-terms">Tendency terms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-condition">initial condition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#restoring">restoring</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimate-surface-forcing-from-jra-using-coare3-6">Estimate surface forcing from JRA using coare3.6</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-coare-fluxes-vs-mitgcm">Test: coare fluxes vs mitgcm</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debugging-checks">Debugging checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-heat-budget">Test: heat budget</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-u-budget">Test : U budget</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-v-budget">test: V budget</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#roms">ROMS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rhs-forcing">RHS forcing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">initial condition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">restoring</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-forcing">surface forcing</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
                 
-              <div>
-                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <section class="tex2jax_ignore mathjax_ignore" id="les-tendencies">
-<h1>LES tendencies<a class="headerlink" href="#les-tendencies" title="Permalink to this headline">#</a></h1>
-<ol class="simple">
+<h1>LES tendencies<a class="headerlink" href="#les-tendencies" title="Permalink to this heading">#</a></h1>
+<ol class="arabic simple">
 <li><p>This has to be run on casper</p></li>
 <li><p>I would add a 5 day buffer on <code class="docutils literal notranslate"><span class="pre">les_time_length</span></code></p></li>
 <li><p>I’ve removed the coriolis contribution, so the LES needs <code class="docutils literal notranslate"><span class="pre">f≠0</span></code></p></li>
@@ -748,11 +495,11 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_6_0.png" src="_images/les-tendencies_6_0.png" />
+<img alt="_images/7f11aa6ff952bb4b11637928be0a2bc841ba4780903ab71145dc12c079af521e.png" src="_images/7f11aa6ff952bb4b11637928be0a2bc841ba4780903ab71145dc12c079af521e.png" />
 </div>
 </div>
 <section id="choose-time-period-plot-ocean-state-to-see-what-we-get">
-<h2>Choose time period + plot ocean state to see what we get<a class="headerlink" href="#choose-time-period-plot-ocean-state-to-see-what-we-get" title="Permalink to this headline">#</a></h2>
+<h2>Choose time period + plot ocean state to see what we get<a class="headerlink" href="#choose-time-period-plot-ocean-state-to-see-what-we-get" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gcmdir</span> <span class="o">=</span> <span class="s2">&quot;/glade/campaign/cgd/oce/people/bachman/TPOS_1_20_20_year_output/&quot;</span>  <span class="c1"># MITgcm output directory</span>
@@ -858,7 +605,7 @@ Calc Ri
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-150.0, 0.0)
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_8_2.png" src="_images/les-tendencies_8_2.png" />
+<img alt="_images/5785a5c305a3e47b50272a39bf8deab0e1b7e4e58a819341cb2f6d1e442f271b.png" src="_images/5785a5c305a3e47b50272a39bf8deab0e1b7e4e58a819341cb2f6d1e442f271b.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -885,13 +632,13 @@ Calc Ri
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_9_0.png" src="_images/les-tendencies_9_0.png" />
-<img alt="_images/les-tendencies_9_1.png" src="_images/les-tendencies_9_1.png" />
+<img alt="_images/6509b0d1a0f6dcf56aeb16c89f27b4ba5e2e11c2aa3dafabb7551a33db1394cc.png" src="_images/6509b0d1a0f6dcf56aeb16c89f27b4ba5e2e11c2aa3dafabb7551a33db1394cc.png" />
+<img alt="_images/51ad1534a8d2437ab8cb5273f91161bdfce45bc2704013e412b51afb7f2acd3f.png" src="_images/51ad1534a8d2437ab8cb5273f91161bdfce45bc2704013e412b51afb7f2acd3f.png" />
 </div>
 </div>
 </section>
 <section id="les-config">
-<h2>LES config<a class="headerlink" href="#les-config" title="Permalink to this headline">#</a></h2>
+<h2>LES config<a class="headerlink" href="#les-config" title="Permalink to this heading">#</a></h2>
 <p>LES things that you need not change; Grid is chosen by <code class="docutils literal notranslate"><span class="pre">whichz</span></code> in the above cell</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1334,10 +1081,10 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 </div>
 </section>
 <section id="mitgcm">
-<h2>MITgcm<a class="headerlink" href="#mitgcm" title="Permalink to this headline">#</a></h2>
+<h2>MITgcm<a class="headerlink" href="#mitgcm" title="Permalink to this heading">#</a></h2>
 <p>The daily avg output was subset in MATLAB syntax : <code class="docutils literal notranslate"><span class="pre">41:end-40,</span> <span class="pre">41:end-40,</span> <span class="pre">1:nz</span></code></p>
 <section id="read-all-ocean-model-output">
-<h3>Read all ocean model output<a class="headerlink" href="#read-all-ocean-model-output" title="Permalink to this headline">#</a></h3>
+<h3>Read all ocean model output<a class="headerlink" href="#read-all-ocean-model-output" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coords</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">read_mitgcm_coords</span><span class="p">(</span><span class="n">gcmdir</span><span class="p">)</span>
@@ -1458,7 +1205,7 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 </div>
 </section>
 <section id="estimate-flux-divergences">
-<h3>Estimate flux divergences<a class="headerlink" href="#estimate-flux-divergences" title="Permalink to this headline">#</a></h3>
+<h3>Estimate flux divergences<a class="headerlink" href="#estimate-flux-divergences" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># constants taken from diagnostics.log (I think)</span>
@@ -1559,7 +1306,7 @@ Dimensions without coordinates: z</pre><div class='xr-wrap' hidden><div class='x
 </div>
 </section>
 <section id="tendency-terms">
-<h3>Tendency terms<a class="headerlink" href="#tendency-terms" title="Permalink to this headline">#</a></h3>
+<h3>Tendency terms<a class="headerlink" href="#tendency-terms" title="Permalink to this heading">#</a></h3>
 <p>Now subset the RHS terms to domain; add sum to total RHS tendencies.</p>
 <p>Stupidly, the temperature flux divergences in <code class="docutils literal notranslate"><span class="pre">budgets</span></code> are with LHS sign; so invert that at the end</p>
 <div class="cell docutils container">
@@ -2010,12 +1757,12 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_23_0.png" src="_images/les-tendencies_23_0.png" />
+<img alt="_images/87cd382f55db3508c41a487d07ad804fa37544400c30f5ac2c747976e66182a7.png" src="_images/87cd382f55db3508c41a487d07ad804fa37544400c30f5ac2c747976e66182a7.png" />
 </div>
 </div>
 </section>
 <section id="initial-condition">
-<h3>initial condition<a class="headerlink" href="#initial-condition" title="Permalink to this headline">#</a></h3>
+<h3>initial condition<a class="headerlink" href="#initial-condition" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subds</span> <span class="o">=</span> <span class="p">(</span>
@@ -2039,12 +1786,12 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_26_0.png" src="_images/les-tendencies_26_0.png" />
+<img alt="_images/9dda6a77157504960dc513d77169193596695a393a610813299b06edd508686d.png" src="_images/9dda6a77157504960dc513d77169193596695a393a610813299b06edd508686d.png" />
 </div>
 </div>
 </section>
 <section id="restoring">
-<h3>restoring<a class="headerlink" href="#restoring" title="Permalink to this headline">#</a></h3>
+<h3>restoring<a class="headerlink" href="#restoring" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">write_to_txt</span><span class="p">(</span><span class="n">substate</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_colfrc_&quot;</span><span class="p">,</span> <span class="n">interleave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">)</span>
@@ -2052,12 +1799,12 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_28_0.png" src="_images/les-tendencies_28_0.png" />
+<img alt="_images/50a7781810589fb995311e42d6289715a89b366310be622fd60bbcdc86cfb534.png" src="_images/50a7781810589fb995311e42d6289715a89b366310be622fd60bbcdc86cfb534.png" />
 </div>
 </div>
 </section>
 <section id="estimate-surface-forcing-from-jra-using-coare3-6">
-<h3>Estimate surface forcing from JRA using coare3.6<a class="headerlink" href="#estimate-surface-forcing-from-jra-using-coare3-6" title="Permalink to this headline">#</a></h3>
+<h3>Estimate surface forcing from JRA using coare3.6<a class="headerlink" href="#estimate-surface-forcing-from-jra-using-coare3-6" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">jrafull</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_jra_20</span><span class="p">()</span>
@@ -2119,7 +1866,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_33_0.png" src="_images/les-tendencies_33_0.png" />
+<img alt="_images/eaba2860ba7ced8550b968cb08e5e7c9aff2bfba95e81f1ca07a7ef3a8bbdbcc.png" src="_images/eaba2860ba7ced8550b968cb08e5e7c9aff2bfba95e81f1ca07a7ef3a8bbdbcc.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2144,12 +1891,12 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_34_0.png" src="_images/les-tendencies_34_0.png" />
+<img alt="_images/f7afeeb666645fad8b4509de8c9586cb9cba73f505035389890106a422f16350.png" src="_images/f7afeeb666645fad8b4509de8c9586cb9cba73f505035389890106a422f16350.png" />
 </div>
 </div>
 </section>
 <section id="test-coare-fluxes-vs-mitgcm">
-<h3>Test: coare fluxes vs mitgcm<a class="headerlink" href="#test-coare-fluxes-vs-mitgcm" title="Permalink to this headline">#</a></h3>
+<h3>Test: coare fluxes vs mitgcm<a class="headerlink" href="#test-coare-fluxes-vs-mitgcm" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">surf</span><span class="p">[</span><span class="s2">&quot;oceQsw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">subsetter</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -2164,7 +1911,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(14176.5, 14206.0)
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_36_1.png" src="_images/les-tendencies_36_1.png" />
+<img alt="_images/ed8d763101389d5e3b3b68c7429921aaaf8ed8546bdb182211d4457aa96f71f6.png" src="_images/ed8d763101389d5e3b3b68c7429921aaaf8ed8546bdb182211d4457aa96f71f6.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2181,7 +1928,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(14176.5, 14206.0)
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_37_1.png" src="_images/les-tendencies_37_1.png" />
+<img alt="_images/95d76bb0ec19efbbb57ca93bb014953a9c1d3aa9d7c394998dcaffc21983d635.png" src="_images/95d76bb0ec19efbbb57ca93bb014953a9c1d3aa9d7c394998dcaffc21983d635.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2197,7 +1944,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2b56747a20a0&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_38_1.png" src="_images/les-tendencies_38_1.png" />
+<img alt="_images/70e6cdaeead6dc6b4e9b6ec0fbed611f23c3c2f8e0ca3c27f26102e3fc1e6479.png" src="_images/70e6cdaeead6dc6b4e9b6ec0fbed611f23c3c2f8e0ca3c27f26102e3fc1e6479.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2215,7 +1962,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2b5674a304f0&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_39_1.png" src="_images/les-tendencies_39_1.png" />
+<img alt="_images/a88d0f27834fd24e5da27575fd4957ba5732a9b0aebf3fd0e419e387718b148c.png" src="_images/a88d0f27834fd24e5da27575fd4957ba5732a9b0aebf3fd0e419e387718b148c.png" />
 </div>
 </div>
 <p>Raise error here so you don’t go past if running every cell :)</p>
@@ -2239,9 +1986,9 @@ Data variables:
 </section>
 <hr class="docutils" />
 <section id="debugging-checks">
-<h2>Debugging checks<a class="headerlink" href="#debugging-checks" title="Permalink to this headline">#</a></h2>
+<h2>Debugging checks<a class="headerlink" href="#debugging-checks" title="Permalink to this heading">#</a></h2>
 <section id="test-heat-budget">
-<h3>Test: heat budget<a class="headerlink" href="#test-heat-budget" title="Permalink to this headline">#</a></h3>
+<h3>Test: heat budget<a class="headerlink" href="#test-heat-budget" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LHS</span> <span class="o">=</span> <span class="n">budgets</span><span class="o">.</span><span class="n">TOTTTEND</span> <span class="o">/</span> <span class="mi">86400</span>
@@ -2267,7 +2014,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2abcfc9f3610&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_43_2.png" src="_images/les-tendencies_43_2.png" />
+<img alt="_images/1846199e6292517af9495f76b8fb24e1628497eed07d481f8f9a45049feb2a9e.png" src="_images/1846199e6292517af9495f76b8fb24e1628497eed07d481f8f9a45049feb2a9e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2305,7 +2052,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/les-tendencies_47_0.png" src="_images/les-tendencies_47_0.png" />
+<img alt="_images/b1431bfc66786f82ae59cb971301a8b7263600ea3e72f8aa6d565c0db0459669.png" src="_images/b1431bfc66786f82ae59cb971301a8b7263600ea3e72f8aa6d565c0db0459669.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2318,12 +2065,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b41fcb93970&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_48_1.png" src="_images/les-tendencies_48_1.png" />
+<img alt="_images/9058fc027f156a7e12e82e25595afe2bae9a3fb1936edac12c0226cb53b9a987.png" src="_images/9058fc027f156a7e12e82e25595afe2bae9a3fb1936edac12c0226cb53b9a987.png" />
 </div>
 </div>
 </section>
 <section id="test-u-budget">
-<h3>Test : U budget<a class="headerlink" href="#test-u-budget" title="Permalink to this headline">#</a></h3>
+<h3>Test : U budget<a class="headerlink" href="#test-u-budget" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
@@ -2346,12 +2093,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b4291fe68b0&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_50_1.png" src="_images/les-tendencies_50_1.png" />
+<img alt="_images/bcdae8581843210c4cd74420daebe966c869f96ba7601ea746ebc92ed1c3e835.png" src="_images/bcdae8581843210c4cd74420daebe966c869f96ba7601ea746ebc92ed1c3e835.png" />
 </div>
 </div>
 </section>
 <section id="test-v-budget">
-<h3>test: V budget<a class="headerlink" href="#test-v-budget" title="Permalink to this headline">#</a></h3>
+<h3>test: V budget<a class="headerlink" href="#test-v-budget" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RHS</span> <span class="o">=</span> <span class="p">(</span>
@@ -2374,16 +2121,16 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b429365b220&gt;
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_52_1.png" src="_images/les-tendencies_52_1.png" />
+<img alt="_images/0314ceaed9f1aa45f9c4ede9cb232af797f21f466195ca6a6dc6b8117b91de21.png" src="_images/0314ceaed9f1aa45f9c4ede9cb232af797f21f466195ca6a6dc6b8117b91de21.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="roms">
-<h2>ROMS<a class="headerlink" href="#roms" title="Permalink to this headline">#</a></h2>
+<h2>ROMS<a class="headerlink" href="#roms" title="Permalink to this heading">#</a></h2>
 <p>Todo
 /glade/p/cgd/oce/people/dwhitt/TPOS/tpos_LES_runs_setup_scripts/tpos-DIABLO/diablo_2.0/tpos_config_files/ROMS_PSH_6HRLIN_0N140W_108x108x288_5OCT2020_fixedeps/</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Staggered grid</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Update grid</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> something is wrong with your ICs (ocean_ic_S.txt and ocean_ic_T.txt and ocean_ic_U.txt). The values are much too small, except for U = -1 + epsilon. U should be m/s (anomaly). S psu (anomaly). T deg C or Kelvin (anomaly).</p></li>
@@ -36837,7 +36584,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 </div>
 </div>
 <section id="rhs-forcing">
-<h3>RHS forcing<a class="headerlink" href="#rhs-forcing" title="Permalink to this headline">#</a></h3>
+<h3>RHS forcing<a class="headerlink" href="#rhs-forcing" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhs</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">()</span>
@@ -37884,7 +37631,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 </div>
 </section>
 <section id="id1">
-<h3>initial condition<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<h3>initial condition<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">substate</span> <span class="o">=</span> <span class="p">(</span><span class="n">subds</span><span class="p">[[</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">compute</span><span class="p">())</span> <span class="o">-</span> <span class="n">offset</span>
@@ -37897,7 +37644,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 </div>
 </section>
 <section id="id2">
-<h3>restoring<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<h3>restoring<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">write_to_txt</span><span class="p">(</span><span class="n">interleave_time</span><span class="p">(</span><span class="n">substate</span><span class="p">,</span> <span class="n">t0</span><span class="p">),</span> <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ocean_colfrc_&quot;</span><span class="p">)</span>
@@ -37907,7 +37654,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 </div>
 </section>
 <section id="surface-forcing">
-<h3>surface forcing<a class="headerlink" href="#surface-forcing" title="Permalink to this headline">#</a></h3>
+<h3>surface forcing<a class="headerlink" href="#surface-forcing" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">frc</span> <span class="o">=</span> <span class="n">subds</span><span class="p">[[</span><span class="s2">&quot;sustr&quot;</span><span class="p">,</span> <span class="s2">&quot;svstr&quot;</span><span class="p">,</span> <span class="s2">&quot;swrad&quot;</span><span class="p">,</span> <span class="s2">&quot;ssflux&quot;</span><span class="p">]]</span>
@@ -37938,7 +37685,7 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b245c327940&gt;]
 </pre></div>
 </div>
-<img alt="_images/les-tendencies_66_1.png" src="_images/les-tendencies_66_1.png" />
+<img alt="_images/a0389fd513ea038aefe1b54a593931c3b2753f19667d818efb821ee01021464d.png" src="_images/a0389fd513ea038aefe1b54a593931c3b2753f19667d818efb821ee01021464d.png" />
 </div>
 </div>
 </section>
@@ -37965,57 +37712,130 @@ salt:  RadNud RadNud Cla    RadNud</dd><dt><span>svn_url :</span></dt><dd>https:
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="long-term-turbulence.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Long-term tubulence in 20-year simulation</p>
-        </div>
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="long-term-turbulence.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Long-term tubulence in 20-year simulation</p>
+      </div>
     </a>
-    <a class='right-next' id="next-link" href="heat-momentum-budget-checks.html" title="next page">
-    <div class="prev-next-info">
+    <a class="right-next"
+       href="heat-momentum-budget-checks.html"
+       title="next page">
+      <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
         <p class="prev-next-title">Heat and momentum budgets with MITgcm output</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
-            </footer>
-        </div>
-    </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-time-period-plot-ocean-state-to-see-what-we-get">Choose time period + plot ocean state to see what we get</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#les-config">LES config</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mitgcm">MITgcm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-all-ocean-model-output">Read all ocean model output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimate-flux-divergences">Estimate flux divergences</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tendency-terms">Tendency terms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-condition">initial condition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#restoring">restoring</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimate-surface-forcing-from-jra-using-coare3-6">Estimate surface forcing from JRA using coare3.6</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-coare-fluxes-vs-mitgcm">Test: coare fluxes vs mitgcm</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debugging-checks">Debugging checks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-heat-budget">Test: heat budget</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-u-budget">Test : U budget</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-v-budget">test: V budget</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#roms">ROMS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rhs-forcing">RHS forcing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">initial condition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">restoring</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-forcing">surface forcing</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
   
-    By Deepak Cherian<br/>
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deepak Cherian
+</p>
+
+  </div>
   
-      &copy; Copyright 2022.<br/>
-    <div class="extra_footer">
-      <div>
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-    </div>
-</p>
-        </footer>
-    </div>
-    
 </div>
+  </div>
+  
+</div></div>
+          </footer>
+        
 
-
-      </div>
+      </main>
     </div>
+  </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
 
-
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>

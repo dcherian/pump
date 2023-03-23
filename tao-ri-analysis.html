@@ -1,48 +1,59 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>TAO Ri analysis &#8212; PUMP</title>
-    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
-    
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
@@ -52,645 +63,336 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tao-ri-analysis';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Simple model analysis" href="mi-simple-model.html" />
     <link rel="prev" title="Extent of marginal stability" href="MI-extent.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
     
-    <div class="container-fluid" id="banner"></div>
-
     
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
 
-    <div class="container-xl">
-      <div class="row">
-          
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="index.html">
-      
-      
-      
-      <h1 class="site-logo" id="site-title">PUMP</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
-    <div class="bd-toc-item active">
-        <p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  miχpods
- </span>
-</p>
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">PUMP</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">miχpods</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods.html">
-   miχpods
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-tao.html">
-   miχpods - TAO
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-les.html">
-   miχpods for LES simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-mom6.html">
-   miχpods: MOM6
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-diag-table.html">
-   Diag table generation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods.html">miχpods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-tao.html">miχpods - TAO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-les.html">miχpods for LES simulations</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="mixpods-mom6.html">miχpods: MOM6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-diag-table.html">Diag table generation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  TIW Turbulence
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TIW Turbulence</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-DCL.html">
-   TIW DCL
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dcl-paper.html">
-   TIW DCL Paper Figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="ctd-adcp.html">
-   TIW Cruise Sections
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html">
-   TIW Compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="vertical-velocity.html">
-   TIW vertical velocity in MITgcm simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tiw-floats.html">
-   EM-APEX floats in TIWs
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-DCL.html">TIW DCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dcl-paper.html">TIW DCL Paper Figures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctd-adcp.html">TIW Cruise Sections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-compositing.html">TIW Compositing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vertical-velocity.html">TIW vertical velocity in MITgcm simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tiw-floats.html">EM-APEX floats in TIWs</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Marginal Stability
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Marginal Stability</span></p>
 <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="bulk-Ri.html">
-   Bulk Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="MI-extent.html">
-   Extent of marginal stability
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   TAO Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mi-simple-model.html">
-   Simple model analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="shred2-evol.html">
-   Reduced Shear Evolution equation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="bulk-Ri.html">Bulk Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MI-extent.html">Extent of marginal stability</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">TAO Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mi-simple-model.html">Simple model analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shred2-evol.html">Reduced Shear Evolution equation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  χpod/Chameleon
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">χpod/Chameleon</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-divergence.html">
-   EQUIX: Jq divergence
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-examine.html">
-   Chameleon heat flux χ vs ε
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixing-efficiency.html">
-   Variations in
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   ,
-   <span class="math notranslate nohighlight">
-    \(Γ\)
-   </span>
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="equix-divergence.html">EQUIX: Jq divergence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="equix-examine.html">Chameleon heat flux χ vs ε</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixing-efficiency.html">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+
+
+
+
+
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Other
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="les-examine.html">
-   LES first look
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="long-term-turbulence.html">
-   Long-term tubulence in 20-year simulation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="les-tendencies.html">
-   LES tendencies
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="heat-momentum-budget-checks.html">
-   Heat and momentum budgets with MITgcm output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="submeso-deep-100.html">
-   Deep submesoscales in 1/100°?
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="les-examine.html">LES first look</a></li>
+<li class="toctree-l1"><a class="reference internal" href="long-term-turbulence.html">Long-term tubulence in 20-year simulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="les-tendencies.html">LES tendencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heat-momentum-budget-checks.html">Heat and momentum budgets with MITgcm output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submeso-deep-100.html">Deep submesoscales in 1/100°?</a></li>
 </ul>
 
     </div>
 </nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-            </div>
-            
-        </div>
     </div>
-    <div id="rtd-footer-container"></div>
-</div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
-          
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
 
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
 <div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
 
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
   
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
     </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/dcherian/pump" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-<a href="https://github.com/dcherian/pump"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="bottom"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fab fa-github"></i>
   </span>
 
 </a>
 
-<div class="menu-dropdown menu-dropdown-download-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Download this page">
-      <i class="fas fa-download"></i>
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
   </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="_sources/tao-ri-analysis.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Download source file"
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/tao-ri-analysis.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.ipynb</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
-
-      </li>
+</li>
+      
+      
+      
       
       <li>
-        
-<button onclick="printPdf(this)"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="left"
-title="Print to PDF"
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file-pdf"></i>
   </span>
-<span class="headerbtn__text-container">.pdf</span>
+<span class="btn__text-container">.pdf</span>
 </button>
-
-      </li>
+</li>
       
-    </ul>
-  </div>
+  </ul>
 </div>
-<label for="__page-toc"
-  class="headerbtn headerbtn-page-toc"
-  
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-list"></i>
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
   </span>
 
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
 </label>
-
+</div></div>
+      
     </div>
+  
 </div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-    <div class="tocsection onthispage pt-5 pb-3">
-        <i class="fas fa-list"></i> Contents
-    </div>
-    <nav id="bd-toc-nav" aria-label="Page">
-        <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#next-steps">
-   Next steps
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ri-g-quantile-analysis">
-   Ri_g quantile analysis
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#argo-how-important-is-salinity-to-n2">
-   Argo: How “important” is salinity to N²
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam">
-   Sampling: how is tao resolving MI at 140W during MAM
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#calculate-rig">
-   calculate Rig
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#bin-in-euc-relative-coordinates">
-   bin in euc-relative coordinates
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#gradient-ri-quantiles">
-   Gradient Ri quantiles
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#median-in-euc-relative-coordinate">
-   Median in euc-relative coordinate
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate">
-     after binning instead of reinterpolating to euc depth coordinate
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-gridding-t-u-to-same-grid">
-     after gridding T,u to same grid
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-filling-nans-with-pchip">
-     after filling NaNs with pchip
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#before-filling-nans-with-pchip">
-     before filling NaNs with pchip
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#using-number-of-observations-90">
-     Using number of observations &gt; 90
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-removing-mld">
-     after removing mld
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#before-removing-mld">
-     before removing mld
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#before-limiting-eucmax-to-be-deeper-than-20m">
-     Before limiting eucmax to be deeper than 20m
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#how-good-is-bulk-ri-vs-gradient-ri">
-   How good is bulk Ri vs gradient Ri
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#estimate-and-plot-histograms">
-     Estimate and plot histograms
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#seasonal-rib-vs-rig">
-     seasonal Rib vs Rig
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#datasets">
-   Datasets
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#johnson">
-     johnson
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tao-daily-full-average">
-     TAO daily → full average
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tao-hourly-average">
-     TAO hourly → average
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#figure-5">
-   Figure 5
-  </a>
- </li>
-</ul>
-
-    </nav>
 </div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
-            <!-- Table of contents that is only displayed when printing the page -->
-            <div id="jb-print-docs-body" class="onlyprint">
-                <h1>TAO Ri analysis</h1>
-                <!-- Table of contents -->
-                <div id="print-main-content">
-                    <div id="jb-print-toc">
-                        
-                        <div>
-                            <h2> Contents </h2>
-                        </div>
-                        <nav aria-label="Page">
-                            <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#next-steps">
-   Next steps
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ri-g-quantile-analysis">
-   Ri_g quantile analysis
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#argo-how-important-is-salinity-to-n2">
-   Argo: How “important” is salinity to N²
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam">
-   Sampling: how is tao resolving MI at 140W during MAM
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#calculate-rig">
-   calculate Rig
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#bin-in-euc-relative-coordinates">
-   bin in euc-relative coordinates
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#gradient-ri-quantiles">
-   Gradient Ri quantiles
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#median-in-euc-relative-coordinate">
-   Median in euc-relative coordinate
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate">
-     after binning instead of reinterpolating to euc depth coordinate
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-gridding-t-u-to-same-grid">
-     after gridding T,u to same grid
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-filling-nans-with-pchip">
-     after filling NaNs with pchip
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#before-filling-nans-with-pchip">
-     before filling NaNs with pchip
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#using-number-of-observations-90">
-     Using number of observations &gt; 90
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#after-removing-mld">
-     after removing mld
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#before-removing-mld">
-     before removing mld
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#before-limiting-eucmax-to-be-deeper-than-20m">
-     Before limiting eucmax to be deeper than 20m
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#how-good-is-bulk-ri-vs-gradient-ri">
-   How good is bulk Ri vs gradient Ri
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#estimate-and-plot-histograms">
-     Estimate and plot histograms
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#seasonal-rib-vs-rig">
-     seasonal Rib vs Rig
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#datasets">
-   Datasets
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#johnson">
-     johnson
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tao-daily-full-average">
-     TAO daily → full average
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#tao-hourly-average">
-     TAO hourly → average
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#figure-5">
-   Figure 5
-  </a>
- </li>
-</ul>
+              
+              
 
-                        </nav>
-                    </div>
-                </div>
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>TAO Ri analysis</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
             </div>
-            <main id="main-content" role="main">
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next steps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ri-g-quantile-analysis">Ri_g quantile analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#argo-how-important-is-salinity-to-n2">Argo: How “important” is salinity to N²</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam">Sampling: how is tao resolving MI at 140W during MAM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-rig">calculate Rig</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bin-in-euc-relative-coordinates">bin in euc-relative coordinates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-ri-quantiles">Gradient Ri quantiles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#median-in-euc-relative-coordinate">Median in euc-relative coordinate</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate">after binning instead of reinterpolating to euc depth coordinate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-gridding-t-u-to-same-grid">after gridding T,u to same grid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-filling-nans-with-pchip">after filling NaNs with pchip</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-filling-nans-with-pchip">before filling NaNs with pchip</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-number-of-observations-90">Using number of observations &gt; 90</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-removing-mld">after removing mld</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-removing-mld">before removing mld</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-limiting-eucmax-to-be-deeper-than-20m">Before limiting eucmax to be deeper than 20m</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-good-is-bulk-ri-vs-gradient-ri">How good is bulk Ri vs gradient Ri</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimate-and-plot-histograms">Estimate and plot histograms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seasonal-rib-vs-rig">seasonal Rib vs Rig</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datasets">Datasets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#johnson">johnson</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tao-daily-full-average">TAO daily → full average</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tao-hourly-average">TAO hourly → average</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-5">Figure 5</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
                 
-              <div>
-                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <section class="tex2jax_ignore mathjax_ignore" id="tao-ri-analysis">
-<h1>TAO Ri analysis<a class="headerlink" href="#tao-ri-analysis" title="Permalink to this headline">#</a></h1>
+<h1>TAO Ri analysis<a class="headerlink" href="#tao-ri-analysis" title="Permalink to this heading">#</a></h1>
 <p>Analysis of bulk &amp; gradient Ri with TAO data</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -730,8 +432,8 @@ matplotlib : 3.3.4
 </div>
 </div>
 <section id="next-steps">
-<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">#</a></h2>
-<ol class="simple">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> Make a merged velocity dataset</p></li>
 <li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Add 147E to merged dataset</p></li>
 <li><p>Try the Pham extrapolation</p>
@@ -748,7 +450,7 @@ matplotlib : 3.3.4
 <li class="task-list-item"><p><input class="task-list-item-checkbox" checked="checked" disabled="disabled" type="checkbox"> I need to interpolate the density field to get a good dens_euc</p></li>
 </ol>
 <p>I will need to</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li><p>Recalculate bulk Ri stuff. This really shouldn’t change much?</p></li>
 <li><p>Scatter median gradient Ri against the new bulk Ri</p></li>
 <li><p>What the heck is going on at 195W. Marginal stability?</p>
@@ -759,7 +461,7 @@ matplotlib : 3.3.4
 </ol>
 </section>
 <section id="ri-g-quantile-analysis">
-<h2>Ri_g quantile analysis<a class="headerlink" href="#ri-g-quantile-analysis" title="Permalink to this headline">#</a></h2>
+<h2>Ri_g quantile analysis<a class="headerlink" href="#ri-g-quantile-analysis" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_q_old</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;tao-hourly-Ri-seasonal-percentiles-before-salinity.nc&quot;</span><span class="p">)</span>
@@ -1749,7 +1451,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x7fe05af53eb0&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_7_1.png" src="_images/tao-ri-analysis_7_1.png" />
+<img alt="_images/4ca2c61fe6319039699c86b931a85d9e6c09f33f4f8f116bb0ab9b0e482ba0dd.png" src="_images/4ca2c61fe6319039699c86b931a85d9e6c09f33f4f8f116bb0ab9b0e482ba0dd.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1770,12 +1472,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x7fe05e262310&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_8_1.png" src="_images/tao-ri-analysis_8_1.png" />
+<img alt="_images/9a7b59633042ed7c9adc4b1f402d57046244923dd009c1212c977dd32f99670d.png" src="_images/9a7b59633042ed7c9adc4b1f402d57046244923dd009c1212c977dd32f99670d.png" />
 </div>
 </div>
 </section>
 <section id="argo-how-important-is-salinity-to-n2">
-<h2>Argo: How “important” is salinity to N²<a class="headerlink" href="#argo-how-important-is-salinity-to-n2" title="Permalink to this headline">#</a></h2>
+<h2>Argo: How “important” is salinity to N²<a class="headerlink" href="#argo-how-important-is-salinity-to-n2" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">argo</span> <span class="o">=</span> <span class="n">dcpy</span><span class="o">.</span><span class="n">oceans</span><span class="o">.</span><span class="n">read_argo_clim</span><span class="p">()</span>
@@ -3849,7 +3551,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;$N_T^2/N²$&#39;)
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_13_2.png" src="_images/tao-ri-analysis_13_2.png" />
+<img alt="_images/5681353ebdb67b776d834bcb042571552c2e7d4a3c88504456a5e18a4c9224d0.png" src="_images/5681353ebdb67b776d834bcb042571552c2e7d4a3c88504456a5e18a4c9224d0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3868,7 +3570,7 @@ Data variables:
  &lt;matplotlib.lines.Line2D at 0x7f12b6a01130&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_14_2.png" src="_images/tao-ri-analysis_14_2.png" />
+<img alt="_images/301004f19f2f93de95072435dee1f567615c3c5c3ec7fc59348c4c5493e56cf1.png" src="_images/301004f19f2f93de95072435dee1f567615c3c5c3ec7fc59348c4c5493e56cf1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3884,7 +3586,7 @@ Data variables:
  &lt;matplotlib.lines.Line2D at 0x7f12b4bd1430&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_15_1.png" src="_images/tao-ri-analysis_15_1.png" />
+<img alt="_images/bd4d8528d6fa54b7fcbe79d440101fbe4650525e1c7e8c8b7031825adddffe8c.png" src="_images/bd4d8528d6fa54b7fcbe79d440101fbe4650525e1c7e8c8b7031825adddffe8c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3900,7 +3602,7 @@ Data variables:
  &lt;matplotlib.lines.Line2D at 0x7f12b6606220&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_16_1.png" src="_images/tao-ri-analysis_16_1.png" />
+<img alt="_images/ad10b2427786c8db5d6eec0231ddbab4376e76210e7adef5bd2c4786bebff896.png" src="_images/ad10b2427786c8db5d6eec0231ddbab4376e76210e7adef5bd2c4786bebff896.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -4302,12 +4004,12 @@ Attributes:
  &lt;matplotlib.lines.Line2D at 0x7f12dc07d3d0&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_18_1.png" src="_images/tao-ri-analysis_18_1.png" />
+<img alt="_images/9ca46f064d3e231f2be2c327f59be5b409e494c8276afe8433eb8cd29cbd0cb8.png" src="_images/9ca46f064d3e231f2be2c327f59be5b409e494c8276afe8433eb8cd29cbd0cb8.png" />
 </div>
 </div>
 </section>
 <section id="sampling-how-is-tao-resolving-mi-at-140w-during-mam">
-<h2>Sampling: how is tao resolving MI at 140W during MAM<a class="headerlink" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam" title="Permalink to this headline">#</a></h2>
+<h2>Sampling: how is tao resolving MI at 140W during MAM<a class="headerlink" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_zarr</span><span class="p">(</span><span class="s2">&quot;ancillary&quot;</span><span class="p">)</span>
@@ -4365,7 +4067,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fe0732db6a0&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_24_1.png" src="_images/tao-ri-analysis_24_1.png" />
+<img alt="_images/b357cc4c0e61205342b19b617e5956b55cc476ba49b791c13baa92cb948b2b28.png" src="_images/b357cc4c0e61205342b19b617e5956b55cc476ba49b791c13baa92cb948b2b28.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -4380,7 +4082,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fe05d3aa0d0&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_25_1.png" src="_images/tao-ri-analysis_25_1.png" />
+<img alt="_images/7ce2e40bb6468b4984d42dbac192953a35d5eb1b9066086fe72e1994750a546b.png" src="_images/7ce2e40bb6468b4984d42dbac192953a35d5eb1b9066086fe72e1994750a546b.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -4392,7 +4094,7 @@ Attributes:
 </div>
 </section>
 <section id="calculate-rig">
-<h2>calculate Rig<a class="headerlink" href="#calculate-rig" title="Permalink to this headline">#</a></h2>
+<h2>calculate Rig<a class="headerlink" href="#calculate-rig" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">Rig</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;time.season&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -4414,7 +4116,7 @@ Attributes:
  &lt;matplotlib.lines.Line2D at 0x2b191fe94128&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_28_2.png" src="_images/tao-ri-analysis_28_2.png" />
+<img alt="_images/49793655710de9fcf3cd1482ec1dd0e1780d25fe61f0472e2339ed03a5431d57.png" src="_images/49793655710de9fcf3cd1482ec1dd0e1780d25fe61f0472e2339ed03a5431d57.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -4811,12 +4513,12 @@ dl.xr-attrs {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/tao-ri-analysis_30_0.png" src="_images/tao-ri-analysis_30_0.png" />
+<img alt="_images/1ed1d26ffb7c4b8607039e773ef8dad8d7ece6860a944f9a1c54f8a25918bce8.png" src="_images/1ed1d26ffb7c4b8607039e773ef8dad8d7ece6860a944f9a1c54f8a25918bce8.png" />
 </div>
 </div>
 </section>
 <section id="bin-in-euc-relative-coordinates">
-<h2>bin in euc-relative coordinates<a class="headerlink" href="#bin-in-euc-relative-coordinates" title="Permalink to this headline">#</a></h2>
+<h2>bin in euc-relative coordinates<a class="headerlink" href="#bin-in-euc-relative-coordinates" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_tao_zarr</span><span class="p">(</span><span class="s2">&quot;ancillary&quot;</span><span class="p">)</span>
@@ -6211,7 +5913,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7fe0afbec430&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_33_1.png" src="_images/tao-ri-analysis_33_1.png" />
+<img alt="_images/e9a53f819b31fe0804b3e0172e4efb82049dc87fce76e6c280061acaba812863.png" src="_images/e9a53f819b31fe0804b3e0172e4efb82049dc87fce76e6c280061acaba812863.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6226,7 +5928,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2ba8ae2a4a90&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_34_1.png" src="_images/tao-ri-analysis_34_1.png" />
+<img alt="_images/3470370a0daac0ae48051a6b27857b0c7b3c43034cf76a4721279a90f657b73c.png" src="_images/3470370a0daac0ae48051a6b27857b0c7b3c43034cf76a4721279a90f657b73c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6245,12 +5947,12 @@ Data variables:
   mask |= resdat &lt;= 0
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_35_2.png" src="_images/tao-ri-analysis_35_2.png" />
+<img alt="_images/d017d0933f60982bead19f34483cd2787868543678ddbd9c1829dc3bf95bc4b5.png" src="_images/d017d0933f60982bead19f34483cd2787868543678ddbd9c1829dc3bf95bc4b5.png" />
 </div>
 </div>
 </section>
 <section id="gradient-ri-quantiles">
-<h2>Gradient Ri quantiles<a class="headerlink" href="#gradient-ri-quantiles" title="Permalink to this headline">#</a></h2>
+<h2>Gradient Ri quantiles<a class="headerlink" href="#gradient-ri-quantiles" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grouped</span> <span class="o">=</span> <span class="n">interped</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;time.season&quot;</span><span class="p">)</span>
@@ -6264,7 +5966,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b3790fd3240&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_37_1.png" src="_images/tao-ri-analysis_37_1.png" />
+<img alt="_images/42a796b79dc85cb28265e5c849c2621634fe20ded4cc8dd0b4286854ba3db799.png" src="_images/42a796b79dc85cb28265e5c849c2621634fe20ded4cc8dd0b4286854ba3db799.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6293,7 +5995,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2ba8c3798710&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_38_2.png" src="_images/tao-ri-analysis_38_2.png" />
+<img alt="_images/57e19cbf8bc3b410f23cf32650fc45298b7d7656879c754708bb4fe932c59e4e.png" src="_images/57e19cbf8bc3b410f23cf32650fc45298b7d7656879c754708bb4fe932c59e4e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -6344,12 +6046,12 @@ findfont: Font family [&#39;DejaVu Sans Display&#39;] not found. Falling back to
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2ac0723c69b0&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_39_2.png" src="_images/tao-ri-analysis_39_2.png" />
+<img alt="_images/99b1ab1037fd119b4b7e6d4fc44e02bfb4e24171efa56151198d6c5633296678.png" src="_images/99b1ab1037fd119b4b7e6d4fc44e02bfb4e24171efa56151198d6c5633296678.png" />
 </div>
 </div>
 </section>
 <section id="median-in-euc-relative-coordinate">
-<h2>Median in euc-relative coordinate<a class="headerlink" href="#median-in-euc-relative-coordinate" title="Permalink to this headline">#</a></h2>
+<h2>Median in euc-relative coordinate<a class="headerlink" href="#median-in-euc-relative-coordinate" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_q</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataarray</span><span class="p">(</span><span class="s2">&quot;tao-hourly-Ri-seasonal-percentiles.nc&quot;</span><span class="p">)</span>
@@ -8398,7 +8100,7 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <section id="after-binning-instead-of-reinterpolating-to-euc-depth-coordinate">
-<h3>after binning instead of reinterpolating to euc depth coordinate<a class="headerlink" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate" title="Permalink to this headline">#</a></h3>
+<h3>after binning instead of reinterpolating to euc depth coordinate<a class="headerlink" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">median_Rig</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">median_Rig</span><span class="o">.</span><span class="n">num_obs</span> <span class="o">&gt;</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
@@ -8416,12 +8118,12 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/tao-ri-analysis_45_0.png" src="_images/tao-ri-analysis_45_0.png" />
+<img alt="_images/aff6dd960fcb75b0f3e657c9f995bc83d1c5cb73facdb7036d69b1787d60539b.png" src="_images/aff6dd960fcb75b0f3e657c9f995bc83d1c5cb73facdb7036d69b1787d60539b.png" />
 </div>
 </div>
 </section>
 <section id="after-gridding-t-u-to-same-grid">
-<h3>after gridding T,u to same grid<a class="headerlink" href="#after-gridding-t-u-to-same-grid" title="Permalink to this headline">#</a></h3>
+<h3>after gridding T,u to same grid<a class="headerlink" href="#after-gridding-t-u-to-same-grid" title="Permalink to this heading">#</a></h3>
 <p>some minor differences especially at 110W</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -8446,12 +8148,12 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/tao-ri-analysis_47_0.png" src="_images/tao-ri-analysis_47_0.png" />
+<img alt="_images/a054d6f0ffbe092f319cb456b550be1b6322d51bd38b4f67a42dd47fef9bfa13.png" src="_images/a054d6f0ffbe092f319cb456b550be1b6322d51bd38b4f67a42dd47fef9bfa13.png" />
 </div>
 </div>
 </section>
 <section id="after-filling-nans-with-pchip">
-<h3>after filling NaNs with pchip<a class="headerlink" href="#after-filling-nans-with-pchip" title="Permalink to this headline">#</a></h3>
+<h3>after filling NaNs with pchip<a class="headerlink" href="#after-filling-nans-with-pchip" title="Permalink to this heading">#</a></h3>
 <p>and properly filtering eucmax</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -8476,12 +8178,12 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/tao-ri-analysis_49_0.png" src="_images/tao-ri-analysis_49_0.png" />
+<img alt="_images/27226cf0158ae942534dd8533a1b212896bf5d41982b9c7d2c5fc0cf12c2ad9a.png" src="_images/27226cf0158ae942534dd8533a1b212896bf5d41982b9c7d2c5fc0cf12c2ad9a.png" />
 </div>
 </div>
 </section>
 <section id="before-filling-nans-with-pchip">
-<h3>before filling NaNs with pchip<a class="headerlink" href="#before-filling-nans-with-pchip" title="Permalink to this headline">#</a></h3>
+<h3>before filling NaNs with pchip<a class="headerlink" href="#before-filling-nans-with-pchip" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="p">(</span>
@@ -8507,12 +8209,12 @@ if (IPython.notebook.kernel != null) {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/tao-ri-analysis_51_0.png" src="_images/tao-ri-analysis_51_0.png" />
+<img alt="_images/ea1a0360f424b2e8acfa74c73bd1c693108f609dcf397b5602ecd2d66000d79e.png" src="_images/ea1a0360f424b2e8acfa74c73bd1c693108f609dcf397b5602ecd2d66000d79e.png" />
 </div>
 </div>
 </section>
 <section id="using-number-of-observations-90">
-<h3>Using number of observations &gt; 90<a class="headerlink" href="#using-number-of-observations-90" title="Permalink to this headline">#</a></h3>
+<h3>Using number of observations &gt; 90<a class="headerlink" href="#using-number-of-observations-90" title="Permalink to this heading">#</a></h3>
 <p>This seems to work best.</p>
 <p>There is an error here. Need 90*24</p>
 <div class="cell docutils container">
@@ -8530,12 +8232,12 @@ if (IPython.notebook.kernel != null) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[None, None, None, None, None]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_53_1.png" src="_images/tao-ri-analysis_53_1.png" />
+<img alt="_images/6def26ea317678fad56cb681c2dbe2f324eda0644fec18177a8f2926d383fcb2.png" src="_images/6def26ea317678fad56cb681c2dbe2f324eda0644fec18177a8f2926d383fcb2.png" />
 </div>
 </div>
 </section>
 <section id="after-removing-mld">
-<h3>after removing mld<a class="headerlink" href="#after-removing-mld" title="Permalink to this headline">#</a></h3>
+<h3>after removing mld<a class="headerlink" href="#after-removing-mld" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="n">Ri_q</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
@@ -8549,12 +8251,12 @@ if (IPython.notebook.kernel != null) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[None, None, None, None, None]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_55_1.png" src="_images/tao-ri-analysis_55_1.png" />
+<img alt="_images/9d910b892c1f2ac1f7b27c8fd1203e9cac08acf6b1095e23a4235f99b10c81be.png" src="_images/9d910b892c1f2ac1f7b27c8fd1203e9cac08acf6b1095e23a4235f99b10c81be.png" />
 </div>
 </div>
 </section>
 <section id="before-removing-mld">
-<h3>before removing mld<a class="headerlink" href="#before-removing-mld" title="Permalink to this headline">#</a></h3>
+<h3>before removing mld<a class="headerlink" href="#before-removing-mld" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fg</span> <span class="o">=</span> <span class="p">(</span>
@@ -8570,12 +8272,12 @@ if (IPython.notebook.kernel != null) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[None, None, None, None, None]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_57_1.png" src="_images/tao-ri-analysis_57_1.png" />
+<img alt="_images/a2fde6f498cf5f19ea56cf232d6304f2cc048fb04c16cc0539b628a343fe23e7.png" src="_images/a2fde6f498cf5f19ea56cf232d6304f2cc048fb04c16cc0539b628a343fe23e7.png" />
 </div>
 </div>
 </section>
 <section id="before-limiting-eucmax-to-be-deeper-than-20m">
-<h3>Before limiting eucmax to be deeper than 20m<a class="headerlink" href="#before-limiting-eucmax-to-be-deeper-than-20m" title="Permalink to this headline">#</a></h3>
+<h3>Before limiting eucmax to be deeper than 20m<a class="headerlink" href="#before-limiting-eucmax-to-be-deeper-than-20m" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_q</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">quantile</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
@@ -8588,7 +8290,7 @@ if (IPython.notebook.kernel != null) {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b00a6c4a2e8&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_59_1.png" src="_images/tao-ri-analysis_59_1.png" />
+<img alt="_images/3e03a484a7d45ac9e28a54102007057fa8f6fe7a4d1216defbd420a6656606d3.png" src="_images/3e03a484a7d45ac9e28a54102007057fa8f6fe7a4d1216defbd420a6656606d3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8624,7 +8326,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b79f92b9898&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_61_1.png" src="_images/tao-ri-analysis_61_1.png" />
+<img alt="_images/c7b15d058c1655327e43dbdc2b7bc48c3ef5cf3945a6c1e8a7d3b1e4b4a598a1.png" src="_images/c7b15d058c1655327e43dbdc2b7bc48c3ef5cf3945a6c1e8a7d3b1e4b4a598a1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8748,7 +8450,7 @@ Coordinates:
 </section>
 </section>
 <section id="how-good-is-bulk-ri-vs-gradient-ri">
-<h2>How good is bulk Ri vs gradient Ri<a class="headerlink" href="#how-good-is-bulk-ri-vs-gradient-ri" title="Permalink to this headline">#</a></h2>
+<h2>How good is bulk Ri vs gradient Ri<a class="headerlink" href="#how-good-is-bulk-ri-vs-gradient-ri" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># del tao.time.encoding[&quot;_FillValue&quot;]</span>
@@ -11228,7 +10930,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b37dfb427f0&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_71_1.png" src="_images/tao-ri-analysis_71_1.png" />
+<img alt="_images/c17b55092bc00039c62c442babb6a2c85909987a7bb9b22688189ee50ec1e952.png" src="_images/c17b55092bc00039c62c442babb6a2c85909987a7bb9b22688189ee50ec1e952.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -12728,7 +12430,7 @@ dl.xr-attrs {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/tao-ri-analysis_78_0.png" src="_images/tao-ri-analysis_78_0.png" />
+<img alt="_images/1ab0ff5101c24dbd31d5e2a2b917635ec67f8075abf612ef3d826498bcf1a1ec.png" src="_images/1ab0ff5101c24dbd31d5e2a2b917635ec67f8075abf612ef3d826498bcf1a1ec.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13136,7 +12838,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b09a25efc18&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_81_1.png" src="_images/tao-ri-analysis_81_1.png" />
+<img alt="_images/f88d111e76287debd74c5f3a7f0a8a9672078f2219c27a737f83909191e6b7d3.png" src="_images/f88d111e76287debd74c5f3a7f0a8a9672078f2219c27a737f83909191e6b7d3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13150,7 +12852,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b098b736208&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_82_1.png" src="_images/tao-ri-analysis_82_1.png" />
+<img alt="_images/f233a3fb5cd7ff9d6caa60b41fdb208f37785eb01e2c5c98e2f28ff3c12072a6.png" src="_images/f233a3fb5cd7ff9d6caa60b41fdb208f37785eb01e2c5c98e2f28ff3c12072a6.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13163,7 +12865,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b34a38ac2e8&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_83_1.png" src="_images/tao-ri-analysis_83_1.png" />
+<img alt="_images/8108137621c288a6794b17c853d999b6d4726e29e13a291ce61da42e849e90e5.png" src="_images/8108137621c288a6794b17c853d999b6d4726e29e13a291ce61da42e849e90e5.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13176,7 +12878,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b0982c0de48&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_84_1.png" src="_images/tao-ri-analysis_84_1.png" />
+<img alt="_images/bd13f6f21a5997c36bfdf2c1e1977b5ecdf5ac72d100a9c4c835af631ac6a902.png" src="_images/bd13f6f21a5997c36bfdf2c1e1977b5ecdf5ac72d100a9c4c835af631ac6a902.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13190,7 +12892,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b098b6678d0&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_85_1.png" src="_images/tao-ri-analysis_85_1.png" />
+<img alt="_images/487cb9a8763b10088567f450e68a12d878e710c046f6d4dca193678fb4572f82.png" src="_images/487cb9a8763b10088567f450e68a12d878e710c046f6d4dca193678fb4572f82.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13203,7 +12905,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b098f0a2cf8&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_86_1.png" src="_images/tao-ri-analysis_86_1.png" />
+<img alt="_images/b5343f68600d35cbe50bcb7273252614fd64562b4bd85e5191da220a46d40448.png" src="_images/b5343f68600d35cbe50bcb7273252614fd64562b4bd85e5191da220a46d40448.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13214,7 +12916,7 @@ dl.xr-attrs {
 </div>
 </div>
 <section id="estimate-and-plot-histograms">
-<h3>Estimate and plot histograms<a class="headerlink" href="#estimate-and-plot-histograms" title="Permalink to this headline">#</a></h3>
+<h3>Estimate and plot histograms<a class="headerlink" href="#estimate-and-plot-histograms" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;rib-median-rig.nc&quot;</span><span class="p">)</span>
@@ -13666,7 +13368,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b37ecee7278&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_93_1.png" src="_images/tao-ri-analysis_93_1.png" />
+<img alt="_images/4b186e5717a79a3ba619988e33d7813f46638b3e166bfcbf9dbdb223a52bbbf6.png" src="_images/4b186e5717a79a3ba619988e33d7813f46638b3e166bfcbf9dbdb223a52bbbf6.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13724,8 +13426,8 @@ dl.xr-attrs {
   mask |= resdat &lt;= 0
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_94_3.png" src="_images/tao-ri-analysis_94_3.png" />
-<img alt="_images/tao-ri-analysis_94_4.png" src="_images/tao-ri-analysis_94_4.png" />
+<img alt="_images/1778512c87f9411828f91d8175a33f298db9bb9dc5da153b1443c0a146fb645c.png" src="_images/1778512c87f9411828f91d8175a33f298db9bb9dc5da153b1443c0a146fb645c.png" />
+<img alt="_images/2189da6a4f371b11ae58f900e8aea9864438f5716d392c84e5ee3cedb1db37a3.png" src="_images/2189da6a4f371b11ae58f900e8aea9864438f5716d392c84e5ee3cedb1db37a3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -13759,13 +13461,13 @@ dl.xr-attrs {
   mask |= resdat &lt;= 0
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_95_3.png" src="_images/tao-ri-analysis_95_3.png" />
-<img alt="_images/tao-ri-analysis_95_4.png" src="_images/tao-ri-analysis_95_4.png" />
+<img alt="_images/23ba8b7f1f059c194d61236870f53a8d5db32a7e7200e0a165d371c331f6e3cc.png" src="_images/23ba8b7f1f059c194d61236870f53a8d5db32a7e7200e0a165d371c331f6e3cc.png" />
+<img alt="_images/d7fd1fe1015005f4b9beab509f3c57ad57d7c12b79a9b5e197968ef56f99f575.png" src="_images/d7fd1fe1015005f4b9beab509f3c57ad57d7c12b79a9b5e197968ef56f99f575.png" />
 </div>
 </div>
 </section>
 <section id="seasonal-rib-vs-rig">
-<h3>seasonal Rib vs Rig<a class="headerlink" href="#seasonal-rib-vs-rig" title="Permalink to this headline">#</a></h3>
+<h3>seasonal Rib vs Rig<a class="headerlink" href="#seasonal-rib-vs-rig" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ri_seasonal_hist</span> <span class="o">=</span> <span class="p">(</span>
@@ -14332,7 +14034,7 @@ dl.xr-attrs {
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/tao-ri-analysis_98_0.png" src="_images/tao-ri-analysis_98_0.png" />
+<img alt="_images/a568376b5c9dc30eaaec7f69645e4a8c2393ed95cff806fe3660579020e1247f.png" src="_images/a568376b5c9dc30eaaec7f69645e4a8c2393ed95cff806fe3660579020e1247f.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -14367,15 +14069,15 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.1, 100)
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_99_1.png" src="_images/tao-ri-analysis_99_1.png" />
+<img alt="_images/e8e6637288b13f325885eaf39b68868d34fa8f892da14a1adeee579b7c2c5f42.png" src="_images/e8e6637288b13f325885eaf39b68868d34fa8f892da14a1adeee579b7c2c5f42.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="datasets">
-<h2>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">#</a></h2>
+<h2>Datasets<a class="headerlink" href="#datasets" title="Permalink to this heading">#</a></h2>
 <section id="johnson">
-<h3>johnson<a class="headerlink" href="#johnson" title="Permalink to this headline">#</a></h3>
+<h3>johnson<a class="headerlink" href="#johnson" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">johnson</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">obs</span><span class="o">.</span><span class="n">read_johnson</span><span class="p">()</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -15439,7 +15141,7 @@ dl.xr-attrs {
 </div>
 </section>
 <section id="tao-daily-full-average">
-<h3>TAO daily → full average<a class="headerlink" href="#tao-daily-full-average" title="Permalink to this headline">#</a></h3>
+<h3>TAO daily → full average<a class="headerlink" href="#tao-daily-full-average" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># need to fill to the surface</span>
@@ -15880,7 +15582,7 @@ dl.xr-attrs {
 </div>
 </section>
 <section id="tao-hourly-average">
-<h3>TAO hourly → average<a class="headerlink" href="#tao-hourly-average" title="Permalink to this headline">#</a></h3>
+<h3>TAO hourly → average<a class="headerlink" href="#tao-hourly-average" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_clim</span> <span class="o">=</span> <span class="n">tao</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
@@ -16554,7 +16256,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b1984516470&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_110_2.png" src="_images/tao-ri-analysis_110_2.png" />
+<img alt="_images/cd54fa6221cdb037e37a5132eda77d4941764acfde4e03b7e23774f5c8fbf13b.png" src="_images/cd54fa6221cdb037e37a5132eda77d4941764acfde4e03b7e23774f5c8fbf13b.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -16568,8 +16270,8 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b197e930828&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_111_1.png" src="_images/tao-ri-analysis_111_1.png" />
-<img alt="_images/tao-ri-analysis_111_2.png" src="_images/tao-ri-analysis_111_2.png" />
+<img alt="_images/3bfc243dd24a6e3c224edeb802cda1f9ec085600002a28b45baa8495d3baec85.png" src="_images/3bfc243dd24a6e3c224edeb802cda1f9ec085600002a28b45baa8495d3baec85.png" />
+<img alt="_images/342b591a08877721a12c613e55b3487039774a7006a787f65acb1865fc02327b.png" src="_images/342b591a08877721a12c613e55b3487039774a7006a787f65acb1865fc02327b.png" />
 </div>
 </div>
 <p><span class="math notranslate nohighlight">\(N²\)</span> isn’t changing that much moving eastward consistent with the bulk <span class="math notranslate nohighlight">\(Δb\)</span>. Shear <span class="math notranslate nohighlight">\(S²\)</span> is changing significantly, again consistent</p>
@@ -16591,9 +16293,9 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2b1a3a5aa320&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_113_2.png" src="_images/tao-ri-analysis_113_2.png" />
-<img alt="_images/tao-ri-analysis_113_3.png" src="_images/tao-ri-analysis_113_3.png" />
-<img alt="_images/tao-ri-analysis_113_4.png" src="_images/tao-ri-analysis_113_4.png" />
+<img alt="_images/625bcd94bb82453168a2c953c208827acbd4d6779d0793b36dd186fc35e9ea13.png" src="_images/625bcd94bb82453168a2c953c208827acbd4d6779d0793b36dd186fc35e9ea13.png" />
+<img alt="_images/88f6f276729a1193c969f2d65e84e734b65390cc051246c38311dfcd96f64fae.png" src="_images/88f6f276729a1193c969f2d65e84e734b65390cc051246c38311dfcd96f64fae.png" />
+<img alt="_images/3676495a966543af7e9a00264820018658fabba8e64b8dabd2f26d1c1cc4df77.png" src="_images/3676495a966543af7e9a00264820018658fabba8e64b8dabd2f26d1c1cc4df77.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -16613,7 +16315,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b7387f5ee10&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_115_1.png" src="_images/tao-ri-analysis_115_1.png" />
+<img alt="_images/9c72442b339d818e6840dbb1710d553670b1a74de9fe1b59d25791e2956057cc.png" src="_images/9c72442b339d818e6840dbb1710d553670b1a74de9fe1b59d25791e2956057cc.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -16643,7 +16345,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2b739ed77860&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_117_1.png" src="_images/tao-ri-analysis_117_1.png" />
+<img alt="_images/382d38e4ea314b0e17ebabc8b33e7e258095a9267bf8675d30522c48d9c098de.png" src="_images/382d38e4ea314b0e17ebabc8b33e7e258095a9267bf8675d30522c48d9c098de.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -16661,7 +16363,7 @@ dl.xr-attrs {
  &lt;matplotlib.lines.Line2D at 0x2b192b8d5278&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_118_1.png" src="_images/tao-ri-analysis_118_1.png" />
+<img alt="_images/7f0742b93ff05def589a9d72a50548d01f7f48f8ac196b9d0b8e4f02ffd31405.png" src="_images/7f0742b93ff05def589a9d72a50548d01f7f48f8ac196b9d0b8e4f02ffd31405.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -17210,7 +16912,7 @@ dl.xr-attrs {
 </section>
 </section>
 <section id="figure-5">
-<h2>Figure 5<a class="headerlink" href="#figure-5" title="Permalink to this headline">#</a></h2>
+<h2>Figure 5<a class="headerlink" href="#figure-5" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tao_zeuc</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="s2">&quot;tao-zeuc.zarr&quot;</span><span class="p">)</span>
@@ -18408,7 +18110,7 @@ dl.xr-attrs {
  &lt;matplotlib.lines.Line2D at 0x2b1944ed5c18&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_123_1.png" src="_images/tao-ri-analysis_123_1.png" />
+<img alt="_images/adfe5fcd7c936f5f7b5d97f428a908024a2f2ea57a131a651b0e7950b3400625.png" src="_images/adfe5fcd7c936f5f7b5d97f428a908024a2f2ea57a131a651b0e7950b3400625.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -18787,7 +18489,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b194600e278&gt;]
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_125_1.png" src="_images/tao-ri-analysis_125_1.png" />
+<img alt="_images/131a7686e80e5f84f47a9dd432a0c8466777649659f059873392451c32b8912e.png" src="_images/131a7686e80e5f84f47a9dd432a0c8466777649659f059873392451c32b8912e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -21108,7 +20810,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b736a5ef668&gt;
 </pre></div>
 </div>
-<img alt="_images/tao-ri-analysis_128_1.png" src="_images/tao-ri-analysis_128_1.png" />
+<img alt="_images/61747d43884611f3e3635085d366cff16e46dc6d845b307ba323f8263a9eee39.png" src="_images/61747d43884611f3e3635085d366cff16e46dc6d845b307ba323f8263a9eee39.png" />
 </div>
 </div>
 </section>
@@ -21134,57 +20836,135 @@ dl.xr-attrs {
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="MI-extent.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Extent of marginal stability</p>
-        </div>
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="MI-extent.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Extent of marginal stability</p>
+      </div>
     </a>
-    <a class='right-next' id="next-link" href="mi-simple-model.html" title="next page">
-    <div class="prev-next-info">
+    <a class="right-next"
+       href="mi-simple-model.html"
+       title="next page">
+      <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
         <p class="prev-next-title">Simple model analysis</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
-            </footer>
-        </div>
-    </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next steps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ri-g-quantile-analysis">Ri_g quantile analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#argo-how-important-is-salinity-to-n2">Argo: How “important” is salinity to N²</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-how-is-tao-resolving-mi-at-140w-during-mam">Sampling: how is tao resolving MI at 140W during MAM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-rig">calculate Rig</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bin-in-euc-relative-coordinates">bin in euc-relative coordinates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-ri-quantiles">Gradient Ri quantiles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#median-in-euc-relative-coordinate">Median in euc-relative coordinate</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-binning-instead-of-reinterpolating-to-euc-depth-coordinate">after binning instead of reinterpolating to euc depth coordinate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-gridding-t-u-to-same-grid">after gridding T,u to same grid</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-filling-nans-with-pchip">after filling NaNs with pchip</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-filling-nans-with-pchip">before filling NaNs with pchip</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-number-of-observations-90">Using number of observations &gt; 90</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-removing-mld">after removing mld</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-removing-mld">before removing mld</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-limiting-eucmax-to-be-deeper-than-20m">Before limiting eucmax to be deeper than 20m</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-good-is-bulk-ri-vs-gradient-ri">How good is bulk Ri vs gradient Ri</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimate-and-plot-histograms">Estimate and plot histograms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seasonal-rib-vs-rig">seasonal Rib vs Rig</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datasets">Datasets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#johnson">johnson</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tao-daily-full-average">TAO daily → full average</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tao-hourly-average">TAO hourly → average</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-5">Figure 5</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
   
-    By Deepak Cherian<br/>
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deepak Cherian
+</p>
+
+  </div>
   
-      &copy; Copyright 2022.<br/>
-    <div class="extra_footer">
-      <div>
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-    </div>
-</p>
-        </footer>
-    </div>
-    
 </div>
+  </div>
+  
+</div></div>
+          </footer>
+        
 
-
-      </div>
+      </main>
     </div>
+  </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
 
-
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>

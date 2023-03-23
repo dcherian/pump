@@ -1,48 +1,59 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>TIW Cruise Sections &#8212; PUMP</title>
-    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
-    
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
@@ -50,557 +61,329 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ctd-adcp';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="TIW Compositing" href="TIW-compositing.html" />
     <link rel="prev" title="TIW DCL Paper Figures" href="dcl-paper.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
     
-    <div class="container-fluid" id="banner"></div>
-
     
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
 
-    <div class="container-xl">
-      <div class="row">
-          
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="index.html">
-      
-      
-      
-      <h1 class="site-logo" id="site-title">PUMP</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
-    <div class="bd-toc-item active">
-        <p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  miχpods
- </span>
-</p>
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">PUMP</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">miχpods</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods.html">
-   miχpods
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-tao.html">
-   miχpods - TAO
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-les.html">
-   miχpods for LES simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-mom6.html">
-   miχpods: MOM6
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-diag-table.html">
-   Diag table generation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods.html">miχpods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-tao.html">miχpods - TAO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-les.html">miχpods for LES simulations</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="mixpods-mom6.html">miχpods: MOM6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-diag-table.html">Diag table generation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  TIW Turbulence
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TIW Turbulence</span></p>
 <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-DCL.html">
-   TIW DCL
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dcl-paper.html">
-   TIW DCL Paper Figures
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   TIW Cruise Sections
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html">
-   TIW Compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="vertical-velocity.html">
-   TIW vertical velocity in MITgcm simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tiw-floats.html">
-   EM-APEX floats in TIWs
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-DCL.html">TIW DCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dcl-paper.html">TIW DCL Paper Figures</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">TIW Cruise Sections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-compositing.html">TIW Compositing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vertical-velocity.html">TIW vertical velocity in MITgcm simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tiw-floats.html">EM-APEX floats in TIWs</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Marginal Stability
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Marginal Stability</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="bulk-Ri.html">
-   Bulk Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="MI-extent.html">
-   Extent of marginal stability
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tao-ri-analysis.html">
-   TAO Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mi-simple-model.html">
-   Simple model analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="shred2-evol.html">
-   Reduced Shear Evolution equation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="bulk-Ri.html">Bulk Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MI-extent.html">Extent of marginal stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tao-ri-analysis.html">TAO Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mi-simple-model.html">Simple model analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shred2-evol.html">Reduced Shear Evolution equation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  χpod/Chameleon
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">χpod/Chameleon</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-divergence.html">
-   EQUIX: Jq divergence
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-examine.html">
-   Chameleon heat flux χ vs ε
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixing-efficiency.html">
-   Variations in
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   ,
-   <span class="math notranslate nohighlight">
-    \(Γ\)
-   </span>
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="equix-divergence.html">EQUIX: Jq divergence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="equix-examine.html">Chameleon heat flux χ vs ε</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixing-efficiency.html">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+
+
+
+
+
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Other
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="les-examine.html">
-   LES first look
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="long-term-turbulence.html">
-   Long-term tubulence in 20-year simulation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="les-tendencies.html">
-   LES tendencies
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="heat-momentum-budget-checks.html">
-   Heat and momentum budgets with MITgcm output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="submeso-deep-100.html">
-   Deep submesoscales in 1/100°?
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="les-examine.html">LES first look</a></li>
+<li class="toctree-l1"><a class="reference internal" href="long-term-turbulence.html">Long-term tubulence in 20-year simulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="les-tendencies.html">LES tendencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heat-momentum-budget-checks.html">Heat and momentum budgets with MITgcm output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submeso-deep-100.html">Deep submesoscales in 1/100°?</a></li>
 </ul>
 
     </div>
 </nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-            </div>
-            
-        </div>
     </div>
-    <div id="rtd-footer-container"></div>
-</div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
-          
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
 
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
 <div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
 
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
   
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
     </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/dcherian/pump" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-<a href="https://github.com/dcherian/pump"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="bottom"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fab fa-github"></i>
   </span>
 
 </a>
 
-<div class="menu-dropdown menu-dropdown-download-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Download this page">
-      <i class="fas fa-download"></i>
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
   </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="_sources/ctd-adcp.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Download source file"
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/ctd-adcp.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.ipynb</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
-
-      </li>
+</li>
+      
+      
+      
       
       <li>
-        
-<button onclick="printPdf(this)"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="left"
-title="Print to PDF"
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file-pdf"></i>
   </span>
-<span class="headerbtn__text-container">.pdf</span>
+<span class="btn__text-container">.pdf</span>
 </button>
-
-      </li>
+</li>
       
-    </ul>
-  </div>
+  </ul>
 </div>
-<label for="__page-toc"
-  class="headerbtn headerbtn-page-toc"
-  
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-list"></i>
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
   </span>
 
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
 </label>
-
+</div></div>
+      
     </div>
+  
 </div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-    <div class="tocsection onthispage pt-5 pb-3">
-        <i class="fas fa-list"></i> Contents
-    </div>
-    <nav id="bd-toc-nav" aria-label="Page">
-        <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#todo">
-   TODO
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#read-all-data">
-   Read all data
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ctd">
-   CTD
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#mld-computation">
-     MLD computation
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#adcp">
-   ADCP
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#processing">
-     processing
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#summary-plot-for-section">
-   summary plot for section
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ladcp-test">
-   LADCP test
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#save-section-images">
-   Save section images
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#tiw-dcl-paper-figure">
-   TIW DCL Paper figure
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#osm20-figure">
-   OSM20 figure
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#debug-particular-sections">
-   debug particular sections
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#clivar-p18-2007">
-     CLIVAR P18 2007
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#discoverer-ep391">
-     Discoverer EP391
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#test-plots">
-   test plots
-  </a>
- </li>
-</ul>
-
-    </nav>
 </div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
-            <!-- Table of contents that is only displayed when printing the page -->
-            <div id="jb-print-docs-body" class="onlyprint">
-                <h1>TIW Cruise Sections</h1>
-                <!-- Table of contents -->
-                <div id="print-main-content">
-                    <div id="jb-print-toc">
-                        
-                        <div>
-                            <h2> Contents </h2>
-                        </div>
-                        <nav aria-label="Page">
-                            <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#todo">
-   TODO
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#read-all-data">
-   Read all data
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ctd">
-   CTD
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#mld-computation">
-     MLD computation
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#adcp">
-   ADCP
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#processing">
-     processing
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#summary-plot-for-section">
-   summary plot for section
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#ladcp-test">
-   LADCP test
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#save-section-images">
-   Save section images
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#tiw-dcl-paper-figure">
-   TIW DCL Paper figure
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#osm20-figure">
-   OSM20 figure
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#debug-particular-sections">
-   debug particular sections
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#clivar-p18-2007">
-     CLIVAR P18 2007
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#discoverer-ep391">
-     Discoverer EP391
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#test-plots">
-   test plots
-  </a>
- </li>
-</ul>
+              
+              
 
-                        </nav>
-                    </div>
-                </div>
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>TIW Cruise Sections</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
             </div>
-            <main id="main-content" role="main">
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#todo">TODO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-all-data">Read all data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ctd">CTD</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mld-computation">MLD computation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adcp">ADCP</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#processing">processing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-plot-for-section">summary plot for section</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ladcp-test">LADCP test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-section-images">Save section images</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tiw-dcl-paper-figure">TIW DCL Paper figure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#osm20-figure">OSM20 figure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-particular-sections">debug particular sections</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clivar-p18-2007">CLIVAR P18 2007</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discoverer-ep391">Discoverer EP391</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-plots">test plots</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
                 
-              <div>
-                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <section class="tex2jax_ignore mathjax_ignore" id="tiw-cruise-sections">
-<h1>TIW Cruise Sections<a class="headerlink" href="#tiw-cruise-sections" title="Permalink to this headline">#</a></h1>
+<h1>TIW Cruise Sections<a class="headerlink" href="#tiw-cruise-sections" title="Permalink to this heading">#</a></h1>
 <section id="todo">
-<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">#</a></h2>
+<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this heading">#</a></h2>
 <p>CTD at 1m resolution</p>
 <p>ADCP in 8m/10m bins</p>
 <ul class="contains-task-list simple">
@@ -650,13 +433,11 @@ title="Print to PDF"
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "057d5707ec04424b86849d55872db1da", "version_major": 2, "version_minor": 0}
-</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "057d5707ec04424b86849d55872db1da", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 </section>
 <section id="read-all-data">
-<h2>Read all data<a class="headerlink" href="#read-all-data" title="Permalink to this headline">#</a></h2>
+<h2>Read all data<a class="headerlink" href="#read-all-data" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">ls</span> ../datasets/ctd
@@ -708,9 +489,9 @@ title="Print to PDF"
 </div>
 </section>
 <section id="ctd">
-<h2>CTD<a class="headerlink" href="#ctd" title="Permalink to this headline">#</a></h2>
+<h2>CTD<a class="headerlink" href="#ctd" title="Permalink to this heading">#</a></h2>
 <section id="mld-computation">
-<h3>MLD computation<a class="headerlink" href="#mld-computation" title="Permalink to this headline">#</a></h3>
+<h3>MLD computation<a class="headerlink" href="#mld-computation" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cruises</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
@@ -753,7 +534,7 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2adf759cf950&gt;]
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_12_1.png" src="_images/ctd-adcp_12_1.png" />
+<img alt="_images/4e228e01d5d5ce2b1116ade79619c0eb848ff8f04d0489e317c4ad30743db353.png" src="_images/4e228e01d5d5ce2b1116ade79619c0eb848ff8f04d0489e317c4ad30743db353.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -768,13 +549,13 @@ Coordinates:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2adf746febd0&gt;]
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_13_1.png" src="_images/ctd-adcp_13_1.png" />
+<img alt="_images/d5bd4710ff04d3df8ec7aa0b46248ad5c5eb25291f747d0328b4d4080029c297.png" src="_images/d5bd4710ff04d3df8ec7aa0b46248ad5c5eb25291f747d0328b4d4080029c297.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="adcp">
-<h2>ADCP<a class="headerlink" href="#adcp" title="Permalink to this headline">#</a></h2>
+<h2>ADCP<a class="headerlink" href="#adcp" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ctd</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">find_cruise</span><span class="p">(</span><span class="n">cruises</span><span class="p">,</span> <span class="s2">&quot;31DSEP393&quot;</span><span class="p">)</span>
@@ -1757,7 +1538,7 @@ dl.xr-attrs {
 </table></pre></li></ul></div></li><li class='xr-section-item'><input id='section-8a9cd26f-11f9-485e-a9f3-b82ac82d9ba1' class='xr-section-summary-in' type='checkbox'  ><label for='section-8a9cd26f-11f9-485e-a9f3-b82ac82d9ba1' class='xr-section-summary' >Attributes: <span>(11)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>EXPOCODE :</span></dt><dd>31DSEP393_1</dd><dt><span>Conventions :</span></dt><dd>COARDS/WOCE</dd><dt><span>WOCE_VERSION :</span></dt><dd>3.0</dd><dt><span>WOCE_ID :</span></dt><dd>PR16</dd><dt><span>DATA_TYPE :</span></dt><dd>WOCE CTD</dd><dt><span>STATION_NUMBER :</span></dt><dd>20</dd><dt><span>CAST_NUMBER :</span></dt><dd>1</dd><dt><span>BOTTOM_DEPTH_METERS :</span></dt><dd>0</dd><dt><span>Creation_Time :</span></dt><dd>Diggs Code Version 1.2: Mon Aug 26 19:47:34 2002 GMT</dd><dt><span>ORIGINAL_HEADER :</span></dt><dd>:CTD,20020826WHPOSIOHLB:#Software Version: CTD_Exchange_Encode_v1.0g (Diggs):#SUMFILE_NAME:     pr16_hsu.txt:#SUMFILE_MOD_DATE: Mon Aug 26 12:45:46 2002:#CTDFILE_NAME:     EP393W20.WCT:#CTDFILE_MOD_DATE: Mon Aug 26 12:43:21 2002:#DEPTH_TYPE      : UNC:#EVENT_CODE      : BO:</dd><dt><span>WOCE_CTD_FLAG_DESCRIPTION :</span></dt><dd>::1=Not calibrated:2=Acceptable measurement:3=Questionable measurement:4=Bad measurement:5=Not reported:6=Interpolated over &gt;2 dbar interval:7=Despiked:8=Not assigned for CTD data:9=Not sampled::</dd></dl></div></li></ul></div></div></div></div>
 </div>
 <section id="processing">
-<h3>processing<a class="headerlink" href="#processing" title="Permalink to this headline">#</a></h3>
+<h3>processing<a class="headerlink" href="#processing" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp</span> <span class="o">=</span> <span class="n">pump</span><span class="o">.</span><span class="n">sections</span><span class="o">.</span><span class="n">read_adcp</span><span class="p">(</span>
@@ -1775,7 +1556,7 @@ dl.xr-attrs {
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Found 31DSEP393 at index 24.
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_17_1.png" src="_images/ctd-adcp_17_1.png" />
+<img alt="_images/81aa0ba112dd0f29b89072bbee4671affdc01d59d3b448ca5cda0362ffc82323.png" src="_images/81aa0ba112dd0f29b89072bbee4671affdc01d59d3b448ca5cda0362ffc82323.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1789,7 +1570,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b723305b3d0&gt;]
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_18_1.png" src="_images/ctd-adcp_18_1.png" />
+<img alt="_images/ab2168d817c95260e3aa3c7ee2eef755323f3d2f50da0f66aef2f655517642e0.png" src="_images/ab2168d817c95260e3aa3c7ee2eef755323f3d2f50da0f66aef2f655517642e0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1802,7 +1583,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b72330611d0&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_19_1.png" src="_images/ctd-adcp_19_1.png" />
+<img alt="_images/1ae8cb0ff4c22862a7b858fba4c5b5e67d13e4bfb4feaf7cd168c7e0ffb0a783.png" src="_images/1ae8cb0ff4c22862a7b858fba4c5b5e67d13e4bfb4feaf7cd168c7e0ffb0a783.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1822,7 +1603,7 @@ dl.xr-attrs {
  &lt;matplotlib.lines.Line2D at 0x2b72356c26d0&gt;]
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_20_1.png" src="_images/ctd-adcp_20_1.png" />
+<img alt="_images/ab7355d2d78a18469521391b7b99204724bb20b49d27608730716c57686b1501.png" src="_images/ab7355d2d78a18469521391b7b99204724bb20b49d27608730716c57686b1501.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1835,7 +1616,7 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b7235740c10&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_21_1.png" src="_images/ctd-adcp_21_1.png" />
+<img alt="_images/f25d216db86d3f06dfbe1800b83685bc15c8c0e46e5c9594eafd2a3bcc8d4e77.png" src="_images/f25d216db86d3f06dfbe1800b83685bc15c8c0e46e5c9594eafd2a3bcc8d4e77.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1848,13 +1629,13 @@ dl.xr-attrs {
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2b7235cd8450&gt;]
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_22_1.png" src="_images/ctd-adcp_22_1.png" />
+<img alt="_images/0c017c18100b58275775d87b983c8951a9f848159d196ca1a7e002815043fb39.png" src="_images/0c017c18100b58275775d87b983c8951a9f848159d196ca1a7e002815043fb39.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="summary-plot-for-section">
-<h2>summary plot for section<a class="headerlink" href="#summary-plot-for-section" title="Permalink to this headline">#</a></h2>
+<h2>summary plot for section<a class="headerlink" href="#summary-plot-for-section" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
@@ -1893,7 +1674,7 @@ distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp:/
 distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp://127.0.0.1:49750 remote=tcp://127.0.0.1:42035&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_24_3.png" src="_images/ctd-adcp_24_3.png" />
+<img alt="_images/48cb23a683de930b914b778411b3df8c507d689fcb801a55e93f62e05fe0499c.png" src="_images/48cb23a683de930b914b778411b3df8c507d689fcb801a55e93f62e05fe0499c.png" />
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp://127.0.0.1:49756 remote=tcp://127.0.0.1:42035&gt;
 distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp://127.0.0.1:49758 remote=tcp://127.0.0.1:42035&gt;
 </pre></div>
@@ -1911,12 +1692,12 @@ distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp:/
   mask |= resdat &lt;= 0
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_25_1.png" src="_images/ctd-adcp_25_1.png" />
+<img alt="_images/0c835cfb746d441be3b10b04214424591073fa24d9c574c602ca097d38ecae4d.png" src="_images/0c835cfb746d441be3b10b04214424591073fa24d9c574c602ca097d38ecae4d.png" />
 </div>
 </div>
 </section>
 <section id="ladcp-test">
-<h2>LADCP test<a class="headerlink" href="#ladcp-test" title="Permalink to this headline">#</a></h2>
+<h2>LADCP test<a class="headerlink" href="#ladcp-test" title="Permalink to this heading">#</a></h2>
 <p>Test out using SADCP instead of LADCP. Probably not a good diea since LADCP seems to be too smooth</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1930,7 +1711,7 @@ distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp:/
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2acb6a860ed0&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_27_1.png" src="_images/ctd-adcp_27_1.png" />
+<img alt="_images/4c98f7b9d113acf9598557df855199357d9ca4d3964f1d0d015c9173625d6ac5.png" src="_images/4c98f7b9d113acf9598557df855199357d9ca4d3964f1d0d015c9173625d6ac5.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1999,7 +1780,7 @@ Invalid limit will be ignored.
   x = np.divide(x1, x2, out)
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_29_1.png" src="_images/ctd-adcp_29_1.png" />
+<img alt="_images/8324024d82592015005fa3936355cdd0d76adc24de41d1177c7da41795e96c8d.png" src="_images/8324024d82592015005fa3936355cdd0d76adc24de41d1177c7da41795e96c8d.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2031,7 +1812,7 @@ Invalid limit will be ignored.
   x = np.divide(x1, x2, out)
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_31_1.png" src="_images/ctd-adcp_31_1.png" />
+<img alt="_images/66c30474022f5c6368af62cf65f634733b169cc3a6309b90acf68fe4f06bb5bc.png" src="_images/66c30474022f5c6368af62cf65f634733b169cc3a6309b90acf68fe4f06bb5bc.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2048,13 +1829,13 @@ Invalid limit will be ignored.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2acb7c30bc50&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_32_1.png" src="_images/ctd-adcp_32_1.png" />
+<img alt="_images/fdf55a31aedba1754cb487cde008375dd9db0ef8266d82f0aa8bb8cd577b3285.png" src="_images/fdf55a31aedba1754cb487cde008375dd9db0ef8266d82f0aa8bb8cd577b3285.png" />
 </div>
 </div>
 <p>R.C. and Ryan think that LADCP is pretty smoothed because of CTD cage motion. R.C. would definitely pick SADCP shear over LADCP to capture finer scale</p>
 </section>
 <section id="save-section-images">
-<h2>Save section images<a class="headerlink" href="#save-section-images" title="Permalink to this headline">#</a></h2>
+<h2>Save section images<a class="headerlink" href="#save-section-images" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adcp_files</span>
@@ -2101,7 +1882,7 @@ skipping 3.5
 skipping 4.5
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_37_3.png" src="_images/ctd-adcp_37_3.png" />
+<img alt="_images/bacff3d7a7e413a55c5217f10fc4a8247eded0f7558e293850fc31d9f11e9a17.png" src="_images/bacff3d7a7e413a55c5217f10fc4a8247eded0f7558e293850fc31d9f11e9a17.png" />
 </div>
 </div>
 <p>Loop through and save images</p>
@@ -2217,29 +1998,29 @@ Found 33RO20161119 at index 15.
   return np.nanmean(a, axis=axis, dtype=dtype)
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_39_18.png" src="_images/ctd-adcp_39_18.png" />
-<img alt="_images/ctd-adcp_39_19.png" src="_images/ctd-adcp_39_19.png" />
-<img alt="_images/ctd-adcp_39_20.png" src="_images/ctd-adcp_39_20.png" />
-<img alt="_images/ctd-adcp_39_21.png" src="_images/ctd-adcp_39_21.png" />
+<img alt="_images/881b36d10214d0d509f8fe5bac2fca30dc8f7cdf934f3a01a30c68dbfb391ed9.png" src="_images/881b36d10214d0d509f8fe5bac2fca30dc8f7cdf934f3a01a30c68dbfb391ed9.png" />
+<img alt="_images/ae187cbd54d83e9c5f062bf3813baca2fd0a777572bdd9853dfd621b2351a9cf.png" src="_images/ae187cbd54d83e9c5f062bf3813baca2fd0a777572bdd9853dfd621b2351a9cf.png" />
+<img alt="_images/973fa7962bd82c05686c6b91f6f5e5e4f80e0569e2a1f9452724320c0a5b14a9.png" src="_images/973fa7962bd82c05686c6b91f6f5e5e4f80e0569e2a1f9452724320c0a5b14a9.png" />
+<img alt="_images/e6e059aeba00f1dde9829fe2a9e73262452a1c50659e92a3da9d8a0047e87a81.png" src="_images/e6e059aeba00f1dde9829fe2a9e73262452a1c50659e92a3da9d8a0047e87a81.png" />
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp://127.0.0.1:50026 remote=tcp://127.0.0.1:46013&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_39_23.png" src="_images/ctd-adcp_39_23.png" />
+<img alt="_images/969c3906e0b8fdeae2ea59440b4f00080dce91c8e3d805d1c57f15b64176b295.png" src="_images/969c3906e0b8fdeae2ea59440b4f00080dce91c8e3d805d1c57f15b64176b295.png" />
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp://127.0.0.1:50200 remote=tcp://127.0.0.1:46013&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_39_25.png" src="_images/ctd-adcp_39_25.png" />
+<img alt="_images/8d34f0494686c4e210fa35217edfc8d39be053cca56a7f4c18e9bf244cc31868.png" src="_images/8d34f0494686c4e210fa35217edfc8d39be053cca56a7f4c18e9bf244cc31868.png" />
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.comm.tcp - WARNING - Closing dangling stream in &lt;TCP  local=tcp://127.0.0.1:50422 remote=tcp://127.0.0.1:46013&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_39_27.png" src="_images/ctd-adcp_39_27.png" />
-<img alt="_images/ctd-adcp_39_28.png" src="_images/ctd-adcp_39_28.png" />
-<img alt="_images/ctd-adcp_39_29.png" src="_images/ctd-adcp_39_29.png" />
+<img alt="_images/508cce6dd302728c1d8da7205bcd16540e71d059c50e7db2fd1c96f9d4d390eb.png" src="_images/508cce6dd302728c1d8da7205bcd16540e71d059c50e7db2fd1c96f9d4d390eb.png" />
+<img alt="_images/44e8dece4ad76ef5a9b7180ca029028e4cca816911dda56fda358ba8e2bcec33.png" src="_images/44e8dece4ad76ef5a9b7180ca029028e4cca816911dda56fda358ba8e2bcec33.png" />
+<img alt="_images/9945979205439738de48d73751a54a6816dfc54f30830a099afb3115082fd21c.png" src="_images/9945979205439738de48d73751a54a6816dfc54f30830a099afb3115082fd21c.png" />
 </div>
 </div>
 </section>
 <section id="tiw-dcl-paper-figure">
-<h2>TIW DCL Paper figure<a class="headerlink" href="#tiw-dcl-paper-figure" title="Permalink to this headline">#</a></h2>
+<h2>TIW DCL Paper figure<a class="headerlink" href="#tiw-dcl-paper-figure" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">display</span>
@@ -2804,7 +2585,7 @@ REFERENCES (DATA REPORTS,ETC)   :
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2ac99ea8c630&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_42_1.png" src="_images/ctd-adcp_42_1.png" />
+<img alt="_images/0c612b06342deca2c874149746c4dcb65e2bb929927dc9dc4674399d5305a0bc.png" src="_images/0c612b06342deca2c874149746c4dcb65e2bb929927dc9dc4674399d5305a0bc.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2926,12 +2707,12 @@ Found 33RO20071215 at index 29.
   ax.set_xlabel(&quot;&quot;)
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_44_10.png" src="_images/ctd-adcp_44_10.png" />
+<img alt="_images/7654bf62421fd4e4252d8f36a87a3fc1d968b183f403e5f3985d524c5b3958cd.png" src="_images/7654bf62421fd4e4252d8f36a87a3fc1d968b183f403e5f3985d524c5b3958cd.png" />
 </div>
 </div>
 </section>
 <section id="osm20-figure">
-<h2>OSM20 figure<a class="headerlink" href="#osm20-figure" title="Permalink to this headline">#</a></h2>
+<h2>OSM20 figure<a class="headerlink" href="#osm20-figure" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">expocode</span><span class="p">,</span> <span class="n">ctd</span><span class="p">,</span> <span class="n">adcp</span><span class="p">,</span> <span class="n">binned</span> <span class="o">=</span> <span class="n">process_file</span><span class="p">(</span><span class="n">adcp_files</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -2955,7 +2736,7 @@ Found 31DSEP393 at index 24.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b7c3af51890&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_47_1.png" src="_images/ctd-adcp_47_1.png" />
+<img alt="_images/a1ad56b9e18b262929621e952fc206381da0f011fed1fb48abaa70348c0f64c8.png" src="_images/a1ad56b9e18b262929621e952fc206381da0f011fed1fb48abaa70348c0f64c8.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2970,7 +2751,7 @@ Found 31DSEP393 at index 24.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b7c340f7350&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_48_1.png" src="_images/ctd-adcp_48_1.png" />
+<img alt="_images/1d2dea553e40f1d8f9b4d8dec32dea09d0c49960b839de3d77c8d417b5305779.png" src="_images/1d2dea553e40f1d8f9b4d8dec32dea09d0c49960b839de3d77c8d417b5305779.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3046,14 +2827,14 @@ Found 33RO20071215 at index 29.
   return np.nanmean(a, axis=axis, dtype=dtype)
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_49_6.png" src="_images/ctd-adcp_49_6.png" />
+<img alt="_images/3df9d09e525b3b4af3e1100d3e0678554376e0d6a96dfb93ca1942ad50e89677.png" src="_images/3df9d09e525b3b4af3e1100d3e0678554376e0d6a96dfb93ca1942ad50e89677.png" />
 </div>
 </div>
 </section>
 <section id="debug-particular-sections">
-<h2>debug particular sections<a class="headerlink" href="#debug-particular-sections" title="Permalink to this headline">#</a></h2>
+<h2>debug particular sections<a class="headerlink" href="#debug-particular-sections" title="Permalink to this heading">#</a></h2>
 <section id="clivar-p18-2007">
-<h3>CLIVAR P18 2007<a class="headerlink" href="#clivar-p18-2007" title="Permalink to this headline">#</a></h3>
+<h3>CLIVAR P18 2007<a class="headerlink" href="#clivar-p18-2007" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;../datasets/adcp/33RO20071215_rb0711_01079_short.nc&quot;</span>
@@ -3083,7 +2864,7 @@ Found 33RO20071215 at index 29.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2adf746cbad0&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_53_1.png" src="_images/ctd-adcp_53_1.png" />
+<img alt="_images/253ae4f30c2a247109a035d2074c6f13fb3e7d576c0a15d7f4f9105460a2b207.png" src="_images/253ae4f30c2a247109a035d2074c6f13fb3e7d576c0a15d7f4f9105460a2b207.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3099,7 +2880,7 @@ Found 33RO20071215 at index 29.
   return np.nanmean(a, axis=axis, dtype=dtype)
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_54_1.png" src="_images/ctd-adcp_54_1.png" />
+<img alt="_images/8b120b749dd00cc2b959748e0e39eb20892116cff9eda33099e13e312fb982a8.png" src="_images/8b120b749dd00cc2b959748e0e39eb20892116cff9eda33099e13e312fb982a8.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3111,7 +2892,7 @@ Found 33RO20071215 at index 29.
 </div>
 </section>
 <section id="discoverer-ep391">
-<h3>Discoverer EP391<a class="headerlink" href="#discoverer-ep391" title="Permalink to this headline">#</a></h3>
+<h3>Discoverer EP391<a class="headerlink" href="#discoverer-ep391" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># _, ctd, adcp, binned = process_file(adcp_files[0])</span>
@@ -3124,7 +2905,7 @@ Found 33RO20071215 at index 29.
   mask |= resdat &lt;= 0
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_57_1.png" src="_images/ctd-adcp_57_1.png" />
+<img alt="_images/4c25077d3f3f22ff4af1be163d1d89b0eb9fb90b8c028c624b78c5854afd92c3.png" src="_images/4c25077d3f3f22ff4af1be163d1d89b0eb9fb90b8c028c624b78c5854afd92c3.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3137,13 +2918,13 @@ Found 33RO20071215 at index 29.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b7232572d10&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_58_1.png" src="_images/ctd-adcp_58_1.png" />
+<img alt="_images/8262f5f32c269dcfdece9fcda950ba1da483c8d38d4ca89387b0114db343bf77.png" src="_images/8262f5f32c269dcfdece9fcda950ba1da483c8d38d4ca89387b0114db343bf77.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="test-plots">
-<h2>test plots<a class="headerlink" href="#test-plots" title="Permalink to this headline">#</a></h2>
+<h2>test plots<a class="headerlink" href="#test-plots" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binned</span><span class="o">.</span><span class="n">Ri</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
@@ -3157,7 +2938,7 @@ Found 33RO20071215 at index 29.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.contour.QuadContourSet at 0x2aadd5ae2850&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_60_1.png" src="_images/ctd-adcp_60_1.png" />
+<img alt="_images/5e9e393f0b41a1736eaa0dd6f1796d9de7d43534bf4282b41032cf1ed515e3e7.png" src="_images/5e9e393f0b41a1736eaa0dd6f1796d9de7d43534bf4282b41032cf1ed515e3e7.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3186,7 +2967,7 @@ Found 33RO20071215 at index 29.
  &lt;matplotlib.lines.Line2D at 0x2b7236f06290&gt;]
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_61_1.png" src="_images/ctd-adcp_61_1.png" />
+<img alt="_images/9e713e45431bd70a766aa1f6bd39f213db53c99227f7505cd7caa4d38bf1b629.png" src="_images/9e713e45431bd70a766aa1f6bd39f213db53c99227f7505cd7caa4d38bf1b629.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -3199,7 +2980,7 @@ Found 33RO20071215 at index 29.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b8b1ad84be0&gt;
 </pre></div>
 </div>
-<img alt="_images/ctd-adcp_62_1.png" src="_images/ctd-adcp_62_1.png" />
+<img alt="_images/bc31197fbd62756fba11d3e63ac0c500e979520a862e3e32a5c9d91a26eda0dd.png" src="_images/bc31197fbd62756fba11d3e63ac0c500e979520a862e3e32a5c9d91a26eda0dd.png" />
 </div>
 </div>
 </section>
@@ -3225,57 +3006,126 @@ Found 33RO20071215 at index 29.
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="dcl-paper.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">TIW DCL Paper Figures</p>
-        </div>
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="dcl-paper.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">TIW DCL Paper Figures</p>
+      </div>
     </a>
-    <a class='right-next' id="next-link" href="TIW-compositing.html" title="next page">
-    <div class="prev-next-info">
+    <a class="right-next"
+       href="TIW-compositing.html"
+       title="next page">
+      <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
         <p class="prev-next-title">TIW Compositing</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
-            </footer>
-        </div>
-    </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#todo">TODO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-all-data">Read all data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ctd">CTD</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mld-computation">MLD computation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adcp">ADCP</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#processing">processing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-plot-for-section">summary plot for section</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ladcp-test">LADCP test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#save-section-images">Save section images</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tiw-dcl-paper-figure">TIW DCL Paper figure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#osm20-figure">OSM20 figure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-particular-sections">debug particular sections</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clivar-p18-2007">CLIVAR P18 2007</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discoverer-ep391">Discoverer EP391</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-plots">test plots</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
   
-    By Deepak Cherian<br/>
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deepak Cherian
+</p>
+
+  </div>
   
-      &copy; Copyright 2022.<br/>
-    <div class="extra_footer">
-      <div>
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-    </div>
-</p>
-        </footer>
-    </div>
-    
 </div>
+  </div>
+  
+</div></div>
+          </footer>
+        
 
-
-      </div>
+      </main>
     </div>
+  </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
 
-
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>

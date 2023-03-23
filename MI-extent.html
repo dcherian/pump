@@ -1,48 +1,59 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Extent of marginal stability &#8212; PUMP</title>
-    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
-    
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
@@ -50,423 +61,309 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'MI-extent';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="TAO Ri analysis" href="tao-ri-analysis.html" />
     <link rel="prev" title="Bulk Ri analysis" href="bulk-Ri.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
     
-    <div class="container-fluid" id="banner"></div>
-
     
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
 
-    <div class="container-xl">
-      <div class="row">
-          
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="index.html">
-      
-      
-      
-      <h1 class="site-logo" id="site-title">PUMP</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
-    <div class="bd-toc-item active">
-        <p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  miχpods
- </span>
-</p>
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">PUMP</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">miχpods</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods.html">
-   miχpods
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-tao.html">
-   miχpods - TAO
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-les.html">
-   miχpods for LES simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-mom6.html">
-   miχpods: MOM6
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixpods-diag-table.html">
-   Diag table generation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods.html">miχpods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-tao.html">miχpods - TAO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-les.html">miχpods for LES simulations</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="mixpods-mom6.html">miχpods: MOM6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-diag-table.html">Diag table generation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  TIW Turbulence
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TIW Turbulence</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-DCL.html">
-   TIW DCL
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="dcl-paper.html">
-   TIW DCL Paper Figures
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="ctd-adcp.html">
-   TIW Cruise Sections
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="TIW-compositing.html">
-   TIW Compositing
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="vertical-velocity.html">
-   TIW vertical velocity in MITgcm simulations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tiw-floats.html">
-   EM-APEX floats in TIWs
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-DCL.html">TIW DCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dcl-paper.html">TIW DCL Paper Figures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctd-adcp.html">TIW Cruise Sections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-compositing.html">TIW Compositing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vertical-velocity.html">TIW vertical velocity in MITgcm simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tiw-floats.html">EM-APEX floats in TIWs</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Marginal Stability
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Marginal Stability</span></p>
 <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="bulk-Ri.html">
-   Bulk Ri analysis
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Extent of marginal stability
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="tao-ri-analysis.html">
-   TAO Ri analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mi-simple-model.html">
-   Simple model analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="shred2-evol.html">
-   Reduced Shear Evolution equation
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="bulk-Ri.html">Bulk Ri analysis</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Extent of marginal stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tao-ri-analysis.html">TAO Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mi-simple-model.html">Simple model analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shred2-evol.html">Reduced Shear Evolution equation</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  χpod/Chameleon
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">χpod/Chameleon</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-divergence.html">
-   EQUIX: Jq divergence
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="equix-examine.html">
-   Chameleon heat flux χ vs ε
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="mixing-efficiency.html">
-   Variations in
-   <span class="math notranslate nohighlight">
-    \(Ri_f\)
-   </span>
-   ,
-   <span class="math notranslate nohighlight">
-    \(Γ\)
-   </span>
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="equix-divergence.html">EQUIX: Jq divergence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="equix-examine.html">Chameleon heat flux χ vs ε</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixing-efficiency.html">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+
+
+
+
+
 </ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
-  Other
- </span>
-</p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="les-examine.html">
-   LES first look
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="long-term-turbulence.html">
-   Long-term tubulence in 20-year simulation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="les-tendencies.html">
-   LES tendencies
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="heat-momentum-budget-checks.html">
-   Heat and momentum budgets with MITgcm output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="submeso-deep-100.html">
-   Deep submesoscales in 1/100°?
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="les-examine.html">LES first look</a></li>
+<li class="toctree-l1"><a class="reference internal" href="long-term-turbulence.html">Long-term tubulence in 20-year simulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="les-tendencies.html">LES tendencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heat-momentum-budget-checks.html">Heat and momentum budgets with MITgcm output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submeso-deep-100.html">Deep submesoscales in 1/100°?</a></li>
 </ul>
 
     </div>
 </nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-            </div>
-            
-        </div>
     </div>
-    <div id="rtd-footer-container"></div>
-</div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
-          
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
 
-
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
 <div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
 
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
   
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
     </div>
-    <div class="header-article__right">
-<button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/dcherian/pump" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-expand"></i>
-  </span>
-
-</button>
-<a href="https://github.com/dcherian/pump"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="bottom"
-title="Source repository"
->
-  
-
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fab fa-github"></i>
   </span>
 
 </a>
 
-<div class="menu-dropdown menu-dropdown-download-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Download this page">
-      <i class="fas fa-download"></i>
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
   </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="_sources/MI-extent.ipynb"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Download source file"
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/MI-extent.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="headerbtn__text-container">.ipynb</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
-
-      </li>
+</li>
+      
+      
+      
       
       <li>
-        
-<button onclick="printPdf(this)"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="left"
-title="Print to PDF"
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-file-pdf"></i>
   </span>
-<span class="headerbtn__text-container">.pdf</span>
+<span class="btn__text-container">.pdf</span>
 </button>
-
-      </li>
+</li>
       
-    </ul>
-  </div>
+  </ul>
 </div>
-<label for="__page-toc"
-  class="headerbtn headerbtn-page-toc"
-  
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
-  <i class="fas fa-list"></i>
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
   </span>
 
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
 </label>
-
+</div></div>
+      
     </div>
+  
 </div>
-
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-    <div class="tocsection onthispage pt-5 pb-3">
-        <i class="fas fa-list"></i> Contents
-    </div>
-    <nav id="bd-toc-nav" aria-label="Page">
-        <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#mitgcm-25-year">
-   MITgcm 25 year
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#study-extents">
-   Study extents
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#pop2-andre">
-   POP2: Andre
-  </a>
- </li>
-</ul>
-
-    </nav>
 </div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
-            <!-- Table of contents that is only displayed when printing the page -->
-            <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Extent of marginal stability</h1>
-                <!-- Table of contents -->
-                <div id="print-main-content">
-                    <div id="jb-print-toc">
-                        
-                        <div>
-                            <h2> Contents </h2>
-                        </div>
-                        <nav aria-label="Page">
-                            <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#mitgcm-25-year">
-   MITgcm 25 year
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#study-extents">
-   Study extents
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#pop2-andre">
-   POP2: Andre
-  </a>
- </li>
-</ul>
+              
+              
 
-                        </nav>
-                    </div>
-                </div>
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Extent of marginal stability</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
             </div>
-            <main id="main-content" role="main">
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mitgcm-25-year">MITgcm 25 year</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#study-extents">Study extents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pop2-andre">POP2: Andre</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
                 
-              <div>
-                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <section class="tex2jax_ignore mathjax_ignore" id="extent-of-marginal-stability">
-<h1>Extent of marginal stability<a class="headerlink" href="#extent-of-marginal-stability" title="Permalink to this headline">#</a></h1>
+<h1>Extent of marginal stability<a class="headerlink" href="#extent-of-marginal-stability" title="Permalink to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">autoreload</span> 2
@@ -2040,127 +1937,127 @@ Hosting the HTTP server on port 46243 instead
 </div>
 <div class="cell_output docutils container">
 <div class="output text_html">
-    <div>
-        <div style="
-            width: 24px;
-            height: 24px;
-            background-color: #e1e1e1;
-            border: 3px solid #9D9D9D;
-            border-radius: 5px;
-            position: absolute;"> </div>
-        <div style="margin-left: 48px;">
-            <h3 style="margin-bottom: 0px;">Client</h3>
-            <p style="color: #9D9D9D; margin-bottom: 0px;">Client-cef8dd03-0fff-11ec-a2d3-3cecef1acc46</p>
-            <table style="width: 100%; text-align: left;">
-
-        <tr>
-            <td style="text-align: left;"><strong>Connection method:</strong> Cluster object</td>
-            <td style="text-align: left;"><strong>Cluster type:</strong> PBSCluster</td>
-        </tr>
-
-        <tr>
-            <td style="text-align: left;">
-                <strong>Dashboard: </strong>
-                <a href="/proxy/46243/status">/proxy/46243/status</a>
-            </td>
-            <td style="text-align: left;"></td>
-        </tr>
-
-            </table>
-
-        <details>
-        <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Cluster Info</h3></summary>
-
-    <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-mod-trusted jp-OutputArea-output">
-        <div style="
-            width: 24px;
-            height: 24px;
-            background-color: #e1e1e1;
-            border: 3px solid #9D9D9D;
-            border-radius: 5px;
-            position: absolute;"> </div>
-        <div style="margin-left: 48px;">
-            <h3 style="margin-bottom: 0px; margin-top: 0px;">PBSCluster</h3>
-            <p style="color: #9D9D9D; margin-bottom: 0px;">3cef5387</p>
-            <table style="width: 100%; text-align: left;">
-
-    <tr>
-        <td style="text-align: left;">
-            <strong>Dashboard:</strong> <a href="/proxy/46243/status">/proxy/46243/status</a>
-        </td>
-        <td style="text-align: left;"><strong>Workers:</strong> 0</td>
-    </tr>
-    <tr>
-        <td style="text-align: left;">
-            <strong>Total threads:</strong>
-            0
-        </td>
-        <td style="text-align: left;">
-            <strong>Total memory:</strong>
-            0 B
-        </td>
-    </tr>
-
-            </table>
-            <details>
-            <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Scheduler Info</h3></summary>
-
-<div style="">
-
-    <div>
-        <div style="
-            width: 24px;
-            height: 24px;
-            background-color: #FFF7E5;
-            border: 3px solid #FF6132;
-            border-radius: 5px;
-            position: absolute;"> </div>
-        <div style="margin-left: 48px;">
-            <h3 style="margin-bottom: 0px;">Scheduler</h3>
-            <p style="color: #9D9D9D; margin-bottom: 0px;">Scheduler-afdb8a0b-d79f-434d-aa80-46073f3d46e0</p>
-            <table style="width: 100%; text-align: left;">
+            <div>
+                <div style="
+                    width: 24px;
+                    height: 24px;
+                    background-color: #e1e1e1;
+                    border: 3px solid #9D9D9D;
+                    border-radius: 5px;
+                    position: absolute;"> </div>
+                <div style="margin-left: 48px;">
+                    <h3 style="margin-bottom: 0px;">Client</h3>
+                    <p style="color: #9D9D9D; margin-bottom: 0px;">Client-cef8dd03-0fff-11ec-a2d3-3cecef1acc46</p>
+                    <table style="width: 100%; text-align: left;">
+                    
                 <tr>
-                    <td style="text-align: left;"><strong>Comm:</strong> tcp://10.12.206.3:40276</td>
-                    <td style="text-align: left;"><strong>Workers:</strong> 0</td>
+                    <td style="text-align: left;"><strong>Connection method:</strong> Cluster object</td>
+                    <td style="text-align: left;"><strong>Cluster type:</strong> PBSCluster</td>
                 </tr>
+                
                 <tr>
                     <td style="text-align: left;">
-                        <strong>Dashboard:</strong> <a href="/proxy/46243/status">/proxy/46243/status</a>
+                        <strong>Dashboard: </strong>
+                        <a href="/proxy/46243/status">/proxy/46243/status</a>
                     </td>
-                    <td style="text-align: left;">
-                        <strong>Total threads:</strong>
-                        0
-                    </td>
+                    <td style="text-align: left;"></td>
                 </tr>
-                <tr>
-                    <td style="text-align: left;">
-                        <strong>Started:</strong>
-                        Just now
-                    </td>
-                    <td style="text-align: left;">
-                        <strong>Total memory:</strong>
-                        0 B
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <details style="margin-left: 48px;">
-    <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Workers</h3></summary>
-
-    </details>
-</div>
-
+                
+                    </table>
+                    
+                <details>
+                <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Cluster Info</h3></summary>
+                
+            <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-mod-trusted jp-OutputArea-output">
+                <div style="
+                    width: 24px;
+                    height: 24px;
+                    background-color: #e1e1e1;
+                    border: 3px solid #9D9D9D;
+                    border-radius: 5px;
+                    position: absolute;"> </div>
+                <div style="margin-left: 48px;">
+                    <h3 style="margin-bottom: 0px; margin-top: 0px;">PBSCluster</h3>
+                    <p style="color: #9D9D9D; margin-bottom: 0px;">3cef5387</p>
+                    <table style="width: 100%; text-align: left;">
+                    
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Dashboard:</strong> <a href="/proxy/46243/status">/proxy/46243/status</a>
+                </td>
+                <td style="text-align: left;"><strong>Workers:</strong> 0</td>
+            </tr>
+            <tr>
+                <td style="text-align: left;">
+                    <strong>Total threads:</strong>
+                    0
+                </td>
+                <td style="text-align: left;">
+                    <strong>Total memory:</strong>
+                    0 B
+                </td>
+            </tr>
+        
+                    </table>
+                    <details>
+                    <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Scheduler Info</h3></summary>
+                    
+        <div style="">
+            
+            <div>
+                <div style="
+                    width: 24px;
+                    height: 24px;
+                    background-color: #FFF7E5;
+                    border: 3px solid #FF6132;
+                    border-radius: 5px;
+                    position: absolute;"> </div>
+                <div style="margin-left: 48px;">
+                    <h3 style="margin-bottom: 0px;">Scheduler</h3>
+                    <p style="color: #9D9D9D; margin-bottom: 0px;">Scheduler-afdb8a0b-d79f-434d-aa80-46073f3d46e0</p>
+                    <table style="width: 100%; text-align: left;">
+                        <tr>
+                            <td style="text-align: left;"><strong>Comm:</strong> tcp://10.12.206.3:40276</td>
+                            <td style="text-align: left;"><strong>Workers:</strong> 0</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">
+                                <strong>Dashboard:</strong> <a href="/proxy/46243/status">/proxy/46243/status</a>
+                            </td>
+                            <td style="text-align: left;">
+                                <strong>Total threads:</strong>
+                                0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">
+                                <strong>Started:</strong>
+                                Just now
+                            </td>
+                            <td style="text-align: left;">
+                                <strong>Total memory:</strong>
+                                0 B
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        
+            <details style="margin-left: 48px;">
+            <summary style="margin-bottom: 20px;"><h3 style="display: inline;">Workers</h3></summary>
+            
             </details>
         </div>
-    </div>
-
-        </details>
-
-        </div>
-    </div>
-</div></div>
+        
+                    </details>
+                </div>
+            </div>
+        
+                </details>
+                
+                </div>
+            </div>
+        </div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -2170,7 +2067,7 @@ Hosting the HTTP server on port 46243 instead
 </div>
 </div>
 <section id="mitgcm-25-year">
-<h2>MITgcm 25 year<a class="headerlink" href="#mitgcm-25-year" title="Permalink to this headline">#</a></h2>
+<h2>MITgcm 25 year<a class="headerlink" href="#mitgcm-25-year" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">print_metrics</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
@@ -2230,7 +2127,7 @@ Hosting the HTTP server on port 46243 instead
 </div>
 </section>
 <section id="study-extents">
-<h2>Study extents<a class="headerlink" href="#study-extents" title="Permalink to this headline">#</a></h2>
+<h2>Study extents<a class="headerlink" href="#study-extents" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">extents</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;mi-zone-extents.nc&quot;</span><span class="p">)</span>
@@ -2846,7 +2743,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2ad0754bc130&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_21_1.png" src="_images/MI-extent_21_1.png" />
+<img alt="_images/2e15debc764ebc74d2aa8909416fd87c27bdf25731d5d7fca3a3918e9768189f.png" src="_images/2e15debc764ebc74d2aa8909416fd87c27bdf25731d5d7fca3a3918e9768189f.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2858,9 +2755,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "f51bc90e54d846ff8492b030e032fa95", "version_major": 2, "version_minor": 0}
-</script><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>([&lt;matplotlib.lines.Line2D at 0x2b10d4230d60&gt;],
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "f51bc90e54d846ff8492b030e032fa95", "version_major": 2, "version_minor": 0}</script><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>([&lt;matplotlib.lines.Line2D at 0x2b10d4230d60&gt;],
  &lt;AxesSubplot:title={&#39;center&#39;:&#39; Y&#39;}, xlabel=&#39;Frequency [cpd]&#39;, ylabel=&#39;PSD&#39;&gt;)
 </pre></div>
 </div>
@@ -2886,7 +2781,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x2b10b79f5d00&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_23_1.png" src="_images/MI-extent_23_1.png" />
+<img alt="_images/fa84590afb8db16c294e0385d9b7f375586504b78d149c4c3619a04c0ae19b01.png" src="_images/fa84590afb8db16c294e0385d9b7f375586504b78d149c4c3619a04c0ae19b01.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2898,7 +2793,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/MI-extent_24_0.png" src="_images/MI-extent_24_0.png" />
+<img alt="_images/a2bdf1beac06becf52360b00af0ff5ab7a730560a7349d1809cd322fd5cd8794.png" src="_images/a2bdf1beac06becf52360b00af0ff5ab7a730560a7349d1809cd322fd5cd8794.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2912,7 +2807,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x2aea3f203e20&gt;]
 </pre></div>
 </div>
-<img alt="_images/MI-extent_25_1.png" src="_images/MI-extent_25_1.png" />
+<img alt="_images/640840977572f8cc47d0cfc271ea11461007ce3d271ee31f1a82deb0bc2de78f.png" src="_images/640840977572f8cc47d0cfc271ea11461007ce3d271ee31f1a82deb0bc2de78f.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2945,7 +2840,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/MI-extent_26_0.png" src="_images/MI-extent_26_0.png" />
+<img alt="_images/1016660700358037438c8b3762f140ada95e00e37939d7209b52349c0be4408e.png" src="_images/1016660700358037438c8b3762f140ada95e00e37939d7209b52349c0be4408e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2965,7 +2860,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.plot.facetgrid.FacetGrid at 0x2ae885c605b0&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_28_1.png" src="_images/MI-extent_28_1.png" />
+<img alt="_images/64ec65b68f2adf90b7bcc637abe7b5d423d5834813a810d4625639967b03d1ee.png" src="_images/64ec65b68f2adf90b7bcc637abe7b5d423d5834813a810d4625639967b03d1ee.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2983,7 +2878,7 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.contour.QuadContourSet at 0x2b36a9a92dc0&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_29_1.png" src="_images/MI-extent_29_1.png" />
+<img alt="_images/0048fc646f2c6507a7df74386bd5dfebe6bced113944ba48a2a13a89570bfb3e.png" src="_images/0048fc646f2c6507a7df74386bd5dfebe6bced113944ba48a2a13a89570bfb3e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -2996,12 +2891,12 @@ Data variables:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x2b36ab2acd60&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_30_1.png" src="_images/MI-extent_30_1.png" />
+<img alt="_images/50b4633c367cfe8f596f3027d79b083efe7dca5997d55367cc93701511bd75dd.png" src="_images/50b4633c367cfe8f596f3027d79b083efe7dca5997d55367cc93701511bd75dd.png" />
 </div>
 </div>
 </section>
 <section id="pop2-andre">
-<h2>POP2: Andre<a class="headerlink" href="#pop2-andre" title="Permalink to this headline">#</a></h2>
+<h2>POP2: Andre<a class="headerlink" href="#pop2-andre" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cluster</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span>
@@ -3017,9 +2912,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "306d140d3fa548a38cdc90495be02e65", "version_major": 2, "version_minor": 0}
-</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "306d140d3fa548a38cdc90495be02e65", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -8256,7 +8149,7 @@ Attributes:
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.collections.QuadMesh at 0x7f6694c98f10&gt;
 </pre></div>
 </div>
-<img alt="_images/MI-extent_42_2.png" src="_images/MI-extent_42_2.png" />
+<img alt="_images/5bb4dc9696260c553203d789d2a232545f06d25c73e81199b3d2ed9e1786b932.png" src="_images/5bb4dc9696260c553203d789d2a232545f06d25c73e81199b3d2ed9e1786b932.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -8278,7 +8171,7 @@ distributed.utils_perf - WARNING - full garbage collections took 92% CPU time re
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f68eb055a50&gt;]
 </pre></div>
 </div>
-<img alt="_images/MI-extent_43_2.png" src="_images/MI-extent_43_2.png" />
+<img alt="_images/4efce7593ac4d0675717630ce5edbd4bda0c82d70c4ed9d9c20d3cef6686d277.png" src="_images/4efce7593ac4d0675717630ce5edbd4bda0c82d70c4ed9d9c20d3cef6686d277.png" />
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.utils_perf - WARNING - full garbage collections took 92% CPU time recently (threshold: 10%)
 distributed.utils_perf - WARNING - full garbage collections took 92% CPU time recently (threshold: 10%)
 distributed.utils_perf - WARNING - full garbage collections took 92% CPU time recently (threshold: 10%)
@@ -8760,7 +8653,7 @@ Data variables:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/MI-extent_47_0.png" src="_images/MI-extent_47_0.png" />
+<img alt="_images/202fe50f83e06a726531f8297f9716c9d581cd3ebe1d85c22a65077402f8df73.png" src="_images/202fe50f83e06a726531f8297f9716c9d581cd3ebe1d85c22a65077402f8df73.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -9458,57 +9351,108 @@ RuntimeError: Too many computes. Total: 2 &gt; max: 1.
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="bulk-Ri.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Bulk Ri analysis</p>
-        </div>
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="bulk-Ri.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Bulk Ri analysis</p>
+      </div>
     </a>
-    <a class='right-next' id="next-link" href="tao-ri-analysis.html" title="next page">
-    <div class="prev-next-info">
+    <a class="right-next"
+       href="tao-ri-analysis.html"
+       title="next page">
+      <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
         <p class="prev-next-title">TAO Ri analysis</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
-            </footer>
-        </div>
-    </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mitgcm-25-year">MITgcm 25 year</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#study-extents">Study extents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pop2-andre">POP2: Andre</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
   
-    By Deepak Cherian<br/>
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deepak Cherian
+</p>
+
+  </div>
   
-      &copy; Copyright 2022.<br/>
-    <div class="extra_footer">
-      <div>
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
 <script data-goatcounter="https://count.cherian.net/count"
         async src="count.js"></script>
 </div>
 
-    </div>
-</p>
-        </footer>
-    </div>
-    
 </div>
+  </div>
+  
+</div></div>
+          </footer>
+        
 
-
-      </div>
+      </main>
     </div>
+  </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
 
-
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>
