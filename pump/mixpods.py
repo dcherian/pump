@@ -1340,7 +1340,24 @@ def load_tao():
     for var in tao_gridded.variables:
         tao_gridded[var].encoding.pop("coordinates", None)
 
-    add_turbulence_quantities(tao_gridded, grid=None)
+    others = (
+        tao_gridded[["α", "β", "Tz", "Sz", "u"]]
+        .reset_coords(drop=True)
+        .rename({"depth": "depthchi"})
+    )
+    sub = tao_gridded[
+        [
+            # These are needed
+            "KT",
+            # don't update these:
+            "Jq",
+            "chi",
+            "eps",
+        ]
+    ].cf.sel(Z=DEPTH_CHIPODS, method="nearest")
+    sub.update(others)
+    add_turbulence_quantities(sub, grid=None)
+    tao_gridded.update(sub)
 
     return tao_gridded
 
@@ -1555,5 +1572,3 @@ def plot_eps_ri_hist(eps_ri, label=None, muted=None):
     return step.opts(
         hv.opts.Curve(xlim=(None, 1.2), xticks=[0.04, 0.1, 0.25, 0.5, 0.63, 1.6])
     )
-
-
