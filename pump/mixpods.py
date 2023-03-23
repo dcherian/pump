@@ -7,6 +7,7 @@ import warnings
 import cf_xarray as cfxr
 import dcpy
 import flox
+import fsspec
 import gsw_xarray
 import holoviews as hv
 import hvplot.xarray  # noqa
@@ -1107,7 +1108,7 @@ def mom6_sections_to_zarr(casename):
     )
 
 
-def load_mom6_sections(casename):
+def load_mom6_sections(casename, use_reference_files=True):
     import xgcm
 
     # root = "/glade/scratch/dcherian/archive/"
@@ -1139,18 +1140,30 @@ def load_mom6_sections(casename):
     )
 
     dirname = f"{ROOT}/{casename}/run"
-    static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
-    sfc = xr.open_mfdataset(
-        sorted(glob.glob(f"{dirname}/*{casename}*sfc*")),
-        coords="minimal",
-        data_vars="minimal",
-        compat="override",
-        use_cftime=True,
-        parallel=True,
-    )
+    if not use_reference_files:
+        static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
+        sfc = xr.open_mfdataset(
+            sorted(glob.glob(f"{dirname}/*{casename}*sfc*")),
+            coords="minimal",
+            data_vars="minimal",
+            compat="override",
+            use_cftime=True,
+            parallel=True,
+        )
+        sfc.coords.update(static.drop_vars("time"))
+    else:
+        sfc_reference = f"{dirname}/jsons/sfc.json"
+        if not os.path.exists(sfc_reference):
+            raise OSError(
+                f"Reference files for {casename}, surface fields do not exist."
+            )
+
+        fs = fsspec.filesystem("reference", fo=sfc_reference)
+        mapper = fs.get_mapper(root="")
+        sfc = xr.open_zarr(
+            mapper, chunks={"time": 25}, use_cftime=True, consolidated=False
+        )
     sfc["time"] = sfc.time + datetime.timedelta(days=365 * 1957)
-    # sfc["time"] = sfc.time + xr.coding.cftime_offsets.YearBegin(1957)
-    sfc.coords.update(static.drop_vars("time"))
     # sfc["tos"].attrs["coordinates"] = "geolon geolat"
 
     sst = sfc.cf["sea_surface_temperature"]
