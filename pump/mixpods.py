@@ -1055,7 +1055,7 @@ def read_mom6_sections(casename):
     from mom6_tools import wright_eos
     from mom6_tools.sections import combine_variables_by_coords, read_raw_files
 
-    dirname = f"/glade/scratch/dcherian/{casename}/run/"
+    dirname = f"{ROOT}/{casename}/run/"
     globstr = f"{dirname}/*TAO*140W*.nc.*"
     files = sorted(glob.glob(globstr))
 
@@ -1184,7 +1184,7 @@ def load_mom6_sections(casename, use_reference_files=True):
         sst.cf.sel(latitude=slice(-5, 5), longitude=slice(-170, -120))
         .cf.mean(["X", "Y"])
         .resample(time="M")
-        .mean()
+        .mean(method="blockwise")
         .load()
     )
 
