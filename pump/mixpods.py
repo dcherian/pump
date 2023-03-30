@@ -1341,13 +1341,14 @@ def load_tao():
     others = (
         tao_gridded[["α", "β", "Tz", "Sz", "u"]]
         .reset_coords(drop=True)
+        .cf.sel(Z=DEPTH_CHIPODS, method="nearest")
         .rename({"depth": "depthchi"})
     )
     sub = tao_gridded[
         [
             # These are needed
             "KT",
-            # don't update these:
+            # don't update these in add_turbulence_quantities:
             "Jq",
             "chi",
             "eps",
@@ -1355,7 +1356,8 @@ def load_tao():
     ].cf.sel(Z=DEPTH_CHIPODS, method="nearest")
     sub.update(others)
     add_turbulence_quantities(sub, grid=None)
-    tao_gridded.update(sub)
+    newvars = list(set(sub) - set(tao_gridded))
+    tao_gridded.update(sub[newvars])
 
     return tao_gridded
 
