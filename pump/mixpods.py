@@ -1160,7 +1160,7 @@ def load_mom6_sections(casename, use_reference_files=True):
             use_cftime=True,
             parallel=True,
         )
-        sfc.coords.update(static.drop_vars("time"))
+        sfc.coords.update(static.drop_vars("time").squeeze())
     else:
         sfc_reference = f"{dirname}/jsons/sfc.json"
         if not os.path.exists(sfc_reference):
