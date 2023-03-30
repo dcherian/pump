@@ -199,9 +199,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
     out.coords["dcl_mask"] = (Z > (out.eucmax + 5)) & (Z < (out.mldT - 5))
     out.dcl_mask.attrs = {"description": "True when 5m below mldT and above eucmax."}
 
-    assert out.dcl_mask.ndim == 2
-    assert out.eucmax.dims == ("time",)
-    assert out.mldT.dims == ("time",)
+    assert len(out.dcl_mask.cf.axes["Z"]) == 1
 
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
