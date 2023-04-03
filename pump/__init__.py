@@ -13,4 +13,5 @@ from . import utils  # noqa
 from .calc import *  # noqa
 from .constants import *  # noqa
 from .obs import *  # noqa
-from .options import OPTIONS  # noqa
+
+OPTIONS = {"root": "/glade/campaign/cgd/oce/projects/pump/"}

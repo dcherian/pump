@@ -22,7 +22,7 @@ import xarray as xr
 
 from .obs import process_oni
 
-ROOT = "/glade/campaign/cgd/oce/projects/pump/cesm/"
+ROOT = "/glade/campaign/cgd/oce/projects/pump/"
 
 ENSO_COLORS_RGB = {
     "El-Nino warm": (177, 0, 19),
@@ -1055,7 +1055,7 @@ def read_mom6_sections(casename):
     from mom6_tools import wright_eos
     from mom6_tools.sections import combine_variables_by_coords, read_raw_files
 
-    dirname = f"{ROOT}/{casename}/run/"
+    dirname = f"{ROOT}/cesm/{casename}/run/"
     globstr = f"{dirname}/*TAO*140W*.nc.*"
     files = sorted(glob.glob(globstr))
 
@@ -1112,7 +1112,7 @@ def mom6_sections_to_zarr(casename):
     mom6tao.drop_vars(
         ["average_DT", "average_T2", "average_T1", "time_bnds"], errors="ignore"
     ).chunk({"time": 24 * 365}).to_zarr(
-        f"{ROOT}/{casename}/run/tao.zarr",
+        f"{ROOT}/cesm/{casename}/run/tao.zarr",
         mode="w",
         consolidated=True,
     )
@@ -1123,7 +1123,7 @@ def load_mom6_sections(casename, use_reference_files=True):
 
     # root = "/glade/scratch/dcherian/archive/"
     mom6tao = xr.open_dataset(
-        f"{ROOT}/{casename}/run/tao.zarr",
+        f"{ROOT}/cesm/{casename}/run/tao.zarr",
         engine="zarr",
         chunks="auto",
         consolidated=True,
@@ -1149,7 +1149,7 @@ def load_mom6_sections(casename, use_reference_files=True):
         metrics={("Z",): "h"},
     )
 
-    dirname = f"{ROOT}/{casename}/run"
+    dirname = f"{ROOT}/cesm/{casename}/run"
     if not use_reference_files:
         static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
         sfc = xr.open_mfdataset(
@@ -1259,7 +1259,7 @@ def load_microstructure():
 
 def load_tao():
     tao_gridded = xr.open_dataset(
-        os.path.expanduser("~/work/pump/zarrs/tao-gridded-ancillary.zarr"),
+        os.path.expanduser(f"{ROOT}/zarrs/tao-gridded-ancillary.zarr"),
         chunks="auto",
         engine="zarr",
     ).sel(longitude=-140, time=slice("1996", None))

@@ -5,11 +5,11 @@ import warnings
 import dcpy
 import numpy as np
 import pandas as pd
+
 import xarray as xr
 
-from . import mdjwf, mixpods
+from . import OPTIONS, mdjwf, mixpods
 from .constants import section_lons  # noqa
-from .options import OPTIONS
 
 TAO_STANDARD_NAMES = {
     "WU_422": "eastward_wind",
@@ -24,6 +24,8 @@ TAO_STANDARD_NAMES = {
     # "TAU_440": "",
 }
 
+ROOT = OPTIONS["root"]
+
 
 def read_all(domain=None):
     johnson = read_johnson()
@@ -36,8 +38,7 @@ def read_all(domain=None):
 
 def read_johnson(filename=None):
     if filename is None:
-        root = OPTIONS["root"]
-        filename = f"{root}/obs/johnson-eq-pac-adcp.cdf"
+        filename = f"{ROOT}/obs/johnson-eq-pac-adcp.cdf"
     ds = xr.open_dataset(filename).rename(
         {
             "XLON": "longitude",
@@ -61,10 +62,8 @@ def read_johnson(filename=None):
 
 
 def read_tao_adcp(domain=None, freq="dy", dirname=None):
-    root = OPTIONS["root"]
-
     if dirname is None:
-        dirname = root + "/obs/tao/"
+        dirname = ROOT + "/obs/tao/"
 
     if freq == "dy":
         adcp = xr.open_dataset(f"{dirname}/adcp_xyzt_dy.cdf").rename(
@@ -94,8 +93,6 @@ def read_tao_adcp(domain=None, freq="dy", dirname=None):
 
 def tao_read_and_merge(suffix, kind):
     """read non-ADCP files."""
-
-    root = OPTIONS["root"]
     if kind == "temp":
         prefix = "t"
         renamer = {"T_20": "T"}
@@ -147,7 +144,7 @@ def tao_read_and_merge(suffix, kind):
     tfiles = tuple(
         itertools.chain(
             *[
-                glob.glob(f"{root}/obs/tao/{prefix}0n{lon}_{suffix}.cdf")
+                glob.glob(f"{ROOT}/obs/tao/{prefix}0n{lon}_{suffix}.cdf")
                 for lon in ["156e", "165e", "170w", "140w", "110w"]
             ]
         )
@@ -206,7 +203,7 @@ def tao_merge_10m_and_hourly(kind):
     )
 
     # # T at 170W is only available at 10min frequency
-    # ds.append(xr.load_dataset(root+'/obs/tao/t0n170w_10m.cdf')['T_20']
+    # ds.append(xr.load_dataset(ROOT+'/obs/tao/t0n170w_10m.cdf')['T_20']
     #           .resample(time='H').mean('time'))
 
     # adcp = read_tao_adcp(freq='hr')
@@ -230,7 +227,7 @@ def read_eq_tao_salt_hr():
 def read_eq_tao_temp_hr():
     """Read hourly resolution temperature for equatorial moorings."""
 
-    # sfiles = [root+'/obs/tao/s0n'+lon+'_hr.cdf'
+    # sfiles = [ROOT+'/obs/tao/s0n'+lon+'_hr.cdf'
     #           for lon in ['156e', '165e', '140w', '110w', '170w']]
     # for file in tqdm.tqdm(sfiles):
     #     ds.append(xr.open_dataset(file)['S_41'])
@@ -239,11 +236,9 @@ def read_eq_tao_temp_hr():
 
 
 def read_tao(domain=None):
-    root = OPTIONS["root"]
-
     tao = xr.open_mfdataset(
         [
-            root + "/obs/tao/" + ff
+            ROOT + "/obs/tao/" + ff
             for ff in ["t_xyzt_dy.cdf", "s_xyzt_dy.cdf", "cur_xyzt_dy.cdf"]
         ],
         parallel=False,
@@ -294,19 +289,17 @@ def read_tao(domain=None):
 
 
 def read_sst(domain=None):
-    root = OPTIONS["root"]
-
     if domain is not None:
         years = range(
             pd.Timestamp(domain["time"].start).year,
             pd.Timestamp(domain["time"].stop).year,
         )
         sst = xr.open_mfdataset(
-            [root + "/obs/oisst/sst.day.mean." + str(yy) + ".nc" for yy in years],
+            [ROOT + "/obs/oisst/sst.day.mean." + str(yy) + ".nc" for yy in years],
             parallel=True,
         )
     else:
-        sst = xr.open_mfdataset(root + "/obs/oisst/sst.day.mean.*.nc", parallel=True)
+        sst = xr.open_mfdataset(ROOT + "/obs/oisst/sst.day.mean.*.nc", parallel=True)
 
     sst["lon"] -= 360
 
@@ -328,9 +321,7 @@ def read_sst(domain=None):
 
 
 def read_oscar(domain=None):
-    root = OPTIONS["root"]
-
-    oscar = dcpy.oceans.read_oscar(root + "/obs/oscar/").rename(
+    oscar = dcpy.oceans.read_oscar(ROOT + "/obs/oscar/").rename(
         {"lat": "latitude", "lon": "longitude"}
     )
     oscar["longitude"] = oscar["longitude"] - 360
@@ -343,9 +334,7 @@ def read_oscar(domain=None):
 
 
 def read_argo():
-    root = OPTIONS["root"]
-
-    dirname = root + "/obs/argo/"
+    dirname = ROOT + "/obs/argo/"
     chunks = {"LATITUDE": 1, "LONGITUDE": 1}
 
     argoT = xr.open_dataset(
@@ -386,19 +375,17 @@ def read_argo():
 
 def process_nino34():
     nino34 = process_esrl_index("nino34.data", skipfooter=5)
-    return nino34  # nino34.to_netcdf(root + "/obs/nino34.nc")
+    return nino34  # nino34.to_netcdf(ROOT + "/obs/nino34.nc")
 
 
 def process_oni():
     oni = process_esrl_index("oni.data", skipfooter=8)
     return oni
-    # oni.to_netcdf(root + "/obs/oni.nc")
+    # oni.to_netcdf(ROOT + "/obs/oni.nc")
 
 
 def process_esrl_index(file, skipfooter=3):
     """Read and make xarray version of climate indices from ESRL."""
-    root = OPTIONS["root"]
-
     month_names = (
         pd.date_range("01-Jan-2001", "31-Dec-2001", freq="MS")
         .to_series()
@@ -407,7 +394,7 @@ def process_esrl_index(file, skipfooter=3):
     )
 
     index = pd.read_csv(
-        root + "/obs/" + file,
+        ROOT + "/obs/" + file,
         index_col=0,
         names=month_names,
         delim_whitespace=True,
@@ -585,7 +572,7 @@ def read_tao_zarr(kind="gridded", **kwargs):
             f"'kind' must be one of ['gridded', 'merged']. Received {kind!r}"
         )
 
-    root = OPTIONS["root"] + "/datasets/zarrs/"
+    root = ROOT + "/zarrs/"
     if kind == "merged":
         tao = xr.open_zarr(f"{root}/tao_eq_hr_merged_cur.zarr", **kwargs)
     elif kind == "gridded":
