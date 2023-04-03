@@ -20,8 +20,6 @@ from flox.xarray import xarray_reduce
 
 import xarray as xr
 
-from .obs import process_oni
-
 ROOT = "/glade/campaign/cgd/oce/projects/pump/"
 
 ENSO_COLORS_RGB = {
@@ -1258,6 +1256,8 @@ def load_microstructure():
 
 
 def load_tao():
+    from .obs import process_oni
+
     tao_gridded = xr.open_dataset(
         os.path.expanduser(f"{ROOT}/zarrs/tao-gridded-ancillary.zarr"),
         chunks="auto",
