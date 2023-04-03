@@ -1247,7 +1247,7 @@ def add_ancillary_variables_microstructure(ds):
 def load_microstructure():
     micro = DataTree.from_dict(
         {
-            key: xr.open_dataset(f"~/work/datasets/microstructure/osu/{key}.nc")
+            key: xr.open_dataset(f"{ROOT}/obs/microstructure/osu/{key}.nc")
             for key in ["equix", "tropicheat", "tiwe"]
         }
     )
@@ -1304,9 +1304,7 @@ def load_tao():
     #       )
 
     chi = read_chipod_mat_file(
-        os.path.expanduser(
-            "~/work/pump/datasets/microstructure/chipods_0_140W_hourly.mat"
-        )
+        os.path.expanduser(f"{ROOT}/obs/microstructure/osu/chipods_0_140W_hourly.mat")
     )
 
     # TAO data are on the hour
