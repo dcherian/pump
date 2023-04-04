@@ -33,6 +33,7 @@ dependencies:
   - ipympl
   - ipython
   - ipywidgets
+  - ipyaggrid
   - jupyter
   - jupyterlab
   - jupyter-server-proxy
