@@ -3,7 +3,7 @@ root: intro
 
 parts:
 
-- captions: Presentations
+- captions: Catalogs
   chapters:
   - file: pump-catalog
 
