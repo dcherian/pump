@@ -2,6 +2,11 @@ format: jb-book
 root: intro
 
 parts:
+
+- captions: Presentations
+  chapters:
+  - file: pump-catalog
+
 - captions: Presentations
   chapters:
   - file: ../presentations/omwg.ipynb
