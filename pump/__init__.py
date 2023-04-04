@@ -15,3 +15,7 @@ from . import utils  # noqa
 from .calc import *  # noqa
 from .constants import *  # noqa
 from .obs import *  # noqa
+
+from . import _version
+
+__version__ = _version.get_versions()["version"]

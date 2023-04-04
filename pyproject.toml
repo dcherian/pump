@@ -1,3 +1,28 @@
+[project]
+name = "pump"
+description = "PUMP project analysis"
+authors = [
+  { name="Deepak Cherian", email="deepak@cherian.net" },
+]
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+dynamic = ["version"]
+
+[build-system]
+requires = ["setuptools", "versioneer[toml]"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["pump"]
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "pump/_version.py"
+versionfile_build = "pump/_version.py"
+tag_prefix = "v"
+
 [tool.ruff]
 target-version = "py39"
 builtins = ["ellipsis"]
