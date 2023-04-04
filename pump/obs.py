@@ -8,8 +8,9 @@ import pandas as pd
 
 import xarray as xr
 
-from . import OPTIONS, mdjwf, mixpods
+from . import mdjwf, mixpods
 from .constants import section_lons  # noqa
+from .options import OPTIONS
 
 TAO_STANDARD_NAMES = {
     "WU_422": "eastward_wind",
