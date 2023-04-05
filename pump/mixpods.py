@@ -1,3 +1,4 @@
+import math
 import ast
 import datetime
 import glob
@@ -508,6 +509,7 @@ def plot_stability_diagram(
 
     assert hue in ds.dims
 
+    ds["n2s2pdf"].load()
     # Note this groupby sorts the hue labels...
     for label, group in ds["n2s2pdf"].groupby(hue):
         group["N2T_bins"] = group["N2T_bins"].copy(
@@ -541,12 +543,13 @@ def plot_stability_diagram(
         ax.set_title(title)
 
 
-def plot_stability_diagram_by_dataset(datasets, fig=None):
+def plot_stability_diagram_by_dataset(datasets, fig=None, nrows=1):
     if fig is None:
-        fig = plt.figure(constrained_layout=True, figsize=(8, 4))
+        fig = plt.figure(constrained_layout=True, figsize=(8, 4 * nrows))
 
-    ax = fig.subplots(1, len(datasets), sharex=True, sharey=True)
-    for (name, sim), (iaxis, axis) in zip(datasets.items(), enumerate(ax)):
+    ncols = math.ceil(len(datasets) / nrows)
+    ax = fig.subplots(nrows, ncols, sharex=True, sharey=True)
+    for (name, sim), (iaxis, axis) in zip(datasets.items(), enumerate(ax.flat)):
         plot_stability_diagram(
             sim.drop_sel(enso_transition_phase=["all", "none", "____________"]),
             linewidths=2,
@@ -554,7 +557,7 @@ def plot_stability_diagram_by_dataset(datasets, fig=None):
             title=name,
             add_legend=(iaxis == len(datasets) - 1),
         )
-        dcpy.plots.clean_axes(ax)
+        # dcpy.plots.clean_axes(ax)
 
 
 def plot_stability_diagram_by_phase(datasets, obs="TAO", fig=None):
@@ -827,7 +830,7 @@ def plot_timeseries(tree, var, obs="TAO"):
     )
 
 
-def plot_profile_fill(da, label, **kwargs):
+def hvplot_profile_fill(da, label, **kwargs):
     import hvplot.pandas  # noqa
 
     assert_z_is_normalized(da.to_dataset())
@@ -836,8 +839,8 @@ def plot_profile_fill(da, label, **kwargs):
 
     Zname = da.cf.axes["Z"][0]
     da = da.copy(deep=True)
-    mean = da.mean("time")
-    std = da.std("time")
+    mean = da.mean("time").load()
+    std = da.std("time").load()
 
     df_ = (
         xr.Dataset({f"{prefix}_low": mean - std, f"{prefix}_high": mean + std})
@@ -1572,8 +1575,13 @@ def plot_eps_ri_hist(eps_ri, label=None, muted=None):
     )
 
 
-def plot_daily_composites(tree, **kwargs):
-    proc = tree.reset_coords(drop=True).dc.concatenate_nodes(dim="node", join="exact")
+def plot_daily_composites(tree, varnames=None, **kwargs):
+    dailies = tree #.dc.extract_leaf("daily_composites")
+    if varnames is not None:
+        dailies = dailies.dc.subset_nodes(varnames)
+    proc = dailies.reset_coords(drop=True).dc.concatenate_nodes(
+        dim="node", join="exact"
+    )
     # Need same name and attrs to allow Overlaying
     proc["depth"].attrs = {"units": "m"}
 
@@ -1596,4 +1604,70 @@ def plot_daily_composites(tree, **kwargs):
             groupby="variable",
             **kwargs,
         )
+    )
+
+
+PROFILE_HVPLOT_KWARGS = dict(
+    show_grid=True,
+    title="",
+    invert_axes=True,
+    legend_position="right",
+    frame_width=150,
+    frame_height=500,
+)
+
+
+def plot_profile_fill(tree, var, label):
+
+    return map_hvplot(
+        lambda ds, name, muted: hvplot_profile_fill(
+            ds.ds.cf[var].load(), label=name, muted=muted
+        ),
+        tree,
+    ).opts(**PROFILE_HVPLOT_KWARGS, ylabel=label)
+
+
+def plot_median_Ri(tree):
+    return (
+        (
+            map_hvplot(
+                lambda ds, name, muted: cfplot(
+                    ds.ds.Rig_T.load().median("time"), name, muted=muted
+                ),
+                tree,
+            )
+            * hv.HLine(0.25).opts(color="k", line_width=0.5)
+        )
+        .opts(**PROFILE_HVPLOT_KWARGS, ylabel="median Ri_g^T")
+        .opts(hv.opts.Curve(ylim=(0, 1)))
+    )
+
+
+def hvplot_step_hist(da, bins, name=None, xlabel=None, **kwargs):
+    from xhistogram.xarray import histogram
+
+    return histogram(da, bins=bins, **kwargs).hvplot.step(
+        label=name, group_label=name, xlabel=xlabel
+    )
+
+
+def plot_distributions(tree, var, bins, log=False):
+    identity = lambda x: x
+    transform = np.log10 if log else identity
+
+    def _subset(ds):
+        # mask = ds.tao_mask.fillna(0).astype(bool)
+        ds = ds.cf[var].reset_coords(drop=True).cf.sel(Z=slice(-69, -29))
+        return transform(ds)
+
+    subset = tree.map_over_subtree(_subset)
+    return map_hvplot(
+        lambda node, name, muted: hvplot_step_hist(
+            node.ds.reset_coords().cf[var],
+            density=True,
+            bins=bins,
+            name=name,
+            xlabel=f"log10({node.ds.cf[var].name})" if log else None,
+        ),
+        subset.children,
     )
