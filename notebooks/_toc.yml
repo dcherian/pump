@@ -13,6 +13,7 @@ parts:
 
 - caption: miχpods
   chapters:
+  - file: mixpods-new-baseline
   - file: mixpods
   - file: mixpods-tao
   - file: mixpods-les
