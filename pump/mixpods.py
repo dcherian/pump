@@ -49,6 +49,19 @@ LOAD_VARNAMES = [
 ]
 DEPTH_CHIPODS = [-89.0, -69.0, -59.0, -49.0, -39.0, -29.0]
 
+PRESENTATION_OPTS = [
+    hv.opts.Curve(fontscale=1.5, line_width=3, color=hv.Cycle("Dark2")),
+]
+
+HV_TOOLS_OPTIONS = [
+    hv.opts.Layout(sizing_mode="stretch_width", toolbar="left"),
+    hv.opts.Overlay(
+        active_tools=["box_zoom"],
+        default_tools=["save", "pan", "box_zoom", "reset"],
+        toolbar="left",
+    ),
+]
+
 
 # TODO: delete
 def ddz(data, grid, h):
@@ -546,7 +559,7 @@ def plot_stability_diagram(
 
 def plot_stability_diagram_by_dataset(datasets, fig=None, nrows=1):
     if fig is None:
-        fig = plt.figure(constrained_layout=True, figsize=(8, 4 * nrows))
+        fig = plt.figure(constrained_layout=True, figsize=(8, 3 * nrows))
 
     ncols = math.ceil(len(datasets) / nrows)
     ax = fig.subplots(nrows, ncols, sharex=True, sharey=True)
@@ -823,11 +836,15 @@ def plot_timeseries(tree, var, obs="TAO"):
             kwargs["color"] = "darkgray"
         handles.append(toplot.hvplot.line(**kwargs))
 
-    return hv.Overlay(handles).opts(
-        legend_position="right",
-        frame_width=700,
-        title=title,
-        xlabel="",
+    return (
+        hv.Overlay(handles)
+        .opts(
+            legend_position="right",
+            frame_width=700,
+            title=title,
+            xlabel="",
+        )
+        .opts(HV_TOOLS_OPTIONS)
     )
 
 
@@ -868,15 +885,22 @@ def cfplot(da, label, **kwargs):
     Zname = da.cf.axes["Z"][0]
     da = da.load().copy(deep=True)
     da[Zname] = normalize_z(da[Zname])
-    return da.hvplot.line(label=label, **kwargs)
+    return da.hvplot.line(label=label, **kwargs).opts(HV_TOOLS_OPTIONS)
 
 
 def map_hvplot(func, datasets, visible=None):
     if visible is None:
         visible = []
-    return hv.Overlay(
-        [func(ds, name=name, muted=name in visible) for name, ds in datasets.items()]
-    ).collate()
+    return (
+        hv.Overlay(
+            [
+                func(ds, name=name, muted=name in visible)
+                for name, ds in datasets.items()
+            ]
+        )
+        .collate()
+        .opts(HV_TOOLS_OPTIONS)
+    )
 
 
 def get_mld_tao_theta(theta):
@@ -1027,7 +1051,7 @@ def plot_enso_transition(oni, enso_transition):
             .opts(line_alpha=0, bar_width=1.5)
         )
 
-    return hv.Overlay(handles).opts(frame_width=1200)
+    return hv.Overlay(handles).opts(frame_width=1200).opts(HV_TOOLS_OPTIONS)
 
 
 def interp_to_center(ds):
@@ -1208,7 +1232,7 @@ def load_mom6_sections(casename, use_reference_files=True):
 
     mom6tao = prepare(mom6tao, grid, oni=oni)
     mom6140 = mom6tao.cf.sel(longitude=-140, latitude=0, method="nearest")
-    mom6140 = mom6140.cf.sel(Z=slice(-250, 0))
+    mom6140 = mom6140.cf.sel(Z=slice(-550, 0))
 
     # mom6140 = mom6140.update(pdf_N2S2(mom6140))
 
@@ -1586,7 +1610,7 @@ def plot_eps_ri_hist(eps_ri, label=None, muted=None):
 
     return step.opts(
         hv.opts.Curve(xlim=(None, 1.2), xticks=[0.04, 0.1, 0.25, 0.5, 0.63, 1.6])
-    )
+    ).opts(HV_TOOLS_OPTIONS)
 
 
 def plot_daily_composites(tree, varnames=None, **kwargs):
@@ -1632,12 +1656,16 @@ PROFILE_HVPLOT_KWARGS = dict(
 
 
 def plot_profile_fill(tree, var, label):
-    return map_hvplot(
-        lambda ds, name, muted: hvplot_profile_fill(
-            ds.ds.cf[var].load(), label=name, muted=muted
-        ),
-        tree,
-    ).opts(**PROFILE_HVPLOT_KWARGS, ylabel=label)
+    return (
+        map_hvplot(
+            lambda ds, name, muted: hvplot_profile_fill(
+                ds.ds.cf[var].load(), label=name, muted=muted
+            ),
+            tree,
+        )
+        .opts(**PROFILE_HVPLOT_KWARGS, ylabel=label)
+        .opts(HV_TOOLS_OPTIONS)
+    )
 
 
 def plot_median_Ri(tree):
@@ -1653,14 +1681,17 @@ def plot_median_Ri(tree):
         )
         .opts(**PROFILE_HVPLOT_KWARGS, ylabel="median Ri_g^T")
         .opts(hv.opts.Curve(ylim=(0, 1)))
+        .opts(HV_TOOLS_OPTIONS)
     )
 
 
 def hvplot_step_hist(da, bins, name=None, xlabel=None, **kwargs):
     from xhistogram.xarray import histogram
 
-    return histogram(da, bins=bins, **kwargs).hvplot.step(
-        label=name, group_label=name, xlabel=xlabel
+    return (
+        histogram(da, bins=bins, **kwargs)
+        .hvplot.step(label=name, group_label=name, xlabel=xlabel)
+        .opts(HV_TOOLS_OPTIONS)
     )
 
 
