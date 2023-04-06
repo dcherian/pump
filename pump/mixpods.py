@@ -1,7 +1,7 @@
-import math
 import ast
 import datetime
 import glob
+import math
 import os
 import warnings
 
@@ -200,6 +200,7 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
 
     assert len(out.dcl_mask.cf.axes["Z"]) == 1
 
+    assert sst_nino34 is None
     if sst_nino34 is not None and oni is not None:
         raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
     if sst_nino34 is not None and oni is None:
@@ -1119,6 +1120,59 @@ def mom6_sections_to_zarr(casename):
     )
 
 
+def read_mom6_sfc_dataset(casename, use_reference_files=True):
+    dirname = f"{ROOT}/cesm/{casename}/run"
+    if not use_reference_files:
+        static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
+        sfc = xr.open_mfdataset(
+            sorted(glob.glob(f"{dirname}/*{casename}*sfc*")),
+            coords="minimal",
+            data_vars="minimal",
+            compat="override",
+            use_cftime=True,
+            parallel=True,
+        )
+        sfc.coords.update(static.drop_vars("time").squeeze())
+    else:
+        sfc_reference = f"{dirname}/jsons/sfc.json"
+        if not os.path.exists(sfc_reference):
+            raise OSError(
+                f"Reference files for {casename}, surface fields do not exist."
+            )
+
+        fs = fsspec.filesystem("reference", fo=sfc_reference)
+        mapper = fs.get_mapper(root="")
+        sfc = xr.open_zarr(
+            mapper, chunks={"time": 25}, use_cftime=True, consolidated=False
+        )
+    sfc["time"] = sfc.time + datetime.timedelta(days=365 * 1957)
+    # sfc["tos"].attrs["coordinates"] = "geolon geolat"
+    return sfc
+
+
+def calc_oni_mom6(casename):
+    sfc = read_mom6_sfc_dataset(casename)
+    sst = sfc.cf["sea_surface_temperature"]
+
+    # Calculate a monthly average sea surface temperature
+    # in the Nino 3.4 region (5°S-5°N, 170°W-120°W).
+    sst_nino34_ = (
+        sst.cf.sel(latitude=slice(-5, 5), longitude=slice(-170, -120))
+        .cf.mean(["X", "Y"])
+        .resample(time="M")
+        .mean(method="blockwise")
+        .load()
+    )
+
+    sst_nino34 = sst_nino34_.convert_calendar("gregorian", use_cftime=False)
+
+    oni = calc_oni(sst_nino34)
+
+    oni.to_netcdf(f"{ROOT}/cesm/{casename}/run/{casename}.oni.nc")
+
+    return oni
+
+
 def load_mom6_sections(casename, use_reference_files=True):
     import xgcm
 
@@ -1150,49 +1204,9 @@ def load_mom6_sections(casename, use_reference_files=True):
         metrics={("Z",): "h"},
     )
 
-    dirname = f"{ROOT}/cesm/{casename}/run"
-    if not use_reference_files:
-        static = xr.open_dataset(*glob.glob(f"{dirname}/*static*.nc"))
-        sfc = xr.open_mfdataset(
-            sorted(glob.glob(f"{dirname}/*{casename}*sfc*")),
-            coords="minimal",
-            data_vars="minimal",
-            compat="override",
-            use_cftime=True,
-            parallel=True,
-        )
-        sfc.coords.update(static.drop_vars("time").squeeze())
-    else:
-        sfc_reference = f"{dirname}/jsons/sfc.json"
-        if not os.path.exists(sfc_reference):
-            raise OSError(
-                f"Reference files for {casename}, surface fields do not exist."
-            )
+    oni = xr.open_dataset(f"{ROOT}/cesm/{casename}/run/{casename}.oni.nc").oni
 
-        fs = fsspec.filesystem("reference", fo=sfc_reference)
-        mapper = fs.get_mapper(root="")
-        sfc = xr.open_zarr(
-            mapper, chunks={"time": 25}, use_cftime=True, consolidated=False
-        )
-    sfc["time"] = sfc.time + datetime.timedelta(days=365 * 1957)
-    # sfc["tos"].attrs["coordinates"] = "geolon geolat"
-
-    sst = sfc.cf["sea_surface_temperature"]
-
-    # Calculate a monthly average sea surface temperature
-    # in the Nino 3.4 region (5°S-5°N, 170°W-120°W).
-    monthly_ = (
-        sst.cf.sel(latitude=slice(-5, 5), longitude=slice(-170, -120))
-        .cf.mean(["X", "Y"])
-        .resample(time="M")
-        .mean(method="blockwise")
-        .load()
-    )
-
-    monthly = monthly_.convert_calendar("gregorian", use_cftime=False)
-
-    mom6tao = prepare(mom6tao, grid, sst_nino34=monthly)
-
+    mom6tao = prepare(mom6tao, grid, oni=oni)
     mom6140 = mom6tao.cf.sel(longitude=-140, latitude=0, method="nearest")
     mom6140 = mom6140.cf.sel(Z=slice(-250, 0))
 
@@ -1576,7 +1590,7 @@ def plot_eps_ri_hist(eps_ri, label=None, muted=None):
 
 
 def plot_daily_composites(tree, varnames=None, **kwargs):
-    dailies = tree #.dc.extract_leaf("daily_composites")
+    dailies = tree  # .dc.extract_leaf("daily_composites")
     if varnames is not None:
         dailies = dailies.dc.subset_nodes(varnames)
     proc = dailies.reset_coords(drop=True).dc.concatenate_nodes(
@@ -1618,7 +1632,6 @@ PROFILE_HVPLOT_KWARGS = dict(
 
 
 def plot_profile_fill(tree, var, label):
-
     return map_hvplot(
         lambda ds, name, muted: hvplot_profile_fill(
             ds.ds.cf[var].load(), label=name, muted=muted
@@ -1671,3 +1684,13 @@ def plot_distributions(tree, var, bins, log=False):
         ),
         subset.children,
     )
+
+
+def process_new_simulation(casename):
+    pass
+
+    # generate reference files
+    #
+    # create TAO zarr
+    #
+    # create oni.nc
