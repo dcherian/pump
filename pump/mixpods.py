@@ -50,7 +50,8 @@ LOAD_VARNAMES = [
 DEPTH_CHIPODS = [-89.0, -69.0, -59.0, -49.0, -39.0, -29.0]
 
 PRESENTATION_OPTS = [
-    hv.opts.Curve(fontscale=1.5, line_width=3, color=hv.Cycle("Dark2")),
+    hv.opts.Curve(fontscale=1.5, line_width=2, color=hv.Cycle("Dark2")),
+    hv.opts.Area(color=hv.Cycle("Dark2")),
 ]
 
 HV_TOOLS_OPTIONS = [
@@ -559,7 +560,7 @@ def plot_stability_diagram(
 
 def plot_stability_diagram_by_dataset(datasets, fig=None, nrows=1):
     if fig is None:
-        fig = plt.figure(constrained_layout=True, figsize=(8, 3 * nrows))
+        fig = plt.figure(constrained_layout=True, figsize=(8, 2.5 * nrows))
 
     ncols = math.ceil(len(datasets) / nrows)
     ax = fig.subplots(nrows, ncols, sharex=True, sharey=True)
@@ -845,6 +846,7 @@ def plot_timeseries(tree, var, obs="TAO"):
             xlabel="",
         )
         .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
     )
 
 
@@ -878,14 +880,18 @@ def hvplot_profile_fill(da, label, **kwargs):
         label=label, muted_line_alpha=0, group_label=label, **kwargs
     ).opts(xrotation=30, xaxis="top")
 
-    return area * line
+    return (area * line).opts(xlim=(-250, 0))
 
 
 def cfplot(da, label, **kwargs):
     Zname = da.cf.axes["Z"][0]
     da = da.load().copy(deep=True)
     da[Zname] = normalize_z(da[Zname])
-    return da.hvplot.line(label=label, **kwargs).opts(HV_TOOLS_OPTIONS)
+    return (
+        da.hvplot.line(label=label, **kwargs)
+        .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
+    )
 
 
 def map_hvplot(func, datasets, visible=None):
@@ -900,6 +906,7 @@ def map_hvplot(func, datasets, visible=None):
         )
         .collate()
         .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
     )
 
 
@@ -1051,7 +1058,12 @@ def plot_enso_transition(oni, enso_transition):
             .opts(line_alpha=0, bar_width=1.5)
         )
 
-    return hv.Overlay(handles).opts(frame_width=1200).opts(HV_TOOLS_OPTIONS)
+    return (
+        hv.Overlay(handles)
+        .opts(frame_width=1200)
+        .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
+    )
 
 
 def interp_to_center(ds):
@@ -1608,9 +1620,13 @@ def plot_eps_ri_hist(eps_ri, label=None, muted=None):
         )
     )
 
-    return step.opts(
-        hv.opts.Curve(xlim=(None, 1.2), xticks=[0.04, 0.1, 0.25, 0.5, 0.63, 1.6])
-    ).opts(HV_TOOLS_OPTIONS)
+    return (
+        step.opts(
+            hv.opts.Curve(xlim=(None, 1.2), xticks=[0.04, 0.1, 0.25, 0.5, 0.63, 1.6])
+        )
+        .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
+    )
 
 
 def plot_daily_composites(tree, varnames=None, **kwargs):
@@ -1642,6 +1658,8 @@ def plot_daily_composites(tree, varnames=None, **kwargs):
             groupby="variable",
             **kwargs,
         )
+        .opts(PRESENTATION_OPTS)
+        .opts(HV_TOOLS_OPTIONS)
     )
 
 
@@ -1665,6 +1683,7 @@ def plot_profile_fill(tree, var, label):
         )
         .opts(**PROFILE_HVPLOT_KWARGS, ylabel=label)
         .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
     )
 
 
@@ -1682,6 +1701,7 @@ def plot_median_Ri(tree):
         .opts(**PROFILE_HVPLOT_KWARGS, ylabel="median Ri_g^T")
         .opts(hv.opts.Curve(ylim=(0, 1)))
         .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
     )
 
 
@@ -1692,6 +1712,7 @@ def hvplot_step_hist(da, bins, name=None, xlabel=None, **kwargs):
         histogram(da, bins=bins, **kwargs)
         .hvplot.step(label=name, group_label=name, xlabel=xlabel)
         .opts(HV_TOOLS_OPTIONS)
+        .opts(PRESENTATION_OPTS)
     )
 
 
