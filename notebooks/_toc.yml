@@ -42,6 +42,7 @@ parts:
   - file: equix-divergence
   - file: equix-examine
   - file: mixing-efficiency
+  - file: below-euc
 
 - caption: Other
   chapters:
