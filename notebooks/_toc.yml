@@ -6,6 +6,7 @@ parts:
 - captions: Catalogs
   chapters:
   - file: pump-catalog
+  - file: catalog-viewer
 
 - captions: Presentations
   chapters:
