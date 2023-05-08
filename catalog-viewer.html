@@ -1,0 +1,1018 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Display interactive catalog &#8212; PUMP</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'catalog-viewer';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="miχPODS: New baseline" href="mixpods-new-baseline.html" />
+    <link rel="prev" title="PUMP catalog" href="pump-catalog.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">PUMP</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pump-catalog.html">PUMP catalog</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Display interactive catalog</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">miχpods</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="mixpods-new-baseline.html">miχPODS: New baseline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods.html">miχpods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-tao.html">miχpods - TAO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-les.html">miχpods for LES simulations</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="mixpods-mom6.html">miχpods: MOM6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixpods-diag-table.html">Diag table generation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">TIW Turbulence</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="TIW-DCL.html">TIW DCL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dcl-paper.html">TIW DCL Paper Figures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ctd-adcp.html">TIW Cruise Sections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TIW-compositing.html">TIW Compositing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vertical-velocity.html">TIW vertical velocity in MITgcm simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tiw-floats.html">EM-APEX floats in TIWs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Marginal Stability</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="bulk-Ri.html">Bulk Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MI-extent.html">Extent of marginal stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tao-ri-analysis.html">TAO Ri analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mi-simple-model.html">Simple model analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shred2-evol.html">Reduced Shear Evolution equation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">χpod/Chameleon</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="equix-divergence.html">EQUIX: Jq divergence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="equix-examine.html">Chameleon heat flux χ vs ε</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixing-efficiency.html">Variations in <span class="math notranslate nohighlight">\(Ri_f\)</span>, <span class="math notranslate nohighlight">\(Γ\)</span></a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="below-euc.html">Mixing below EUC</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="les-examine.html">LES first look</a></li>
+<li class="toctree-l1"><a class="reference internal" href="long-term-turbulence.html">Long-term tubulence in 20-year simulation</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="les-tendencies.html">LES tendencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="heat-momentum-budget-checks.html">Heat and momentum budgets with MITgcm output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submeso-deep-100.html">Deep submesoscales in 1/100°?</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/dcherian/pump" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/catalog-viewer.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Display interactive catalog</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">intake</span>
+
+<span class="n">data_catalog</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_esm_datastore</span><span class="p">(</span><span class="s2">&quot;../pump-catalog.json&quot;</span><span class="p">)</span>
+<span class="n">data_catalog</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><p><strong>../pump-catalog catalog with 32 dataset(s) from 32 asset(s)</strong>:</p> <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>unique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>casename</th>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>stream</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>path</th>
+      <td>32</td>
+    </tr>
+    <tr>
+      <th>baseline</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>levels</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>frequency</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>variables</th>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>derived_variables</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<section id="display-interactive-catalog">
+<h1>Display interactive catalog<a class="headerlink" href="#display-interactive-catalog" title="Permalink to this heading">#</a></h1>
+<div class="cell tag_full-width docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ipyaggrid</span>
+
+
+<span class="k">def</span> <span class="nf">make_short_name</span><span class="p">(</span><span class="n">casename_split</span><span class="p">):</span>
+    <span class="n">trimmed</span> <span class="o">=</span> <span class="n">casename_split</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">trimmed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;mixpods&quot;</span><span class="p">:</span>
+        <span class="n">trimmed</span> <span class="o">=</span> <span class="n">trimmed</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span>
+
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">data_catalog</span><span class="o">.</span><span class="n">df</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">shortname</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">casename</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">make_short_name</span><span class="p">))</span>
+
+<span class="n">column_defs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;shortname&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;shortname&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rowGroup&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;pinned&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;stream&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;stream&quot;</span><span class="p">,</span> <span class="s2">&quot;rowGroup&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;baseline&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;baseline&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="s2">&quot;rowGroup&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;levels&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;levels&quot;</span><span class="p">,</span> <span class="s2">&quot;rowGroup&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;variables&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;variables&quot;</span><span class="p">,</span> <span class="s2">&quot;autoHeight&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;casename&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;casename&quot;</span><span class="p">,</span> <span class="s2">&quot;rowGroup&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;headerName&quot;</span><span class="p">:</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;rowGroup&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">grid_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;columnDefs&quot;</span><span class="p">:</span> <span class="n">column_defs</span><span class="p">,</span>
+    <span class="s2">&quot;defaultColDef&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;resizable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;editable&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;sortable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;colResizeDefault&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;rowSelection&quot;</span><span class="p">:</span> <span class="s2">&quot;multiple&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;statusBar&quot;</span><span class="p">:</span> <span class="p">{</span>  <span class="c1"># new syntax since 19.0</span>
+        <span class="s2">&quot;statusPanels&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;statusPanel&quot;</span><span class="p">:</span> <span class="s2">&quot;agTotalRowCountComponent&quot;</span><span class="p">,</span> <span class="s2">&quot;align&quot;</span><span class="p">:</span> <span class="s2">&quot;left&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;statusPanel&quot;</span><span class="p">:</span> <span class="s2">&quot;agFilteredRowCountComponent&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;statusPanel&quot;</span><span class="p">:</span> <span class="s2">&quot;agSelectedRowCountComponent&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;statusPanel&quot;</span><span class="p">:</span> <span class="s2">&quot;agAggregationComponent&quot;</span><span class="p">},</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="c1"># &quot;enableRangeHandle&quot;: True,</span>
+<span class="p">}</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">ipyaggrid</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span>
+    <span class="n">grid_data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">grid_options</span><span class="o">=</span><span class="n">grid_options</span><span class="p">,</span>
+    <span class="n">quick_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">export_csv</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">export_excel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">export_mode</span><span class="o">=</span><span class="s2">&quot;buttons&quot;</span><span class="p">,</span>
+    <span class="n">export_to_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;ag-theme-balham&quot;</span><span class="p">,</span>
+    <span class="c1"># show_toggle_edit=False,</span>
+    <span class="c1"># show_toggle_delete=False,</span>
+    <span class="n">columns_fit</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="c1"># index=False,</span>
+    <span class="c1"># keep_multiindex=False,</span>
+<span class="p">)</span>
+<span class="n">g</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<p>Subselect by filtering, then select Rows you want, click “Export Rows”. This populates <code class="docutils literal notranslate"><span class="pre">g.grid_data_out[&quot;rows&quot;]</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selection</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">grid_data_out</span><span class="p">[</span><span class="s2">&quot;rows&quot;</span><span class="p">]</span>
+<span class="n">selection</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shortname</th>
+      <th>stream</th>
+      <th>baseline</th>
+      <th>frequency</th>
+      <th>levels</th>
+      <th>variables</th>
+      <th>casename</th>
+      <th>path</th>
+    </tr>
+    <tr>
+      <th>Index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>kpp.lmd.004</td>
+      <td>combined</td>
+      <td>old</td>
+      <td>None</td>
+      <td>150</td>
+      <td>['SSH', 'SSU', 'SSV', 'mlotst', 'oml', 'sos', ...</td>
+      <td>gmom.e23.GJRAv3.TL319_t061_zstar_N150.kpp.lmd....</td>
+      <td>/glade/campaign/cgd/oce/projects/pump/cesm/gmo...</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>baseline.kpp.lmd.004</td>
+      <td>combined</td>
+      <td>old</td>
+      <td>None</td>
+      <td>65</td>
+      <td>['KPP_NLT_temp_budget', 'SSH', 'SSU', 'SSV', '...</td>
+      <td>gmom.e23.GJRAv3.TL319_t061_zstar_N65.baseline....</td>
+      <td>/glade/campaign/cgd/oce/projects/pump/cesm/gmo...</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>new_baseline.kpp.lmd.004</td>
+      <td>combined</td>
+      <td>new</td>
+      <td>None</td>
+      <td>65</td>
+      <td>['N2_int', 'Rd_dx', 'SSH', 'SSU', 'SSV', 'ages...</td>
+      <td>gmom.e23.GJRAv3.TL319_t061_zstar_N65.new_basel...</td>
+      <td>/glade/campaign/cgd/oce/projects/pump/cesm/gmo...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subcat</span> <span class="o">=</span> <span class="n">data_catalog</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">casename</span><span class="o">=</span><span class="n">selection</span><span class="p">[</span><span class="s2">&quot;casename&quot;</span><span class="p">],</span> <span class="n">stream</span><span class="o">=</span><span class="n">selection</span><span class="p">[</span><span class="s2">&quot;stream&quot;</span><span class="p">])</span>
+<span class="n">subcat</span><span class="o">.</span><span class="n">to_dataset_dict</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>--&gt; The keys in the returned dictionary of datasets are constructed as follows:
+	&#39;casename.stream&#39;
+</pre></div>
+</div>
+<div class="output text_html">
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div><div class="output text_html">
+    <div>
+      <progress value='0' class='' max='3' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    </div><div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/source.py:240, in ESMDataSource._open_dataset(self)
+    220 datasets = [
+    221     _open_dataset(
+    222         record[self.path_column_name],
+   (...)
+    237     for _, record in self.df.iterrows()
+    238 ]
+--&gt; 240 datasets = dask.compute(*datasets)
+    241 if len(datasets) == 1:
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/dask/base.py:599, in compute(traverse, optimize_graph, scheduler, get, *args, **kwargs)
+    597     postcomputes.append(x.__dask_postcompute__())
+--&gt; 599 results = schedule(dsk, keys, **kwargs)
+    600 return repack([f(r, *a) for r, (f, a) in zip(results, postcomputes)])
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/dask/threaded.py:89, in get(dsk, keys, cache, num_workers, pool, **kwargs)
+     87         pool = MultiprocessingPoolExecutor(pool)
+---&gt; 89 results = get_async(
+     90     pool.submit,
+     91     pool._max_workers,
+     92     dsk,
+     93     keys,
+     94     cache=cache,
+     95     get_id=_thread_get_id,
+     96     pack_exception=pack_exception,
+     97     **kwargs,
+     98 )
+    100 # Cleanup pools associated to dead threads
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/dask/local.py:511, in get_async(submit, num_workers, dsk, result, cache, get_id, rerun_exceptions_locally, pack_exception, raise_exception, callbacks, dumps, loads, chunksize, **kwargs)
+    510     else:
+--&gt; 511         raise_exception(exc, tb)
+    512 res, worker_id = loads(res_info)
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/dask/local.py:319, in reraise(exc, tb)
+    318     raise exc.with_traceback(tb)
+--&gt; 319 raise exc
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/dask/local.py:224, in execute_task(key, task_info, dumps, loads, get_id, pack_exception)
+    223 task, data = loads(task_info)
+--&gt; 224 result = _execute_task(task, data)
+    225 id = get_id()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/dask/core.py:119, in _execute_task(arg, cache, dsk)
+    116     # Note: Don&#39;t assign the subtask results to a variable. numpy detects
+    117     # temporaries by their reference count and can execute certain
+    118     # operations in-place.
+--&gt; 119     return func(*(_execute_task(a, cache) for a in args))
+    120 elif not ishashable(arg):
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/dask/utils.py:72, in apply(func, args, kwargs)
+     71 if kwargs:
+---&gt; 72     return func(*args, **kwargs)
+     73 else:
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/source.py:73, in _open_dataset(urlpath, varname, xarray_open_kwargs, preprocess, requested_variables, additional_attrs, expand_dims, data_format)
+     72 else:
+---&gt; 73     ds = xr.open_dataset(url, **xarray_open_kwargs)
+     74     if preprocess is not None:
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/xarray/backends/api.py:541, in open_dataset(filename_or_obj, engine, chunks, cache, decode_cf, mask_and_scale, decode_times, decode_timedelta, use_cftime, concat_characters, decode_coords, drop_variables, inline_array, backend_kwargs, **kwargs)
+    540 overwrite_encoded_chunks = kwargs.pop(&quot;overwrite_encoded_chunks&quot;, None)
+--&gt; 541 backend_ds = backend.open_dataset(
+    542     filename_or_obj,
+    543     drop_variables=drop_variables,
+    544     **decoders,
+    545     **kwargs,
+    546 )
+    547 ds = _dataset_from_backend_dataset(
+    548     backend_ds,
+    549     filename_or_obj,
+   (...)
+    557     **kwargs,
+    558 )
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/xarray/backends/zarr.py:887, in ZarrBackendEntrypoint.open_dataset(self, filename_or_obj, mask_and_scale, decode_times, concat_characters, decode_coords, drop_variables, use_cftime, decode_timedelta, group, mode, synchronizer, consolidated, chunk_store, storage_options, stacklevel, zarr_version)
+    886 filename_or_obj = _normalize_path(filename_or_obj)
+--&gt; 887 store = ZarrStore.open_group(
+    888     filename_or_obj,
+    889     group=group,
+    890     mode=mode,
+    891     synchronizer=synchronizer,
+    892     consolidated=consolidated,
+    893     consolidate_on_close=False,
+    894     chunk_store=chunk_store,
+    895     storage_options=storage_options,
+    896     stacklevel=stacklevel + 1,
+    897     zarr_version=zarr_version,
+    898 )
+    900 store_entrypoint = StoreBackendEntrypoint()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/xarray/backends/zarr.py:425, in ZarrStore.open_group(cls, store, mode, synchronizer, group, consolidated, consolidate_on_close, chunk_store, storage_options, append_dim, write_region, safe_chunks, stacklevel, zarr_version)
+    424 else:
+--&gt; 425     zarr_group = zarr.open_group(store, **open_kwargs)
+    426 return cls(
+    427     zarr_group,
+    428     mode,
+   (...)
+    432     safe_chunks,
+    433 )
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/zarr/hierarchy.py:1347, in open_group(store, mode, cache_attrs, synchronizer, path, chunk_store, storage_options, zarr_version, meta_array)
+   1346 # handle polymorphic store arg
+-&gt; 1347 store = _normalize_store_arg(
+   1348     store, storage_options=storage_options, mode=mode,
+   1349     zarr_version=zarr_version)
+   1350 if zarr_version is None:
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/zarr/hierarchy.py:1220, in _normalize_store_arg(store, storage_options, mode, zarr_version)
+   1219     return MemoryStore() if zarr_version == 2 else MemoryStoreV3()
+-&gt; 1220 return normalize_store_arg(store,
+   1221                            storage_options=storage_options, mode=mode,
+   1222                            zarr_version=zarr_version)
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/zarr/storage.py:171, in normalize_store_arg(store, storage_options, mode, zarr_version)
+    170     normalize_store = _normalize_store_arg_v3
+--&gt; 171 return normalize_store(store, storage_options, mode)
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/zarr/storage.py:144, in _normalize_store_arg_v2(store, storage_options, mode)
+    143 if &quot;://&quot; in store or &quot;::&quot; in store:
+--&gt; 144     return FSStore(store, mode=mode, **(storage_options or {}))
+    145 elif storage_options:
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/zarr/storage.py:1328, in FSStore.__init__(self, url, normalize_keys, key_separator, mode, exceptions, dimension_separator, fs, check, create, missing_exceptions, **storage_options)
+   1327     storage_options[&quot;auto_mkdir&quot;] = True
+-&gt; 1328 self.map = fsspec.get_mapper(url, **{**mapper_options, **storage_options})
+   1329 self.fs = self.map.fs  # for direct operations
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/mapping.py:237, in get_mapper(url, check, create, missing_exceptions, alternate_root, **kwargs)
+    236 # Removing protocol here - could defer to each open() on the backend
+--&gt; 237 fs, urlpath = url_to_fs(url, **kwargs)
+    238 root = alternate_root if alternate_root is not None else urlpath
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/core.py:365, in url_to_fs(url, **kwargs)
+    364 urlpath, protocol, _ = chain[0]
+--&gt; 365 fs = filesystem(protocol, **inkwargs)
+    366 return fs, urlpath
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/registry.py:252, in filesystem(protocol, **storage_options)
+    251 cls = get_filesystem_class(protocol)
+--&gt; 252 return cls(**storage_options)
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/spec.py:76, in _Cached.__call__(cls, *args, **kwargs)
+     75 else:
+---&gt; 76     obj = super().__call__(*args, **kwargs)
+     77     # Setting _fs_token here causes some static linters to complain.
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/implementations/reference.py:164, in ReferenceFileSystem.__init__(self, fo, target, ref_storage_args, target_protocol, target_options, remote_protocol, remote_options, fs, template_overrides, simple_templates, max_gap, max_block, **kwargs)
+    163 # text JSON
+--&gt; 164 with open(fo, &quot;rb&quot;, **dic) as f:
+    165     logger.info(&quot;Read reference from URL %s&quot;, fo)
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/core.py:102, in OpenFile.__enter__(self)
+    100 mode = self.mode.replace(&quot;t&quot;, &quot;&quot;).replace(&quot;b&quot;, &quot;&quot;) + &quot;b&quot;
+--&gt; 102 f = self.fs.open(self.path, mode=mode)
+    104 self.fobjects = [f]
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/spec.py:1135, in AbstractFileSystem.open(self, path, mode, block_size, cache_options, compression, **kwargs)
+   1134 ac = kwargs.pop(&quot;autocommit&quot;, not self._intrans)
+-&gt; 1135 f = self._open(
+   1136     path,
+   1137     mode=mode,
+   1138     block_size=block_size,
+   1139     autocommit=ac,
+   1140     cache_options=cache_options,
+   1141     **kwargs,
+   1142 )
+   1143 if compression is not None:
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/implementations/local.py:183, in LocalFileSystem._open(self, path, mode, block_size, **kwargs)
+    182     self.makedirs(self._parent(path), exist_ok=True)
+--&gt; 183 return LocalFileOpener(path, mode, fs=self, **kwargs)
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/implementations/local.py:285, in LocalFileOpener.__init__(self, path, mode, autocommit, fs, compression, **kwargs)
+    284 self.blocksize = io.DEFAULT_BUFFER_SIZE
+--&gt; 285 self._open()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/fsspec/implementations/local.py:290, in LocalFileOpener._open(self)
+    289 if self.autocommit or &quot;w&quot; not in self.mode:
+--&gt; 290     self.f = open(self.path, mode=self.mode)
+    291     if self.compression:
+
+FileNotFoundError: [Errno 2] No such file or directory: &#39;/glade/campaign/cgd/oce/projects/pump/cesm/gmom.e23.GJRAv3.TL319_t061_zstar_N65.baseline.kpp.lmd.004.mixpods/run/jsons/combined.json&#39;
+
+The above exception was the direct cause of the following exception:
+
+ESMDataSourceError                        Traceback (most recent call last)
+Cell In[7], line 2
+      1 subcat = data_catalog.search(casename=selection[&quot;casename&quot;], stream=selection[&quot;stream&quot;])
+----&gt; 2 subcat.to_dataset_dict()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/pydantic/decorator.py:40, in pydantic.decorator.validate_arguments.validate.wrapper_function()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/pydantic/decorator.py:134, in pydantic.decorator.ValidatedFunction.call()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/pydantic/decorator.py:206, in pydantic.decorator.ValidatedFunction.execute()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/core.py:651, in esm_datastore.to_dataset_dict(self, xarray_open_kwargs, xarray_combine_by_coords_kwargs, preprocess, storage_options, progressbar, aggregate, skip_on_error, **kwargs)
+    649         except Exception as exc:
+    650             if not skip_on_error:
+--&gt; 651                 raise exc
+    652 self.datasets = self._create_derived_variables(datasets, skip_on_error)
+    653 return self.datasets
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/core.py:647, in esm_datastore.to_dataset_dict(self, xarray_open_kwargs, xarray_combine_by_coords_kwargs, preprocess, storage_options, progressbar, aggregate, skip_on_error, **kwargs)
+    645 for task in gen:
+    646     try:
+--&gt; 647         key, ds = task.result()
+    648         datasets[key] = ds
+    649     except Exception as exc:
+
+File ~/mambaforge/envs/pump/lib/python3.10/concurrent/futures/_base.py:439, in Future.result(self, timeout)
+    437     raise CancelledError()
+    438 elif self._state == FINISHED:
+--&gt; 439     return self.__get_result()
+    441 self._condition.wait(timeout)
+    443 if self._state in [CANCELLED, CANCELLED_AND_NOTIFIED]:
+
+File ~/mambaforge/envs/pump/lib/python3.10/concurrent/futures/_base.py:391, in Future.__get_result(self)
+    389 if self._exception:
+    390     try:
+--&gt; 391         raise self._exception
+    392     finally:
+    393         # Break a reference cycle with the exception in self._exception
+    394         self = None
+
+File ~/mambaforge/envs/pump/lib/python3.10/concurrent/futures/thread.py:58, in _WorkItem.run(self)
+     55     return
+     57 try:
+---&gt; 58     result = self.fn(*self.args, **self.kwargs)
+     59 except BaseException as exc:
+     60     self.future.set_exception(exc)
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/core.py:789, in _load_source(key, source)
+    788 def _load_source(key, source):
+--&gt; 789     return key, source.to_dask()
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/source.py:273, in ESMDataSource.to_dask(self)
+    271 def to_dask(self):
+    272     &quot;&quot;&quot;Return xarray object (which will have chunks)&quot;&quot;&quot;
+--&gt; 273     self._load_metadata()
+    274     return self._ds
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake/source/base.py:285, in DataSourceBase._load_metadata(self)
+    283 &quot;&quot;&quot;load metadata only if needed&quot;&quot;&quot;
+    284 if self._schema is None:
+--&gt; 285     self._schema = self._get_schema()
+    286     self.dtype = self._schema.dtype
+    287     self.shape = self._schema.shape
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/source.py:205, in ESMDataSource._get_schema(self)
+    202 def _get_schema(self) -&gt; Schema:
+    204     if self._ds is None:
+--&gt; 205         self._open_dataset()
+    206         metadata = {&#39;dims&#39;: {}, &#39;data_vars&#39;: {}, &#39;coords&#39;: ()}
+    207         self._schema = Schema(
+    208             datashape=None,
+    209             dtype=None,
+   (...)
+    212             extra_metadata=metadata,
+    213         )
+
+File ~/mambaforge/envs/pump/lib/python3.10/site-packages/intake_esm/source.py:265, in ESMDataSource._open_dataset(self)
+    262     self._ds.attrs[OPTIONS[&#39;dataset_key&#39;]] = self.key
+    264 except Exception as exc:
+--&gt; 265     raise ESMDataSourceError(
+    266         f&quot;&quot;&quot;Failed to load dataset with key=&#39;{self.key}&#39;
+    267          You can use `cat[&#39;{self.key}&#39;].df` to inspect the assets/files for this key.
+    268          &quot;&quot;&quot;
+    269     ) from exc
+
+ESMDataSourceError: Failed to load dataset with key=&#39;gmom.e23.GJRAv3.TL319_t061_zstar_N65.baseline.kpp.lmd.004.mixpods.combined&#39;
+                 You can use `cat[&#39;gmom.e23.GJRAv3.TL319_t061_zstar_N65.baseline.kpp.lmd.004.mixpods.combined&#39;].df` to inspect the assets/files for this key.
+                 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pump-catalog.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">PUMP catalog</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="mixpods-new-baseline.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">miχPODS: New baseline</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Deepak Cherian
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+<div class="extra_footer">
+  <div>
+<script data-goatcounter="https://count.cherian.net/count"
+        async src="count.js"></script>
+</div>
+
+</div>
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
