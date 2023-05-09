@@ -1755,3 +1755,63 @@ def process_new_simulation(casename):
     # create TAO zarr
     #
     # create oni.nc
+
+
+def bin_to_euc_centered_coordinate(tree):
+    edges = np.arange(-202.5, 202.5, 5)
+
+    newtree = DataTree()
+    for nodename, node in tree.children.items():
+        ds = node.ds
+        node["eucmax"].load()
+        node.coords["zeuc"] = (
+            ds.cf["ocean_vertical_heat_diffusivity"].cf["vertical"] - node["eucmax"]
+        )
+
+        subset = ds.cf[
+            [
+                "sea_water_x_velocity",
+                "sea_water_y_velocity",
+                "ocean_vertical_diffusive_heat_flux",
+                "ocean_vertical_heat_diffusivity",
+                "ocean_vertical_momentum_diffusivity",
+                "sea_water_potential_temperature",
+                "chi",
+                "eps",
+                "S2",
+                "Rig_T",
+            ]
+        ]
+
+        binned = xr.Dataset()
+        # handle different vertical coordinates
+        # by subsetting, and creating new zeuc for each subset
+        for coord in subset.cf[["vertical"]].variables:
+            varnames = [
+                name for name, var in subset.variables.items() if coord in var.dims
+            ]
+            sub2 = subset[varnames]
+            sub2.coords["zeuc"] = (sub2.cf["vertical"] - ds.eucmax).load()
+            binned.update(
+                sub2.cf.groupby_bins(
+                    "zeuc", bins=edges, labels=(edges[:-1] + edges[1:]) / 2
+                )
+                .mean("vertical", method="map-reduce")
+                .rename({"zeuc_bins": "zeuc"})
+            )
+
+        # binned["Sh2"] = (
+        #    binned.cf["sea_water_x_velocity"].differentiate("zeuc") ** 2
+        #    + binned.cf["sea_water_y_velocity"].differentiate("zeuc") ** 2
+        # )
+        # binned["Tz"] = binned.cf["sea_water_potential_temperature"].differentiate("zeuc")
+        # binned["N2T"] = (
+        #    9.81
+        #    * dcpy.eos.alpha(35, binned.cf["sea_water_potential_temperature"], binned.zeuc, pt=True).mean("time")
+        #    * binned.Tz
+        # )
+        # binned["Rig_T"] = binned.N2T / binned.Sh2
+        # binned["Shred2"] = binned.Sh2 - 4 * binned.N2T
+
+        newtree[f"{nodename}/euc"] = DataTree(binned)
+    return newtree
