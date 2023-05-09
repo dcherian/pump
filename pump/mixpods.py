@@ -990,6 +990,10 @@ def add_turbulence_quantities(ds, grid):
                 grid.interp(ds.cf["ocean_vertical_y_viscosity"], "Z")
                 * grid.derivative(ds.cf["sea_water_y_velocity"], "Z") ** 2
             )
+            # just copy over one viscosity as "THE" viscosity
+            ds["ν"] = ds.cf["ocean_vertical_x_viscosity"].assign_attrs(
+                standard_name="ocean_vertical_momentum_diffusivity"
+            )
 
         ds["shear_prod"] = shear_prodx + xgcm_interp_to(
             grid, shear_prody, axis="Y", to="center"
@@ -1386,6 +1390,11 @@ def load_tao():
     tao_gridded["Tflx_dia_diff"].attrs[
         "standard_name"
     ] = "ocean_vertical_diffusive_heat_flux"
+    tao_gridded["ν"] = tao_gridded.eps / tao_gridded.S2.interp(
+        depth=DEPTH_CHIPODS
+    ).rename({"depth": "depthchi"})
+    tao_gridded.ν.attrs["standard_name"] = "ocean_vertical_momentum_diffusivity"
+
     for var in tao_gridded.variables:
         tao_gridded[var].encoding.pop("coordinates", None)
 
