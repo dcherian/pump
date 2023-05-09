@@ -1815,3 +1815,12 @@ def bin_to_euc_centered_coordinate(tree):
 
         newtree[f"{nodename}/euc"] = DataTree(binned)
     return newtree
+
+
+def average_euc(tree):
+    import dcpy.datatree  # noqa
+
+    euc = tree.dc.extract_leaf("euc").dc.reorder_nodes(["TAO", ...])
+    euc_mean = euc.mean("time")
+    euc_mean.dc.update(euc.dc.subset_nodes(["Rig_T"]).median("time"))
+    return euc_mean
