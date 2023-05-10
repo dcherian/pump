@@ -1,5 +1,6 @@
 from . import KPP  # noqa
 from . import calc  # noqa
+from . import catalog  # noqa
 from . import cesm  # noqa
 from . import composite  # noqa
 from . import les  # noqa
