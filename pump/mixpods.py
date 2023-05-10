@@ -50,8 +50,8 @@ LOAD_VARNAMES = [
 DEPTH_CHIPODS = [-89.0, -69.0, -59.0, -49.0, -39.0, -29.0]
 
 PRESENTATION_OPTS = [
-    hv.opts.Curve(fontscale=1.5, line_width=2, color=hv.Cycle("Dark2")),
-    hv.opts.Area(color=hv.Cycle("Dark2")),
+    hv.opts.Curve(muted_alpha=0, fontscale=1.5, line_width=2, color=hv.Cycle("Dark2")),
+    hv.opts.Area(color=hv.Cycle("Dark2"), muted_fill_alpha=0, muted_line_alpha=0),
 ]
 
 HV_TOOLS_OPTIONS = [
@@ -875,7 +875,7 @@ def hvplot_profile_fill(da, label, **kwargs):
         label=label,
         hover=False,
         **kwargs,
-    ).opts(alpha=0.1, muted_fill_alpha=0, muted_line_alpha=0)
+    ).opts(alpha=0.1, *PRESENTATION_OPTS)
     line = mean.hvplot.line(
         label=label, muted_line_alpha=0, group_label=label, **kwargs
     ).opts(xrotation=30, xaxis="top")
@@ -887,10 +887,8 @@ def cfplot(da, label, **kwargs):
     Zname = da.cf.axes["Z"][0]
     da = da.load().copy(deep=True)
     da[Zname] = normalize_z(da[Zname])
-    return (
-        da.hvplot.line(label=label, **kwargs)
-        .opts(HV_TOOLS_OPTIONS)
-        .opts(PRESENTATION_OPTS)
+    return da.hvplot.line(label=label, **kwargs).opts(
+        *HV_TOOLS_OPTIONS, *PRESENTATION_OPTS
     )
 
 
