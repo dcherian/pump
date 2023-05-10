@@ -1723,7 +1723,7 @@ def hvplot_step_hist(da, bins, name=None, xlabel=None, **kwargs):
     )
 
 
-def plot_distributions(tree, var, bins, log=False):
+def plot_distributions(tree, var, bins, log=False, subset=True):
     identity = lambda x: x
     transform = np.log10 if log else identity
 
@@ -1732,7 +1732,10 @@ def plot_distributions(tree, var, bins, log=False):
         ds = ds.cf[var].reset_coords(drop=True).cf.sel(Z=slice(-69, -29))
         return transform(ds)
 
-    subset = tree.map_over_subtree(_subset)
+    if subset:
+        subset = tree.map_over_subtree(_subset)
+    else:
+        subset = tree
     return map_hvplot(
         lambda node, name, muted: hvplot_step_hist(
             node.ds.reset_coords().cf[var],
@@ -1756,7 +1759,7 @@ def process_new_simulation(casename):
 
 
 def bin_to_euc_centered_coordinate(tree):
-    edges = np.arange(-202.5, 202.5, 5)
+    edges = np.arange(-302.5, 202.5, 10)
 
     newtree = DataTree()
     for nodename, node in tree.children.items():
