@@ -951,7 +951,7 @@ def add_turbulence_quantities(ds, grid):
         β = xgcm_interp_to(grid, β, axis="Z", to="outer")
 
     K = ds.cf["ocean_vertical_heat_diffusivity"]
-    ds["Jb"] = -9.81 * (-K * α * ds.Tz + K * β * ds.Sz)
+    ds["Jb"] = 9.81 * (-K * α * ds.Tz + K * β * ds.Sz)
     ds["Jb"].attrs["standard_name"] = "ocean_vertical_diffusive_buoyancy_flux"
 
     if "ocean_vertical_diffusive_heat_flux" not in ds.cf.keys():
@@ -999,6 +999,7 @@ def add_turbulence_quantities(ds, grid):
         ds["shear_prod"].attrs = {"long_name": "$SP$", "units": "W/kg"}
 
         ds["eps"] = ds["shear_prod"] + ds["Jb"]
+        ds["eps"].attrs = {"long_name": "$ε$", "units": "W/kg"}
 
     if "chi" not in ds:
         ds["chi"] = 2 * ds.cf["ocean_vertical_heat_diffusivity"] * ds.Tz**2
