@@ -61,7 +61,19 @@ HV_TOOLS_OPTIONS = [
         default_tools=["save", "pan", "box_zoom", "reset"],
         toolbar="left",
     ),
+    hv.opts.GridSpace(toolbar="left"),
 ]
+
+PROFILE_HVPLOT_KWARGS = dict(
+    show_grid=True,
+    title="",
+    invert_axes=True,
+    legend_position="right",
+    frame_width=150,
+    frame_height=500,
+    xrotation=30,
+    xaxis="top",
+)
 
 
 # TODO: delete
@@ -874,11 +886,12 @@ def hvplot_profile_fill(da, label, **kwargs):
         y2=f"{prefix}_high",
         label=label,
         hover=False,
+        alpha=0.1,
         **kwargs,
-    ).opts(alpha=0.1, *PRESENTATION_OPTS)
+    ).opts(*PRESENTATION_OPTS)
     line = mean.hvplot.line(
         label=label, muted_line_alpha=0, group_label=label, **kwargs
-    ).opts(xrotation=30, xaxis="top")
+    )
 
     return (area * line).opts(xlim=(-250, 0))
 
@@ -1655,30 +1668,23 @@ def plot_daily_composites(tree, varnames=None, **kwargs):
     proc["hour"] = proc.hour.astype("str")
     proc["hour"].attrs["long_name"] = "Hour of day (Local Time)"
 
-    return (
-        proc.drop_vars("tau_bins")
-        .to_array()
-        .hvplot.line(
-            col="depth",
-            x="hour",
-            by="node",
-            row="tau_bins",
-            groupby="variable",
-            **kwargs,
-        )
-        .opts(PRESENTATION_OPTS)
-        .opts(HV_TOOLS_OPTIONS)
-    )
+    da = proc.drop_vars("tau_bins").to_array().squeeze("variable")
+    plot = da.hvplot.line(
+        col="depth",
+        x="hour",
+        by="node",
+        row="tau_bins",
+        groupby="variable" if "variable" in da.dims else None,
+        title=da["variable"].item() if "variable" not in da.dims else None,
+        **kwargs,
+    ).opts(*HV_TOOLS_OPTIONS)
 
+    # Workaround to add single legend
+    # From https://github.com/holoviz/hvplot/issues/937
+    [v.opts(show_legend=False) for v in plot]
+    # list(plot)[-3].opts(show_legend=True, legend_position="right")
 
-PROFILE_HVPLOT_KWARGS = dict(
-    show_grid=True,
-    title="",
-    invert_axes=True,
-    legend_position="right",
-    frame_width=150,
-    frame_height=500,
-)
+    return plot
 
 
 def plot_profile_fill(tree, var, label):
@@ -1690,8 +1696,7 @@ def plot_profile_fill(tree, var, label):
             tree,
         )
         .opts(**PROFILE_HVPLOT_KWARGS, ylabel=label)
-        .opts(HV_TOOLS_OPTIONS)
-        .opts(PRESENTATION_OPTS)
+        .opts(*HV_TOOLS_OPTIONS, *PRESENTATION_OPTS)
     )
 
 
@@ -1707,9 +1712,11 @@ def plot_median_Ri(tree):
             * hv.HLine(0.25).opts(color="k", line_width=0.5)
         )
         .opts(**PROFILE_HVPLOT_KWARGS, ylabel="median Ri_g^T")
-        .opts(hv.opts.Curve(ylim=(0, 1)))
-        .opts(HV_TOOLS_OPTIONS)
-        .opts(PRESENTATION_OPTS)
+        .opts(
+            hv.opts.Curve(ylim=(0, 1)),
+            *HV_TOOLS_OPTIONS,
+            *PRESENTATION_OPTS,
+        )
     )
 
 
