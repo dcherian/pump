@@ -187,6 +187,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Other</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="oni.html">ONI calculation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="les-examine.html">LES first look</a></li>
 <li class="toctree-l1"><a class="reference internal" href="long-term-turbulence.html">Long-term tubulence in 20-year simulation</a></li>
 
@@ -360,8 +361,13 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subset-and-read">Subset and read</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-html-to-view">Export HTML to view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-new-mom6-simulation">Add a new MOM6 simulation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-kerchunk-jsons">Step 1: Generate <code class="docutils literal notranslate"><span class="pre">kerchunk</span></code> JSONS.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-kerchunk-jsons">Step 1: Generate <code class="docutils literal notranslate"><span class="pre">kerchunk</span></code> JSONS.</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#single-case">Single case</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#all-runs">All runs</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-rebuild-intake-catalog">Step 2 : Rebuild intake catalog</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-create-zarr-files-for-section">Step 3: Create Zarr files for section</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#some-debugging-code">Some debugging code</a></li>
 </ul>
 </li>
@@ -2773,11 +2779,42 @@ if (window.Jupyter !== undefined) {
 <section id="step-1-generate-kerchunk-jsons">
 <h3>Step 1: Generate <code class="docutils literal notranslate"><span class="pre">kerchunk</span></code> JSONS.<a class="headerlink" href="#step-1-generate-kerchunk-jsons" title="Permalink to this heading">#</a></h3>
 <p>See <a class="reference external" href="https://ncar.github.io/esds/posts/2023/kerchunk-mom6/">this blog post</a> for details. The core functionality is now in <code class="docutils literal notranslate"><span class="pre">mom6_tools</span></code>. We just provide a caseroot to <code class="docutils literal notranslate"><span class="pre">mom6_tools.kerchunk.generate_references_for_stream</span></code>.</p>
+<section id="single-case">
+<h4>Single case<a class="headerlink" href="#single-case" title="Permalink to this heading">#</a></h4>
+<p>This is what you need for a single case. Works better with a dask client</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pump</span> <span class="kn">import</span> <span class="n">mixpods</span>
+<span class="kn">from</span> <span class="nn">mom6_tools.kerchunk</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">combine_stream_jsons_as_groups</span><span class="p">,</span>
+    <span class="n">generate_references_for_stream</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">casename</span> <span class="o">=</span> <span class="s1">&#39;gmom.e23.GJRAv3.TL319_t061_zstar_N65.baseline.hb&#39;</span>
+<span class="n">caseroot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mixpods</span><span class="o">.</span><span class="n">ROOT</span><span class="si">}</span><span class="s2">/cesm/</span><span class="si">{</span><span class="n">casename</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">caseroot</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;hm&quot;</span><span class="p">,</span> <span class="s2">&quot;hm.wci&quot;</span><span class="p">,</span> <span class="s2">&quot;sfc&quot;</span><span class="p">]:</span>
+    <span class="n">generate_references_for_stream</span><span class="p">(</span>
+        <span class="n">caseroot</span><span class="o">=</span><span class="n">caseroot</span><span class="p">,</span>
+        <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
+        <span class="n">missing_stream</span><span class="o">=</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+        <span class="n">existing_output</span><span class="o">=</span><span class="s2">&quot;overwrite&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+
+<span class="n">combine_stream_jsons_as_groups</span><span class="p">(</span><span class="n">caseroot</span><span class="o">=</span><span class="n">caseroot</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="all-runs">
+<h4>All runs<a class="headerlink" href="#all-runs" title="Permalink to this heading">#</a></h4>
 <p>The following code regenerates the reference files for all cases.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pump</span> <span class="kn">import</span> <span class="n">mixpods</span>
 <span class="kn">from</span> <span class="nn">pump.catalog</span> <span class="kn">import</span> <span class="n">catalog_dict</span>
 
-<span class="kn">from</span> <span class="nn">mom6_tools.kerchunk</span> <span class="kn">import</span> <span class="n">generate_references_for_stream</span>
+<span class="kn">from</span> <span class="nn">mom6_tools.kerchunk</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">combine_stream_jsons_as_groups</span><span class="p">,</span>
+    <span class="n">generate_references_for_stream</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">casename</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">catalog_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
     <span class="n">caseroot</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mixpods</span><span class="o">.</span><span class="n">ROOT</span><span class="si">}</span><span class="s2">/cesm/</span><span class="si">{</span><span class="n">casename</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -2791,14 +2828,24 @@ if (window.Jupyter !== undefined) {
             <span class="n">missing_stream</span><span class="o">=</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span>
             <span class="n">existing_output</span><span class="o">=</span><span class="s2">&quot;overwrite&quot;</span><span class="p">,</span>
         <span class="p">)</span>
+    <span class="n">combine_stream_jsons_as_groups</span><span class="p">(</span><span class="n">caseroot</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
 </section>
 <section id="step-2-rebuild-intake-catalog">
 <h3>Step 2 : Rebuild intake catalog<a class="headerlink" href="#step-2-rebuild-intake-catalog" title="Permalink to this heading">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pump</span>
 
 <span class="n">pump</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">build_mom6_catalog</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-create-zarr-files-for-section">
+<h3>Step 3: Create Zarr files for section<a class="headerlink" href="#step-3-create-zarr-files-for-section" title="Permalink to this heading">#</a></h3>
+<p>This is needed for <code class="docutils literal notranslate"><span class="pre">mixpods.load_mom6_sections</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">casename</span> <span class="o">=</span> <span class="s2">&quot;gmom.e23.GJRAv3.TL319_t061_zstar_N65.new_baseline.kpp.lmd.005.mixpods&quot;</span>
+<span class="n">mixpods</span><span class="o">.</span><span class="n">mom6_sections_to_zarr</span><span class="p">(</span><span class="n">casename</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -3624,16 +3671,16 @@ Data variables:
         },
         codeMirrorConfig: {
             theme: "abcdef",
-            mode: "python"
+            mode: "conda-env-miniconda3-pump-py"
         },
         kernelOptions: {
-            name: "python3",
+            name: "conda-env-miniconda3-pump-py",
             path: "./."
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python3'</script>
+    <script>kernelName = 'conda-env-miniconda3-pump-py'</script>
 
                 </article>
               
@@ -3688,8 +3735,13 @@ Data variables:
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subset-and-read">Subset and read</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-html-to-view">Export HTML to view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-a-new-mom6-simulation">Add a new MOM6 simulation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-kerchunk-jsons">Step 1: Generate <code class="docutils literal notranslate"><span class="pre">kerchunk</span></code> JSONS.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-generate-kerchunk-jsons">Step 1: Generate <code class="docutils literal notranslate"><span class="pre">kerchunk</span></code> JSONS.</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#single-case">Single case</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#all-runs">All runs</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-rebuild-intake-catalog">Step 2 : Rebuild intake catalog</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-create-zarr-files-for-section">Step 3: Create Zarr files for section</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#some-debugging-code">Some debugging code</a></li>
 </ul>
 </li>
