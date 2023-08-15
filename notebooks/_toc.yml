@@ -47,6 +47,7 @@ parts:
 
 - caption: Other
   chapters:
+  - file: oni
   - file: les-examine
   - file: long-term-turbulence
   - file: les-tendencies
