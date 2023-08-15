@@ -115,7 +115,7 @@ agg_median = flox.aggregations.Aggregation(
 )
 
 
-def prepare(ds, grid=None, sst_nino34=None, oni=None):
+def prepare(ds, grid=None, oni=None):
     """
     Prepare an input dataset for miχpod diagnostics.
 
@@ -126,9 +126,6 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
         optionally with "N2T", "S2"
     grid: xgcm.Grid, optional
         Grid object; neccessary if N2 or S2 need to be calculated.
-    sst_nino34: xr.DataArray, optional
-        Monthly mean SST in NINO3.4 region. Used to estimate ONI
-        if "oni" is not provided.
     oni: xr.DataArray, optional
         Monthly Oceanic Nino Index timeseries. Used to estimate
         "enso_transition" labels..
@@ -226,11 +223,6 @@ def prepare(ds, grid=None, sst_nino34=None, oni=None):
 
     assert len(out.dcl_mask.cf.axes["Z"]) == 1
 
-    assert sst_nino34 is None
-    if sst_nino34 is not None and oni is not None:
-        raise ValueError("Provide one of 'sst_nino34' or 'oni'.")
-    if sst_nino34 is not None and oni is None:
-        oni = calc_oni(sst_nino34)
     if oni is not None:
         oni = oni.rename("oni")
         enso_transition = make_enso_transition_mask(oni).rename("enso_transition")
@@ -1256,7 +1248,16 @@ def load_mom6_sections(casename, use_reference_files=True):
         metrics={("Z",): "h"},
     )
 
-    oni = xr.open_dataset(f"{ROOT}/cesm/{casename}/run/{casename}.oni.nc").oni
+    # This oni is bad. The calculation doesn't work so well for branch runs.
+    # Unless we mergein the NINO3.4 SST timeseries from before branching.
+    # Instead just use the observed ONI since we are working with forced runs
+    # so far.
+    # oni = xr.open_dataset(f"{ROOT}/cesm/{casename}/run/{casename}.oni.nc").oni
+
+    # read obs ONI timeseries
+    from .obs import process_oni
+
+    oni = process_oni().sel(time=slice(mom6tao.time[0], None))
 
     mom6tao = prepare(mom6tao, grid, oni=oni)
     mom6140 = mom6tao.cf.sel(longitude=-140, latitude=0, method="nearest")
