@@ -1801,14 +1801,18 @@ def bin_to_euc_centered_coordinate(tree):
                 name for name, var in subset.variables.items() if coord in var.dims
             ]
             sub2 = subset[varnames]
-            sub2.coords["zeuc"] = (sub2.cf["vertical"] - ds.eucmax).load()
-            binned.update(
-                sub2.cf.groupby_bins(
-                    "zeuc", bins=edges, labels=(edges[:-1] + edges[1:]) / 2
+            sub2.coords["zeuc"] = (sub2[coord] - ds.eucmax).load()
+            # only works with flox!
+            averaged = (
+                sub2.groupby_bins(
+                    "zeuc",
+                    bins=edges,  # labels=(edges[:-1] + edges[1:]) / 2
                 )
-                .mean("vertical", method="map-reduce")
+                .mean(coord, method="map-reduce")
                 .rename({"zeuc_bins": "zeuc"})
             )
+            averaged["zeuc"] = (edges[:-1] + edges[1:]) / 2
+            binned.update(averaged)
 
         # binned["Sh2"] = (
         #    binned.cf["sea_water_x_velocity"].differentiate("zeuc") ** 2
