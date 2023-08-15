@@ -923,10 +923,10 @@ def get_mld_tao_theta(theta):
     thetai = theta.cf.interp(Z=np.arange(0, -200, -1))
     dθ = thetai - thetai.cf.sel(Z=[0, -5], method="nearest").cf.max("Z")
 
-    thresh = xr.where(dθ < -0.1, dθ.cf["Z"], np.nan, keep_attrs=False)
-    thresh.attrs = dθ.cf["Z"].attrs
+    thresh = xr.where(dθ < -0.1, dθ.cf["Z"].copy(deep=True), np.nan, keep_attrs=False)
+    thresh.attrs = thetai.cf["Z"].attrs
     for dim in thresh.dims:
-        thresh[dim].attrs = dθ[dim].attrs
+        thresh[dim].attrs = thetai[dim].attrs
     mld = thresh.cf.max("Z")
 
     mld.name = "mldT"
