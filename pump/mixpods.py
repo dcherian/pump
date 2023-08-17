@@ -1838,3 +1838,63 @@ def average_euc(tree):
     euc_mean = euc.mean("time")
     euc_mean.dc.update(euc.dc.subset_nodes(["Rig_T"]).median("time"))
     return euc_mean
+
+
+def hvplot_facet(tree, varname, col, **kwargs):
+    by = next(iter(tree.children.values()))[col].data
+    handles = []
+    for by_ in by:
+        handles.append(
+            hv.Overlay(
+                [
+                    node.ds.cf[varname]
+                    .sel({col: by_})
+                    .hvplot.line(label=name, **kwargs)
+                    for name, node in tree.children.items()
+                ]
+            )
+        )
+    return hv.Layout(handles)
+
+
+def hvplot_spectra(tree, varname, dim):
+    import xrft
+
+    handles = []
+    for name, node in tree.children.items():
+        da = node[varname].reset_coords(drop=True)
+        (dim_name,) = da.cf.axes[dim]
+        spec = xrft.power_spectrum(
+            da,
+            dim=dim_name,
+            window="hann",
+            window_correction=True,
+        ).mean("time")
+        sym = 2 * spec.isel(
+            {f"freq_{dim_name}": slice(da.sizes[dim_name] // 2 + 1, None)}
+        )
+        sym.name = "spectral density"
+        handles.append(sym.hvplot.line(logx=True, logy=True, label=name))
+
+    return hv.Overlay(handles).opts(
+        hv.opts.Overlay(legend_position="right"), *HV_TOOLS_OPTIONS, *PRESENTATION_OPTS
+    )
+
+
+def read_stream_vars(catalog, stream, variables):
+    import datetime
+
+    datasets = catalog.search(stream=stream).to_dataset_dict(
+        xarray_open_kwargs={"use_cftime": True}
+    )
+    sims = catalog.search(stream=stream).df["shortname"].values
+
+    ds = xr.Dataset()
+    for sim in sims:
+        t = datasets[f"{sim}.{stream}"][variables]
+        t["time"] = t["time"] + datetime.timedelta(days=1957 * 365)
+        t = t.sel(time=slice("2003", "2018"))
+        ds[sim] = t
+
+    # convert ds to an array
+    return ds.to_array(dim="dataset")
