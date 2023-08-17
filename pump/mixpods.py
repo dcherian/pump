@@ -50,7 +50,7 @@ LOAD_VARNAMES = [
 DEPTH_CHIPODS = [-89.0, -69.0, -59.0, -49.0, -39.0, -29.0]
 
 PRESENTATION_OPTS = [
-    hv.opts.Curve(muted_alpha=0, fontscale=1.5, line_width=2, color=hv.Cycle("Dark2")),
+    hv.opts.Curve(muted_alpha=0, fontscale=1.25, line_width=2, color=hv.Cycle("Dark2")),
     hv.opts.Area(color=hv.Cycle("Dark2"), muted_fill_alpha=0, muted_line_alpha=0),
 ]
 
@@ -1652,7 +1652,7 @@ def plot_eps_ri_hist(eps_ri, label=None, muted=None):
             ]
         )
         .hvplot.step(
-            frame_width=600,
+            frame_width=400,
             frame_height=300,
             col="enso_transition_phase",
             x="Rig_T_bins",
