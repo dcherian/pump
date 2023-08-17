@@ -191,6 +191,14 @@ def prepare(ds, grid=None, oni=None):
             out["S2"].attrs["long_name"] = "$S^2$"
             out["S2"].attrs["units"] = "s$^{-2}$"
 
+        if "w" not in out:
+            assert grid is not None
+            with xr.set_options(keep_attrs=False):
+                out["wz"] = dudz + 1j * dvdz
+                out["wz"].attrs = {"description": "Complex shear", "units": "s-1"}
+                out["w"] = u + 1j * v
+                out["w"].attrs = {"description": "complex velocity", "units": "ms-1"}
+
         out["shred2"] = out.S2 - 4 * out.N2T
         out.shred2.attrs["long_name"] = "$Sh_{red}^2$"
         out.shred2.attrs["units"] = "$s^{-2}$"
@@ -1328,11 +1336,24 @@ def load_microstructure():
 def load_tao():
     from .obs import process_oni
 
-    tao_gridded = xr.open_dataset(
-        os.path.expanduser(f"{ROOT}/zarrs/tao-gridded-ancillary.zarr"),
-        chunks="auto",
-        engine="zarr",
-    ).sel(longitude=-140, time=slice("1996", None))
+    tao_gridded = (
+        xr.open_dataset(
+            os.path.expanduser(f"{ROOT}/zarrs/tao-gridded-ancillary.zarr"),
+            chunks="auto",
+            engine="zarr",
+        )
+        .sel(longitude=-140, time=slice("1996", None))
+        .chunk(time=100000)
+    )
+
+    with xr.set_options(keep_attrs=False):
+        tao_gridded["wz"] = tao_gridded.u.differentiate(
+            "depth"
+        ) + 1j * tao_gridded.v.differentiate("depth")
+        tao_gridded["w"] = tao_gridded.u + 1j * tao_gridded.v
+        tao_gridded["wz"].attrs = {"description": "Complex shear", "units": "s-1"}
+        tao_gridded["w"].attrs = {"description": "complex velocity", "units": "ms-1"}
+
     tao_gridded["pressure"] = gsw_xarray.p_from_z(
         tao_gridded.depth, lat=tao_gridded.latitude
     )
@@ -1774,9 +1795,6 @@ def bin_to_euc_centered_coordinate(tree):
     for nodename, node in tree.children.items():
         ds = node.ds
         node["eucmax"].load()
-        node.coords["zeuc"] = (
-            ds.cf["ocean_vertical_heat_diffusivity"].cf["vertical"] - node["eucmax"]
-        )
 
         subset = ds.cf[
             [
@@ -1790,6 +1808,8 @@ def bin_to_euc_centered_coordinate(tree):
                 "eps",
                 "S2",
                 "Rig_T",
+                "w",
+                "wz",
             ]
         ]
 
@@ -1827,16 +1847,17 @@ def bin_to_euc_centered_coordinate(tree):
         # binned["Rig_T"] = binned.N2T / binned.Sh2
         # binned["Shred2"] = binned.Sh2 - 4 * binned.N2T
 
-        newtree[f"{nodename}/euc"] = DataTree(binned)
+        newtree[f"{nodename}"] = DataTree(binned)
     return newtree
 
 
-def average_euc(tree):
+def average_euc(euc):
     import dcpy.datatree  # noqa
 
-    euc = tree.dc.extract_leaf("euc").dc.reorder_nodes(["TAO", ...])
     euc_mean = euc.mean("time")
-    euc_mean.dc.update(euc.dc.subset_nodes(["Rig_T"]).median("time"))
+    euc_mean.dc.update(
+        euc.dc.subset_nodes(["Rig_T"]).chunk({"time": -1}).median("time")
+    )
     return euc_mean
 
 
